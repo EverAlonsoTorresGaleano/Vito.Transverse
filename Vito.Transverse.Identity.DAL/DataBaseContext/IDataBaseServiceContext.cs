@@ -1,0 +1,46 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Vito.Transverse.Identity.Domain.Models;
+
+namespace Vito.Transverse.Identity.DAL.DataBaseContext;
+
+/// <summary>
+/// Database reposiories Set.
+/// </summary>
+public partial interface IDataBaseServiceContext : IDisposable
+{
+    DbSet<ActivityLog> ActivityLogs { get; set; }
+
+    DbSet<Application> Applications { get; set; }
+
+    DbSet<Company> Companies { get; set; }
+
+    DbSet<Component> Components { get; set; }
+
+    DbSet<Country> Countries { get; set; }
+
+    DbSet<Culture> Cultures { get; set; }
+
+    DbSet<CultureTranslation> CultureTranslations { get; set; }
+
+    DbSet<Language> Languages { get; set; }
+
+    DbSet<ListItem> ListItems { get; set; }
+
+    DbSet<ListItemGroup> ListItemGroups { get; set; }
+
+    DbSet<Module> Modules { get; set; }
+
+    DbSet<Notification> Notifications { get; set; }
+
+    DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+
+    DbSet<Page> Pages { get; set; }
+
+    DbSet<Person> Persons { get; set; }
+
+    DbSet<Role> Roles { get; set; }
+
+    DbSet<User> Users { get; set; }
+
+    DbSet<UserRolePermission> UserRolePermissions { get; set; }
+}
