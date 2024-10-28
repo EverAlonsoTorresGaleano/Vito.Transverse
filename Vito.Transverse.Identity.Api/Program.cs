@@ -110,6 +110,9 @@ try
     //builder.AddAuthenticationForJwtClient(identityServiceClientOptions);
     //builder.Services.AddAuthorization();
 
+    //Nswag
+    builder.Services.AddOpenApiDocument();
+
     Console.WriteLine(IdentityConstants.Program_PreBuildMessage);
     var app = builder.Build();
 
