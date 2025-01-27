@@ -45,7 +45,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             ActionTypeEnum.ActionType_LoginSuccessByAuthorizationCode
         };
 
-        if (logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
+        if (userInfoDTO is not null && logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
         {
             List<Claim> claimList = CreateAuthenticationClaims(userInfoDTO);
             tokenResponse = await CreateJwtTokenAsync(requestBody, claimList, userInfoDTO);
@@ -73,7 +73,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             token_type = FrameworkConstants.TokenBearerPrefix,
             issued_at = null,
             expires_in = null,
-            status = userInfoDTO.ActionStatus.ToString(),
+            status = userInfoDTO?.ActionStatus.ToString(),
             scope = requestBody.scope!,
             application_id = requestBody.application_id,
             company_id = requestBody.company_id,
