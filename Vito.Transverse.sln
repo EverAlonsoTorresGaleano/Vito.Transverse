@@ -5,8 +5,6 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.Api", "Vito.Transverse.Identity.Api\Vito.Transverse.Identity.Api.csproj", "{E1AE378A-6918-46F7-B74D-AEBED45DC67F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.AppHost", "Vito.Transverse.AppHost\Vito.Transverse.AppHost.csproj", "{44CC3656-837F-4A70-8B17-0F602F42823A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B3FABDB-E40D-48F2-95E7-4D4BFCCDCE23}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.packages.props = Directory.packages.props
@@ -38,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.Un
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "08 Automation Test", "08 Automation Test", "{BB836303-008D-48AC-8DA6-B81546C2FE9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.AppHost.Aspire", "Vito.Transverse.AppHost.Aspire\Vito.Transverse.AppHost.Aspire.csproj", "{F800D3CD-F99C-4522-9B44-C12B5AB11D04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,10 +48,6 @@ Global
 		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44CC3656-837F-4A70-8B17-0F602F42823A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44CC3656-837F-4A70-8B17-0F602F42823A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44CC3656-837F-4A70-8B17-0F602F42823A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44CC3656-837F-4A70-8B17-0F602F42823A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -68,17 +64,21 @@ Global
 		{D5F46237-C073-432E-A99C-A8440D01CDD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5F46237-C073-432E-A99C-A8440D01CDD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5F46237-C073-432E-A99C-A8440D01CDD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F800D3CD-F99C-4522-9B44-C12B5AB11D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F800D3CD-F99C-4522-9B44-C12B5AB11D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F800D3CD-F99C-4522-9B44-C12B5AB11D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F800D3CD-F99C-4522-9B44-C12B5AB11D04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E1AE378A-6918-46F7-B74D-AEBED45DC67F} = {0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}
-		{44CC3656-837F-4A70-8B17-0F602F42823A} = {D8B0BC4B-DCB7-4190-A269-B3159A4827DB}
 		{7A69D221-F0F1-440B-8B75-830AF97B51D3} = {F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}
 		{8B3F93EE-CD59-4CBE-A421-131CE22F68D7} = {3FD99A0D-213D-4D82-B804-EB3AD9D020AF}
 		{430EC238-BBCF-4703-B3A4-AA224AAA4EDB} = {9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}
 		{D5F46237-C073-432E-A99C-A8440D01CDD5} = {8626142B-4A18-4F72-BE8F-E71A3CFED020}
+		{F800D3CD-F99C-4522-9B44-C12B5AB11D04} = {D8B0BC4B-DCB7-4190-A269-B3159A4827DB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D2F43FD-AFBF-4361-B722-C37FA705CF02}

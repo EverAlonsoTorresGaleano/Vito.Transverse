@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:15061",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19077",
+        "DOTNET_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20150",
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "false"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:17200;http://localhost:15061",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21022",
+        "DOTNET_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22006"
+      }
+    },
+    "Vito.Transverse.AppHost.Aspire": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:17200;http://localhost:15061",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21022",
+        "DOTNET_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22006",
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "false"
+      }
+    }
+  }
+}
