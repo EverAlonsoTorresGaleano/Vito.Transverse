@@ -7,16 +7,16 @@
     <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />
     <PackageVersion Include="Azure.Identity" Version="1.13.1" />
-    <PackageVersion Include="EFCore.BulkExtensions" Version="8.1.2" />
+    <PackageVersion Include="EFCore.BulkExtensions" Version="9.0.1" />
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageVersion Include="Microsoft.FeatureManagement" Version="3.5.0" />
     <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="3.5.0" />
@@ -33,18 +33,18 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.6.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.0.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.8.1" />
     <PackageVersion Include="System.Formats.Asn1" Version="8.0.1" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.1" />
-    <PackageVersion Include="Twilio" Version="7.8.2" />
-    <PackageVersion Include="Vito.Framework.Api" Version="0.2.2-alpha.0.g" />
-    <PackageVersion Include="Vito.Framework.Common" Version="0.2.2-alpha.0.g" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.2" />
+    <PackageVersion Include="Twilio" Version="7.8.5" />
+    <PackageVersion Include="Vito.Framework.Api" Version="0.2.2-alpha.3" />
+    <PackageVersion Include="Vito.Framework.Common" Version="0.2.2-alpha.3" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.14.0" />
   </ItemGroup>
 </Project>
