@@ -1,9 +1,41 @@
-﻿using System.Globalization;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Globalization;
+using Vito.Framework.Common.Options;
+using Vito.Transverse.Identity.DAL.DataBaseContext;
+using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
+using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
+using Vito.Transverse.Identity.Domain.ModelsDTO;
+using Vito.Transverse.Identity.Domain.Extensions;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 
-public class CultureRepository : ICultureRepository
+public class CultureRepository(IDataBaseContextFactory _dataBaseContextFactory, ILogger<LocalizationRepository> _logger) : ICultureRepository
 {
+
+    public async Task<List<CultureDTO>> GetActiveCultureList()
+    {
+
+        List<CultureDTO> returnListDTO = default!;
+        DataBaseServiceContext context = default!;
+        try
+        {
+            context = _dataBaseContextFactory.CreateDbContext();
+            var returnList = await context.Cultures.Where(x => x.IsEnabled).ToListAsync();
+            returnListDTO = returnList.ToCultureDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetActiveCultureList));
+        }
+        finally
+        {
+            context.Dispose();
+        }
+        return returnListDTO;
+    }
+
     public DateTimeOffset UtcNow()
     {
         var returnValue = DateTimeOffset.UtcNow;
@@ -18,35 +50,35 @@ public class CultureRepository : ICultureRepository
 
     public string MomentToLongDateTimeString(DateTimeOffset currentDateTime)
     {
-        var cultureInfo = GetCurrectCulture();
+        var cultureInfo = GetCurrentCulture();
         var returnValue = currentDateTime.ToString(cultureInfo.DateTimeFormat.FullDateTimePattern);
         return returnValue;
     }
 
     public string MomentToLongDateString(DateTimeOffset currentDateTime)
     {
-        var cultureInfo = GetCurrectCulture();
+        var cultureInfo = GetCurrentCulture();
         var returnValue = currentDateTime.ToString(cultureInfo.DateTimeFormat.LongDatePattern);
         return returnValue;
     }
 
     public string MomentToLongTimeString(DateTimeOffset currentDateTime)
     {
-        var cultureInfo = GetCurrectCulture();
+        var cultureInfo = GetCurrentCulture();
         var returnValue = currentDateTime.ToString(cultureInfo.DateTimeFormat.LongTimePattern);
         return returnValue;
     }
 
     public string MomentToShortDateString(DateTimeOffset currentDateTime)
     {
-        var cultureInfo = GetCurrectCulture();
+        var cultureInfo = GetCurrentCulture();
         var returnValue = currentDateTime.ToString(cultureInfo.DateTimeFormat.ShortDatePattern);
         return returnValue;
     }
 
     public string MomentToShortTimeString(DateTimeOffset currentDateTime)
     {
-        var cultureInfo = GetCurrectCulture();
+        var cultureInfo = GetCurrentCulture();
         var returnValue = currentDateTime.ToString(cultureInfo.DateTimeFormat.ShortTimePattern);
         return returnValue;
     }
@@ -87,28 +119,29 @@ public class CultureRepository : ICultureRepository
         return returnValue;
     }
 
-    public CultureInfo GetCurrectCulture()
+    public CultureInfo GetCurrentCulture()
     {
         var currentCulture = Thread.CurrentThread.CurrentCulture;
         return currentCulture;
     }
 
-    public string GetCurrectCultureId()
+    public string GetCurrentCultureId()
     {
-        var currentCulture = GetCurrectCulture().Name;
+        var currentCulture = GetCurrentCulture().Name;
         return currentCulture;
     }
 
-    public string GetCurrectCultureName()
+    public string GetCurrentCultureName()
     {
-        var currentCulture = GetCurrectCulture().DisplayName;
+        var currentCulture = GetCurrentCulture().DisplayName;
         return currentCulture;
     }
 
-    public string SetCurrectCulture(string cultureId)
+    public string SetCurrentCulture(string cultureId)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureId);
-        var returnValue = GetCurrectCultureId();
+        Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureId);
+        var returnValue = GetCurrentCultureId();
         return returnValue;
     }
 

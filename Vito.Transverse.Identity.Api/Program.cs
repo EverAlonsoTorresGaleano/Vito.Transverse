@@ -10,6 +10,7 @@ using Vito.Transverse.Identity.Api.Validators;
 using Vito.Transverse.Identity.BAL.IntegrationServices.Twilio;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
+using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
@@ -26,7 +27,11 @@ try
     var builder = WebApplication.CreateBuilder(args);
     var configuration = builder.Configuration;
 
+    //Contains 
+    //AddDefaultHsts()/ConfigureOpenTelemetry()/AddDefaultHealthChecks()/AddServiceDiscovery()/AddDefaultHttpJsonOptions()
+    //AddDefaultApiVersioning() / AddSwaggerInfo() / AddFeatureManagement()/ConfigureHttpClientDefaults / AddOptions();
     builder.AddPreBuildServiceDefaults();
+
     builder.Services.AddEndpointsApiExplorer();
 
     //Device Detection Wangkanai
@@ -72,29 +77,25 @@ try
 
     //Register Transverse Repositories
     builder.Services.AddTransient<ProblemDetailsFactory, CustomProblemDetailsFactory>();
-
-
     builder.Services.AddTransient<ICultureRepository, CultureRepository>();
     builder.Services.AddTransient<ILocalizationRepository, LocalizationRepository>();
-    builder.Services.AddTransient<ISocialNetworksRepository, SocialNetworksRepository>();
     builder.Services.AddTransient<ISecurityRepository, SecurityRepository>();
 
     //Register REpositories
-
+    builder.Services.AddTransient<ISocialNetworksRepository, SocialNetworksRepository>();
 
     //Register Transverse Services
     builder.Services.AddTransient<ICachingServiceMemoryCache, CachingServiceMemoryCache>();
     builder.Services.AddTransient<ICultureService, CultureService>();
-
+    builder.Services.AddTransient<ILocalizationService, LocalizationService>();
+    builder.Services.AddTransient<ISecurityService, SecurityService>();
 
 
     //Register Services
-    builder.Services.AddTransient<ISecurityService, SecurityService>();
     builder.Services.AddTransient<ITwilioService, TwilioService>();
 
     //Register Fluent Validation
     builder.Services.AddValidatorsFromAssemblyContaining<TokenRequestValidator>();
-
 
 
     //Identity Service Server 
@@ -131,6 +132,7 @@ try
     //Applciation EndPOints
     app.MapHomeEndPoints(versionSet);
     app.MapSecurityEndpoint(versionSet);
+    app.MapLocalizationEndpoint(versionSet);
     app.MapCultureEndpoint(versionSet);
     app.MapTwilioEndPoint(versionSet);
 

@@ -1,9 +1,12 @@
 ﻿using System.Globalization;
+using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 
 public interface ICultureRepository
 {
+    Task<List<CultureDTO>> GetActiveCultureList();
+
     DateTimeOffset UtcNow();
     string MomentToString(DateTimeOffset currentDateTime);
     string MomentToLongDateTimeString(DateTimeOffset currentDateTime);
@@ -18,10 +21,10 @@ public interface ICultureRepository
     string NowToShortDateString();
     string NowToShortTimeString();
 
-    CultureInfo GetCurrectCulture();
-    string GetCurrectCultureId();
-    string GetCurrectCultureName();
-    string SetCurrectCulture(string cultureId);
+    CultureInfo GetCurrentCulture();
+    string GetCurrentCultureId();
+    string GetCurrentCultureName();
+    string SetCurrentCulture(string cultureId);
     //DateTimeOffset NextTokenExpirationTimeFromNow();
 
     //TimeSpan CacheExpirationTimeFromNow();

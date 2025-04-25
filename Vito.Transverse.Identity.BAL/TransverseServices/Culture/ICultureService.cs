@@ -18,7 +18,4 @@ public interface ICultureService
 
     Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync();
 
-    Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync();
-
-    CultureTranslationDTO GetLocalizedMessage(string localizationMessageKey, params object?[] parameters);
 }

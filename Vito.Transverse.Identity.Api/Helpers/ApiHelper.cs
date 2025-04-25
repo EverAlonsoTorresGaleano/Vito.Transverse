@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using FluentValidation;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.Options;
@@ -32,8 +33,17 @@ public static class ApilHelper
         //TODO Set Time / fromats
         request.HttpContext.Response.Headers.Remove(FrameworkConstants.Header_CultureId);
         request.HttpContext.Response.Headers.Append(FrameworkConstants.Header_CultureId, cultureId);
+
+       // SetValidatorCulture(cultureId!);
+       
     }
 
+    //private static void SetValidatorCulture(string cultureId)
+    //{
+    //    ValidatorOptions.Global.LanguageManager.Enabled=true;
+    //    ValidatorOptions.Global.LanguageManager.Culture = _cultureService.GetCurrectCulture();
+    //    ValidatorOptions.Global.LanguageManager = new ValidatorLanguageManager(_cultureService, cultureId!);
+    //}
 
     public static CultureInfo GetCurrectCulture(this HttpRequest request)
     {

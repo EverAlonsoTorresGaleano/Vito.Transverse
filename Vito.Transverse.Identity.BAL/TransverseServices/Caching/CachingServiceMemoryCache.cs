@@ -13,30 +13,38 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
 
     public bool CacheDataExistsByKey(string itemCacheName)
     {
+        bool returValue = false;
         try
         {
-            var dataExist = _memoryCache.TryGetValue(itemCacheName, out object? variable);
-            return dataExist;
+            if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
+            {
+                var dataExist = _memoryCache.TryGetValue(itemCacheName, out object? variable);
+                returValue = dataExist;
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(CacheDataExistsByKey));
-            return false;
         }
+        return returValue;
     }
 
     public bool DeleteCacheDataByKey(string itemCacheKey)
     {
+        bool returValue = false;
         try
         {
-            _memoryCache.Remove(itemCacheKey);
-            return true;
+            if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
+            {
+                _memoryCache.Remove(itemCacheKey);
+                returValue = true;
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(DeleteCacheDataByKey));
-            return false;
         }
+        return returValue;
     }
 
 
@@ -44,22 +52,29 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
     public T? GetCacheDataByKey<T>(string itemCacheName)
     {
         T? returnEntity = (T?)Activator.CreateInstance(typeof(T));
-        try
+        if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
         {
-            var returnValueByte = _memoryCache.Get(itemCacheName);
-            var returnValue = returnValueByte?.ToString();
-            if (returnValue != null)
+            try
             {
-                returnEntity = CommonExtensions.Deserialize<T>(returnValue)!;
+                var returnValueByte = _memoryCache.Get(itemCacheName);
+                var returnValue = returnValueByte?.ToString();
+                if (returnValue != null)
+                {
+                    returnEntity = CommonExtensions.Deserialize<T>(returnValue)!;
+                }
+                else
+                {
+                    returnEntity = default;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, message: nameof(GetCacheDataByKey));
                 returnEntity = default;
             }
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, message: nameof(GetCacheDataByKey));
             returnEntity = default;
         }
         return returnEntity;
@@ -72,17 +87,21 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
 
     public bool SetCacheData(string itemCacheName, object itemCacheValue)
     {
-        try
+        bool returnValue = false;
+        if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
         {
-            var serializedObject = CommonExtensions.Serialize(itemCacheValue);
-            var cacheExpiration = _cultureRepository.UtcNow().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
-            _memoryCache.Set(itemCacheName, serializedObject, cacheExpiration);
-            return true;
+            try
+            {
+                var serializedObject = CommonExtensions.Serialize(itemCacheValue);
+                var cacheExpiration = _cultureRepository.UtcNow().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
+                _memoryCache.Set(itemCacheName, serializedObject, cacheExpiration);
+                returnValue = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, message: nameof(SetCacheData));
+            }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, message: nameof(SetCacheData));
-            return false;
-        }
+        return returnValue;
     }
 }

@@ -4,7 +4,7 @@ namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 
 public interface ILocalizationRepository
 {
-    Task<List<CultureDTO>> GetActiveCultureList();
+    
     Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByCultureIdAsync(string cultureId);
     Task<bool> AddAsync(CultureTranslationDTO newRecordDTO);
     Task<bool> UpdateAsync(CultureTranslationDTO newRecordDTO);

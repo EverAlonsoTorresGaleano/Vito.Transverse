@@ -16,27 +16,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 {
     CultureSettingsOptions _cultureSettingsOptionsValues => _cultureSettingsOptions.Value;
 
-    public async Task<List<CultureDTO>> GetActiveCultureList()
-    {
-
-        List<CultureDTO> returnListDTO = default!;
-        DataBaseServiceContext context = default!;
-        try
-        {
-            context = _dataBaseContextFactory.CreateDbContext();
-            var returnList = await context.Cultures.Where(x => x.IsEnabled).ToListAsync();
-            returnListDTO = returnList.ToCultureDTOList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, message: nameof(GetActiveCultureList));
-        }
-        finally
-        {
-            context.Dispose();
-        }
-        return returnListDTO;
-    }
+   
 
     public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByCultureIdAsync(string cultureId)
     {

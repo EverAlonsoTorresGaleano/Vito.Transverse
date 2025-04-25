@@ -1,19 +1,22 @@
 ﻿using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.SocialNetworks;
-using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
+using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.Extensions;
-
+//******************************************************************************
+// Becouse Label Localization is on front end and data will no be to tranlated
+//******************************************************************************
+/*
 public static class MapperExtension
 {
 
-    private static ICultureService _cultureService = default!;
+    private static ILocalizationService _localizationService = default!;
 
-    public static void Configure(ICultureService cultureService)
+    public static void Configure(ILocalizationService localizationService)
     {
-        _cultureService = cultureService;
+        _localizationService = localizationService;
     }
 
     public static List<PersonDTO> ToPersonDTOList(this List<Person> modelObjectList)
@@ -78,7 +81,7 @@ public static class MapperExtension
         {
             Id = modelObject.Id,
             NameTranslationKey = modelObject.NameTranslationKey,
-            Name = _cultureService.GetLocalizedMessage(modelObject.NameTranslationKey).TranslationValue,
+            Name = _localizationService.GetLocalizedMessage(modelObject.NameTranslationKey).TranslationValue,
             CountryFk = modelObject.CountryFk,
             LanguageFk = modelObject.LanguageFk,
             IsEnabled = modelObject.IsEnabled
@@ -378,4 +381,4 @@ public static class MapperExtension
         };
         return returnObject;
     }
-}
+}*/

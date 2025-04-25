@@ -9,4 +9,5 @@ public class IdentityConstants
     public const string Program_PostBuildMessage = $"{Program_Name} POst build Success";
     public const string Program_PreRunMessage = $"{Program_Name} Pre-run Sucess";
     public const string Program_ErrorMessage = $"{Program_Name} Error -";
+    public const string Separator_Comma= ",";
 }

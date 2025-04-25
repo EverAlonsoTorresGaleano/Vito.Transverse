@@ -4,6 +4,7 @@ public enum FeatureFlagsNamesEnum
 {
     HomeFeature,
     CultureFeature,
+    LocalizationFeature,
     SecurityFeature,
 }
 

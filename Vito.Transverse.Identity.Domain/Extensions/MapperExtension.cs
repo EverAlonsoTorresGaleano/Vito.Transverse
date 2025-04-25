@@ -7,14 +7,6 @@ namespace Vito.Transverse.Identity.Domain.Extensions;
 
 public static class MapperExtension
 {
-
-    //private static ICultureService _cultureService = default!;
-
-    //public static void Configure(ICultureService cultureService)
-    //{
-    //    _cultureService = cultureService;
-    //}
-
     public static List<PersonDTO> ToPersonDTOList(this List<Person> modelObjectList)
     {
         List<PersonDTO> returnList = [];

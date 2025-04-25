@@ -32,8 +32,9 @@ public static class SecurityEndpoint
         endPointGroupVersioned.MapPost("Token", TokenAync)
              .MapToApiVersion(1.0)
             .WithSummary("Get Authentication Token")
-            .AddEndpointFilter<SecurityFeatureFlagFilter>()
-            .AddEndpointFilter<InfrastructureFilter>();
+            .AddEndpointFilter<InfrastructureFilter>()
+            .AddEndpointFilter<SecurityFeatureFlagFilter>();
+
     }
 
     public static async Task<Results<Ok<TokenResponseDTO>, NotFound, ValidationProblem>> TokenAync(
