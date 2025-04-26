@@ -44,7 +44,7 @@ public interface ISecurityRepository
     /// <param name="deviceInformation"></param>
     /// <param name="actionStatus"></param>
     /// <returns></returns>
-    Task<bool> AddNewActivityLog(Guid companyId, Guid? applicationId, long? userId, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? transactionContext = null);
+    Task<bool> AddNewActivityLog(Guid companyId, Guid? applicationId, long? userId, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
     /// <summary>
     /// Update user logging information
@@ -53,29 +53,29 @@ public interface ISecurityRepository
     /// <param name="deviceInformation"></param>
     /// <param name="actionStatus"></param>
     /// <returns></returns>
-    Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? transactionContext = null);
+    Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
 
-    Task<ApplicationDTO> CreateNewApplication(ApplicationDTO applicationInfo, DeviceInformationDTO deviceInformation, Guid companyId, long userId, DataBaseServiceContext? transactionContext = null);
+    Task<ApplicationDTO> CreateNewApplication(ApplicationDTO applicationInfo, DeviceInformationDTO deviceInformation, Guid companyId, long userId, DataBaseServiceContext? context = null);
 
     /// <summary>
     /// Create a new company and asociate a new person and new api-user to enable acces
     /// </summary>
     /// <param name="companyInfo"></param>
     /// <returns></returns>
-    Task<CompanyDTO> CreateNewCompany(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation,long userId, DataBaseServiceContext? transactionContext = null);
+    Task<CompanyDTO> CreateNewCompany(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, long userId, DataBaseServiceContext? context = null);
 
-    Task<PersonDTO> CreateNewPerson(PersonDTO personInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? transactionContext = null);
+    Task<PersonDTO> CreateNewPerson(PersonDTO personInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<UserDTO> CreateNewUser(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? transactionContext = null);
+    Task<UserDTO> CreateNewUser(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> ChangeUserPassword(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? transactionContext = null);
+    Task<bool> ChangeUserPassword(UserDTO userInfo, DeviceInformationDTO deviceInformation);
 
-    Task<bool> UpdateCompanyApplications(CompanyDTO companyInfo, List<ApplicationDTO> applicationInfoList, DeviceInformationDTO deviceInformation, DataBaseServiceContext? transactionContext = null);
+    Task<bool> UpdateCompanyApplications(CompanyDTO companyInfo, List<ApplicationDTO> applicationInfoList, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> SendActivationEmail(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? transactionContext = null);
+    Task<bool> SendActivationEmail(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> ActivateAccount(Guid companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? transactionContext = null);
+    Task<bool> ActivateAccount(Guid companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
     Task<List<ApplicationDTO>> GetAllApplicationList();
 

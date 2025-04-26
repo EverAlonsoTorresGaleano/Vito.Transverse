@@ -39,13 +39,51 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         return notificationTemplateInfoDTO;
     }
 
-    public async Task<bool> SendNotification(NotificationDTO notificationInfoDTO, DataBaseServiceContext? transactionContext = null)
+
+    public async Task<bool> SendNotificationByTemplate(NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null)
     {
-        DataBaseServiceContext? context = default;
         bool notificationSent = false;
         try
         {
-            context = _dataBaseContextFactory.GetDbContext(transactionContext);
+            context = _dataBaseContextFactory.GetDbContext(context);
+            cultureId = cultureId ?? _cultureRepository.GetCurrentCultureId();
+
+            var templateInfo = await context.NotificationTemplates.FirstOrDefaultAsync(x => x.Id.Equals(templateId));
+            if (templateInfo != null)
+            {
+                NotificationDTO notificationInfoDTO = new()
+                {
+                    NotificationTemplateFk = templateInfo.Id,
+                    NotificationTypeFk = (long)type,
+                    CreationDate = _cultureRepository.UtcNow().DateTime,
+                    Receiver = emailList,
+                    Cc = emailListCC,
+                    Bcc = emailListBCC,
+                    CultureFk = cultureId,
+                    IsHtml = templateInfo.IsHtml,
+                    IsSent = false,
+                    Subject = templateInfo.SubjectTemplateText?.ReplaceParameterOnString(templateParameters),
+                    Message = templateInfo.MessageTemplateText?.ReplaceParameterOnString(templateParameters),
+                };
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, nameof(SendNotificationByTemplate));
+            throw;
+        }
+
+        return notificationSent;
+    }
+
+    public async Task<bool> SendNotification(NotificationDTO notificationInfoDTO, DataBaseServiceContext? context = null)
+    {
+
+        bool notificationSent = false;
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
             notificationInfoDTO.Sender = _emailSettingsOptionsValues.SenderEmail;
             var notificationInfo = notificationInfoDTO.ToNotification();
             var notificationType = Enum.Parse<NotificationTypeEnum>(notificationInfoDTO.NotificationTypeFk.ToString(), true);
@@ -54,7 +92,15 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
             switch (notificationType)
             {
                 case NotificationTypeEnum.Email:
-                    notificationIsSent = await SendEmailNotification(notificationInfoDTO);
+                    try
+                    {
+                        notificationIsSent = await SendEmailNotification(notificationInfoDTO);
+                    }
+                    catch (Exception exMail)
+                    {
+                        _logger.LogError(exMail, nameof(SendNotification));
+                    }
+
                     break;
 
                 case NotificationTypeEnum.SMS:
@@ -71,11 +117,9 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(SendNotification));
+            throw;
         }
-        finally
-        {
-            _dataBaseContextFactory.DisposeDbContext(context, transactionContext);
-        }
+
         return notificationSent;
     }
 
@@ -117,6 +161,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(SendEmailNotification));
+            throw;
         }
         return emailSent;
     }

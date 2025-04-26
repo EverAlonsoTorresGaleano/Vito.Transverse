@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	  <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
-	  <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0" />
@@ -46,8 +46,8 @@
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
     <PackageVersion Include="System.Text.Json" Version="9.0.4" />
     <PackageVersion Include="Twilio" Version="7.10.0" />
-    <PackageVersion Include="Vito.Framework.Api" Version="0.2.2-alpha.4" />
-    <PackageVersion Include="Vito.Framework.Common" Version="0.2.2-alpha.4" />
+    <PackageVersion Include="Vito.Framework.Api" Version="0.2.5-alpha.0" />
+    <PackageVersion Include="Vito.Framework.Common" Version="0.2.5-alpha.0" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.15.0" />
     <PackageVersion Include="Wangkanai.Hosting" Version="3.3.0" />
     <PackageVersion Include="Wangkanai.System" Version="5.2.0" />

@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Vito.Transverse.Identity.Domain.Models;
 
-public partial class VitoTransverseContext : DbContext
+public partial class VitoTransverseDbContext : DbContext
 {
-    public VitoTransverseContext()
+    public VitoTransverseDbContext()
     {
     }
 
-    public VitoTransverseContext(DbContextOptions<VitoTransverseContext> options)
+    public VitoTransverseDbContext(DbContextOptions<VitoTransverseDbContext> options)
         : base(options)
     {
     }
@@ -51,9 +51,6 @@ public partial class VitoTransverseContext : DbContext
 
     public virtual DbSet<UserRolePermission> UserRolePermissions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(local)\\MSSQLSERVER2019;Database=Vito.Transverse;Integrated Security=false;TrustServerCertificate=True;Trusted_Connection=True;Persist Security Info=True; User ID=vito.torres;Password=Vito87152+24Oct*");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -135,8 +132,9 @@ public partial class VitoTransverseContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK_PageComponents");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.ComponentId).HasMaxLength(50);
-            entity.Property(e => e.ComponentName).HasMaxLength(50);
+            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
+            entity.Property(e => e.ObjectId).HasMaxLength(50);
+            entity.Property(e => e.ObjectName).HasMaxLength(50);
 
             entity.HasOne(d => d.PageFkNavigation).WithMany(p => p.Components)
                 .HasForeignKey(d => d.PageFk)
@@ -230,7 +228,6 @@ public partial class VitoTransverseContext : DbContext
                 .HasColumnName("CC");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.CultureFk).HasMaxLength(5);
-            entity.Property(e => e.NotificationTemplateFk).HasMaxLength(25);
             entity.Property(e => e.Receiver).HasMaxLength(500);
             entity.Property(e => e.Sender).HasMaxLength(50);
             entity.Property(e => e.SentDate).HasColumnType("datetime");
@@ -238,25 +235,27 @@ public partial class VitoTransverseContext : DbContext
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.CultureFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NotificationTraces_Cultures");
-
-            entity.HasOne(d => d.NotificationTemplateFkNavigation).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.NotificationTemplateFk)
-                .HasConstraintName("FK_NotificationTraces_NotificationTemplates");
 
             entity.HasOne(d => d.NotificationTypeFkNavigation).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.NotificationTypeFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_ListItems");
+
+            entity.HasOne(d => d.NotificationTemplate).WithMany(p => p.Notifications)
+                .HasForeignKey(d => new { d.NotificationTemplateFk, d.CultureFk })
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Notifications_NotificationTemplates");
         });
 
         modelBuilder.Entity<NotificationTemplate>(entity =>
         {
-            entity.Property(e => e.Id).HasMaxLength(25);
+            entity.HasKey(e => new { e.Id, e.CultureFk });
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CultureFk).HasMaxLength(5);
-            entity.Property(e => e.TemplateText)
-                .HasMaxLength(10)
-                .IsFixedLength();
+            entity.Property(e => e.Name).HasMaxLength(25);
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.NotificationTemplates)
                 .HasForeignKey(d => d.CultureFk)

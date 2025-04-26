@@ -5,8 +5,10 @@ namespace Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 
 public interface IDataBaseContextFactory : IDbContextFactory<DataBaseServiceContext>
 {
-    DataBaseServiceContext GetDbContext(DataBaseServiceContext? transactionContext = null);
+    new DataBaseServiceContext CreateDbContext();
 
-    void DisposeDbContext(DataBaseServiceContext? context, DataBaseServiceContext? transactionContext);
+    DataBaseServiceContext GetDbContext(DataBaseServiceContext? context = null);
+
+    void DisposeDbContext(DataBaseServiceContext? context);
 }
 

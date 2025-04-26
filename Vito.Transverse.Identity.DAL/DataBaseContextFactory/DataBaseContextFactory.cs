@@ -36,20 +36,23 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
 
     }
 
-    public void DisposeDbContext(DataBaseServiceContext? context, DataBaseServiceContext? transactionContext)
+
+    public DataBaseServiceContext GetDbContext(DataBaseServiceContext? context = null)
     {
-        if (transactionContext is null)
+        if (context is null)// || context.Database.CurrentTransaction is null)
         {
-            context!.Dispose();
+            context = CreateDbContext();
         }
+        return context;
     }
 
-    public DataBaseServiceContext GetDbContext(DataBaseServiceContext? transactionContext = null)
+    public void DisposeDbContext(DataBaseServiceContext? context)
     {
-        if (transactionContext is null)
+        if (context?.Database?.CurrentTransaction is not null)
         {
-            transactionContext = CreateDbContext();
+            context.Database.CurrentTransaction.Dispose();
         }
-        return transactionContext;
+        context!.Dispose();
     }
+
 }

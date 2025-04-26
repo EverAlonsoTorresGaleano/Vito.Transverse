@@ -5,9 +5,11 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class Notification
 {
-    public string? NotificationTemplateFk { get; set; }
+    public long NotificationTemplateFk { get; set; }
 
-    public string? CultureFk { get; set; }
+    public string CultureFk { get; set; } = null!;
+
+    public long NotificationTypeFk { get; set; }
 
     public long Id { get; set; }
 
@@ -29,11 +31,11 @@ public partial class Notification
 
     public DateTime? SentDate { get; set; }
 
-    public long NotificationTypeFk { get; set; }
+    public bool IsHtml { get; set; }
 
-    public virtual Culture? CultureFkNavigation { get; set; }
+    public virtual Culture CultureFkNavigation { get; set; } = null!;
 
-    public virtual NotificationTemplate? NotificationTemplateFkNavigation { get; set; }
+    public virtual NotificationTemplate NotificationTemplate { get; set; } = null!;
 
     public virtual ListItem NotificationTypeFkNavigation { get; set; } = null!;
 }

@@ -18,7 +18,7 @@ public class UserDTO
     public DateTime? LastAccess { get; set; }
     public bool IsActive { get; set; }
     public long RoleFk { get; set; }
-    public long ? DocumentTypeFk { get; set; }
+    public long? DocumentTypeFk { get; set; }
     public string? DocumentValue { get; set; }
     public string? Name { get; set; }
     public string? LastName { get; set; }
@@ -27,7 +27,10 @@ public class UserDTO
     public string? MobileNumber { get; set; }
     public Guid? ApplicationId { get; set; }
     public string? ApplicationName { get; set; }
+
+    public Guid? ActivationId { get; set; }
     public string? CompanyName { get; set; }
     public string? RoleName { get; set; }
+
     public ActionTypeEnum? ActionStatus { get; set; }
 }

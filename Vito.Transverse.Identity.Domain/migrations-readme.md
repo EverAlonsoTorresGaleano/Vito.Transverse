@@ -59,15 +59,15 @@ Go to Package Manager Console
 	on Default Project DropDown Select Domain
 
 Gotto phisical Folder
-	>cd domain*
+	>cd **domain
 
 
 
 Scaffold-DbContext "Server=(local)\MSSQLSERVER2019;Database=Vito.Transverse;Integrated Security=false;TrustServerCertificate=True;Trusted_Connection=True;Persist Security Info=True; User ID=vito.torres;Password=Vito87152+24Oct*" Microsoft.EntityFrameworkCore.SqlServer -force -o "Models"
-
+ Scaffold-DbContext @Server=(local);Database=Vito.Transverse;Integrated Security=true;TrustServerCertificate=True;Persist Security Info=True; Encrypt=Optional;Command Timeout=120;MultipleActiveResultSets=true;Max Pool Size=200;Application Name=Vito.Transverse;" Microsoft.EntityFrameworkCore.SqlServer -force -o "Models"
 or
 
-dotnet ef dbcontext scaffold "Server=(local)\MSSQLSERVER2019;Database=Vito.Transverse;Integrated Security=false;TrustServerCertificate=True;Trusted_Connection=True;Persist Security Info=True; User ID=vito.torres;Password=Vito87152+24Oct*" Microsoft.EntityFrameworkCore.SqlServer -force -o "Models"
+dotnet ef dbcontext scaffold "Server=(local);Database=Vito.Transverse.DB;Integrated Security=true;TrustServerCertificate=True;Trusted_Connection=True;Persist Security Info=True;" Microsoft.EntityFrameworkCore.SqlServer --force -o "Models"
 
 
 Copy Infor From Context File VitoTransverseContext 

@@ -215,6 +215,7 @@ public static class MapperExtension
             LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
             RoleFk = modelObject.RoleFk,
+            ActivationId=modelObject.ActivationId ?? Guid.NewGuid(),
         };
         return returnObject;
     }
@@ -328,7 +329,10 @@ public static class MapperExtension
         {
             Id = modelObject.Id,
             CultureFk = modelObject.CultureFk,
-            TemplateText = modelObject.TemplateText,
+            SubjectTemplateText= modelObject.SubjectTemplateText,
+            MessageTemplateText = modelObject.MessageTemplateText,
+            IsHtml = modelObject.IsHtml,
+            Name = modelObject.Name,
         };
         return returnObject;
     }
@@ -345,7 +349,14 @@ public static class MapperExtension
             Receiver = modelObject.Receiver.Split(",").ToList(),
             Cc = modelObject.Cc!.Split(",").ToList(),
             Bcc = modelObject.Bcc!.Split(",").ToList(),
-            NotificationTemplateFk = modelObject.NotificationTemplateFk!
+            NotificationTemplateFk = modelObject.NotificationTemplateFk!,
+            CreationDate = modelObject.CreationDate,
+            Id = modelObject.Id,
+            IsHtml = modelObject.IsHtml,
+            IsSent = modelObject.IsSent,
+            NotificationTypeFk = modelObject.NotificationTypeFk,
+            SentDate = modelObject.SentDate,
+
         };
         return returnObject;
     }
@@ -366,6 +377,10 @@ public static class MapperExtension
             NotificationTemplateFk = modelObject.NotificationTemplateFk,
             NotificationTypeFk = modelObject.NotificationTypeFk,
             CreationDate = modelObject.CreationDate,
+            Id = modelObject.Id,
+            IsHtml = modelObject.IsHtml,
+            IsSent = modelObject.IsSent,
+            SentDate = modelObject.SentDate,
         };
         return returnObject;
     }

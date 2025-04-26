@@ -13,3 +13,8 @@ public enum CacheItemKeysEnum
     CultureList,
     CultureTranslationsListByCultureId
 }
+
+public enum NotificationTemplatesEnum
+{
+    ActivationEmail=1,
+}

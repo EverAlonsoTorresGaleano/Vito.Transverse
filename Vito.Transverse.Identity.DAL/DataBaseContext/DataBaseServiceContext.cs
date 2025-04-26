@@ -123,8 +123,9 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.HasKey(e => e.Id).HasName("PK_PageComponents");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.ComponentId).HasMaxLength(50);
-            entity.Property(e => e.ComponentName).HasMaxLength(50);
+            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
+            entity.Property(e => e.ObjectId).HasMaxLength(50);
+            entity.Property(e => e.ObjectName).HasMaxLength(50);
 
             entity.HasOne(d => d.PageFkNavigation).WithMany(p => p.Components)
                 .HasForeignKey(d => d.PageFk)
@@ -218,7 +219,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasColumnName("CC");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.CultureFk).HasMaxLength(5);
-            entity.Property(e => e.NotificationTemplateFk).HasMaxLength(25);
             entity.Property(e => e.Receiver).HasMaxLength(500);
             entity.Property(e => e.Sender).HasMaxLength(50);
             entity.Property(e => e.SentDate).HasColumnType("datetime");
@@ -226,25 +226,27 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.CultureFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NotificationTraces_Cultures");
-
-            entity.HasOne(d => d.NotificationTemplateFkNavigation).WithMany(p => p.Notifications)
-                .HasForeignKey(d => d.NotificationTemplateFk)
-                .HasConstraintName("FK_NotificationTraces_NotificationTemplates");
 
             entity.HasOne(d => d.NotificationTypeFkNavigation).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.NotificationTypeFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_ListItems");
+
+            entity.HasOne(d => d.NotificationTemplate).WithMany(p => p.Notifications)
+                .HasForeignKey(d => new { d.NotificationTemplateFk, d.CultureFk })
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Notifications_NotificationTemplates");
         });
 
         modelBuilder.Entity<NotificationTemplate>(entity =>
         {
-            entity.Property(e => e.Id).HasMaxLength(25);
+            entity.HasKey(e => new { e.Id, e.CultureFk });
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CultureFk).HasMaxLength(5);
-            entity.Property(e => e.TemplateText)
-                .HasMaxLength(10)
-                .IsFixedLength();
+            entity.Property(e => e.Name).HasMaxLength(25);
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.NotificationTemplates)
                 .HasForeignKey(d => d.CultureFk)
@@ -310,7 +312,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         {
             entity.Property(e => e.IsLocked).HasDefaultValue(true);
             entity.Property(e => e.LastAccess).HasColumnType("datetime");
-         //   entity.Property(e => e.LockedDate).HasColumnType("datetime");
+            entity.Property(e => e.LockedDate).HasColumnType("datetime");
             entity.Property(e => e.RequirePasswordChange).HasDefaultValue(true);
             entity.Property(e => e.UserName).HasMaxLength(25);
 

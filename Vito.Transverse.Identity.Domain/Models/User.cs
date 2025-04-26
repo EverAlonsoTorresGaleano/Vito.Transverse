@@ -27,7 +27,7 @@ public partial class User
 
     public bool ActivationEmailSent { get; set; }
 
-    public Guid? ActivationId { get; set; }
+    public Guid ActivationId { get; set; }
 
     public bool IsActive { get; set; }
 

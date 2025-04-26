@@ -9,9 +9,11 @@ public partial class Component
 
     public long Id { get; set; }
 
-    public string ComponentName { get; set; } = null!;
+    public string NameTranslationKey { get; set; } = null!;
 
-    public string ComponentId { get; set; } = null!;
+    public string ObjectId { get; set; } = null!;
+
+    public string ObjectName { get; set; } = null!;
 
     public bool IsEnabled { get; set; }
 
