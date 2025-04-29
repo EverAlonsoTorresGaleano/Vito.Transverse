@@ -43,6 +43,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(GetAllLocalizedMessagesByCultureIdAsync));
+            throw;
             returnList = [];// MockDataPopulateEntity.CreateMockDataLocalization().Where(x => x.CultureFk.Equals(cultureId)).ToList();
         }
         finally

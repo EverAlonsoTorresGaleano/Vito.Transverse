@@ -115,7 +115,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../../Vito.ePos/Vito.ePos.UI.React/src/api/vito-transverse-identity-api.ts"
+      "output": "../vito.transverse.ui.react/src/api/vito-transverse-identity-api.ts"
     }
   }
 }
