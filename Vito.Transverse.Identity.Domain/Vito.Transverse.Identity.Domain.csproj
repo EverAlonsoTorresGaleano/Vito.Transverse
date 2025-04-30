@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Remove="Models\VitoTransverseContext.cs" />
+    <Compile Remove="Models\VitoTransverseDbContext.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -235,17 +235,17 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasConstraintName("FK_Notifications_ListItems");
 
             entity.HasOne(d => d.NotificationTemplate).WithMany(p => p.Notifications)
-                .HasForeignKey(d => new { d.NotificationTemplateFk, d.CultureFk })
+                .HasForeignKey(d => new { d.NotificationTemplateGroupFk, d.CultureFk })
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_NotificationTemplates");
         });
 
         modelBuilder.Entity<NotificationTemplate>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.CultureFk });
+            entity.HasKey(e => new { e.NotificationTemplateGroupId, e.CultureFk });
 
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CultureFk).HasMaxLength(5);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Name).HasMaxLength(25);
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.NotificationTemplates)

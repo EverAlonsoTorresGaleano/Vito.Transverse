@@ -5,7 +5,7 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class Notification
 {
-    public long NotificationTemplateFk { get; set; }
+    public long NotificationTemplateGroupFk { get; set; }
 
     public string CultureFk { get; set; } = null!;
 

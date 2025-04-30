@@ -51,6 +51,9 @@ public partial class VitoTransverseDbContext : DbContext
 
     public virtual DbSet<UserRolePermission> UserRolePermissions { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=(local);Database=Vito.Transverse.DB;Integrated Security=false;TrustServerCertificate=True;Persist Security Info=True; Encrypt=Optional;Command Timeout=120;MultipleActiveResultSets=true;Max Pool Size=200;User ID=sa;Password=VitoLaptop2025+;Application Name=Vito.Transverse;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -244,17 +247,17 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasConstraintName("FK_Notifications_ListItems");
 
             entity.HasOne(d => d.NotificationTemplate).WithMany(p => p.Notifications)
-                .HasForeignKey(d => new { d.NotificationTemplateFk, d.CultureFk })
+                .HasForeignKey(d => new { d.NotificationTemplateGroupFk, d.CultureFk })
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Notifications_NotificationTemplates");
         });
 
         modelBuilder.Entity<NotificationTemplate>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.CultureFk });
+            entity.HasKey(e => new { e.NotificationTemplateGroupId, e.CultureFk });
 
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CultureFk).HasMaxLength(5);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Name).HasMaxLength(25);
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.NotificationTemplates)

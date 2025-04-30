@@ -52,6 +52,7 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <Description>Transverse Api for Security/ Culture and Localization end points</Description>
     <Copyright>Vito Torres Soft ©®™</Copyright>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">

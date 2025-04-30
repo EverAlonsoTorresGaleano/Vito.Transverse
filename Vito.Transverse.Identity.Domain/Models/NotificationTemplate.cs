@@ -7,6 +7,8 @@ public partial class NotificationTemplate
 {
     public long Id { get; set; }
 
+    public long NotificationTemplateGroupId { get; set; }
+
     public string CultureFk { get; set; } = null!;
 
     public string Name { get; set; } = null!;

@@ -109,7 +109,7 @@ Add First Migration
 	Create Data Base on SQL Server
 	Go to Package Manager Console
 	on Default Project DropDown Select Vito.ProductTracking.DataAccessLayer
-	>Add-Migration "First_Migration"
+	>Add-Migration "Initial_Migration"
 
 ===============
 Add Migration

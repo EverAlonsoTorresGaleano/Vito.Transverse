@@ -18,7 +18,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
 {
     EmailSettingsOptions _emailSettingsOptionsValues => _emailSettingsOptions.Value;
 
-    public async Task<NotificationTemplateDTO> GetNotificationTeamplete(string id)
+    public async Task<NotificationTemplateDTO> GetNotificationTemplateById(string id)
     {
         DataBaseServiceContext context = default!;
         NotificationTemplateDTO notificationTemplateInfoDTO = default!;
@@ -30,7 +30,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetNotificationTeamplete));
+            _logger.LogError(ex, message: nameof(GetNotificationTemplateById));
         }
         finally
         {
@@ -43,6 +43,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
     public async Task<bool> SendNotificationByTemplate(NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null)
     {
         bool notificationSent = false;
+        bool savedSuccesfuly = false;
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
@@ -53,7 +54,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
             {
                 NotificationDTO notificationInfoDTO = new()
                 {
-                    NotificationTemplateFk = templateInfo.Id,
+                    NotificationTemplateGroupFk = templateInfo.NotificationTemplateGroupId,
                     NotificationTypeFk = (long)type,
                     CreationDate = _cultureRepository.UtcNow().DateTime,
                     Receiver = emailList,
@@ -65,8 +66,8 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
                     Subject = templateInfo.SubjectTemplateText?.ReplaceParameterOnString(templateParameters),
                     Message = templateInfo.MessageTemplateText?.ReplaceParameterOnString(templateParameters),
                 };
+                notificationSent = await SendNotification(notificationInfoDTO, context);
             }
-
         }
         catch (Exception ex)
         {
@@ -92,17 +93,8 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
             switch (notificationType)
             {
                 case NotificationTypeEnum.Email:
-                    try
-                    {
-                        notificationIsSent = await SendEmailNotification(notificationInfoDTO);
-                    }
-                    catch (Exception exMail)
-                    {
-                        _logger.LogError(exMail, nameof(SendNotification));
-                    }
-
+                    notificationIsSent = await SendEmailNotification(notificationInfoDTO);
                     break;
-
                 case NotificationTypeEnum.SMS:
                     break;
             }
@@ -129,13 +121,16 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         bool emailSent = false;
         try
         {
-            SmtpClient mySmtpClient = new SmtpClient(_emailSettingsOptionsValues.ServerName);
-            mySmtpClient.Port = _emailSettingsOptionsValues.Port;
-            mySmtpClient.EnableSsl = _emailSettingsOptionsValues.EnableSsl;
-            mySmtpClient.UseDefaultCredentials = false;
             NetworkCredential basicAuthenticationInfo = new System.Net.NetworkCredential(_emailSettingsOptionsValues.UserName, _emailSettingsOptionsValues.Password);
-            mySmtpClient.Credentials = basicAuthenticationInfo;
 
+            SmtpClient mySmtpClient = new(_emailSettingsOptionsValues.ServerName)
+            {
+                Port = _emailSettingsOptionsValues.Port,
+                EnableSsl = _emailSettingsOptionsValues.EnableSsl,
+                UseDefaultCredentials = false,
+                Credentials = basicAuthenticationInfo,
+                DeliveryMethod = SmtpDeliveryMethod.Network
+            };
 
             var mailMessage = new MailMessage();
 
@@ -152,7 +147,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
 
             mailMessage.Body = notificationInfoDTO.Message;
             mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
-            mailMessage.IsBodyHtml = true;
+            mailMessage.IsBodyHtml = notificationInfoDTO.IsHtml;
 
             await mySmtpClient.SendMailAsync(mailMessage);
 
@@ -161,7 +156,6 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(SendEmailNotification));
-            throw;
         }
         return emailSent;
     }

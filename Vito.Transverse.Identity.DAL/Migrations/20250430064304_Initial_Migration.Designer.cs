@@ -12,8 +12,8 @@ using Vito.Transverse.Identity.DAL.DataBaseContext;
 namespace Vito.Transverse.Identity.DAL.Migrations
 {
     [DbContext(typeof(DataBaseServiceContext))]
-    [Migration("20250429213221_First_Migration")]
-    partial class First_Migration
+    [Migration("20250430064304_Initial_Migration")]
+    partial class Initial_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,6 +245,9 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int?>("UtcHoursDifference")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
@@ -424,7 +427,7 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("NotificationTemplateFk")
+                    b.Property<long>("NotificationTemplateGroupFk")
                         .HasColumnType("bigint");
 
                     b.Property<long>("NotificationTypeFk")
@@ -455,22 +458,25 @@ namespace Vito.Transverse.Identity.DAL.Migrations
 
                     b.HasIndex("NotificationTypeFk");
 
-                    b.HasIndex("NotificationTemplateFk", "CultureFk");
+                    b.HasIndex("NotificationTemplateGroupFk", "CultureFk");
 
                     b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
                 {
+                    b.Property<long>("NotificationTemplateGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CultureFk")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("CultureFk")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
 
                     b.Property<bool>("IsHtml")
                         .HasColumnType("bit");
@@ -487,7 +493,7 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id", "CultureFk");
+                    b.HasKey("NotificationTemplateGroupId", "CultureFk");
 
                     b.HasIndex("CultureFk");
 
@@ -820,7 +826,7 @@ namespace Vito.Transverse.Identity.DAL.Migrations
 
                     b.HasOne("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", "NotificationTemplate")
                         .WithMany("Notifications")
-                        .HasForeignKey("NotificationTemplateFk", "CultureFk")
+                        .HasForeignKey("NotificationTemplateGroupFk", "CultureFk")
                         .IsRequired()
                         .HasConstraintName("FK_Notifications_NotificationTemplates");
 

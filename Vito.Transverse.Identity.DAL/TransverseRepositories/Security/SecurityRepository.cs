@@ -144,6 +144,16 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context.ActivityLogs.Add(userTrace);
             var resultValue = await context.SaveChangesAsync();
             savedSuccesfuly = resultValue > 0;
+
+            //Send Activation Email
+            List<KeyValuePair<string, string>> emailTemplateParams = new()
+                {
+                     new KeyValuePair<string, string>("EMAIL","email@email.com"),
+                     new KeyValuePair<string, string>("ACTIVATION_LINK","www.casasdemiciudad.com/activateuser?activationId=EB2D4FFC-DC34-435F-8983-ECD42481143F"),
+                };
+            await _socialNetworksRepository.SendNotificationByTemplate(NotificationTypeEnum.Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, ["eeatg844@hotmail.com"], null, null, _cultureRepository.GetCurrentCultureId(), context);
+          
+
         }
         catch (Exception ex)
         {

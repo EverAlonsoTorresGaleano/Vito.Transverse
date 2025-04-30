@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Vito.Transverse.Identity.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class First_Migration : Migration
+    public partial class Initial_Migration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,8 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    NameTranslationKey = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    NameTranslationKey = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UtcHoursDifference = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -204,9 +205,10 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                 name: "NotificationTemplates",
                 columns: table => new
                 {
+                    NotificationTemplateGroupId = table.Column<long>(type: "bigint", nullable: false),
+                    CultureFk = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CultureFk = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     SubjectTemplateText = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MessageTemplateText = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -214,7 +216,7 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NotificationTemplates", x => new { x.Id, x.CultureFk });
+                    table.PrimaryKey("PK_NotificationTemplates", x => new { x.NotificationTemplateGroupId, x.CultureFk });
                     table.ForeignKey(
                         name: "FK_NotificationTemplates_Cultures",
                         column: x => x.CultureFk,
@@ -307,7 +309,7 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NotificationTemplateFk = table.Column<long>(type: "bigint", nullable: false),
+                    NotificationTemplateGroupFk = table.Column<long>(type: "bigint", nullable: false),
                     CultureFk = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     NotificationTypeFk = table.Column<long>(type: "bigint", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -336,9 +338,9 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Notifications_NotificationTemplates",
-                        columns: x => new { x.NotificationTemplateFk, x.CultureFk },
+                        columns: x => new { x.NotificationTemplateGroupFk, x.CultureFk },
                         principalTable: "NotificationTemplates",
-                        principalColumns: new[] { "Id", "CultureFk" });
+                        principalColumns: new[] { "NotificationTemplateGroupId", "CultureFk" });
                 });
 
             migrationBuilder.CreateTable(
@@ -505,9 +507,9 @@ namespace Vito.Transverse.Identity.DAL.Migrations
                 column: "CultureFk");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_NotificationTemplateFk_CultureFk",
+                name: "IX_Notifications_NotificationTemplateGroupFk_CultureFk",
                 table: "Notifications",
-                columns: new[] { "NotificationTemplateFk", "CultureFk" });
+                columns: new[] { "NotificationTemplateGroupFk", "CultureFk" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_NotificationTypeFk",
