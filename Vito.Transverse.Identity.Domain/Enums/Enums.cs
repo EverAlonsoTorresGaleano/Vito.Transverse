@@ -16,5 +16,10 @@ public enum CacheItemKeysEnum
 
 public enum NotificationTemplatesEnum
 {
-    ActivationEmail=1,
+    ActivationEmail = 1,
+}
+
+public enum DataBaseNameEnum
+{
+    TransverseDB
 }

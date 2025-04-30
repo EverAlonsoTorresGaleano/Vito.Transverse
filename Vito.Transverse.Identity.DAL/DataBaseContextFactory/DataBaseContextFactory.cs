@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
+using Vito.Transverse.Identity.Domain.Enums;
 using Vito.Transverse.Identity.Domain.Options;
 
 namespace Vito.Transverse.Identity.DAL.DataBaseContextFactory;
@@ -10,10 +11,16 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
 {
     DataBaseSettingsOptions _dataBaseSettingsOptionsValue => _dataBaseSettingsOptions.Value;
 
+
     public DataBaseServiceContext CreateDbContext()
     {
+        return CreateDbContext(DataBaseNameEnum.TransverseDB);
+    }
+
+    public DataBaseServiceContext CreateDbContext(DataBaseNameEnum dataBaseEnum)
+    {
         DataBaseServiceContext context;
-        var sqlDbConnectionName = "TransverseDB";
+        var sqlDbConnectionName = dataBaseEnum.ToString();
         var transverseDBConnectionString = _dataBaseSettingsOptionsValue!.ConnectionStrings!.First(x => x.ConnectionName.Equals(sqlDbConnectionName));
         switch (transverseDBConnectionString.ConnectionType)
         {
@@ -37,7 +44,7 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
     }
 
 
-    public DataBaseServiceContext GetDbContext(DataBaseServiceContext? context = null)
+    public DataBaseServiceContext GetDbContext( DataBaseServiceContext? context = null, DataBaseNameEnum dataBaseEnum = DataBaseNameEnum.TransverseDB)
     {
         if (context is null)// || context.Database.CurrentTransaction is null)
         {
@@ -54,5 +61,6 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
         }
         context!.Dispose();
     }
+
 
 }

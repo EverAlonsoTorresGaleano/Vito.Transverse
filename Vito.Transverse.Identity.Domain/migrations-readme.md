@@ -67,7 +67,11 @@ Scaffold-DbContext "Server=(local)\MSSQLSERVER2019;Database=Vito.Transverse;Inte
  Scaffold-DbContext @Server=(local);Database=Vito.Transverse;Integrated Security=true;TrustServerCertificate=True;Persist Security Info=True; Encrypt=Optional;Command Timeout=120;MultipleActiveResultSets=true;Max Pool Size=200;Application Name=Vito.Transverse;" Microsoft.EntityFrameworkCore.SqlServer -force -o "Models"
 or
 
-dotnet ef dbcontext scaffold "Server=(local);Database=Vito.Transverse.DB;Integrated Security=true;TrustServerCertificate=True;Trusted_Connection=True;Persist Security Info=True;" Microsoft.EntityFrameworkCore.SqlServer --force -o "Models"
+--Local with connection string hardcoded
+dotnet ef dbcontext scaffold "Server=(local);Database=Vito.Transverse.DB;Integrated Security=false;TrustServerCertificate=True;Persist Security Info=True; Encrypt=Optional;Command Timeout=120;MultipleActiveResultSets=true;Max Pool Size=200;User ID=sa;Password=VitoLaptop2025+;Application Name=Vito.Transverse;" Microsoft.EntityFrameworkCore.SqlServer --force -o "Models"
+
+--Container 
+dotnet ef dbcontext scaffold "Server=127.0.0.1,1401;Database=Vito.Transverse.DB;Integrated Security=false;TrustServerCertificate=True;Persist Security Info=True; Encrypt=Optional;Command Timeout=120;MultipleActiveResultSets=true;Max Pool Size=200;User ID=sa;Password=Vito2025+;Application Name=Vito.Transverse;" Microsoft.EntityFrameworkCore.SqlServer --force -o "Models"
 
 
 Copy Infor From Context File VitoTransverseContext 
@@ -148,7 +152,7 @@ Remove LastMigration
 Generate DB Script
 ===============
 
-dotnet-ef migrations script --context PricingPlatformDbContext --output "Migrations/SQL/essex-pricing-platform-db-migrations.sql" --idempotent
+dotnet-ef migrations script --context PricingPlatformDbContext --output "Migrations/SQL/vito-transverse-db-migrations.sql" --idempotent
 Script-migration
 
 

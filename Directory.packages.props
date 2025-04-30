@@ -23,13 +23,13 @@
     <PackageVersion Include="Microsoft.FeatureManagement" Version="3.5.0" />
     <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="3.5.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.9.1" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.2.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="NSwag.AspNetCore" Version="14.3.0" />
-    <PackageVersion Include="NSwag.MSBuild" Version="14.3.0" />
-    <PackageVersion Include="OpenTelemetry.Api" Version="1.11.2" />
+    <PackageVersion Include="NSwag.AspNetCore" Version="14.4.0" />
+    <PackageVersion Include="NSwag.MSBuild" Version="14.4.0" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
@@ -46,8 +46,8 @@
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
     <PackageVersion Include="System.Text.Json" Version="9.0.4" />
     <PackageVersion Include="Twilio" Version="7.10.0" />
-    <PackageVersion Include="Vito.Framework.Api" Version="0.2.11-alpha.0" />
-    <PackageVersion Include="Vito.Framework.Common" Version="0.2.11-alpha.0" />
+    <PackageVersion Include="Vito.Framework.Api" Version="0.2.12-alpha.0" />
+    <PackageVersion Include="Vito.Framework.Common" Version="0.2.12-alpha.0" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.15.0" />
     <PackageVersion Include="Wangkanai.Hosting" Version="3.3.0" />
     <PackageVersion Include="Wangkanai.System" Version="5.2.0" />

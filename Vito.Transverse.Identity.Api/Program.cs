@@ -27,8 +27,10 @@ try
     var builder = WebApplication.CreateBuilder(args);
     var configuration = builder.Configuration;
 
+
+    builder.AddDefaultHsts(false);
     //Contains 
-    //AddDefaultHsts()/ConfigureOpenTelemetry()/AddDefaultHealthChecks()/AddServiceDiscovery()/AddDefaultHttpJsonOptions()
+    //ConfigureOpenTelemetry()/AddDefaultHealthChecks()/AddServiceDiscovery()/AddDefaultHttpJsonOptions()
     //AddDefaultApiVersioning() / AddSwaggerInfo() / AddFeatureManagement()/ConfigureHttpClientDefaults / AddOptions();
     builder.AddPreBuildServiceDefaults();
 
@@ -100,16 +102,16 @@ try
 
     //Identity Service Server 
     var identityServiceServerOptions = configuration.GetSection(IdentityServiceServerSettingsOptions.SectionName).Get<IdentityServiceServerSettingsOptions>();
-    builder.AddCorsOnlyForAuthorizedUrls(identityServiceServerOptions!.AuthorizedUrls!);
     builder.AddAuthenticationForJwtServer(identityServiceServerOptions);
     builder.Services.AddAuthorization();
 
-
     //Identity Service Client (Api server)
     //var identityServiceClientOptions  = configuration.GetSection(IdentityServiceClientSettingsOptions.SectionName).Get<IdentityServiceClientSettingsOptions>();
-    //builder.AddCorsOnlyForAuthorizedUrls(identityServiceClientOptions !.LocalAuthorizedUrls!);
     //builder.AddAuthenticationForJwtClient(identityServiceClientOptions);
     //builder.Services.AddAuthorization();
+
+    //Cors
+    builder.AddCorsOnlyForAuthorizedUrls(identityServiceServerOptions!.AuthorizedUrls!);
 
     //Nswag
     builder.Services.AddOpenApiDocument();
@@ -136,7 +138,7 @@ try
     app.MapCultureEndpoint(versionSet);
     app.MapTwilioEndPoint(versionSet);
 
-    if (app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Container"))
     {
         app.UsePostBuildApplicationDefaultsDevelopment();
     }

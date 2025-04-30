@@ -32,7 +32,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         IDbContextTransaction transactionScope = default!;
         try
         {
-            context = _dataBaseContextFactory.GetDbContext(null);
+            context = _dataBaseContextFactory.GetDbContext();
             transactionScope = await context.Database.BeginTransactionAsync();
 
             userInfoDTO = await TokenValidateCompany(companyId, companySecret, applicationId, applicationSecret, null, null, deviceInformation, context);
