@@ -35,15 +35,15 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
 
     #region Localization
 
-    public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync()
+    public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync(long applicationId)
     {
-        var returnList = await GetActiveCultureListAsync();
+        var returnList = await GetActiveCultureListAsync(applicationId);
         var returnListDTO = returnList.ToListItemDTOList();
-        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessage(c.NameTranslationKey).TranslationValue);
+        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessage(c.NameTranslationKey, applicationId).TranslationValue);
         return returnListDTO;
     }
 
-    public async Task<List<CultureDTO>> GetActiveCultureListAsync()
+    public async Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId)
     {
         var cacheList = _cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString());
         List<CultureDTO> returnList = new();
@@ -51,7 +51,7 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
         {
             cacheList = await _cultureRepository.GetActiveCultureList();
             //Localize
-            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessage(c.NameTranslationKey).TranslationValue);
+            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessage(c.NameTranslationKey,applicationId).TranslationValue);
             _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString(), cacheList);
         }
         return cacheList;

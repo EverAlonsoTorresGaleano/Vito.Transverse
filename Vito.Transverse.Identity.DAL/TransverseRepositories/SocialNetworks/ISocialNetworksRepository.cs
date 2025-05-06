@@ -8,7 +8,7 @@ public interface ISocialNetworksRepository
 {
     Task<NotificationTemplateDTO> GetNotificationTemplateById(string id);
 
-    Task<bool> SendNotificationByTemplate(NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null);
+    Task<bool> SendNotificationByTemplate(long companyId,NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null);
 
     Task<bool> SendNotification(NotificationDTO emailInfo, DataBaseServiceContext? context = null);
 }

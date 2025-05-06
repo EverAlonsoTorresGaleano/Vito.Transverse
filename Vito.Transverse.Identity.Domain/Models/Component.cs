@@ -5,6 +5,8 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class Component
 {
+    public long ApplicationFk { get; set; }
+
     public long PageFk { get; set; }
 
     public long Id { get; set; }
@@ -15,9 +17,15 @@ public partial class Component
 
     public string ObjectName { get; set; } = null!;
 
-    public bool IsEnabled { get; set; }
+    public string ObjectPropertyName { get; set; } = null!;
+
+    public string DefaultPropertyValue { get; set; } = null!;
+
+    public long? PositionIndex { get; set; }
+
+    public virtual Application ApplicationFkNavigation { get; set; } = null!;
 
     public virtual Page PageFkNavigation { get; set; } = null!;
 
-    public virtual ICollection<UserRolePermission> UserRolePermissions { get; set; } = new List<UserRolePermission>();
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

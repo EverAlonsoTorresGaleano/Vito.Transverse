@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Api.Filters;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
+using Vito.Transverse.Identity.Api.Helpers;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
@@ -56,7 +57,8 @@ public static class CultureEndpoint
         HttpRequest request,
         [FromServices] ICultureService cultureService)
     {
-        var returnObject = await cultureService.GetActiveCultureListAsync();
+        var applicationId = request.GetCompanyIdFromHeader();
+        var returnObject = await cultureService.GetActiveCultureListAsync(applicationId);
         return TypedResults.Ok(returnObject);
     }
 
@@ -64,7 +66,8 @@ public static class CultureEndpoint
         HttpRequest request,
         [FromServices] ICultureService cultureService)
     {
-        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync();
+        var applicationId = request.GetCompanyIdFromHeader();
+        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(applicationId);
         return TypedResults.Ok(returnObject);
     }
 }

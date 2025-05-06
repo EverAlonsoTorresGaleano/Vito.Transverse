@@ -5,15 +5,13 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class ActivityLog
 {
-    public Guid? CompanyFk { get; set; }
-
-    public Guid? ApplicationFk { get; set; }
+    public long CompanyFk { get; set; }
 
     public long UserFk { get; set; }
 
     public long TraceId { get; set; }
 
-    public DateTime EventDateTime { get; set; }
+    public DateTime EventDate { get; set; }
 
     public string DeviceName { get; set; } = null!;
 
@@ -30,6 +28,8 @@ public partial class ActivityLog
     public string Engine { get; set; } = null!;
 
     public string CultureId { get; set; } = null!;
+
+    public string RequestEndpoint { get; set; } = null!;
 
     public string AddtionalInformation { get; set; } = null!;
 

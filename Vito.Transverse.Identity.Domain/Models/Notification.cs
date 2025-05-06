@@ -5,6 +5,8 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class Notification
 {
+    public long CompanyFk { get; set; }
+
     public long NotificationTemplateGroupFk { get; set; }
 
     public string CultureFk { get; set; } = null!;
@@ -32,6 +34,8 @@ public partial class Notification
     public DateTime? SentDate { get; set; }
 
     public bool IsHtml { get; set; }
+
+    public virtual Company CompanyFkNavigation { get; set; } = null!;
 
     public virtual Culture CultureFkNavigation { get; set; } = null!;
 

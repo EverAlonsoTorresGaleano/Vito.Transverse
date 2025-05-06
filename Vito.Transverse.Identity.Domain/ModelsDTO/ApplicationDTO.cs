@@ -2,14 +2,24 @@
 
 public  class ApplicationDTO
 {
-    public Guid Id { get; set; }
+    public long Id { get; set; }
 
     public string Name { get; set; } = null!;
 
-    public Guid Secret { get; set; }
+    public Guid ApplicationClient { get; set; }
 
-    public bool IsActive { get; set; }
+    public Guid ApplicationSecret { get; set; }
+
+    public DateTime CreationDate { get; set; }
+
+    public long CreatedByUserFk { get; set; }
 
     public byte[]? Avatar { get; set; }
+
+    public DateTime? LastUpdateDate { get; set; }
+
+    public long? LastUpdateByUserFk { get; set; }
+
+    public bool IsActive { get; set; }
 
 }

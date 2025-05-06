@@ -480,6 +480,9 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "applicationFk": {
+            "type": "string"
+          },
           "cultureFk": {
             "type": "string"
           },

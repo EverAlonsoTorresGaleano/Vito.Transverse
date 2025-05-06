@@ -20,8 +20,4 @@ public partial class ListItem
     public virtual ListItemGroup ListItemGroupFkNavigation { get; set; } = null!;
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-
-    public virtual ICollection<Person> PersonDocumentTypeFkNavigations { get; set; } = new List<Person>();
-
-    public virtual ICollection<Person> PersonGenderFkNavigations { get; set; } = new List<Person>();
 }

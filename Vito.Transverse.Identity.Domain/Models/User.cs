@@ -5,13 +5,17 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class User
 {
-    public Guid CompanyFk { get; set; }
-
-    public long Id { get; set; }
+    public long CompanyFk { get; set; }
 
     public string UserName { get; set; } = null!;
 
-    public long PersonFk { get; set; }
+    public long Id { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string LastName { get; set; } = null!;
+
+    public string Email { get; set; } = null!;
 
     public string Password { get; set; } = null!;
 
@@ -29,17 +33,27 @@ public partial class User
 
     public Guid ActivationId { get; set; }
 
-    public bool IsActive { get; set; }
-
     public bool IsLocked { get; set; }
 
     public DateTime? LockedDate { get; set; }
+
+    public DateTime? CreationDate { get; set; }
+
+    public long? CreatedByUserFk { get; set; }
+
+    public DateTime? LastUpdateDate { get; set; }
+
+    public long? UpdatedByUserFk { get; set; }
+
+    public byte[]? Avatar { get; set; }
+
+    public bool IsActive { get; set; }
 
     public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
 
     public virtual Company CompanyFkNavigation { get; set; } = null!;
 
-    public virtual Person PersonFkNavigation { get; set; } = null!;
-
     public virtual Role RoleFkNavigation { get; set; } = null!;
+
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

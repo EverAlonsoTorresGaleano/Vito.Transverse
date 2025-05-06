@@ -44,7 +44,7 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
     }
 
 
-    public DataBaseServiceContext GetDbContext( DataBaseServiceContext? context = null, DataBaseNameEnum dataBaseEnum = DataBaseNameEnum.TransverseDB)
+    public DataBaseServiceContext GetDbContext(DataBaseServiceContext? context = null, DataBaseNameEnum dataBaseEnum = DataBaseNameEnum.TransverseDB)
     {
         if (context is null)// || context.Database.CurrentTransaction is null)
         {

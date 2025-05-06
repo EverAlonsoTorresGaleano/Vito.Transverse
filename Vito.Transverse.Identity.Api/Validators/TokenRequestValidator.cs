@@ -9,37 +9,33 @@ namespace Vito.Transverse.Identity.Api.Validators;
 
 public class TokenRequestValidator : AbstractValidator<TokenRequestDTO>
 {
-    public TokenRequestValidator(ILocalizationService localizationService)//IStringLocalizer<TokenRequestDTO> localizer)
+    public TokenRequestValidator()
     {
-
-        RuleFor(x => x.grant_type).NotEmpty().WithMessage(localizationService.GetLocalizedMessage("Validator_NotEmpty", "grant_type").TranslationValue);
-        RuleFor(x => x.company_id).NotEmpty().WithMessage(localizationService.GetLocalizedMessage("Validator_NotEmpty", "company_id").TranslationValue);
+        RuleFor(x => x.grant_type).NotEmpty().WithMessage("Validator_NotEmpty_grant_type");
+        RuleFor(x => x.company_id).NotEmpty().WithMessage("Validator_NotEmpty_company_id");
         RuleFor(x => x).Custom((entity, vaidationContext) =>
         {
             if (IsValidGuid(entity.company_id))
             {
-                vaidationContext.AddFailure(nameof(entity.company_id), localizationService.GetLocalizedMessage("Validator_NotNull", nameof(entity.company_id)).TranslationValue);
-                //vaidationContext.AddFailure(nameof(entity.company_id), $"{nameof(entity.company_id)}{FrameworkConstants.ValidatorValidGuid}");
+                vaidationContext.AddFailure(nameof(entity.company_id), $"Validator_NotNull_{nameof(entity.company_id)}");
             }
         });
 
-        RuleFor(x => x.company_secret).NotEmpty().WithMessage(localizationService.GetLocalizedMessage("Validator_NotEmpty", "company_secret").TranslationValue);
+        RuleFor(x => x.company_secret).NotEmpty().WithMessage("Validator_NotEmpty_company_secret");
         RuleFor(x => x).Custom((entity, vaidationContext) =>
         {
             if (IsValidGuid(entity.company_secret))
             {
-                vaidationContext.AddFailure(nameof(entity.company_secret), localizationService.GetLocalizedMessage("Validator_NotNull", nameof(entity.company_secret)).TranslationValue);
-                //vaidationContext.AddFailure(nameof(entity.company_secret), $"{nameof(entity.company_secret)}{FrameworkConstants.ValidatorValidGuid}");
+                vaidationContext.AddFailure(nameof(entity.company_secret), $"Validator_NotNull_{nameof(entity.company_secret)}");
             }
         });
 
-        RuleFor(x => x.application_id).NotEmpty().WithMessage(localizationService.GetLocalizedMessage("Validator_NotEmpty", "application_id").TranslationValue);
+        RuleFor(x => x.application_id).NotEmpty().WithMessage("Validator_NotEmpty_application_id");
         RuleFor(x => x).Custom((entity, vaidationContext) =>
         {
             if (IsValidGuid(entity.application_id))
             {
-                vaidationContext.AddFailure(nameof(entity.application_id), localizationService.GetLocalizedMessage("Validator_NotNull", nameof(entity.application_id)).TranslationValue);
-                // vaidationContext.AddFailure(nameof(entity.application_id), $"{nameof(entity.application_id)}{FrameworkConstants.ValidatorValidGuid}");
+                vaidationContext.AddFailure(nameof(entity.application_id), $"Validator_NotNull{nameof(entity.application_id)}");
             }
         });
 
@@ -47,24 +43,23 @@ public class TokenRequestValidator : AbstractValidator<TokenRequestDTO>
         {
             if (!Enum.TryParse(entity.grant_type, true, out TokenGrantTypeEnum tokenGrantType))
             {
-                vaidationContext.AddFailure(nameof(entity.grant_type), localizationService.GetLocalizedMessage("Validator_NotNull", nameof(entity.grant_type)).TranslationValue);
-                //vaidationContext.AddFailure(nameof(entity.grant_type), $"{nameof(entity.grant_type)}{FrameworkConstants.ValidatorValidValue}");
+                vaidationContext.AddFailure(nameof(entity.grant_type), $"Validator_NotNull{nameof(entity.grant_type)} ");
             }
             else if (tokenGrantType == TokenGrantTypeEnum.RefreshToken)
             {
-                vaidationContext.AddFailure(nameof(entity.grant_type), localizationService.GetLocalizedMessage("Validator_NotImplemented", nameof(entity.grant_type)).TranslationValue);
-                //vaidationContext.AddFailure(nameof(entity.grant_type), $"{nameof(entity.grant_type)}{FrameworkConstants.ValidatorNotImplemented}");
+                vaidationContext.AddFailure(nameof(entity.grant_type), $"Validator_NotImplemented{nameof(entity.grant_type)}");
             }
         });
 
         //AuthorizationCode - Company asumption <companyname>-api-user max role
-        //RuleFor(x => x.application_secret).NotEmpty().When(x => VaidateGrantTypeAuthorizationCode(x));
+        RuleFor(x => x.application_secret).NotEmpty().When(x => ValidateGrantTypeAuthorizationCode(x))
+            .WithMessage("Validator_NotEmpty_application_secret");
 
         //ClientCredentials user info role assigned
-        RuleFor(x => x.user_id).NotEmpty().When(x => VaidateGrantTypeClientCredentials(x))
-            .WithMessage(localizationService.GetLocalizedMessage("Validator_NotEmpty", "user_id").TranslationValue); ;
-        RuleFor(x => x.user_secret).NotEmpty().When(x => VaidateGrantTypeClientCredentials(x))
-            .WithMessage(localizationService.GetLocalizedMessage("Validator_NotEmpty", "user_secret").TranslationValue); ;
+        RuleFor(x => x.user_id).NotEmpty().When(x => ValidateGrantTypeClientCredentials(x))
+            .WithMessage("Validator_NotEmpty_user_id");
+        RuleFor(x => x.user_secret).NotEmpty().When(x => ValidateGrantTypeClientCredentials(x))
+            .WithMessage("Validator_NotEmpty_user_secret");
     }
 
     private bool IsValidGuid(string? id)
@@ -73,13 +68,13 @@ public class TokenRequestValidator : AbstractValidator<TokenRequestDTO>
         return isValid;
     }
 
-    private bool VaidateGrantTypeAuthorizationCode(TokenRequestDTO x)
+    private bool ValidateGrantTypeAuthorizationCode(TokenRequestDTO x)
     {
         var validate = x.grant_type.Equals(TokenGrantTypeEnum.AuthorizationCode.ToString(), StringComparison.InvariantCultureIgnoreCase);
         return validate;
     }
 
-    private bool VaidateGrantTypeClientCredentials(TokenRequestDTO x)
+    private bool ValidateGrantTypeClientCredentials(TokenRequestDTO x)
     {
         var validate = x.grant_type.Equals(TokenGrantTypeEnum.ClientCredentials.ToString(), StringComparison.InvariantCultureIgnoreCase);
         return validate;

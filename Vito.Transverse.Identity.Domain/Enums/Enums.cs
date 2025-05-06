@@ -11,7 +11,7 @@ public enum FeatureFlagsNamesEnum
 public enum CacheItemKeysEnum
 {
     CultureList,
-    CultureTranslationsListByCultureId
+    CultureTranslationsListByCultureIdAndApplicationId
 }
 
 public enum NotificationTemplatesEnum

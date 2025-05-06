@@ -22,27 +22,27 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
         }
         return parameters;
     }
-    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync()
+    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync(long applicationId)
     {
         var cultureId = CultureInfo.CurrentCulture.Name;
-        var cacheList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByCultureId + cultureId);
+        var cacheList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByCultureIdAndApplicationId + cultureId + applicationId);
         List<CultureTranslationDTO> returnList = new();
         if (cacheList == null)
         {
-            cacheList = await _localizationRepository.GetAllLocalizedMessagesByCultureIdAsync(cultureId);
-            _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByCultureId + cultureId, cacheList);
+            cacheList = await _localizationRepository.GetAllLocalizedMessagesByCultureIdAsync(cultureId, applicationId);
+            _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByCultureIdAndApplicationId + cultureId + applicationId, cacheList);
         }
         return cacheList;
     }
 
 
 
-    public CultureTranslationDTO GetLocalizedMessage(string localizationMessageKey, params object?[] parameters)
+    public CultureTranslationDTO GetLocalizedMessage(string localizationMessageKey, long applicationId, params object?[] parameters)
     {
         parameters = ValidateParamArray(parameters);
 
         CultureTranslationDTO? localizedMessage = default;
-        var returnList = GetAllLocalizedMessagesAsync().GetAwaiter().GetResult();
+        var returnList = GetAllLocalizedMessagesAsync(applicationId).GetAwaiter().GetResult();
 
         localizedMessage = returnList.FirstOrDefault(x => x.TranslationKey.Equals(localizationMessageKey));
         var cultureId = CultureInfo.CurrentCulture.Name;

@@ -2,13 +2,33 @@
 
 public record CompanyDTO
 (
-    Guid Id,
+    long Id,
+
     string Name,
-    string? Subdomain,
+
+    Guid CompanyClient,
+
+    Guid CompanySecret,
+
+    DateTime CreationDate,
+
+    long CreatedByUserFk,
+
+    string Subdomain,
+
     string Email,
-    Guid? Secret,
-    bool IsActive,
+
+    string DefaultCultureFk,
+
+    string CountryFk,
+
+    bool IsSystemCompany,
+
     byte[]? Avatar,
-    string? CultureFk,
-    string? CountryFk
+
+    DateTime? LastUpdateDate,
+
+    long? LastUpdateByUserFk,
+
+    bool IsActive
 );

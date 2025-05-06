@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,6 +10,7 @@ using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.Security;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
+using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
@@ -16,7 +18,7 @@ namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
 
 
 /// <see cref="ISecurityService"/>
-public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions) : ISecurityService
+public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, ILocalizationService _localizationService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions, ILogger<ISecurityService> _logger) : ISecurityService
 {
     private readonly IdentityServiceServerSettingsOptions _jwtIdentityServerOptionsValues = _jwtIdentityServerOptions.Value;
 
@@ -24,37 +26,47 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     /// <see cref="ISecurityService.CreateAuthenticationTokenAsync(TokenRequestDTO, DeviceInformationDTO)"/>
     public async Task<TokenResponseDTO> CreateAuthenticationTokenAsync(TokenRequestDTO requestBody, DeviceInformationDTO deviceInformation)
     {
-        UserDTO? userInfoDTO = default;
-        var grantType = Enum.Parse<TokenGrantTypeEnum>(requestBody.grant_type, true);
-        TokenResponseDTO tokenResponse = default!;
-        switch (grantType)
+        try
         {
-            case TokenGrantTypeEnum.AuthorizationCode:
-                userInfoDTO = await _securityRepository.TokenValidateAuthorizationCode(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), deviceInformation);
-                break;
-            case TokenGrantTypeEnum.ClientCredentials:
-                userInfoDTO = await _securityRepository.TokenValidateClientCredentials(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id, requestBody.user_secret, deviceInformation);
-                break;
-            case TokenGrantTypeEnum.RefreshToken:
-                break;
-        }
 
-        var logginSuccesStatusList = new List<ActionTypeEnum>()
+
+            UserDTO? userInfoDTO = default;
+            var grantType = Enum.Parse<TokenGrantTypeEnum>(requestBody.grant_type, true);
+            TokenResponseDTO tokenResponse = default!;
+            switch (grantType)
+            {
+                case TokenGrantTypeEnum.AuthorizationCode:
+                    userInfoDTO = await _securityRepository.TokenValidateAuthorizationCode(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.scope, deviceInformation);
+                    break;
+                case TokenGrantTypeEnum.ClientCredentials:
+                    userInfoDTO = await _securityRepository.TokenValidateClientCredentials(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id, requestBody.user_secret, requestBody.scope, deviceInformation);
+                    break;
+                case TokenGrantTypeEnum.RefreshToken:
+                    break;
+            }
+
+            var logginSuccesStatusList = new List<ActionTypeEnum>()
         {
             ActionTypeEnum.ActionType_LoginSuccessByClientCredentials,
             ActionTypeEnum.ActionType_LoginSuccessByAuthorizationCode
         };
 
-        if (userInfoDTO is not null && logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
-        {
-            List<Claim> claimList = CreateAuthenticationClaims(userInfoDTO);
-            tokenResponse = await CreateJwtTokenAsync(requestBody, claimList, userInfoDTO);
+            if (userInfoDTO is not null && logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
+            {
+                List<Claim> claimList = CreateAuthenticationClaims(userInfoDTO);
+                tokenResponse = await CreateJwtTokenAsync(requestBody, claimList, userInfoDTO);
+            }
+            else
+            {
+                tokenResponse = await CreateEmptyJwtTokenAsync(requestBody, userInfoDTO);
+            }
+            return tokenResponse;
         }
-        else
+        catch (Exception ex)
         {
-            tokenResponse = await CreateEmptyJwtTokenAsync(requestBody, userInfoDTO);
+            _logger.LogError(ex, message: nameof(CreateAuthenticationTokenAsync));
+            throw;
         }
-        return tokenResponse;
     }
     #endregion
 
@@ -97,7 +109,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             new (ClaimTypes.Sid, userInfo.Id.ToString()), //USer Id
             new (ClaimTypes.Name, $"{userInfo.Name} {userInfo.LastName}"),
             new (ClaimTypes.Email, userInfo.Email!),
-            new (ClaimTypes.Role, userInfo.RoleName! ),
+            new (ClaimTypes.Role, userInfo.RoleName ),
         ];
         return claimList;
     }

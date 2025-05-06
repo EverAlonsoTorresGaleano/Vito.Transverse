@@ -5,17 +5,27 @@ namespace Vito.Transverse.Identity.Domain.Models;
 
 public partial class Page
 {
+    public long ApplicationFk { get; set; }
+
     public long ModuleFk { get; set; }
 
     public long Id { get; set; }
 
     public string NameTranslationKey { get; set; } = null!;
 
-    public bool? IsEnabled { get; set; }
+    public long? PositionIndex { get; set; }
+
+    public bool IsActive { get; set; }
+
+    public bool IsVisible { get; set; }
+
+    public bool IsApi { get; set; }
+
+    public virtual Application ApplicationFkNavigation { get; set; } = null!;
 
     public virtual ICollection<Component> Components { get; set; } = new List<Component>();
 
     public virtual Module ModuleFkNavigation { get; set; } = null!;
 
-    public virtual ICollection<UserRolePermission> UserRolePermissions { get; set; } = new List<UserRolePermission>();
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

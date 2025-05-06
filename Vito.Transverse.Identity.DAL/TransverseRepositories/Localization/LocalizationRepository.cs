@@ -9,6 +9,7 @@ using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 using Vito.Transverse.Identity.Domain.Extensions;
+using System;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 
@@ -16,16 +17,16 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 {
     CultureSettingsOptions _cultureSettingsOptionsValues => _cultureSettingsOptions.Value;
 
-   
 
-    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByCultureIdAsync(string cultureId)
+
+    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByCultureIdAsync(string cultureId, long applicationId)
     {
         List<CultureTranslation> returnList;
         DataBaseServiceContext context = default!;
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
-            returnList = await context.CultureTranslations.Where(x => x.CultureFk.Equals(cultureId)).ToListAsync();
+            returnList = await context.CultureTranslations.Where(x => x.CultureFk.Equals(cultureId) && x.ApplicationFk == applicationId).ToListAsync();
 #if DEBUG
             var fileName = string.Format(_cultureSettingsOptionsValues.LocalizationJsonFilePath!, cultureId);
             var localizationFile = new StringBuilder("{");

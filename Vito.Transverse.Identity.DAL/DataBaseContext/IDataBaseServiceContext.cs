@@ -14,6 +14,10 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<Company> Companies { get; set; }
 
+    DbSet<CompanyMembership> CompanyMemberships { get; set; }
+
+    DbSet<CompanyMembershipPermission> CompanyMembershipPermissions { get; set; }
+
     DbSet<Component> Components { get; set; }
 
     DbSet<Country> Countries { get; set; }
@@ -28,6 +32,10 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<ListItemGroup> ListItemGroups { get; set; }
 
+    DbSet<MembershipType> MembershipTypes { get; set; }
+
+    DbSet<MembersipPriceHistory> MembersipPriceHistories { get; set; }
+
     DbSet<Module> Modules { get; set; }
 
     DbSet<Notification> Notifications { get; set; }
@@ -36,11 +44,18 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<Page> Pages { get; set; }
 
-    DbSet<Person> Persons { get; set; }
-
     DbSet<Role> Roles { get; set; }
+
+    DbSet<RolePermission> RolePermissions { get; set; }
+
+    DbSet<Sequence> Sequences { get; set; }
 
     DbSet<User> Users { get; set; }
 
-    DbSet<UserRolePermission> UserRolePermissions { get; set; }
+    DbSet<VwGetAllCompanyPermission> VwGetAllCompanyPermissions { get; set; }
+
+    DbSet<VwGetCompanyMembership> VwGetCompanyMemberships { get; set; }
+
+    DbSet<VwGetRolePermission> VwGetRolePermissions { get; set; }
+
 }

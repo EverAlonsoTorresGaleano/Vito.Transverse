@@ -47,7 +47,8 @@ public class InfrastructureFilter : IEndpointFilter
             Browser = $"{_userDeviceDetectionService.Browser.Name.ToString()} v{_userDeviceDetectionService.Browser.Version.ToString()}",
             Platform = $"{_userDeviceDetectionService.Platform.Name.ToString()} v{_userDeviceDetectionService.Platform.Version.ToString()} [{_userDeviceDetectionService.Platform.Processor.ToString()}]",
             Engine = $"{_userDeviceDetectionService.Engine.Name.ToString()}",
-            CultureId = request.GetCurrectCulture().Name
+            CultureId = request.GetCurrectCulture().Name,
+            Scope= request.HttpContext.Request.Path,
         };
 
         var additionalInfo = deviceInfo.AddtionalInfo;

@@ -6,7 +6,9 @@ namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
 public class UserDTO
 {
-    public Guid CompanyFk { get; set; }
+    public long CompanyFk { get; set; }
+
+    public Guid? CompanySecret { get; set; }
     public long Id { get; set; }
     public string? UserName { get; set; }
     public long PersonFk { get; set; }
@@ -25,7 +27,7 @@ public class UserDTO
     public string? Email { get; set; }
     public long? GenderFk { get; set; }
     public string? MobileNumber { get; set; }
-    public Guid? ApplicationId { get; set; }
+    public long? ApplicationId { get; set; }
     public string? ApplicationName { get; set; }
 
     public Guid? ActivationId { get; set; }

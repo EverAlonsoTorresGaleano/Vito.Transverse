@@ -1,8 +1,13 @@
 ﻿using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Microsoft.Extensions.Primitives;
 using Vito.Framework.Api.Filters;
+using Vito.Framework.Common.Constants;
+using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
+using Vito.Transverse.Identity.Api.Helpers;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
@@ -29,7 +34,7 @@ public static class LocalizationEndpoint
             .AddEndpointFilter<LocalizationFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>()
             .RequireAuthorization();
-     
+
 
         endPointGroupVersioned.MapGet("AllLocalizedMessagesAsync", GetAllLocalizedMessagesAsync)
              .MapToApiVersion(1.0)
@@ -45,7 +50,9 @@ public static class LocalizationEndpoint
         HttpRequest request,
         [FromServices] ILocalizationService localizationService)
     {
-        var returnObject = await localizationService.GetAllLocalizedMessagesAsync();
+        var applicationId = request.GetCompanyIdFromHeader();
+
+        var returnObject = await localizationService.GetAllLocalizedMessagesAsync(applicationId);
         return TypedResults.Ok(returnObject);
     }
 
@@ -55,7 +62,8 @@ public static class LocalizationEndpoint
         [FromQuery] string localizationMessageKey,
         [FromQuery] params string[]? parameters)
     {
-        var returnObject = localizationService.GetLocalizedMessage(localizationMessageKey, parameters ?? []);
+        var applicationId = request.GetCompanyIdFromHeader();
+        var returnObject = localizationService.GetLocalizedMessage(localizationMessageKey,applicationId, parameters ?? []);
         return TypedResults.Ok(returnObject);
     }
 

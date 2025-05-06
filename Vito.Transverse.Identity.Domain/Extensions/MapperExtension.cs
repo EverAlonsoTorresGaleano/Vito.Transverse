@@ -164,9 +164,9 @@ public static class MapperExtension
         return returnList;
     }
 
-    public static UserDTO ToUserDTO(this User modelObject, Guid? applicationId = null, string? applicationName = null, ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_Undefined)
+    public static UserDTO ToUserDTO(this User modelObject, long? applicationId = null, string? applicationName = null, ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_Undefined)
     {
-        var person = modelObject.PersonFkNavigation is not null ? modelObject.PersonFkNavigation.ToPersonDTO() : (new Person()).ToPersonDTO();
+        //var person = modelObject.PersonFkNavigation is not null ? modelObject.PersonFkNavigation.ToPersonDTO() : (new Person()).ToPersonDTO();
         var company = modelObject.CompanyFkNavigation is not null ? modelObject.CompanyFkNavigation.ToCompanyDTO() : (new Company()).ToCompanyDTO();
         var role = modelObject.RoleFkNavigation is not null ? modelObject.RoleFkNavigation.ToRoleDTO() : (new Role()).ToRoleDTO();
         UserDTO returnObject = new()
@@ -174,7 +174,6 @@ public static class MapperExtension
             CompanyFk = modelObject.CompanyFk,
             Id = modelObject.Id,
             UserName = modelObject.UserName,
-            PersonFk = modelObject.PersonFk,
             Password = null,
             EmailValidated = modelObject.EmailValidated,
             IsLocked = modelObject.IsLocked,
@@ -183,17 +182,14 @@ public static class MapperExtension
             LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
             RoleFk = modelObject.RoleFk,
-            DocumentTypeFk = person.DocumentTypeFk,
-            DocumentValue = person.DocumentValue,
-            Name = person.Name,
-            LastName = person.LastName,
-            Email = person.Email,
-            GenderFk = person.GenderFk,
-            MobileNumber = person.MobileNumber,
+            Name = modelObject.Name,
+            LastName = modelObject.LastName,
+            Email = modelObject.Email,
             ApplicationId = applicationId,
             ApplicationName = applicationName,
             CompanyName = company.Name,
             RoleName = role?.NameTranslationKey,
+
             ActionStatus = actionStatus
         };
         return returnObject;
@@ -206,7 +202,6 @@ public static class MapperExtension
             CompanyFk = modelObject.CompanyFk,
             Id = modelObject.Id,
             UserName = modelObject.UserName!,
-            PersonFk = modelObject.PersonFk,
             Password = null!,
             EmailValidated = modelObject.EmailValidated,
             IsLocked = modelObject.IsLocked,
@@ -215,7 +210,7 @@ public static class MapperExtension
             LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
             RoleFk = modelObject.RoleFk,
-            ActivationId=modelObject.ActivationId ?? Guid.NewGuid(),
+            ActivationId = modelObject.ActivationId ?? Guid.NewGuid(),
         };
         return returnObject;
     }
@@ -233,14 +228,19 @@ public static class MapperExtension
     public static CompanyDTO ToCompanyDTO(this Company modelObject)
     {
         CompanyDTO returnObject = new(modelObject.Id,
-                modelObject.Name,
-                modelObject.Subdomain,
-                modelObject.Email,
-                modelObject.Secret,
-                modelObject.IsActive,
-                modelObject.Avatar,
-                modelObject.DefaultCultureFk,
-                modelObject.CountryFk
+            modelObject.Name,
+            modelObject.CompanyClient,
+            modelObject.CompanySecret,
+            modelObject.CreationDate,
+            modelObject.CreatedByUserFk,
+            modelObject.Subdomain,
+            modelObject.Email,
+            modelObject.DefaultCultureFk,
+            modelObject.CountryFk,
+            modelObject.IsSystemCompany,
+            modelObject.Avatar, modelObject.LastUpdateDate,
+            modelObject.LastUpdateByUserFk,
+            modelObject.IsActive
             );
         return returnObject;
     }
@@ -254,7 +254,7 @@ public static class MapperExtension
             Name = modelObject.Name,
             Subdomain = modelObject.Subdomain!,
             Email = modelObject.Email,
-            Secret = modelObject.Secret!.Value,
+            CompanySecret = modelObject.CompanySecret,
             IsActive = modelObject.IsActive,
             Avatar = modelObject.Avatar,
             CountryFk = modelObject.CountryFk!
@@ -282,7 +282,7 @@ public static class MapperExtension
             Name = modelObject.Name,
             Avatar = modelObject.Avatar,
             IsActive = modelObject.IsActive,
-            Secret = modelObject.Secret,
+            ApplicationSecret = modelObject.ApplicationSecret,
         };
         return returnObject;
     }
@@ -295,7 +295,7 @@ public static class MapperExtension
             Name = modelObject.Name,
             Avatar = modelObject.Avatar,
             IsActive = modelObject.IsActive,
-            Secret = modelObject.Secret,
+            ApplicationSecret = modelObject.ApplicationSecret,
         };
         return returnObject;
     }
@@ -329,7 +329,7 @@ public static class MapperExtension
         {
             Id = modelObject.Id,
             CultureFk = modelObject.CultureFk,
-            SubjectTemplateText= modelObject.SubjectTemplateText,
+            SubjectTemplateText = modelObject.SubjectTemplateText,
             MessageTemplateText = modelObject.MessageTemplateText,
             IsHtml = modelObject.IsHtml,
             Name = modelObject.Name,
@@ -349,7 +349,7 @@ public static class MapperExtension
             Receiver = modelObject.Receiver.Split(",").ToList(),
             Cc = modelObject.Cc!.Split(",").ToList(),
             Bcc = modelObject.Bcc!.Split(",").ToList(),
-            NotificationTemplateGroupFk= modelObject.NotificationTypeFk!,
+            NotificationTemplateGroupFk = modelObject.NotificationTypeFk!,
             CreationDate = modelObject.CreationDate,
             Id = modelObject.Id,
             IsHtml = modelObject.IsHtml,
@@ -367,6 +367,7 @@ public static class MapperExtension
         Notification returnObject;
         returnObject = new()
         {
+            CompanyFk = modelObject.CompanyFk,
             Sender = modelObject.Sender,
             Subject = modelObject.Subject,
             Message = modelObject.Message,
@@ -374,7 +375,7 @@ public static class MapperExtension
             Cc = modelObject.Cc is null ? null : string.Join(",", modelObject.Cc),
             Bcc = modelObject.Bcc is null ? null : string.Join(",", modelObject.Bcc),
             CultureFk = modelObject.CultureFk,
-            NotificationTemplateGroupFk= modelObject.NotificationTemplateGroupFk,
+            NotificationTemplateGroupFk = modelObject.NotificationTemplateGroupFk,
             NotificationTypeFk = modelObject.NotificationTypeFk,
             CreationDate = modelObject.CreationDate,
             Id = modelObject.Id,
