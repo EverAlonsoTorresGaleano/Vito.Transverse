@@ -1,4 +1,4 @@
-@Vito.Transverse.Identity.Api_HostAddress = http://localhost:5237
+@Vito.Transverse.Identity.Api_HostAddress = https://localhost:7295
 
 ### Home ###
 
@@ -22,7 +22,7 @@ GET {{Vito.Transverse.Identity.Api_HostAddress}}/api/Twilio/v1/SendSMS?message=s
 
 
 
-###  1 ActionType_LoginFail_CompanyNotFound
+###  1 OAuthActionType_LoginFail_CompanyNotFound
 
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
@@ -38,7 +38,7 @@ Content-Type: application/json
   "refresh_token": ""
 }
 
-### - 2 ActionType_LoginFail_CompanySecretInvalid
+### - 2 OAuthActionType_LoginFail_CompanySecretInvalid
 
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
@@ -55,7 +55,7 @@ Content-Type: application/json
 }
 
 
-###  - 3 -  ActionType_LoginFail_ApplicationNoFound
+###  - 3 -  OAuthActionType_LoginFail_ApplicationNoFound
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
 
@@ -71,7 +71,7 @@ Content-Type: application/json
   "refresh_token": ""
 }
   
-###   4  ActionType_LoginFail_ApplicationSecretInvalid 
+###   4  OAuthActionType_LoginFail_ApplicationSecretInvalid 
 
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
@@ -90,7 +90,7 @@ Content-Type: application/json
 
 
 
-### 5 - ActionType_LoginFail_UserNotFound
+### 5 - OAuthActionType_LoginFail_UserNotFound
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
 
@@ -106,7 +106,7 @@ Content-Type: application/json
   "refresh_token": ""
 }
 
-###  6 - ActionType_LoginFail_UserSecretInvalid
+###  6 - OAuthActionType_LoginFail_UserSecretInvalid
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
 
@@ -122,23 +122,74 @@ Content-Type: application/json
   "refresh_token": ""
 }
 
-### 7 -  ActionType_LoginSuccessByAuthorizarionCode
+### 7 -  OAuthActionType_LoginSuccessByAuthorizarionCode  1 - Vito Torres Soft/ App:1 - Vito TransverseState - Anonymuos - R//3-Vito-Transverse_Role_ApiUser
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
 
  {
   "grant_type": "AuthorizationCode",
   "scope": "",
-  "application_id": "eb2d4ffc-dc34-435f-8983-ecd42481143f",
-  "application_secret": "ce09510a-7c12-4121-9f8b-ca0506ca302c",
+   "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109",/* 1 - Vito Transverse*/
+  "application_secret": "96471380-F3F3-4120-9E25-A4E5C9701C23",
   "company_id": "55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8",
-  "company_secret": "ba3a564f-946a-4b07-b44c-bf8ea21e808c",
-  "user_id": "",
+  "company_secret": "ba3a564f-946a-4b07-b44c-bf8ea21e808c", /*  1 - Vito Torres Soft*/
+  "user_id": "", /* Anonymous*/
   "user_secret": "",
   "refresh_token": ""
 }
 
-### 8 -ActionType_LoginSuccessByClientCredentials
+
+### 8 -  OAuthActionType_LoginSuccessByAuthorizarionCode  1 - Vito Torres Soft/ App: 2 - Vito Real State - Anonymuos - R//6-Vito-RealState_Role_ApiUser
+POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+
+ {
+  "grant_type": "AuthorizationCode",
+  "scope": "",
+  "application_id": "eb2d4ffc-dc34-435f-8983-ecd42481143f", /* 2 - Vito Real State*/
+  "application_secret": "ce09510a-7c12-4121-9f8b-ca0506ca302c",
+  "company_id": "55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8",
+  "company_secret": "ba3a564f-946a-4b07-b44c-bf8ea21e808c", /*  1 - Vito Torres Soft*/
+  "user_id": "", /* Anonymous*/
+  "user_secret": "",
+  "refresh_token": ""
+}
+
+### 9 -  OAuthActionType_LoginSuccessByAuthorizarionCode  -Proyectos Las Torres SAS/ App:1 - Vito TransverseState - Anonymuos - R//7-LaTorres-Transverse_Role_ApiUser
+POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+
+ {
+  "grant_type": "AuthorizationCode",
+  "scope": "",
+   "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109",/* 1 - Vito Transverse*/
+  "application_secret": "96471380-F3F3-4120-9E25-A4E5C9701C23",
+  "company_id": "C5BCEA98-2974-4D43-8110-28D402CF5CE2",
+  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", /*  2- -Proyectos Las Torres SAS */
+  "user_id": "", /* Anonymous*/
+  "user_secret": "",
+  "refresh_token": ""
+}
+
+
+### 10 -  OAuthActionType_LoginSuccessByAuthorizarionCode  2-Proyectos Las Torres SAS/ App: 2 - Vito Real State - Anonymuos - R//8-LaTorres-RealState_Role_ApiUser
+POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+ {
+  "grant_type": "AuthorizationCode",
+  "scope": "",
+  "application_id": "eb2d4ffc-dc34-435f-8983-ecd42481143f", /* 2 - Vito Real State */
+  "application_secret": "ce09510a-7c12-4121-9f8b-ca0506ca302c",
+  "company_id": "C5BCEA98-2974-4D43-8110-28D402CF5CE2",
+  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", /*  2- -Proyectos Las Torres SAS */
+  "user_id": "", /* Anonymous */
+  "user_secret": "",
+  "refresh_token": ""
+}
+
+
+
+### 11 -OAuthActionType_LoginSuccessByAuthorizarionCode Company: 1 - Vito Torres Soft/ App:  2 - Vito Real State  - ever.torresg - R// 5-Vito-RealState_Role_0000000001
 
 POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
 Content-Type: application/json
@@ -146,11 +197,63 @@ Content-Type: application/json
  {
   "grant_type": "ClientCredentials",
   "scope": "",
-  "application_id": "eb2d4ffc-dc34-435f-8983-ecd42481143f",
+  "application_id": "eb2d4ffc-dc34-435f-8983-ecd42481143f", /* 2 - Vito Real State*/
   "application_secret": "ce09510a-7c12-4121-9f8b-ca0506ca302c",
-  "company_id": "55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8",
+  "company_id": "55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8", /*  1 - Vito Torres Soft*/
+  "company_secret": "ba3a564f-946a-4b07-b44c-bf8ea21e808c",
+  "user_id": "ever.torresg", 
+  "user_secret": "123",
+  "refresh_token": ""
+}
+
+### 12 -OAuthActionType_LoginSuccessByClientCredentials Company: 1 - Vito Torres Soft/ App: 1 - Vito TransverseState - ever.torresg - R// 4-Vito-Transverse_Role_0000000001
+
+POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+
+ {
+  "grant_type": "ClientCredentials",
+  "scope": "",
+  "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109",/* 1 - Vito Transverse*/
+  "application_secret": "96471380-F3F3-4120-9E25-A4E5C9701C23",
+  "company_id": "55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8", /*  1 - Vito Torres Soft*/
   "company_secret": "ba3a564f-946a-4b07-b44c-bf8ea21e808c",
   "user_id": "ever.torresg",
   "user_secret": "123",
   "refresh_token": ""
 }
+
+### 13 -OAuthActionType_LoginSuccessByAuthorizarionCode Company: 2- -Proyectos Las Torres SAS/ App:  2 - Vito Real State  - edgar.torres - R// 10-LaTorres-RealState_Role_0000000001
+
+POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+
+ {
+  "grant_type": "ClientCredentials",
+  "scope": "",
+  "application_id": "eb2d4ffc-dc34-435f-8983-ecd42481143f", /* 2 - Vito Real State*/
+  "application_secret": "ce09510a-7c12-4121-9f8b-ca0506ca302c",
+  "company_id": "C5BCEA98-2974-4D43-8110-28D402CF5CE2",
+  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", /*  2- -Proyectos Las Torres SAS */
+  "user_id": "edgar.torres", 
+  "user_secret": "456",
+  "refresh_token": ""
+}
+
+### 14 -OAuthActionType_LoginSuccessByClientCredentials Company: 2- -Proyectos Las Torres SAS/ App: 1 - Vito TransverseState - edgar.torres - R// 9-LaTorres-Transverse_Role_0000000001
+
+POST {{Vito.Transverse.Identity.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+{
+  "grant_type": "ClientCredentials",
+  "scope": "",
+  "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109", /* 1 - Vito Transverse */
+  "application_secret": "96471380-F3F3-4120-9E25-A4E5C9701C23",
+  "company_id": "C5BCEA98-2974-4D43-8110-28D402CF5CE2",
+  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", /*  2- -Proyectos Las Torres SAS */
+  "user_id": "edgar.torres",
+  "user_secret": "456",
+  "refresh_token": ""
+}
+
+

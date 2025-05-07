@@ -2,9 +2,9 @@
 
 public class CultureTranslationDTO
 {
-    public string ApplicationFk { get; set; } = string.Empty;
+    public long ApplicationFk { get; set; }
     public string CultureFk { get; set; } = string.Empty;
-    public string TranslationKey { get; set; }=string.Empty;
+    public string TranslationKey { get; set; } = string.Empty;
     public string TranslationValue { get; set; } = string.Empty;
 }
 

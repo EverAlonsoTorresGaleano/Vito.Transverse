@@ -27,9 +27,9 @@ public partial class Person
 
     public virtual Company CompanyFkNavigation { get; set; } = null!;
 
-    public virtual ListItem DocumentTypeFkNavigation { get; set; } = null!;
+    public virtual GeneralTypeItem DocumentTypeFkNavigation { get; set; } = null!;
 
-    public virtual ListItem GenderFkNavigation { get; set; } = null!;
+    public virtual GeneralTypeItem GenderFkNavigation { get; set; } = null!;
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

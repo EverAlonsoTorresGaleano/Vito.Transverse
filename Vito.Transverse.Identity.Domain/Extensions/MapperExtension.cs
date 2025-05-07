@@ -91,6 +91,7 @@ public static class MapperExtension
     {
         CultureTranslationDTO returnObject = new()
         {
+            ApplicationFk = modelObject.ApplicationFk,
             CultureFk = modelObject.CultureFk,
             TranslationKey = modelObject.TranslationKey,
             TranslationValue = modelObject.TranslationValue
@@ -98,7 +99,7 @@ public static class MapperExtension
         return returnObject;
     }
 
-    public static List<ListItemDTO> ToListItemDTOList(this List<ListItem> modelObjectList)
+    public static List<ListItemDTO> ToListItemDTOList(this List<GeneralTypeItem> modelObjectList)
     {
         List<ListItemDTO> returnList = [];
         modelObjectList.ForEach(modelObject =>
@@ -108,7 +109,7 @@ public static class MapperExtension
         return returnList;
     }
 
-    public static ListItemDTO ToListItemDTO(this ListItem modelObject)
+    public static ListItemDTO ToListItemDTO(this GeneralTypeItem modelObject)
     {
         ListItemDTO returnObject = new()
         {
@@ -164,11 +165,11 @@ public static class MapperExtension
         return returnList;
     }
 
-    public static UserDTO ToUserDTO(this User modelObject, long? applicationId = null, string? applicationName = null, ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_Undefined)
+    public static UserDTO ToUserDTO(this User modelObject, long? applicationId = null, string? applicationName = null, OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_Undefined)
     {
         //var person = modelObject.PersonFkNavigation is not null ? modelObject.PersonFkNavigation.ToPersonDTO() : (new Person()).ToPersonDTO();
         var company = modelObject.CompanyFkNavigation is not null ? modelObject.CompanyFkNavigation.ToCompanyDTO() : (new Company()).ToCompanyDTO();
-        var role = modelObject.RoleFkNavigation is not null ? modelObject.RoleFkNavigation.ToRoleDTO() : (new Role()).ToRoleDTO();
+        var role = modelObject.UserRoles is not null ? modelObject.UserRoles.FirstOrDefault().RoleFkNavigation.ToRoleDTO() : (new Role()).ToRoleDTO();
         UserDTO returnObject = new()
         {
             CompanyFk = modelObject.CompanyFk,
@@ -181,15 +182,17 @@ public static class MapperExtension
             RetryCount = modelObject.RetryCount,
             LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
-            RoleFk = modelObject.RoleFk,
+
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             Email = modelObject.Email,
+            
+            
             ApplicationId = applicationId,
             ApplicationName = applicationName,
             CompanyName = company.Name,
             RoleName = role?.NameTranslationKey,
-
+            RoleId = role?.Id,
             ActionStatus = actionStatus
         };
         return returnObject;
@@ -209,8 +212,7 @@ public static class MapperExtension
             RetryCount = modelObject.RetryCount,
             LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
-            RoleFk = modelObject.RoleFk,
-            ActivationId = modelObject.ActivationId ?? Guid.NewGuid(),
+            ActivationId = modelObject.ActivationId
         };
         return returnObject;
     }

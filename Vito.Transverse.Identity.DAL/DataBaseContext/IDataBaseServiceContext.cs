@@ -12,7 +12,13 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<Application> Applications { get; set; }
 
+    DbSet<AuditEntity> AuditEntities { get; set; }
+
+    DbSet<AuditRecord> AuditRecords { get; set; }
+
     DbSet<Company> Companies { get; set; }
+
+    DbSet<CompanyEntityAudit> CompanyEntityAudits { get; set; }
 
     DbSet<CompanyMembership> CompanyMemberships { get; set; }
 
@@ -26,11 +32,11 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<CultureTranslation> CultureTranslations { get; set; }
 
+    DbSet<GeneralTypeGroup> GeneralTypeGroups { get; set; }
+
+    DbSet<GeneralTypeItem> GeneralTypeItems { get; set; }
+
     DbSet<Language> Languages { get; set; }
-
-    DbSet<ListItem> ListItems { get; set; }
-
-    DbSet<ListItemGroup> ListItemGroups { get; set; }
 
     DbSet<MembershipType> MembershipTypes { get; set; }
 
@@ -52,9 +58,15 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<User> Users { get; set; }
 
+    DbSet<UserRole> UserRoles { get; set; }
+
+    DbSet<VwCompanyUserRole> VwCompanyUserRoles { get; set; }
+
     DbSet<VwGetAllCompanyPermission> VwGetAllCompanyPermissions { get; set; }
 
     DbSet<VwGetCompanyMembership> VwGetCompanyMemberships { get; set; }
+
+    DbSet<VwGetListItemWithGroup> VwGetListItemWithGroups { get; set; }
 
     DbSet<VwGetRolePermission> VwGetRolePermissions { get; set; }
 

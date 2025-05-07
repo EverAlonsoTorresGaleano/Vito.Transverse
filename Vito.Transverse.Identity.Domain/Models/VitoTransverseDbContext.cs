@@ -19,7 +19,13 @@ public partial class VitoTransverseDbContext : DbContext
 
     public virtual DbSet<Application> Applications { get; set; }
 
+    public virtual DbSet<AuditEntity> AuditEntities { get; set; }
+
+    public virtual DbSet<AuditRecord> AuditRecords { get; set; }
+
     public virtual DbSet<Company> Companies { get; set; }
+
+    public virtual DbSet<CompanyEntityAudit> CompanyEntityAudits { get; set; }
 
     public virtual DbSet<CompanyMembership> CompanyMemberships { get; set; }
 
@@ -33,11 +39,11 @@ public partial class VitoTransverseDbContext : DbContext
 
     public virtual DbSet<CultureTranslation> CultureTranslations { get; set; }
 
+    public virtual DbSet<GeneralTypeGroup> GeneralTypeGroups { get; set; }
+
+    public virtual DbSet<GeneralTypeItem> GeneralTypeItems { get; set; }
+
     public virtual DbSet<Language> Languages { get; set; }
-
-    public virtual DbSet<ListItem> ListItems { get; set; }
-
-    public virtual DbSet<ListItemGroup> ListItemGroups { get; set; }
 
     public virtual DbSet<MembershipType> MembershipTypes { get; set; }
 
@@ -59,9 +65,15 @@ public partial class VitoTransverseDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserRole> UserRoles { get; set; }
+
+    public virtual DbSet<VwCompanyUserRole> VwCompanyUserRoles { get; set; }
+
     public virtual DbSet<VwGetAllCompanyPermission> VwGetAllCompanyPermissions { get; set; }
 
     public virtual DbSet<VwGetCompanyMembership> VwGetCompanyMemberships { get; set; }
+
+    public virtual DbSet<VwGetListItemWithGroup> VwGetListItemWithGroups { get; set; }
 
     public virtual DbSet<VwGetRolePermission> VwGetRolePermissions { get; set; }
 
@@ -75,6 +87,7 @@ public partial class VitoTransverseDbContext : DbContext
         {
             entity.HasKey(e => e.TraceId).HasName("PK_UserTraces");
 
+            entity.Property(e => e.AddtionalInformation).HasColumnType("text");
             entity.Property(e => e.Browser).HasMaxLength(50);
             entity.Property(e => e.CultureId).HasMaxLength(50);
             entity.Property(e => e.DeviceName).HasMaxLength(50);
@@ -110,6 +123,57 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<AuditEntity>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.EnityName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SchemaName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<AuditRecord>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.AuditEntityIndex)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.AuditInfoJson).HasColumnType("text");
+            entity.Property(e => e.Browser)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CultureFk)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DeviceType)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Engine)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.HostName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.IpAddress)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Platform)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.AuditEntityFkNavigation).WithMany(p => p.AuditRecords)
+                .HasForeignKey(d => d.AuditEntityFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AuditRecords_AuditEntities");
+
+            entity.HasOne(d => d.AuditTypeFkNavigation).WithMany(p => p.AuditRecords)
+                .HasForeignKey(d => d.AuditTypeFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AuditRecords_GeneralTypeItems");
+        });
+
         modelBuilder.Entity<Company>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
@@ -132,6 +196,26 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasForeignKey(d => d.DefaultCultureFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Companies_Cultures");
+        });
+
+        modelBuilder.Entity<CompanyEntityAudit>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.AuditEntityFkNavigation).WithMany(p => p.CompanyEntityAudits)
+                .HasForeignKey(d => d.AuditEntityFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CompanyEntityAudits_AuditEntities");
+
+            entity.HasOne(d => d.AuditTypeFkNavigation).WithMany(p => p.CompanyEntityAudits)
+                .HasForeignKey(d => d.AuditTypeFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CompanyEntityAudits_GeneralTypeItems");
+
+            entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.CompanyEntityAudits)
+                .HasForeignKey(d => d.CompanyFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CompanyEntityAudits_Companies");
         });
 
         modelBuilder.Entity<CompanyMembership>(entity =>
@@ -233,7 +317,7 @@ public partial class VitoTransverseDbContext : DbContext
 
         modelBuilder.Entity<CultureTranslation>(entity =>
         {
-            entity.HasKey(e => new { e.CultureFk, e.TranslationKey });
+            entity.HasKey(e => new { e.ApplicationFk, e.CultureFk, e.TranslationKey });
 
             entity.HasIndex(e => e.ApplicationFk, "IX_CultureTranslations");
 
@@ -252,31 +336,33 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasConstraintName("FK_CultureTranslations_Cultures");
         });
 
-        modelBuilder.Entity<Language>(entity =>
-        {
-            entity.Property(e => e.Id).HasMaxLength(2);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
-        });
-
-        modelBuilder.Entity<ListItem>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
-
-            entity.HasOne(d => d.ListItemGroupFkNavigation).WithMany(p => p.ListItems)
-                .HasForeignKey(d => d.ListItemGroupFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ListItems_ListItemGroup");
-        });
-
-        modelBuilder.Entity<ListItemGroup>(entity =>
+        modelBuilder.Entity<GeneralTypeGroup>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_ListItemGroup");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsSystemType).HasDefaultValue(true);
             entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<GeneralTypeItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_ListItems");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
+            entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
+
+            entity.HasOne(d => d.ListItemGroupFkNavigation).WithMany(p => p.GeneralTypeItems)
+                .HasForeignKey(d => d.ListItemGroupFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ListItems_ListItemGroup");
+        });
+
+        modelBuilder.Entity<Language>(entity =>
+        {
+            entity.Property(e => e.Id).HasMaxLength(2);
+            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
         });
 
         modelBuilder.Entity<MembershipType>(entity =>
@@ -405,15 +491,15 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
             entity.Property(e => e.NameTranslationKey).HasMaxLength(150);
 
+            entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Roles)
+                .HasForeignKey(d => d.ApplicationFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Roles_Applications");
+
             entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.Roles)
                 .HasForeignKey(d => d.CompanyFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Roles_Companies");
-
-            entity.HasOne(d => d.CompanyFk1).WithMany(p => p.Roles)
-                .HasForeignKey(d => d.CompanyFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Roles_Users");
         });
 
         modelBuilder.Entity<RolePermission>(entity =>
@@ -442,18 +528,23 @@ public partial class VitoTransverseDbContext : DbContext
             entity.HasOne(d => d.RoleFkNavigation).WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.RoleFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserRolePermissions_Roles");
+                .HasConstraintName("FK_RolePermissions_Roles");
         });
 
         modelBuilder.Entity<Sequence>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.SequenceName)
+            entity.Property(e => e.SequenceNameFormat)
                 .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.TextFormat)
                 .HasMaxLength(15)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Sequences)
+                .HasForeignKey(d => d.ApplicationFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Sequences_Applications");
 
             entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.Sequences)
                 .HasForeignKey(d => d.CompanyFk)
@@ -484,11 +575,35 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasForeignKey(d => d.CompanyFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Companies");
+        });
 
-            entity.HasOne(d => d.RoleFkNavigation).WithMany(p => p.Users)
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => new { e.UserFk, e.RoleFk });
+
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.RoleFkNavigation).WithMany(p => p.UserRoles)
                 .HasForeignKey(d => d.RoleFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Users_Roles");
+                .HasConstraintName("FK_UserRoles_Roles");
+
+            entity.HasOne(d => d.UserFkNavigation).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.UserFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRoles_Users");
+        });
+
+        modelBuilder.Entity<VwCompanyUserRole>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vw_CompanyUserRoles");
+
+            entity.Property(e => e.ApplicationName).HasMaxLength(50);
+            entity.Property(e => e.CompanyName).HasMaxLength(50);
+            entity.Property(e => e.RoleName).HasMaxLength(150);
+            entity.Property(e => e.UserName).HasMaxLength(130);
         });
 
         modelBuilder.Entity<VwGetAllCompanyPermission>(entity =>
@@ -520,6 +635,17 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(150);
             entity.Property(e => e.MembershipTypeName).HasMaxLength(50);
             entity.Property(e => e.Subdomain).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<VwGetListItemWithGroup>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vw_GetListItemWithGroups");
+
+            entity.Property(e => e.ListItemGroupIsSystemType).HasColumnName("ListITemGroupIsSystemType");
+            entity.Property(e => e.ListItemGroupName).HasMaxLength(100);
+            entity.Property(e => e.ListItemName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<VwGetRolePermission>(entity =>

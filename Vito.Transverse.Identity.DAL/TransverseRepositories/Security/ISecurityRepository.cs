@@ -44,7 +44,7 @@ public interface ISecurityRepository
     /// <param name="deviceInformation"></param>
     /// <param name="actionStatus"></param>
     /// <returns></returns>
-    Task<bool> AddNewActivityLog(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+    Task<bool> AddNewActivityLog(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
     /// <summary>
     /// Update user logging information
@@ -53,7 +53,7 @@ public interface ISecurityRepository
     /// <param name="deviceInformation"></param>
     /// <param name="actionStatus"></param>
     /// <returns></returns>
-    Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+    Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
 
     Task<ApplicationDTO> CreateNewApplication(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId, DataBaseServiceContext? context = null);

@@ -19,8 +19,6 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
-    public long RoleFk { get; set; }
-
     public bool EmailValidated { get; set; }
 
     public bool RequirePasswordChange { get; set; }
@@ -53,7 +51,5 @@ public partial class User
 
     public virtual Company CompanyFkNavigation { get; set; } = null!;
 
-    public virtual Role RoleFkNavigation { get; set; } = null!;
-
-    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

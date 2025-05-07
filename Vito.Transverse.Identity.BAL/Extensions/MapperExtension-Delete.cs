@@ -176,7 +176,7 @@ public static class MapperExtension
         return returnList;
     }
 
-    public static UserDTO ToUserDTO(this User modelObject, Guid? applicationId = null, string? applicationName = null, ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_Undefined)
+    public static UserDTO ToUserDTO(this User modelObject, Guid? applicationId = null, string? applicationName = null, OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_Undefined)
     {
         var person = modelObject.PersonFkNavigation is not null ? modelObject.PersonFkNavigation.ToPersonDTO() : (new Person()).ToPersonDTO();
         var company = modelObject.CompanyFkNavigation is not null ? modelObject.CompanyFkNavigation.ToCompanyDTO() : (new Company()).ToCompanyDTO();

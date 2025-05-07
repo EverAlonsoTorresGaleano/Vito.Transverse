@@ -481,7 +481,8 @@
         "additionalProperties": false,
         "properties": {
           "applicationFk": {
-            "type": "string"
+            "type": "integer",
+            "format": "int64"
           },
           "cultureFk": {
             "type": "string"

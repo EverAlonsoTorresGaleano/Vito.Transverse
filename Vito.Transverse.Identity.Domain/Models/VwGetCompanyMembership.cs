@@ -17,6 +17,10 @@ public partial class VwGetCompanyMembership
 
     public string CompanyName { get; set; } = null!;
 
+    public Guid CompanyClient { get; set; }
+
+    public Guid CompanySecret { get; set; }
+
     public string Subdomain { get; set; } = null!;
 
     public string Email { get; set; } = null!;
@@ -34,4 +38,8 @@ public partial class VwGetCompanyMembership
     public string ApplicationName { get; set; } = null!;
 
     public bool ApplicationIsActive { get; set; }
+
+    public Guid ApplicationClient { get; set; }
+
+    public Guid ApplicationSecret { get; set; }
 }

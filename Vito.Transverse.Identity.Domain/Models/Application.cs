@@ -34,4 +34,8 @@ public partial class Application
     public virtual ICollection<Module> Modules { get; set; } = new List<Module>();
 
     public virtual ICollection<Page> Pages { get; set; } = new List<Page>();
+
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+
+    public virtual ICollection<Sequence> Sequences { get; set; } = new List<Sequence>();
 }

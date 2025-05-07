@@ -45,13 +45,13 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
 
     public async Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId)
     {
-        var cacheList = _cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString());
+        var cacheList = _cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
         List<CultureDTO> returnList = new();
         if (cacheList == null)
         {
             cacheList = await _cultureRepository.GetActiveCultureList();
             //Localize
-            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessage(c.NameTranslationKey,applicationId).TranslationValue);
+            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessage(c.NameTranslationKey, applicationId).TranslationValue);
             _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString(), cacheList);
         }
         return cacheList;

@@ -65,7 +65,7 @@ public static class ApilHelper
 
     public static long GetCompanyIdFromHeader(this HttpRequest request)
     {
-        var companyId = request.GetValueFromHeader(FrameworkConstants.Header_CompanyId);
+        var companyId = request.GetValueFromHeader(FrameworkConstants.Header_CompanyId, FrameworkConstants.Company_DefaultId.ToString());
         long companyIdNumber = 0;
         if (long.TryParse(companyId, out long companyIdNumberTmp))
         {

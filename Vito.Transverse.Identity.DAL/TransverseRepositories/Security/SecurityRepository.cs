@@ -17,13 +17,15 @@ using Vito.Transverse.Identity.Domain.Enums;
 using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
+using Vito.Transverse.Identity.Domain.Options;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 
 /// <see cref="ISecurityRepository"/>
-public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory, ICultureRepository _cultureRepository, IOptions<IdentityServiceServerSettingsOptions> _identityServiceOptions, ISocialNetworksRepository _socialNetworksRepository, ILogger<SecurityRepository> _logger) : ISecurityRepository
+public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory, ICultureRepository _cultureRepository, ISocialNetworksRepository _socialNetworksRepository, IOptions<IdentityServiceServerSettingsOptions> _identityServiceOptions, IOptions<EncryptionSettingsOptions> _encryptionSettingsOptions, ILogger<SecurityRepository> _logger) : ISecurityRepository
 {
     private IdentityServiceServerSettingsOptions identityServiceOptionsValues = _identityServiceOptions.Value;
+    private EncryptionSettingsOptions _encryptionSettingsOptions = _encryptionSettingsOptions.Value;
 
     #region Public Methods
     /// <see cref="ISecurityRepository.TokenValidateAuthorizationCode(Guid, Guid, Guid, Guid, string?, DeviceInformationDTO)"/>
@@ -34,27 +36,27 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
         context = _dataBaseContextFactory.GetDbContext();
         //To retry if fail
-        var executionStrategy = context.Database.CreateExecutionStrategy();
-        await executionStrategy.ExecuteAsync(async () =>
+        //var executionStrategy = context.Database.CreateExecutionStrategy();
+        //await executionStrategy.ExecuteAsync(async () =>
+        //{
+        //    using var transactionScope = context.Database.BeginTransactionAsync();
+        try
         {
-            using var transactionScope = context.Database.BeginTransactionAsync();
-            try
-            {
 
-                userInfoDTO = await TokenValidateCompany(companyClient, companySecret, applicationClient, applicationSecret, null, null, scope, deviceInformation, context);
-                while (transactionScope.Result.GetDbTransaction().Connection is null)
-                {
-                    transactionScope.Wait();
-                }
-                await transactionScope.Result.CommitAsync();
+            userInfoDTO = await TokenValidateCompany(companyClient, companySecret, applicationClient, applicationSecret, null, null, scope, deviceInformation, context);
+            //while (transactionScope.Result.GetDbTransaction().Connection is null)
+            //{
+            //    transactionScope.Wait();
+            //}
+            //await transactionScope.Result.CommitAsync();
 
-            }
-            catch (Exception ex)
-            {
-                transactionScope.Result.Rollback();
-                _logger.LogError(ex, message: nameof(UpdateLastUserAccess));
-            }
-        });
+        }
+        catch (Exception ex)
+        {
+            //transactionScope.Result.Rollback();
+            _logger.LogError(ex, message: nameof(UpdateLastUserAccess));
+        }
+        // });
 
         return userInfoDTO;
     }
@@ -67,6 +69,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
         context = _dataBaseContextFactory.GetDbContext();
 
+       // var transactionScope = await context.Database.BeginTransactionAsync();
         //To retry if fail
         //var executionStrategy = context.Database.CreateExecutionStrategy();
         //await executionStrategy.Execute(async () =>
@@ -93,7 +96,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             //    {
             //        transactionScope.Wait();
             //    }
-            //transactionScope.Result.CommitAsync();
+            //transactionScope.CommitAsync();
 
         }
         catch (Exception ex)
@@ -106,8 +109,8 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return userInfoDTO;
     }
 
-    /// <see cref="ISecurityRepository.UpdateLastUserAccess(long, DeviceInformationDTO, ActionTypeEnum)"/>
-    public async Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
+    /// <see cref="ISecurityRepository.UpdateLastUserAccess(long, DeviceInformationDTO, OAuthActionTypeEnum)"/>
+    public async Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
     {
         var savedSuccesfuly = false;
         try
@@ -116,7 +119,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
             var userInfo = await context.Users.FirstAsync(x => x.Id.Equals(id));
             userInfo.LastAccess = _cultureRepository.UtcNow().DateTime;
-            if (actionStatus == ActionTypeEnum.ActionType_LoginFail_UserSecretInvalid)
+            if (actionStatus == OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid)
             {
                 var retryCount = userInfo.RetryCount;
                 userInfo.RetryCount++;
@@ -144,8 +147,8 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return savedSuccesfuly;
     }
 
-    /// <see cref="ISecurityRepository.AddNewActivityLog(Guid, Guid?, long?, DeviceInformationDTO, ActionTypeEnum)"/>
-    public async Task<bool> AddNewActivityLog(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, ActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
+    /// <see cref="ISecurityRepository.AddNewActivityLog(Guid, Guid?, long?, DeviceInformationDTO, OAuthActionTypeEnum)"/>
+    public async Task<bool> AddNewActivityLog(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
     {
         var savedSuccesfuly = false;
         try
@@ -202,7 +205,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             aplicationInfo.ApplicationSecret = Guid.NewGuid();
             context.Applications.Add(aplicationInfo);
             await context.SaveChangesAsync();
-            ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_CreateNewApplication;
+            OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewApplication ;
             savedSuccesfuly = await AddNewActivityLog(companyId, aplicationInfo.Id, userId, deviceInformation, actionStatus);
 
         }
@@ -231,7 +234,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             companyInfo.CompanySecret = Guid.NewGuid();
             context.Companies.Add(companyInfo);
             await context.SaveChangesAsync();
-            ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_CreateNewCompany;
+            OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewCompany;
             savedSuccesfuly = await AddNewActivityLog(companyInfo.Id, null, userId, deviceInformation, actionStatus);
             var newPersonDTO = new PersonDTO()
             {
@@ -268,7 +271,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     //        context.Persons.Add(personInfo);
     //        await context.SaveChangesAsync();
     //        personInfoDTOReturn = personInfo.ToPersonDTO();
-    //        ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_CreateNewPerson;
+    //        OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewPerson;
     //        savedSuccesfuly = await AddNewActivityLog(personInfoDTOReturn.CompanyFk!.Value, null, FrameworkConstants.UserId_UserUnknown, deviceInformation, actionStatus);
 
     //    }
@@ -294,7 +297,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context.Users.Add(userInfo);
             await context.SaveChangesAsync();
             userDTOReturn = userInfo.ToUserDTO();
-            ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_CreateNewUser;
+            OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewUser;
             savedSuccesfuly = await AddNewActivityLog(userInfo.CompanyFkNavigation.Id, null, userDTOReturn.Id, deviceInformation, actionStatus);
             await SendActivationEmail(userInfoDTO, deviceInformation, context);
         }
@@ -374,7 +377,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 userInfo.RetryCount = 0;
                 userInfo.LastAccess = _cultureRepository.UtcNow().DateTime;
                 await context.SaveChangesAsync();
-                ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_ChangeUserPassword;
+                OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_ChangeUserPassword;
 
                 savedSuccesfuly = await AddNewActivityLog(userInfo.CompanyFkNavigation.Id, null, userInfo.Id, deviceInformation, actionStatus);
             }
@@ -433,7 +436,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 userInfo.RetryCount = 0;
                 userInfo.LastAccess = _cultureRepository.UtcNow().DateTime;
                 await context.SaveChangesAsync();
-                ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_SendActivationEmail;
+                OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_SendActivationEmail;
 
                 savedSuccesfuly = await AddNewActivityLog(companyId, null, userInfoDTO.Id, deviceInformation, actionStatus);
 
@@ -474,7 +477,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 userInfo.RetryCount = 0;
                 userInfo.LastAccess = _cultureRepository.UtcNow().DateTime;
                 await context.SaveChangesAsync();
-                ActionTypeEnum actionStatus = ActionTypeEnum.ActionType_ActivateUser;
+                OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_ActivateUser;
 
                 savedSuccesfuly = await AddNewActivityLog(companyId, null, userId, deviceInformation, actionStatus);
             }
@@ -500,13 +503,13 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             context = _dataBaseContextFactory.GetDbContext(context);
 
-            ActionTypeEnum actionStatus = default;
+            OAuthActionTypeEnum actionStatus = default;
             Company? companyInfo = await context.Companies.Include(x => x.CompanyMemberships).FirstOrDefaultAsync(c => c.CompanyClient.Equals(companyClient) && c.IsActive == true);
 
 
             if (companyInfo is null)
             {
-                actionStatus = ActionTypeEnum.ActionType_LoginFail_CompanyNotFound;
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyNotFound;
             }
             else
             {
@@ -515,14 +518,14 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
                 if (applicationInfo is null)
                 {
-                    actionStatus = ActionTypeEnum.ActionType_LoginFail_ApplicationNoFound;
+                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound;
                 }
                 else
                 {
                     var companyApplicationMembership = context.CompanyMemberships.Include(x => x.CompanyMembershipPermissions).FirstOrDefault(x => x.ApplicationFk.Equals(applicationInfo.Id) && x.CompanyFk.Equals(companyInfo.Id));
                     if (companyApplicationMembership is null)
                     {
-                        actionStatus = ActionTypeEnum.ActionType_LoginFail_CompanyMembershipDoesNotExist;
+                        actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipDoesNotExist;
                     }
                     else
                     {
@@ -531,7 +534,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                         var isValid = companyInfo.CompanyClient.Equals(companyClient) && companyInfo.CompanySecret.Equals(companySecret);
                         if (!isValid)
                         {
-                            actionStatus = ActionTypeEnum.ActionType_LoginFail_CompanySecretInvalid;
+                            actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanySecretInvalid;
                         }
                         else
                         {
@@ -540,16 +543,16 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                     }
                 }
             }
-            var actionsListToTrace = new List<ActionTypeEnum>
+            var actionsListToTrace = new List<OAuthActionTypeEnum>
             {
-                ActionTypeEnum.ActionType_LoginFail_CompanyMembershipDoesNotExist,
-                ActionTypeEnum.ActionType_LoginFail_CompanyNotFound,
-                ActionTypeEnum.ActionType_LoginFail_CompanySecretInvalid,
-                ActionTypeEnum.ActionType_LoginFail_ApplicationNoFound
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipDoesNotExist,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyNotFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanySecretInvalid,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound
             };
             if (actionsListToTrace.Contains(actionStatus))
             {
-                var userTraceAddedSuccessfully = AddNewActivityLog(companyInfo.Id, null, FrameworkConstants.UserId_UserUnknown, deviceInformation, actionStatus, context);
+                var userTraceAddedSuccessfully = AddNewActivityLog(companyInfo?.Id ?? FrameworkConstants.Company_DefaultId, null, FrameworkConstants.UserId_UserUnknown, deviceInformation, actionStatus, context);
                 userInfoDTO = new() { ActionStatus = actionStatus };
             }
         }
@@ -567,7 +570,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     private async Task<UserDTO?> TokenValidateApplication(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         UserDTO? userInfoDTO = default;
-        ActionTypeEnum actionStatus = default;
+        OAuthActionTypeEnum actionStatus = default;
 
         try
         {
@@ -575,24 +578,24 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             Application? applicationInfo = await context.Applications.FirstOrDefaultAsync(a => a.Id.Equals(applicationId) && a.IsActive == true);
             if (applicationInfo is null)
             {
-                actionStatus = ActionTypeEnum.ActionType_LoginFail_ApplicationNoFound;
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound;
             }
             else
             {
                 var isValid = !applicationSecret.HasValue ? true : applicationInfo.ApplicationSecret.Equals(applicationSecret);
                 if (!isValid)
                 {
-                    actionStatus = ActionTypeEnum.ActionType_LoginFail_ApplicationSecretInvalid;
+                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationSecretInvalid;
                 }
                 else
                 {
                     userInfoDTO = await TokenValidateUser(companyId, companySecret, applicationId, applicationSecret, !string.IsNullOrEmpty(userName) ? userName : FrameworkConstants.Username_UserApi, password, scope, deviceInformation, context);
                 }
             }
-            var actionsListToTrace = new List<ActionTypeEnum>
+            var actionsListToTrace = new List<OAuthActionTypeEnum>
             {
-                ActionTypeEnum.ActionType_LoginFail_ApplicationNoFound,
-                ActionTypeEnum.ActionType_LoginFail_ApplicationSecretInvalid,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationSecretInvalid,
 
             };
 
@@ -626,56 +629,61 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     private async Task<UserDTO?> TokenValidateUser(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         UserDTO? userInfoDTO = default;
-        ActionTypeEnum actionStatus = default;
+        OAuthActionTypeEnum actionStatus = default;
 
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
-            User? userInfo = await context.Users.Include(x => x.RoleFkNavigation).FirstOrDefaultAsync(u => u.CompanyFk.Equals(companyId)
-                 && u.UserName.Equals(userName)
+            UserRole? userRoleInfo = await context.UserRoles
+                .Include(x => x.RoleFkNavigation)
+                .Include(x => x.RoleFkNavigation.RolePermissions)
+                .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .Include(x => x.UserFkNavigation).FirstOrDefaultAsync(u => u.CompanyFk.Equals(companyId) && u.ApplicationFk.Equals(applicationId)
+                 && u.UserFkNavigation.UserName.Equals(userName)
                  && u.IsActive == true
-                 && u.IsLocked == false);
+                 && u.UserFkNavigation.IsActive == true
+                 && u.UserFkNavigation.IsLocked == false);
 
-            if (userInfo is null)
+            if (userRoleInfo is null)
             {
                 //User do no exist
-                actionStatus = ActionTypeEnum.ActionType_LoginFail_UserNotFound;
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserNotFound;
             }
             else
             {
-                var isValid = password is null ? true : userInfo.Password.Equals(password);
+                var isValid = password is null ? true : userRoleInfo.UserFkNavigation.Password.Equals(password);
                 if (!isValid)
                 {
                     //psw invalid
-                    actionStatus = ActionTypeEnum.ActionType_LoginFail_UserSecretInvalid;
+                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid;
                 }
                 else
                 {
-                    var rolePermissions = await context.RolePermissions.Include(x => x.PageFkNavigation).Where(x => x.RoleFk == userInfo.RoleFk).ToListAsync();
+                    var rolePermissions = context.RolePermissions.Include(x => x.PageFkNavigation).Where(x => x.RoleFk == userRoleInfo.RoleFk).ToList();
                     var pageAccesInfo = rolePermissions.FirstOrDefault(x => x.PageFkNavigation.NameTranslationKey.Equals(scope));
 
                     if (pageAccesInfo is null)
                     {
                         //Do nos have Acces to resource
-                        actionStatus = ActionTypeEnum.ActionType_LoginFail_UserUnauthorized;
+                        actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserUnauthorized;
                     }
                     else
                     {
                         //user valid
-                        actionStatus = userInfo.UserName.Equals(FrameworkConstants.Username_UserApi) ? ActionTypeEnum.ActionType_LoginSuccessByAuthorizationCode : ActionTypeEnum.ActionType_LoginSuccessByClientCredentials;
-                        Application applicationInfo = userInfo!.CompanyFkNavigation.CompanyMemberships.ToList().First(x => x.ApplicationFk.Equals(applicationId)).ApplicationFkNavigation;
-                        userInfoDTO = userInfo.ToUserDTO(applicationId, applicationInfo.Name, actionStatus);
+                        actionStatus = userRoleInfo.UserFkNavigation.UserName.Equals(FrameworkConstants.Username_UserApi) ? OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode : OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials;
+                        Application applicationInfo = userRoleInfo.RoleFkNavigation.ApplicationFkNavigation;
+                        userInfoDTO = userRoleInfo.UserFkNavigation.ToUserDTO(applicationId, applicationInfo.Name, actionStatus);
                     }
                 }
-                var userUpdatedSuccessfully = await UpdateLastUserAccess(userInfo.Id, deviceInformation, actionStatus, context);
+                var userUpdatedSuccessfully = await UpdateLastUserAccess(userRoleInfo.UserFkNavigation.Id, deviceInformation, actionStatus, context);
             }
-            var userInfoDToId = userInfo is not null ? userInfo.Id : FrameworkConstants.UserId_UserUnknown;
+            var userInfoDToId = userRoleInfo?.UserFkNavigation is not null ? userRoleInfo?.UserFkNavigation.Id : FrameworkConstants.UserId_UserUnknown;
             var userTraceAddedSuccessfully = AddNewActivityLog(companyId, applicationId, userInfoDToId, deviceInformation, actionStatus, context);
-            var actionsListToTrace = new List<ActionTypeEnum>
+            var actionsListToTrace = new List<OAuthActionTypeEnum>
             {
-                ActionTypeEnum.ActionType_LoginFail_UserNotFound,
-                ActionTypeEnum.ActionType_LoginFail_UserSecretInvalid,
-                ActionTypeEnum.ActionType_LoginFail_UserUnauthorized
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserNotFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserUnauthorized
             };
 
             if (actionsListToTrace.Contains(actionStatus))

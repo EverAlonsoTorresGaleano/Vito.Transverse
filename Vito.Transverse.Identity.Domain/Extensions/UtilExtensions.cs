@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Azure;
+using System.Text;
 
 namespace Vito.Transverse.Identity.Domain.Extensions;
 
@@ -15,6 +16,44 @@ public static class UtilExtensions
             });
         }
         return finalString.ToString();
+    }
+
+    public static string ToStringEncrypted(this string sentence, bool criptografyEnabled)
+    {
+        string cadenaSalida = sentence;
+        try
+        {
+            if (criptografyEnabled)
+            {
+                byte[] bytes;
+                bytes = System.Text.Encoding.Unicode.GetBytes(sentence);
+                cadenaSalida = Convert.ToBase64String(bytes);
+            }
+        }
+        catch (Exception error)
+        {
+
+        }
+        return cadenaSalida;
+    }
+
+    public static string ToStringDecrypted(this string encryptedSentence, bool criptografyEnabled)
+    {
+        string cadenaSalida = encryptedSentence;
+        try
+        {
+            if (criptografyEnabled)
+            {
+                byte[] bytes;
+                bytes = Convert.FromBase64String(encryptedSentence);
+                cadenaSalida = System.Text.Encoding.Unicode.GetString(bytes, 0, bytes.ToArray().Length);
+            }
+        }
+        catch (Exception error)
+        {
+
+        }
+        return cadenaSalida;
     }
 
 }

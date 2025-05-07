@@ -7,6 +7,8 @@ public partial class Role
 {
     public long CompanyFk { get; set; }
 
+    public long ApplicationFk { get; set; }
+
     public long Id { get; set; }
 
     public string NameTranslationKey { get; set; } = null!;
@@ -21,11 +23,11 @@ public partial class Role
 
     public long? LastUpdateByUserFk { get; set; }
 
-    public virtual User CompanyFk1 { get; set; } = null!;
+    public virtual Application ApplicationFkNavigation { get; set; } = null!;
 
     public virtual Company CompanyFkNavigation { get; set; } = null!;
 
     public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

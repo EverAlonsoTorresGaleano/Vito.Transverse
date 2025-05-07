@@ -45,10 +45,10 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
                     break;
             }
 
-            var logginSuccesStatusList = new List<ActionTypeEnum>()
+            var logginSuccesStatusList = new List<OAuthActionTypeEnum>()
         {
-            ActionTypeEnum.ActionType_LoginSuccessByClientCredentials,
-            ActionTypeEnum.ActionType_LoginSuccessByAuthorizationCode
+            OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials,
+            OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode
         };
 
             if (userInfoDTO is not null && logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
@@ -134,11 +134,16 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             issued_at = tokenDescriptor.Expires!.Value.AddMinutes(-(double)_jwtIdentityServerOptionsValues!.TokenLifeTimeMinutes).Ticks,
             expires_in = _jwtIdentityServerOptionsValues.TokenLifeTimeMinutes * FrameworkConstants.MinuteOnSeconds,
             status = userInfoDTO.ActionStatus.ToString(),
+#if DEBUG
+            scope = $"{userInfoDTO.RoleId}-{userInfoDTO.RoleName}",
+#else
             scope = requestBody.scope!,
+#endif
             application_id = requestBody.application_id,
             company_id = requestBody.company_id,
             user_id = requestBody.user_id,
-            user_avatar = []
+            user_avatar = [],
+             
         };
         return Task.FromResult(response);
     }
@@ -166,7 +171,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         return tokenDescriptor;
     }
 
-    #endregion
+#endregion
 
     //decodejw token on react/NodeJS
     //    import jwt_decode from 'jwt-decode';

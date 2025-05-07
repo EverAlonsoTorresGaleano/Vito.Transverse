@@ -50,11 +50,11 @@ try
     //builder.Services.AddOptions<RedisCacheSettingsOptions>().BindConfiguration(RedisCacheSettingsOptions.SectionName);
     builder.Services.AddOptions<TwilioSettingsOptions>().BindConfiguration(TwilioSettingsOptions.SectionName);
 
+    builder.Services.AddOptions<EncryptionSettingsOptions>().BindConfiguration(EncryptionSettingsOptions.SectionName);
 
     //Memory Cache
     var memoryCacheOptions = configuration.GetSection(MemoryCacheSettingsOptions.SectionName).Get<MemoryCacheSettingsOptions>();
     builder.AddServiceForMemoryCache(memoryCacheOptions!.ExpirationScanFrequencyInSeconds);
-
 
     //RedisCache
 

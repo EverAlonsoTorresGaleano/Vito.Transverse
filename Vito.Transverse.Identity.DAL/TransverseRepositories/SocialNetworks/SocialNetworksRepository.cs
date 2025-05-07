@@ -93,10 +93,10 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
             //TODO push on Queue  AzFx Queue Based Function that send Email
             switch (notificationType)
             {
-                case NotificationTypeEnum.Email:
+                case NotificationTypeEnum.NotificationType_Email:
                     notificationIsSent = await SendEmailNotification(notificationInfoDTO);
                     break;
-                case NotificationTypeEnum.SMS:
+                case NotificationTypeEnum.NotificationType_SMS:
                     break;
             }
             notificationInfo.CreationDate = _cultureRepository.UtcNow().DateTime;

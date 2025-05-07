@@ -33,7 +33,7 @@ public partial class ActivityLog
 
     public string AddtionalInformation { get; set; } = null!;
 
-    public virtual ListItem ActionTypeFkNavigation { get; set; } = null!;
+    public virtual GeneralTypeItem ActionTypeFkNavigation { get; set; } = null!;
 
     public virtual User UserFkNavigation { get; set; } = null!;
 }

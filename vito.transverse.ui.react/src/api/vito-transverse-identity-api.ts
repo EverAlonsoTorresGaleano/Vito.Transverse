@@ -497,7 +497,7 @@ export interface TokenRequestDTO {
 }
 
 export interface CultureTranslationDTO {
-    applicationFk?: string;
+    applicationFk?: number;
     cultureFk?: string;
     translationKey?: string;
     translationValue?: string;

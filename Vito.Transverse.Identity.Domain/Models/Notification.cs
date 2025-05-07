@@ -41,5 +41,5 @@ public partial class Notification
 
     public virtual NotificationTemplate NotificationTemplate { get; set; } = null!;
 
-    public virtual ListItem NotificationTypeFkNavigation { get; set; } = null!;
+    public virtual GeneralTypeItem NotificationTypeFkNavigation { get; set; } = null!;
 }

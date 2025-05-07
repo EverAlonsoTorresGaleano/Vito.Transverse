@@ -35,6 +35,8 @@ public partial class Company
 
     public bool IsActive { get; set; }
 
+    public virtual ICollection<CompanyEntityAudit> CompanyEntityAudits { get; set; } = new List<CompanyEntityAudit>();
+
     public virtual ICollection<CompanyMembership> CompanyMemberships { get; set; } = new List<CompanyMembership>();
 
     public virtual Country CountryFkNavigation { get; set; } = null!;
