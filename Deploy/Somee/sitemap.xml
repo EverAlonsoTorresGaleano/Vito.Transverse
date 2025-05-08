@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+
+<url>
+  <loc>http://www.casasdemiciudad.com/Comun/Publico/IngresoPortal.aspx</loc>
+</url>
+
+  <!-- Anunciantes -->
+  
+  <url>
+  <loc>http://www.casasdemiciudad.com/Anunciantes/Publico/TarifasPublicacionPersonas.aspx</loc>
+</url>
+<url>
+  <loc>http://www.casasdemiciudad.com/Anunciantes/Publico/TarifasPublicacionEmpresas.aspx</loc>
+</url>
+<url>
+  <loc>http://www.casasdemiciudad.com/Anunciantes/Publico/NuevaCuentaInvitado.aspx</loc>
+</url>
+
+  <!-- Comun-->
+  <url>
+    <loc>http://www.casasdemiciudad.com/Comun/Publico/InquietudSugerencia.aspx</loc>
+  </url>
+  <url>
+    <loc>http://www.casasdemiciudad.com/Comun/Publico/CreamosSuSitioWeb.aspx</loc>
+  </url>
+  <url>
+    <loc>http://www.casasdemiciudad.com/Comun/Publico/TerminosLegales.aspx</loc>
+  </url>
+
+  <!-- geografico-->
+<url>
+  <loc>http://www.casasdemiciudad.com/Geograficos/Publico/BusquedaGeografica.aspx?IdEmpresa=-1&amp;OcultarMenu=true</loc>
+</url>
+<url>
+  <loc>http://www.casasdemiciudad.com/Geograficos/Publico/GeocodificadorDireccionesGoogleMap.aspx?OcultarMenu=true</loc>
+</url>
+<url>
+  <loc>http://www.casasdemiciudad.com/Geograficos/Publico/GeoRssFeed.aspx</loc>
+</url>
+
+  <!-- Inmuebles -->
+  <url>
+    <loc>http://www.casasdemiciudad.com/Inmuebles/Publico/BuscarInmueble.aspx</loc>
+  </url>
+  <!-- Una X cada Empresa-->
+  <url>
+    <loc>http://www.casasdemiciudad.com/Inmuebles/Publico/IngresoEmpresaInmuebles.aspx?IdEmpresa=6</loc>
+  </url>
+  <url>
+  <loc>http://www.casasdemiciudad.com/Inmuebles/Publico/NotificacionBusquedaInmueble.aspx</loc>
+</url>
+  <url>
+    <loc>http://www.casasdemiciudad.com/Inmuebles/Publico/VisualizarInmueble.aspx</loc>
+  </url>
+
+  <!-- Proyectos -->
+  <url>
+    <loc>http://www.casasdemiciudad.com/Proyectos/Publico/VisualizarProyecto.aspx</loc>
+  </url>
+</urlset>

@@ -1,0 +1,524 @@
+html, BODY, head, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td
+{
+    font-family: Tahoma,Verdana;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 14px;
+}
+
+@media screen and ( -webkit-min-device-pixel-ratio:0)
+{
+    @font-face
+    {
+        font-family: eureka_sans_lightregular;
+        src: url('Fonts/eureka_sans_light_regular-webfont.eot'); /* IE9 */
+        src: url('Fonts/eureka_sans_light_regular-webfont.eot?#iefix') format('embedded-opentype'), /* IE6 IE8 */ url('Fonts/eureka_sans_light_regular-webfont.svg#eureka_sans_lightregular') format('svg'), /* legacy iOS*/ url('Fonts/eureka_sans_light_regular-webfont.woff') format('woff'), /*modern browsers */ url('Fonts/eureka_sans_light_regular-webfont.ttf') format('truetype'), /* safari android iOs */ url('Fonts/eureka_sans_light_regular-webfont.woff2') format('woff2'); /*  */
+        font-weight: normal;
+        font-style: normal;
+    }
+    html, BODY
+    {
+        /*scrollbar-face-color:#BAC8D5;     scrollbar-highlight-color:#DCF5F8;     scrollbar-shadow-color:#DEE3E7;     scrollbar-3dlight-color:#879BA9;     scrollbar-arrow-color:#FFF;     scrollbar-track-color:#E0EAEF;     scrollbar-darkshadow-color:#90ABBE; */
+        overflow-y: auto;
+        overflow-x: hidden;
+        line-height: 12px;
+        border-bottom-style: none;
+        border-top-style: none;
+        border-right-style: none;
+        border-left-style: none;
+        padding-top: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-bottom: 0px;
+        font-family: eureka_sans_lightregular,Tahoma,Verdana;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 16px;
+        background-color: #FCFEFC; /*#ECEEEC; */ /*#F4F6F4; */ /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=    '#AD8950',EndColorStr= '#FFF' ); /*Cafe*/
+    }
+    head, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td
+    {
+        font-family: eureka_sans_lightregular,Tahoma,Verdana;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 16px;
+    }
+}
+
+
+
+
+
+.*:focus
+{
+    outline-style: none;
+}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Control EATG-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.Button
+{
+    border: #333 1px dotted;
+    color: #333;
+    display: table;
+    position: relative;
+    vertical-align: text-top;
+    background-color: Transparent;
+    font-weight: normal;
+}
+
+.Button:hover
+{
+    border: #000 1px solid;
+    color: #000; /*background-color:#F4F6F4; */
+    font-weight: normal;
+    transform: rotate(1Deg);
+    -webkit-transform: rotate(1deg);
+}
+
+Button:active
+{
+    border: #000 1px solid;
+    color: #000; /*background-color:#F4F6F4; */
+    font-weight: bold;
+}
+
+.ToolbarButton
+{
+    border: whiteSmoke 1px dotted;
+    color: whiteSmoke;
+    display: table;
+    position: relative;
+    vertical-align: text-top;
+    background-color: Transparent;
+    font-weight: normal;
+}
+
+.ToolbarButton:hover
+{
+    border: #FFF 1px solid;
+    color: #FFF;
+    background-color: Transparent;
+    font-weight: normal;
+    transform: rotate(1Deg);
+    -webkit-transform: rotate(1deg);
+}
+
+.ToolbarButton:active
+{
+    border: #FFF 1px solid;
+    color: #FFF;
+    background-color: Transparent;
+    font-weight: bold;
+}
+
+.enlaceToolTip:hover
+{
+}
+
+.enlaceToolTip
+{
+    color: #000;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+
+
+.GradientePruebaIE
+{
+    /*background-color:#243254; /* Auzl Oscuro*/ /*background-color:#43587E; /* Azul Medio*/ /*background-color:#ACC6DC; /*Azul Claro*/ /*BCC6DC   Azul muy claro*/ /*cce6f4   microsoft claro*/ /*044a7c micro oscuro*/ /*0a6ebc azul encabezado oscuro*/ /* 3882b4 azu l encabezado claro*/ /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#ACC6DC',EndColorStr= '#044a7c' ); /* */
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr= '#048A04',EndColorStr= '#6cba04' );
+}
+
+FondoBarraMenuCabecera .
+{
+    /* background:url('../../Imagenes/CentroBarraInformacion.png'); background-repeat:repeat-x; */
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.GradienteBannerTitulo
+{
+    /*position:absolute; top:0px; left:0px; width:100%; padding:0px; */ /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=                     '#ECEAEC',EndColorStr= '#FCFAFC' ); */
+}
+
+.ImagenExpandible
+{
+    border: 1px dashed #C3C3C3;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.LabelUrlCaberaMenu
+{
+    color: #fff;
+    font-weight: bold;
+}
+
+.LabelPiepagina
+{
+    color: #333;
+    font-weight: normal;
+}
+
+.LabelPiepaginaEnlace
+{
+    color: #333;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Botones-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.BotonBarraHerramientas
+{
+    color: #333;
+    font-weight: normal;
+}
+
+.BotonBarraHerramientas:hover
+{
+    color: #666;
+    font-weight: bold;
+}
+
+.LabelTituloFramePagina
+{
+    color: #fff;
+    font-weight: bold;
+    text-shadow: rgba(20,22,20,1) 3px -3px 5px;
+}
+
+.LabelTituloFrameMenuPagina
+{
+    color: #fff; /*696969; */
+    font-weight: bold;
+}
+
+.CuerpoPagina
+{
+    background-color: #FCFEFC; /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#FCFAFC',EndColorStr= '#FFF' ); /*Gradiente */
+}
+
+.CuerpoMensaje
+{
+    background-color: #FCFAFC;
+    border: 2px solid #6C6D6C;
+}
+
+.TituloMensaje
+{
+    background-color: #6C6D6C /* DCDEDC *background-color:#666*/;
+}
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Fondos-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.FondoCargando
+{
+    background: Gray;
+    filter: alpha(opacity=60);
+    -moz-opacity: .5;
+    opacity: 0.6;
+    float: left;
+    position: absolute;
+    width: 100%;
+    z-index: 10005;
+}
+
+.FondoGrid
+{
+    border-style: none;
+    color: #666;
+    font-weight: normal;
+    background-color: #333;
+}
+
+.PlantillaInmueble
+{
+    background-color: #FCFEFC;
+}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Grid Datos-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.FilaAlternaGrid
+{
+    /*border-color:#ECEAEC; border-style:solid; border-width:1px; */ /*COLOR:#666; */
+    font-weight: normal;
+    background-color: #ECEAEC;
+    height: 16px;
+    text-transform: none;
+}
+
+.FilaNormalGrid
+{
+    color: #666;
+    font-weight: normal;
+    background-color: #FCFAFC;
+    height: 16px;
+    text-transform: none;
+}
+
+.FilaPiePaginaGrid
+{
+    background-image: url(../Imagenes/Control/GridDatosFooter_Centro_Internal.png);
+    background-repeat: repeat-x;
+    font-weight: bold;
+    background-color: #ACAEB4; /*#DCE2E4; */
+    border-color: #696969;
+}
+
+.FilaPiePaginaGridTotales
+{
+    font-weight: bold;
+    background-color: #c4cacc;
+    border-color: #696969;
+}
+
+.FilaResaltadaGrid
+{
+    color: #666;
+    font-weight: normal;
+    background-color: LightYellow; /*#FFE39B; */
+    height: 16px;
+    text-transform: none;
+}
+
+.FilaSeleccionadaGrid
+{
+    color: #666;
+    font-weight: normal;
+    background-color: LightBlue; /*#FFE39B; */
+    height: 18px;
+    text-transform: none;
+}
+
+.FilaCabeceraGrid
+{
+    background-image: url(../Imagenes/Control/GridDatos_Centro.png);
+    background-repeat: repeat-x;
+    background-color: #DCE2E4;
+    border-color: #333;
+    border-style: solid;
+    border-width: 1px;
+    color: #FFF;
+    font-weight: bold;
+    height: 18px;
+}
+
+.FilaCabeceraGridInternal
+{
+    background-image: url(../Imagenes/Control/GridDatos_Centro_Internal.png);
+    background-repeat: repeat-x;
+    background-color: #DCE2E4;
+    border-color: #333;
+    border-style: solid;
+    border-width: 1px;
+    color: #696969;
+    font-weight: bold;
+    height: 18px;
+}
+
+/* Filas Ordenables */
+.FilaCabeceraGrid th a
+{
+    color: #FFF;
+    font-weight: bold;
+    height: 18px;
+}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Labels-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+/* Titulos Cabecera Portal*/
+.LabelTituloPortal
+{
+    font-size: 40px;
+    color: #fff; /*#696969; */
+    font-weight: bold; /*height:20px; */
+    text-shadow: rgba(10,12,10,1) 3px -3px 5px;
+}
+
+.LabelSubTituloPortal
+{
+    font-size: 20px;
+    color: #fff;
+    font-weight: bold; /*height:16px; */
+    text-shadow: rgba(10,12,10,1) 3px -3px 5px;
+}
+
+.LabelSubTituloPortalNormal
+{
+    color: #696969;
+    font-weight: normal; /*height:16px; */
+}
+
+.LabelSubTituloPortalNegrita
+{
+    color: #696969;
+    font-weight: bold; /*height:16px; */
+}
+
+/* Titulos Paginas */
+.LabelTituloPaginaBlanco
+{
+    color: #FFF;
+    font-weight: bold;
+    height: 22px;
+}
+/* Nombres de Pagina en IFrameMasterPage*/
+.LabelTituloPagina
+{
+    color: #696969;
+    font-weight: bold;
+    height: 22px;
+}
+
+.LabelTitulo
+{
+    color: #696969;
+    font-weight: bold;
+    height: 22px;
+}
+
+.LabelTituloCheck
+{
+    color: #696969;
+    font-weight: bold;
+    height: 22px;
+}
+
+.LabelTituloGrande
+{
+    color: #696969;
+    font-weight: bold;
+    height: 22px;
+}
+
+.LabelTituloDeshaibiltado
+{
+    color: #A4A2A4;
+    font-weight: bold;
+    height: 22px;
+}
+
+.LabelTituloEtiqueta
+{
+    color: #696969;
+    font-weight: bold;
+}
+
+
+.LabelTituloBlanco
+{
+    color: #FFF;
+    font-weight: bold;
+    text-shadow: rgba(20,22,20,1) 3px -3px 5px;
+}
+.LabelTituloCheckBlanco
+{
+    color: #FFF;
+    font-weight: bold;
+}
+
+.LabelNormal
+{
+    color: #696969;
+    font-weight: normal;
+}
+
+.LabelNormalPequeno
+{
+    color: #696969;
+    font-weight: normal;
+}
+
+.LabelNegroPequenoLink
+{
+    color: #000;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.LabelNormalEtiqueta
+{
+    color: #333;
+    font-weight: normal;
+}
+
+.LabelNormalBlanco
+{
+    color: #fff;
+    font-weight: normal;
+}
+
+.LabelNormalNegrita
+{
+    color: #696969;
+    font-weight: bold;
+}
+
+
+.EnlaceTituloSinLinea
+{
+    color: #696969;
+    font-weight: bold;
+    height: 22px;
+}
+
+.EnlaceTitulo
+{
+    /*background-image:url('../../Imagenes/EnlaceNormal.png');   background-repeat:no-repeat;  background-position:left; */
+    color: #3C3C3C;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    height: 22px;
+}
+
+.EnlaceTitulo:hover
+{
+    /*background-image:url('../../Imagenes/EnlaceHover.png'); background-repeat:no-repeat; background-position:left; */
+    color: #000;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+    height: 22px;
+}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*AutoCompletar Extender-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.AutoCompletarListado
+{
+    visibility: hidden;
+    overflow-y: auto;
+    overflow-x: hidden; /*text-overflow:ellipsis; */
+    color: #333;
+    font-weight: normal;
+    border: solid 1px #c3c3c3;
+    list-style-type: none;
+    text-align: left;
+    background-color: White;
+    width: 250px !important;
+    padding: 0px; /*z-index:200 !important; */
+    margin: 0px !important;
+    float: left;
+    z-index: 1000000;
+    position: absolute;
+    margin-left: 0px;
+}
+
+.AutoCompletarListadoItem
+{
+    border-bottom: dotted 1px #000;
+    cursor: pointer;
+    color: #696969;
+    padding: 1px;
+}
+.AutoCompletarListadoItemSeleccionado
+{
+    color: White;
+    background-color: #696969;
+    cursor: pointer;
+    color: #fff;
+    padding: 1px;
+}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Sin Revisar-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+A
+{
+    color: #000;
+    text-decoration: none;
+}

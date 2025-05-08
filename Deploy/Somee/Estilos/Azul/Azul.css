@@ -1,0 +1,64 @@
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Cabecera-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.FondoCabeceraSitio{background-image:url('Imagenes/FondoCabecera.png'); background-repeat:repeat-x repeat-y} /* OJO :repeat-x*/
+
+.CeldaCabeceraImagenEmpresa{ border-width:0px; background:url('Imagenes/Cabecera_Izq.png') no-repeat; margin-right:0; margin-left:0; border-spacing:0px; }
+
+.CeldaCabeceraCredencialesUsuario{margin-left:0; border-width:0px; background:url('Imagenes/Cabecera_Der.png') repeat-x repeat-y; margin-right:0; margin-left:0; margin-top:0; border-spacing:0px; } /* OJO width:490px*/
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*ventana-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.BordeVentana{background-image:url( 'Imagenes/FondoVentanaGradienteH.png'); background-repeat:repeat-y  repeat-x; /* Fondo Texturizado*/ /*background-image:url( '..Imagenes/master/TexturaBordeCuerpo.png');       background-repeat:repeat;   */ /*background-color:#243254; /* Auzl Oscuro*/ /*background-color:#43587E; /* Azul Medio*/ /*background-color:#ACC6DC; /*Azul Claro*/ /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=1,StartColorStr='#ACC6DC',EndColorStr= '#243254' ); /* */}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Gradientes-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.GradienteIFrame{top:0px; left:0px; padding:0px; background-color:#F4F2F4; background-image:url('Imagenes/FondoCuerpoGradienteV.png' ); /**/background-repeat:repeat; /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=         '#ecf6fc',EndColorStr= '#6492b4' ); /*Gradiente  Colores Microsoft*/}
+
+.GradienteMaster{top:0px; left:0px; padding:0px; background-color:#F4F2F4; background-image:url('Imagenes/FondoCuerpoGradienteV.png' ); /**/background-repeat:repeat; /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=         '#ecf6fc',EndColorStr= '#6492b4' ); /*Gradiente  Colores Microsoft*/}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Plantilla Empresa-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.PlantillaEmpresa{color:#FFF; /* Color Fuente Titulo Menu */font-weight:bold; padding:4px; margin-top:3px; background-image:url( 'Imagenes/FondoPlantillaEmpresaGradienteH.png'); background-repeat:repeat-y; /*Imagenes*/height:25px; /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=1,StartColorStr='#6c6a6c',EndColorStr= '#dcdadc' ); /*Gradiente*/}
+
+.LabelTituloPlantillaEmpresa{  color:#fff; font-weight:bold}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Plantilla Proyecto-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.PlantillaProyecto{color:#FFF; /* Color Fuente Titulo Menu */font-weight:bold; padding:4px; margin-top:3px; background-image:url( 'Imagenes/FondoPlantillaProyectoGradienteH.png'); background-repeat:repeat-y; /*Imagenes*/ /*height:8px; filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#6c6a6c',EndColorStr= '#dcdadc' ); /*Gradiente*/}
+
+.LabelTituloPlantillaProyecto{  color:#fff; font-weight:normal}
+
+/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*Elementos Panel Menu-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+.Menu{color:#3a4a6c; /* Color Fuente Titulo Menu */background-color:#BCC6DC; /*#c4cacc; */cursor:pointer; padding:4px; margin-top:3px; /*filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#FFF',EndColorStr= '#BCC6DC' ); /* */background-image:url( 'Imagenes/BordePanelMenuGradienteV.png'); background-repeat:repeat-x; /*Imagenes*/ /*height:9px;  filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr='#fcfefc',EndColorStr= '#9c9e9c' ); /*Gradiente*/font-weight:bold;  }
+
+.SubMenu{/* Gris Claro Fondo Enlaces Sub Menu*/background-color:#EAECEC; /*#F4F6F4; */ /* #FCFAFC; */font:bold 11px auto Arial,Verdana,Helvetica,sans-serif; /*border:1px gray; */padding:4px; padding-top:7px}
+
+.EnlacesSubMenu{font-weight:normal;   /*outline-style:dotted; */text-decoration:none}
+
+.EnlacesSubMenuSeleccionado{font-weight:normal;   /*outline-style:dotted; */text-decoration:none}
+
+.EnlacesSubMenu:hover{font-weight:bold; text-decoration:underline}
+
+.ImagenMenu{cursor:pointer; position:absolute; left:0px; top:0px; visibility:visible; z-index:9000}
+
+.BordeMenu{margin:0px 0px 0px 0px; /*background-color:#FCEEB4; /*EACD82; */ /*#696969; */ /*filter:alpha(opacity=90) */background-color:#43587E; /* Azul Medio*/}
+
+.LabelItemMenuCabecera{  color:#696969; font-weight:normal}
+
+.BarraTituloCategoriaPubicacion{background:url('Imagenes/SimpleContainer_Center.png'); background-repeat:repeat-x; margin-right:0; margin-left:0; height:29px; color:WhiteSmoke; font-weight:bold; font-size:12px} */
+
+/* Enlaces en general al posar el mouse sobre ellos*/
+A:hover{color:#000; text-decoration:none; height:2px; }
+
+
+.EATGWebControls_SimpleContainerCenter{ background:url('Imagenes/SimpleContainer_Center.png'); background-repeat:repeat-x; margin-right:0; margin-left:0; height:29px}
+.EATGWebControls_SimpleContainerText{     color:#FFF;  font-weight:bold;text-shadow: rgba(20,22,20,1) 3px -3px 5px; }
+
+
+.EATGWebControls_StandardContainerLeft{margin-left:0; border-width:0px; background:url('Imagenes/StandardContainer_Left.png') no-repeat; margin-right:0; margin-left:0; border-spacing:0px; width:18px; height:29px}
+.EATGWebControls_StandardContainerCenter{margin-left:0; border-width:0px;background:url('Imagenes/StandardContainer_Center.png'); background-repeat:repeat-x; margin-right:0; margin-left:0; height:29px}
+.EATGWebControls_StandardContainerRight{margin-left:0; border-width:0px; background:url('Imagenes/StandardContainer_Right.png'); background-repeat:no-repeat; margin-right:0; margin-left:0; border-spacing:0px; width:20px; height:29px}
+.EATGWebControls_StandardContainerText{     color:#FFF;  font-weight:bold;text-shadow: rgba(20,22,20,1) 3px -3px 5px; }
+
+
+.EATGWebControls_CollapsableContainerLeft{margin-left:0; border-width:0px; background:url('Imagenes/CollapsableContainer_Left.png') no-repeat; margin-right:0; margin-left:0; border-spacing:0px; width:18px; height:29px}
+.EATGWebControls_CollapsableContainerCenter{margin-left:0; border-width:0px;background:url('Imagenes/CollapsableContainer_Center.png'); background-repeat:repeat-x; margin-right:0; margin-left:0; height:29px}
+.EATGWebControls_CollapsableContainerRight{margin-left:0; border-width:0px; background:url('Imagenes/CollapsableContainer_Right.png'); background-repeat:no-repeat; margin-right:0; margin-left:0; border-spacing:0px; width:20px; height:29px}
+.EATGWebControls_CollapsableContainerText{     color:#FFF;  font-weight:bold;text-shadow: rgba(20,22,20,1) 3px -3px 5px; }
+
+

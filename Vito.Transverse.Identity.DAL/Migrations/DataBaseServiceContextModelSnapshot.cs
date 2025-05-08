@@ -8,1577 +8,2042 @@ using Vito.Transverse.Identity.DAL.DataBaseContext;
 
 #nullable disable
 
-namespace Vito.Transverse.Identity.DAL.Migrations;
-
-[DbContext(typeof(DataBaseServiceContext))]
-partial class DataBaseServiceContextModelSnapshot : ModelSnapshot
+namespace Vito.Transverse.Identity.DAL.Migrations
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    [DbContext(typeof(DataBaseServiceContext))]
+    partial class DataBaseServiceContextModelSnapshot : ModelSnapshot
     {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-        modelBuilder
-            .HasAnnotation("ProductVersion", "9.0.4")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            modelBuilder
+                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ActivityLog", b =>
-            {
-                b.Property<long>("TraceId")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ActivityLog", b =>
+                {
+                    b.Property<long>("TraceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TraceId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TraceId"));
 
-                b.Property<long>("ActionTypeFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("ActionTypeFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("AddtionalInformation")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AddtionalInformation")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                b.Property<string>("Browser")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Browser")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("CultureId")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("CultureId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("DeviceName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("DeviceName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("DeviceType")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("DeviceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("Engine")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Engine")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<DateTime>("EventDate")
-                    .HasColumnType("datetime");
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("IpAddress")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("Platform")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("RequestEndpoint")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(100)");
+                    b.Property<string>("RequestEndpoint")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                b.Property<long>("UserFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("UserFk")
+                        .HasColumnType("bigint");
 
-                b.HasKey("TraceId")
-                    .HasName("PK_UserTraces");
+                    b.HasKey("TraceId")
+                        .HasName("PK_UserTraces");
 
-                b.HasIndex("ActionTypeFk");
+                    b.HasIndex("ActionTypeFk");
 
-                b.HasIndex("UserFk");
+                    b.HasIndex("UserFk");
 
-                b.ToTable("ActivityLogs");
-            });
+                    b.ToTable("ActivityLogs");
+                });
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Application", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Application", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<Guid>("ApplicationClient")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier")
-                    .HasDefaultValueSql("(newid())");
+                    b.Property<Guid>("ApplicationClient")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
-                b.Property<Guid>("ApplicationSecret")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier")
-                    .HasDefaultValueSql("(newid())");
+                    b.Property<Guid>("ApplicationSecret")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
-                b.Property<byte[]>("Avatar")
-                    .HasColumnType("varbinary(max)");
+                    b.Property<byte[]>("Avatar")
+                        .HasColumnType("varbinary(max)");
 
-                b.Property<long>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<long?>("LastUpdateByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<long?>("LastUpdateByUserFk")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Applications_1");
+
+                    b.ToTable("Applications");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.AuditEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<bool>("IsSystemEntity")
+                        .HasColumnType("bit");
 
-                b.HasKey("Id")
-                    .HasName("PK_Applications_1");
+                    b.Property<string>("SchemaName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.ToTable("Applications");
-            });
+                    b.HasKey("Id");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Company", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.ToTable("AuditEntities");
+                });
 
-                b.Property<byte[]>("Avatar")
-                    .HasColumnType("varbinary(max)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.AuditRecord", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                b.Property<Guid>("CompanyClient")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier")
-                    .HasDefaultValueSql("(newid())");
+                    b.Property<long>("AuditEntityFk")
+                        .HasColumnType("bigint");
 
-                b.Property<Guid>("CompanySecret")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier")
-                    .HasDefaultValueSql("(newid())");
+                    b.Property<string>("AuditEntityIndex")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("AuditInfoJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("AuditTypeFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("CountryFk")
-                    .IsRequired()
-                    .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    b.Property<string>("Browser")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<long>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("DefaultCultureFk")
-                    .IsRequired()
-                    .HasMaxLength(5)
-                    .HasColumnType("nvarchar(5)");
+                    b.Property<string>("CultureFk")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<string>("Email")
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.Property<string>("DeviceType")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<string>("Engine")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<bool>("IsSystemCompany")
-                    .HasColumnType("bit");
+                    b.Property<string>("HostName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<long?>("LastUpdateByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<long>("UserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("Subdomain")
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.HasKey("Id");
 
-                b.HasKey("Id");
+                    b.HasIndex("AuditEntityFk");
 
-                b.HasIndex("CountryFk");
+                    b.HasIndex("AuditTypeFk");
 
-                b.HasIndex("DefaultCultureFk");
+                    b.ToTable("AuditRecords");
+                });
 
-                b.ToTable("Companies");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Company", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembership", b =>
-            {
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    b.Property<byte[]>("Avatar")
+                        .HasColumnType("varbinary(max)");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.Property<Guid>("CompanyClient")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
-                b.Property<long>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<Guid>("CompanySecret")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.Property<string>("CountryFk")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
-                b.Property<DateTime?>("EndDate")
-                    .HasColumnType("datetime");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<string>("DefaultCultureFk")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
-                b.Property<long?>("LastUpdateByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<long>("MembershipTypeFk")
-                    .HasColumnType("bigint");
+                    b.Property<bool>("IsSystemCompany")
+                        .HasColumnType("bit");
 
-                b.Property<DateTime>("StartDate")
-                    .HasColumnType("datetime");
+                    b.Property<long?>("LastUpdateByUserFk")
+                        .HasColumnType("bigint");
 
-                b.HasKey("CompanyFk", "ApplicationFk")
-                    .HasName("PK_CompanyApplications");
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
 
-                b.HasIndex("ApplicationFk");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasIndex("MembershipTypeFk");
+                    b.Property<string>("Subdomain")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.HasIndex(new[] { "Id" }, "IX_CompanyMemberships")
-                    .IsUnique();
+                    b.HasKey("Id");
 
-                b.ToTable("CompanyMemberships");
-            });
+                    b.HasIndex("CountryFk");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembershipPermission", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.HasIndex("DefaultCultureFk");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.ToTable("Companies");
+                });
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyEntityAudit", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("CompanyMembershipFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("AuditEntityFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long?>("ComponentFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("AuditTypeFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("ModuleFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("PageFk")
-                    .HasColumnType("bigint");
+                    b.HasKey("Id");
 
-                b.Property<string>("PropertyValue")
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(50)");
+                    b.HasIndex("AuditEntityFk");
 
-                b.HasKey("Id")
-                    .HasName("PK_CompanyMembershipPermissions_1");
+                    b.HasIndex("AuditTypeFk");
 
-                b.HasIndex(new[] { "CompanyMembershipFk" }, "IX_CompanyMembershipPermissions");
+                    b.HasIndex("CompanyFk");
 
-                b.ToTable("CompanyMembershipPermissions");
-            });
+                    b.ToTable("CompanyEntityAudits");
+                });
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Component", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembership", b =>
+                {
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("DefaultPropertyValue")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(50)");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("ObjectId")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("ObjectName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("ObjectPropertyName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(50)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<long>("PageFk")
-                    .HasColumnType("bigint");
+                    b.Property<long?>("LastUpdateByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long?>("PositionIndex")
-                    .HasColumnType("bigint");
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
 
-                b.HasKey("Id")
-                    .HasName("PK_PageComponents");
+                    b.Property<long>("MembershipTypeFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("ApplicationFk");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime");
 
-                b.HasIndex("PageFk");
+                    b.HasKey("CompanyFk", "ApplicationFk")
+                        .HasName("PK_CompanyApplications");
 
-                b.ToTable("Components");
-            });
+                    b.HasIndex("ApplicationFk");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Country", b =>
-            {
-                b.Property<string>("Id")
-                    .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    b.HasIndex("MembershipTypeFk");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.HasIndex(new[] { "Id" }, "IX_CompanyMemberships")
+                        .IsUnique();
 
-                b.Property<int?>("UtcHoursDifference")
-                    .HasColumnType("int");
+                    b.ToTable("CompanyMemberships");
+                });
 
-                b.HasKey("Id");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembershipPermission", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.ToTable("Countries");
-            });
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Culture", b =>
-            {
-                b.Property<string>("Id")
-                    .HasMaxLength(5)
-                    .HasColumnType("nvarchar(5)");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("CountryFk")
-                    .IsRequired()
-                    .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    b.Property<long>("CompanyMembershipFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("IsEnabled")
-                    .HasColumnType("bit");
+                    b.Property<long?>("ComponentFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("LanguageFk")
-                    .IsRequired()
-                    .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    b.Property<long>("ModuleFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<long>("PageFk")
+                        .HasColumnType("bigint");
 
-                b.HasKey("Id");
+                    b.Property<string>("PropertyValue")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.HasIndex("CountryFk");
+                    b.HasKey("Id")
+                        .HasName("PK_CompanyMembershipPermissions_1");
 
-                b.HasIndex("LanguageFk");
+                    b.HasIndex(new[] { "CompanyMembershipFk" }, "IX_CompanyMembershipPermissions");
 
-                b.ToTable("Cultures");
-            });
+                    b.ToTable("CompanyMembershipPermissions");
+                });
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CultureTranslation", b =>
-            {
-                b.Property<string>("CultureFk")
-                    .HasMaxLength(5)
-                    .HasColumnType("nvarchar(5)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Component", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("TranslationKey")
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("DefaultPropertyValue")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<string>("TranslationValue")
-                    .IsRequired()
-                    .HasMaxLength(250)
-                    .HasColumnType("nvarchar(250)");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-                b.HasKey("CultureFk", "TranslationKey");
+                    b.Property<string>("ObjectId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasIndex(new[] { "ApplicationFk" }, "IX_CultureTranslations");
+                    b.Property<string>("ObjectName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.ToTable("CultureTranslations");
-            });
+                    b.Property<string>("ObjectPropertyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Language", b =>
-            {
-                b.Property<string>("Id")
-                    .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    b.Property<long>("PageFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<long?>("PositionIndex")
+                        .HasColumnType("bigint");
 
-                b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_PageComponents");
 
-                b.ToTable("Languages");
-            });
+                    b.HasIndex("ApplicationFk");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ListItem", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.HasIndex("PageFk");
 
-                b.Property<bool>("IsEnabled")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(true);
+                    b.ToTable("Components");
+                });
 
-                b.Property<long>("ListItemGroupFk")
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Country", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<int?>("OrderIndex")
-                    .HasColumnType("int");
+                    b.Property<int?>("UtcHoursDifference")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("ListItemGroupFk");
+                    b.ToTable("Countries");
+                });
 
-                b.ToTable("ListItems");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Culture", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ListItemGroup", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.Property<string>("CountryFk")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
-                b.Property<bool>("IsSystemType")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(true);
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("LanguageFk")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
-                b.HasKey("Id")
-                    .HasName("PK_ListItemGroup");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.ToTable("ListItemGroups");
-            });
+                    b.HasKey("Id");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembershipType", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.HasIndex("CountryFk");
 
-                b.Property<long>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("LanguageFk");
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.ToTable("Cultures");
+                });
 
-                b.Property<DateTime?>("EndDate")
-                    .HasColumnType("datetime");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CultureTranslation", b =>
+                {
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<string>("CultureFk")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
-                b.Property<long?>("LastUpdateByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("TranslationKey")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<string>("TranslationValue")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.HasKey("ApplicationFk", "CultureFk", "TranslationKey");
 
-                b.Property<DateTime>("StartDate")
-                    .HasColumnType("datetime");
+                    b.HasIndex("CultureFk");
 
-                b.HasKey("Id")
-                    .HasName("PK_Memberships");
+                    b.HasIndex(new[] { "ApplicationFk" }, "IX_CultureTranslations");
 
-                b.ToTable("MembershipTypes");
-            });
+                    b.ToTable("CultureTranslations");
+                });
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembersipPriceHistory", b =>
-            {
-                b.Property<long>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.GeneralTypeGroup", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<bool>("IsSystemType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
-                b.Property<long>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.HasKey("Id")
+                        .HasName("PK_ListItemGroup");
 
-                b.Property<DateTime?>("EndDate")
-                    .HasColumnType("datetime");
+                    b.ToTable("GeneralTypeGroups");
+                });
 
-                b.Property<decimal?>("LastIncreasePercentage")
-                    .HasColumnType("decimal(18, 4)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<decimal?>("LastPrice")
-                    .HasColumnType("decimal(18, 4)");
+                    b.Property<bool>("IsEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
-                b.Property<long?>("LastUpdateByUserFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("ListItemGroupFk")
+                        .HasColumnType("bigint");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<long>("MembershipTypeFk")
-                    .HasColumnType("bigint");
+                    b.Property<int?>("OrderIndex")
+                        .HasColumnType("int");
 
-                b.Property<decimal>("Price")
-                    .HasColumnType("decimal(18, 4)");
+                    b.HasKey("Id")
+                        .HasName("PK_ListItems");
 
-                b.Property<DateTime>("StartDate")
-                    .HasColumnType("datetime");
+                    b.HasIndex("ListItemGroupFk");
 
-                b.HasKey("Id");
+                    b.ToTable("GeneralTypeItems");
+                });
 
-                b.HasIndex("MembershipTypeFk");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Language", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
-                b.ToTable("MembersipPriceHistory", (string)null);
-            });
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Module", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.HasKey("Id");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.ToTable("Languages");
+                });
 
-                b.Property<bool>("IsActive")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(true);
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembershipType", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("IsApi")
-                    .HasColumnType("bit");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("IsVisible")
-                    .HasColumnType("bit");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime");
 
-                b.Property<long?>("PositionIndex")
-                    .HasColumnType("bigint");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.HasKey("Id");
+                    b.Property<long?>("LastUpdateByUserFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("ApplicationFk");
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
 
-                b.ToTable("Modules");
-            });
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Notification", b =>
-            {
-                b.Property<long>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bigint");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.HasKey("Id")
+                        .HasName("PK_Memberships");
 
-                b.Property<string>("Bcc")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)")
-                    .HasColumnName("BCC");
+                    b.ToTable("MembershipTypes");
+                });
 
-                b.Property<string>("Cc")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)")
-                    .HasColumnName("CC");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembersipPriceHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("CultureFk")
-                    .IsRequired()
-                    .HasMaxLength(5)
-                    .HasColumnType("nvarchar(5)");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<bool>("IsHtml")
-                    .HasColumnType("bit");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime");
 
-                b.Property<bool>("IsSent")
-                    .HasColumnType("bit");
+                    b.Property<decimal?>("LastIncreasePercentage")
+                        .HasColumnType("decimal(18, 4)");
 
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("LastPrice")
+                        .HasColumnType("decimal(18, 4)");
 
-                b.Property<long>("NotificationTemplateGroupFk")
-                    .HasColumnType("bigint");
+                    b.Property<long?>("LastUpdateByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("NotificationTypeFk")
-                    .HasColumnType("bigint");
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("Receiver")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<long>("MembershipTypeFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("Sender")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 4)");
 
-                b.Property<DateTime?>("SentDate")
-                    .HasColumnType("datetime");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("Subject")
-                    .IsRequired()
-                    .HasMaxLength(250)
-                    .HasColumnType("nvarchar(250)");
+                    b.HasKey("Id");
 
-                b.HasKey("Id")
-                    .HasName("PK_NotificationTraces");
+                    b.HasIndex("MembershipTypeFk");
 
-                b.HasIndex("CompanyFk");
+                    b.ToTable("MembersipPriceHistory", (string)null);
+                });
 
-                b.HasIndex("CultureFk");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Module", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("NotificationTypeFk");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("NotificationTemplateGroupFk", "CultureFk");
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
-                b.ToTable("Notifications");
-            });
+                    b.Property<bool>("IsApi")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
-            {
-                b.Property<long>("NotificationTemplateGroupId")
-                    .HasColumnType("bigint");
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
-                b.Property<string>("CultureFk")
-                    .HasMaxLength(5)
-                    .HasColumnType("nvarchar(5)");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-                b.Property<long>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bigint");
+                    b.Property<long?>("PositionIndex")
+                        .HasColumnType("bigint");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.HasKey("Id");
 
-                b.Property<bool>("IsHtml")
-                    .HasColumnType("bit");
+                    b.HasIndex("ApplicationFk");
 
-                b.Property<string>("MessageTemplateText")
-                    .HasColumnType("nvarchar(max)");
+                    b.ToTable("Modules");
+                });
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(25)
-                    .HasColumnType("nvarchar(25)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Notification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                b.Property<string>("SubjectTemplateText")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                b.HasKey("NotificationTemplateGroupId", "CultureFk");
+                    b.Property<string>("Bcc")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("BCC");
 
-                b.HasIndex("CultureFk");
+                    b.Property<string>("Cc")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("CC");
 
-                b.ToTable("NotificationTemplates");
-            });
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Page", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("CultureFk")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
-                b.Property<bool>("IsActive")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(true);
+                    b.Property<bool>("IsHtml")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("IsApi")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("IsVisible")
-                    .HasColumnType("bit");
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<long>("ModuleFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("NotificationTemplateGroupFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+                    b.Property<long>("NotificationTypeFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long?>("PositionIndex")
-                    .HasColumnType("bigint");
+                    b.Property<string>("Receiver")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.HasKey("Id")
-                    .HasName("PK_PagesModules");
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasIndex("ApplicationFk");
+                    b.Property<DateTime?>("SentDate")
+                        .HasColumnType("datetime");
 
-                b.HasIndex("ModuleFk");
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                b.ToTable("Pages");
-            });
+                    b.HasKey("Id")
+                        .HasName("PK_NotificationTraces");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Role", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.HasIndex("CompanyFk");
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("CultureFk");
 
-                b.Property<long>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("NotificationTypeFk");
 
-                b.Property<DateTime>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.HasIndex("NotificationTemplateGroupFk", "CultureFk");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.ToTable("Notifications");
+                });
 
-                b.Property<long?>("LastUpdateByUserFk")
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
+                {
+                    b.Property<long>("NotificationTemplateGroupId")
+                        .HasColumnType("bigint");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<string>("CultureFk")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
-                b.Property<string>("NameTranslationKey")
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                b.HasKey("Id")
-                    .HasName("PK_Roles_1");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                b.HasIndex("CompanyFk");
+                    b.Property<bool>("IsHtml")
+                        .HasColumnType("bit");
 
-                b.ToTable("Roles");
-            });
+                    b.Property<string>("MessageTemplateText")
+                        .HasColumnType("nvarchar(max)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.RolePermission", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
-                b.Property<long>("ApplicationFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("SubjectTemplateText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    b.HasKey("NotificationTemplateGroupId", "CultureFk");
 
-                b.Property<long?>("ComponentFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("CultureFk");
 
-                b.Property<long>("ModuleFk")
-                    .HasColumnType("bigint");
+                    b.ToTable("NotificationTemplates");
+                });
 
-                b.Property<long>("PageFk")
-                    .HasColumnType("bigint");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Page", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("PropertyValue")
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(50)");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("RoleFk")
-                    .HasColumnType("bigint");
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
-                b.HasKey("Id")
-                    .HasName("PK_UserRolePermissions");
+                    b.Property<bool>("IsApi")
+                        .HasColumnType("bit");
 
-                b.HasIndex("ComponentFk");
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
-                b.HasIndex("ModuleFk");
+                    b.Property<long>("ModuleFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("PageFk");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-                b.HasIndex("RoleFk");
+                    b.Property<long?>("PositionIndex")
+                        .HasColumnType("bigint");
 
-                b.ToTable("RolePermissions");
-            });
+                    b.HasKey("Id")
+                        .HasName("PK_PagesModules");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Sequence", b =>
-            {
-                b.Property<long>("Id")
-                    .HasColumnType("bigint");
+                    b.HasIndex("ApplicationFk");
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("ModuleFk");
 
-                b.Property<long>("SequenceIndex")
-                    .HasColumnType("bigint");
+                    b.ToTable("Pages");
+                });
 
-                b.Property<string>("SequenceName")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("TextFormat")
-                    .IsRequired()
-                    .HasMaxLength(15)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(15)");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.HasKey("Id");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("CompanyFk");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.ToTable("Sequences");
-            });
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.User", b =>
-            {
-                b.Property<long>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bigint");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<long?>("LastUpdateByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("ActivationEmailSent")
-                    .HasColumnType("bit");
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
 
-                b.Property<Guid>("ActivationId")
-                    .HasColumnType("uniqueidentifier");
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.Property<byte[]>("Avatar")
-                    .HasColumnType("varbinary(max)");
+                    b.HasKey("Id")
+                        .HasName("PK_Roles_1");
 
-                b.Property<long>("CompanyFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("ApplicationFk");
 
-                b.Property<long?>("CreatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("CompanyFk");
 
-                b.Property<DateTime?>("CreationDate")
-                    .HasColumnType("datetime");
+                    b.ToTable("Roles");
+                });
 
-                b.Property<string>("Email")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nchar(100)")
-                    .IsFixedLength();
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.RolePermission", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("EmailValidated")
-                    .HasColumnType("bit");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("IsLocked")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(true);
+                    b.Property<long?>("ComponentFk")
+                        .HasColumnType("bigint");
 
-                b.Property<DateTime?>("LastAccess")
-                    .HasColumnType("datetime");
+                    b.Property<long>("ModuleFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("LastName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nchar(100)")
-                    .IsFixedLength();
+                    b.Property<long>("PageFk")
+                        .HasColumnType("bigint");
 
-                b.Property<DateTime?>("LastUpdateDate")
-                    .HasColumnType("datetime");
+                    b.Property<string>("PropertyValue")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Property<DateTime?>("LockedDate")
-                    .HasColumnType("datetime");
+                    b.Property<long>("RoleFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nchar(100)")
-                    .IsFixedLength();
+                    b.HasKey("Id")
+                        .HasName("PK_UserRolePermissions");
 
-                b.Property<string>("Password")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.HasIndex("ComponentFk");
 
-                b.Property<bool>("RequirePasswordChange")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(true);
+                    b.HasIndex("ModuleFk");
 
-                b.Property<int>("RetryCount")
-                    .HasColumnType("int");
+                    b.HasIndex("PageFk");
 
-                b.Property<long>("RoleFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("RoleFk");
 
-                b.Property<long?>("UpdatedByUserFk")
-                    .HasColumnType("bigint");
+                    b.ToTable("RolePermissions");
+                });
 
-                b.Property<string>("UserName")
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .HasColumnType("nvarchar(30)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Sequence", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                b.HasKey("Id");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("CompanyFk");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.HasIndex("RoleFk");
+                    b.Property<long>("SequenceIndex")
+                        .HasColumnType("bigint");
 
-                b.ToTable("Users");
-            });
+                    b.Property<string>("SequenceNameFormat")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetAllCompanyPermission", b =>
-            {
-                b.Property<long>("ApplicationId")
-                    .HasColumnType("bigint");
+                    b.Property<long>("SequenceTypeFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("ApplicationIsActive")
-                    .HasColumnType("bit");
+                    b.Property<string>("TextFormat")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(15)");
 
-                b.Property<string>("ApplicationName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.HasKey("Id");
 
-                b.Property<long>("CompanyId")
-                    .HasColumnType("bigint");
+                    b.HasIndex("ApplicationFk");
 
-                b.Property<long>("CompanyMembershipFk")
-                    .HasColumnType("bigint");
+                    b.HasIndex("CompanyFk");
 
-                b.Property<long>("CompanyMembershipPermissionsId")
-                    .HasColumnType("bigint");
+                    b.ToTable("Sequences");
+                });
 
-                b.Property<string>("CompanyName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.User", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                b.Property<long?>("ComponentFk")
-                    .HasColumnType("bigint");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                b.Property<long>("ModuleId")
-                    .HasColumnType("bigint");
+                    b.Property<bool>("ActivationEmailSent")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("ModuleIsActive")
-                    .HasColumnType("bit");
+                    b.Property<Guid>("ActivationId")
+                        .HasColumnType("uniqueidentifier");
 
-                b.Property<string>("ModuleName")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+                    b.Property<byte[]>("Avatar")
+                        .HasColumnType("varbinary(max)");
 
-                b.Property<long>("PageId")
-                    .HasColumnType("bigint");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("PageIsActive")
-                    .HasColumnType("bit");
+                    b.Property<long?>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("PageName")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime");
 
-                b.ToTable((string)null);
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nchar(100)")
+                        .IsFixedLength();
 
-                b.ToView("Vw_GetAllCompanyPermissions", (string)null);
-            });
+                    b.Property<bool>("EmailValidated")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetCompanyMembership", b =>
-            {
-                b.Property<long>("ApplicationId")
-                    .HasColumnType("bigint");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("ApplicationIsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsLocked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
-                b.Property<string>("ApplicationName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<DateTime?>("LastAccess")
+                        .HasColumnType("datetime");
 
-                b.Property<long>("CompanyId")
-                    .HasColumnType("bigint");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nchar(100)")
+                        .IsFixedLength();
 
-                b.Property<bool>("CompanyIsActive")
-                    .HasColumnType("bit");
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime");
 
-                b.Property<long>("CompanyMemberShipId")
-                    .HasColumnType("bigint");
+                    b.Property<DateTime?>("LockedDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("CompanyName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nchar(100)")
+                        .IsFixedLength();
 
-                b.Property<string>("CountryFk")
-                    .IsRequired()
-                    .HasMaxLength(2)
-                    .HasColumnType("nvarchar(2)");
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("DefaultCultureFk")
-                    .IsRequired()
-                    .HasMaxLength(5)
-                    .HasColumnType("nvarchar(5)");
+                    b.Property<bool>("RequirePasswordChange")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
-                b.Property<string>("Email")
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("int");
 
-                b.Property<bool>("IsSystemCompany")
-                    .HasColumnType("bit");
+                    b.Property<long?>("UpdatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("MembershipTypeFk")
-                    .HasColumnType("bigint");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
-                b.Property<bool>("MembershipTypeIsActive")
-                    .HasColumnType("bit");
+                    b.HasKey("Id");
 
-                b.Property<string>("MembershipTypeName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.HasIndex("CompanyFk");
 
-                b.Property<string>("Subdomain")
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.ToTable("Users");
+                });
 
-                b.ToTable((string)null);
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.UserRole", b =>
+                {
+                    b.Property<long>("UserFk")
+                        .HasColumnType("bigint");
 
-                b.ToView("Vw_GetCompanyMemberships", (string)null);
-            });
+                    b.Property<long>("RoleFk")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetRolePermission", b =>
-            {
-                b.Property<long>("ApplicationId")
-                    .HasColumnType("bigint");
+                    b.Property<long>("ApplicationFk")
+                        .HasColumnType("bigint");
 
-                b.Property<bool>("ApplicationIsActive")
-                    .HasColumnType("bit");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("ApplicationName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<long>("CreatedByUserFk")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("CompanyId")
-                    .HasColumnType("bigint");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime");
 
-                b.Property<string>("CompanyName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<long?>("ComponentFk")
-                    .HasColumnType("bigint");
+                    b.HasKey("UserFk", "RoleFk");
 
-                b.Property<long>("ModuleId")
-                    .HasColumnType("bigint");
+                    b.HasIndex("RoleFk");
 
-                b.Property<bool>("ModuleIsActive")
-                    .HasColumnType("bit");
+                    b.ToTable("UserRoles");
+                });
 
-                b.Property<string>("ModuleName")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwCompanyUserRole", b =>
+                {
+                    b.Property<long>("ApplicationId")
+                        .HasColumnType("bigint");
 
-                b.Property<long>("PageId")
-                    .HasColumnType("bigint");
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<bool>("PageIsActive")
-                    .HasColumnType("bit");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("PageName")
-                    .IsRequired()
-                    .HasMaxLength(75)
-                    .IsUnicode(false)
-                    .HasColumnType("varchar(75)");
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<long>("RoleFk")
-                    .HasColumnType("bigint");
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
-                b.Property<string>("RoleName")
-                    .IsRequired()
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.Property<long>("RolePermissionsId")
-                    .HasColumnType("bigint");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
-                b.ToTable((string)null);
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(130)
+                        .HasColumnType("nvarchar(130)");
 
-                b.ToView("Vw_GetRolePermissions", (string)null);
-            });
+                    b.Property<bool>("UserRoleIsActive")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ActivityLog", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.ListItem", "ActionTypeFkNavigation")
-                    .WithMany("ActivityLogs")
-                    .HasForeignKey("ActionTypeFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_ActivityLogs_ListItems");
+                    b.ToTable((string)null);
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.User", "UserFkNavigation")
-                    .WithMany("ActivityLogs")
-                    .HasForeignKey("UserFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_ActivityLogs_Users");
+                    b.ToView("Vw_CompanyUserRoles", (string)null);
+                });
 
-                b.Navigation("ActionTypeFkNavigation");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetAllCompanyPermission", b =>
+                {
+                    b.Property<long>("ApplicationId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("UserFkNavigation");
-            });
+                    b.Property<bool>("ApplicationIsActive")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Company", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Country", "CountryFkNavigation")
-                    .WithMany("Companies")
-                    .HasForeignKey("CountryFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Companies_Countries");
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "DefaultCultureFkNavigation")
-                    .WithMany("Companies")
-                    .HasForeignKey("DefaultCultureFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Companies_Cultures");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("CountryFkNavigation");
+                    b.Property<long>("CompanyMembershipFk")
+                        .HasColumnType("bigint");
 
-                b.Navigation("DefaultCultureFkNavigation");
-            });
+                    b.Property<long>("CompanyMembershipPermissionsId")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembership", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
-                    .WithMany("CompanyMemberships")
-                    .HasForeignKey("ApplicationFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_CompanyMemberships_Applications");
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
-                    .WithMany("CompanyMemberships")
-                    .HasForeignKey("CompanyFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_CompanyMemberships_Companies");
+                    b.Property<long?>("ComponentFk")
+                        .HasColumnType("bigint");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.MembershipType", "MembershipTypeFkNavigation")
-                    .WithMany("CompanyMemberships")
-                    .HasForeignKey("MembershipTypeFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_CompanyMemberships_Memberships");
+                    b.Property<long>("ModuleId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("ApplicationFkNavigation");
+                    b.Property<bool>("ModuleIsActive")
+                        .HasColumnType("bit");
 
-                b.Navigation("CompanyFkNavigation");
+                    b.Property<string>("ModuleName")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-                b.Navigation("MembershipTypeFkNavigation");
-            });
+                    b.Property<long>("PageId")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembershipPermission", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.CompanyMembership", "CompanyMembershipFkNavigation")
-                    .WithMany("CompanyMembershipPermissions")
-                    .HasForeignKey("CompanyMembershipFk")
-                    .HasPrincipalKey("Id")
-                    .IsRequired()
-                    .HasConstraintName("FK_CompanyMembershipPermissions_CompanyMemberships");
+                    b.Property<bool>("PageIsActive")
+                        .HasColumnType("bit");
 
-                b.Navigation("CompanyMembershipFkNavigation");
-            });
+                    b.Property<string>("PageName")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Component", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
-                    .WithMany("Components")
-                    .HasForeignKey("ApplicationFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Components_Applications");
+                    b.ToTable((string)null);
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Page", "PageFkNavigation")
-                    .WithMany("Components")
-                    .HasForeignKey("PageFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_PageComponents_ModulePages");
+                    b.ToView("Vw_GetAllCompanyPermissions", (string)null);
+                });
 
-                b.Navigation("ApplicationFkNavigation");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetAuditRecord", b =>
+                {
+                    b.Property<long>("AuditEntityFk")
+                        .HasColumnType("bigint");
 
-                b.Navigation("PageFkNavigation");
-            });
+                    b.Property<string>("AuditInfoJson")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Culture", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Country", "CountryFkNavigation")
-                    .WithMany("Cultures")
-                    .HasForeignKey("CountryFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Cultures_Countries");
+                    b.Property<long>("AuditTypeFk")
+                        .HasColumnType("bigint");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Language", "LanguageFkNavigation")
-                    .WithMany("Cultures")
-                    .HasForeignKey("LanguageFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Cultures_Languages");
+                    b.Property<string>("Browser")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Navigation("CountryFkNavigation");
+                    b.Property<long>("CompanyFk")
+                        .HasColumnType("bigint");
 
-                b.Navigation("LanguageFkNavigation");
-            });
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CultureTranslation", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
-                    .WithMany("CultureTranslations")
-                    .HasForeignKey("ApplicationFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_CultureTranslations_Applications");
+                    b.Property<string>("CultureFk")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "CultureFkNavigation")
-                    .WithMany("CultureTranslations")
-                    .HasForeignKey("CultureFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_CultureTranslations_Cultures");
+                    b.Property<string>("DeviceType")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Navigation("ApplicationFkNavigation");
+                    b.Property<string>("Engine")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Navigation("CultureFkNavigation");
-            });
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ListItem", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.ListItemGroup", "ListItemGroupFkNavigation")
-                    .WithMany("ListItems")
-                    .HasForeignKey("ListItemGroupFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_ListItems_ListItemGroup");
+                    b.Property<string>("HostName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Navigation("ListItemGroupFkNavigation");
-            });
+                    b.Property<bool>("IsSystemEntity")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembersipPriceHistory", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.MembershipType", "MembershipTypeFkNavigation")
-                    .WithMany("MembersipPriceHistories")
-                    .HasForeignKey("MembershipTypeFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_MembersipPriceHistory_Memberships");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Navigation("MembershipTypeFkNavigation");
-            });
+                    b.Property<string>("NameTranslationKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Module", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
-                    .WithMany("Modules")
-                    .HasForeignKey("ApplicationFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Modules_Applications");
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-                b.Navigation("ApplicationFkNavigation");
-            });
+                    b.Property<string>("SchemaName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Notification", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
-                    .WithMany("Notifications")
-                    .HasForeignKey("CompanyFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Notifications_Companies");
+                    b.Property<long>("UserFk")
+                        .HasColumnType("bigint");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "CultureFkNavigation")
-                    .WithMany("Notifications")
-                    .HasForeignKey("CultureFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_NotificationTraces_Cultures");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.ListItem", "NotificationTypeFkNavigation")
-                    .WithMany("Notifications")
-                    .HasForeignKey("NotificationTypeFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Notifications_ListItems");
+                    b.ToTable((string)null);
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", "NotificationTemplate")
-                    .WithMany("Notifications")
-                    .HasForeignKey("NotificationTemplateGroupFk", "CultureFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Notifications_NotificationTemplates");
+                    b.ToView("Vw_GetAuditRecords", (string)null);
+                });
 
-                b.Navigation("CompanyFkNavigation");
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetCompanyMembership", b =>
+                {
+                    b.Property<Guid>("ApplicationClient")
+                        .HasColumnType("uniqueidentifier");
 
-                b.Navigation("CultureFkNavigation");
+                    b.Property<long>("ApplicationId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("NotificationTemplate");
+                    b.Property<bool>("ApplicationIsActive")
+                        .HasColumnType("bit");
 
-                b.Navigation("NotificationTypeFkNavigation");
-            });
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "CultureFkNavigation")
-                    .WithMany("NotificationTemplates")
-                    .HasForeignKey("CultureFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_NotificationTemplates_Cultures");
+                    b.Property<Guid>("ApplicationSecret")
+                        .HasColumnType("uniqueidentifier");
 
-                b.Navigation("CultureFkNavigation");
-            });
+                    b.Property<Guid>("CompanyClient")
+                        .HasColumnType("uniqueidentifier");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Page", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
-                    .WithMany("Pages")
-                    .HasForeignKey("ApplicationFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Pages_Applications");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Module", "ModuleFkNavigation")
-                    .WithMany("Pages")
-                    .HasForeignKey("ModuleFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_ModulePages_Modules");
+                    b.Property<bool>("CompanyIsActive")
+                        .HasColumnType("bit");
 
-                b.Navigation("ApplicationFkNavigation");
+                    b.Property<long>("CompanyMemberShipId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("ModuleFkNavigation");
-            });
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Role", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
-                    .WithMany("Roles")
-                    .HasForeignKey("CompanyFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Roles_Companies");
+                    b.Property<Guid>("CompanySecret")
+                        .HasColumnType("uniqueidentifier");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.User", "CompanyFk1")
-                    .WithMany("Roles")
-                    .HasForeignKey("CompanyFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Roles_Users");
+                    b.Property<string>("CountryFk")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
-                b.Navigation("CompanyFk1");
+                    b.Property<string>("DefaultCultureFk")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
-                b.Navigation("CompanyFkNavigation");
-            });
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.RolePermission", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Component", "ComponentFkNavigation")
-                    .WithMany("RolePermissions")
-                    .HasForeignKey("ComponentFk")
-                    .HasConstraintName("FK_UserRolePermissions_Components");
+                    b.Property<bool>("IsSystemCompany")
+                        .HasColumnType("bit");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Module", "ModuleFkNavigation")
-                    .WithMany("RolePermissions")
-                    .HasForeignKey("ModuleFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_UserRolePermissions_Modules");
+                    b.Property<long>("MembershipTypeFk")
+                        .HasColumnType("bigint");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Page", "PageFkNavigation")
-                    .WithMany("RolePermissions")
-                    .HasForeignKey("PageFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_UserRolePermissions_Pages");
+                    b.Property<bool>("MembershipTypeIsActive")
+                        .HasColumnType("bit");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Role", "RoleFkNavigation")
-                    .WithMany("RolePermissions")
-                    .HasForeignKey("RoleFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_UserRolePermissions_Roles");
+                    b.Property<string>("MembershipTypeName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Navigation("ComponentFkNavigation");
+                    b.Property<string>("Subdomain")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.Navigation("ModuleFkNavigation");
+                    b.ToTable((string)null);
 
-                b.Navigation("PageFkNavigation");
+                    b.ToView("Vw_GetCompanyMemberships", (string)null);
+                });
 
-                b.Navigation("RoleFkNavigation");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetDatabaseTable", b =>
+                {
+                    b.Property<string>("Expr1")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Sequence", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
-                    .WithMany("Sequences")
-                    .HasForeignKey("CompanyFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Sequences_Companies");
+                    b.Property<int>("IsActive")
+                        .HasColumnType("int");
 
-                b.Navigation("CompanyFkNavigation");
-            });
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("name");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.User", b =>
-            {
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
-                    .WithMany("Users")
-                    .HasForeignKey("CompanyFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Users_Companies");
+                    b.Property<long?>("NameRowNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("name_row_number");
 
-                b.HasOne("Vito.Transverse.Identity.Domain.Models.Role", "RoleFkNavigation")
-                    .WithMany("Users")
-                    .HasForeignKey("RoleFk")
-                    .IsRequired()
-                    .HasConstraintName("FK_Users_Roles");
+                    b.ToTable((string)null);
 
-                b.Navigation("CompanyFkNavigation");
+                    b.ToView("Vw_GetDatabaseTables", (string)null);
+                });
 
-                b.Navigation("RoleFkNavigation");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetGeneralTypeItemWithGroup", b =>
+                {
+                    b.Property<bool>("GeneralTypeGroup")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Application", b =>
-            {
-                b.Navigation("CompanyMemberships");
+                    b.Property<long>("GeneralTypeGroupId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("Components");
+                    b.Property<string>("GeneralTypeGroupName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Navigation("CultureTranslations");
+                    b.Property<long>("GeneralTypeItemId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("Modules");
+                    b.Property<int?>("GeneralTypeItemIndex")
+                        .HasColumnType("int");
 
-                b.Navigation("Pages");
-            });
+                    b.Property<bool>("GeneralTypeItemIsEnabled")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Company", b =>
-            {
-                b.Navigation("CompanyMemberships");
+                    b.Property<string>("GeneralTypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Navigation("Notifications");
+                    b.Property<bool>("IsSystemType")
+                        .HasColumnType("bit");
 
-                b.Navigation("Roles");
+                    b.ToTable((string)null);
 
-                b.Navigation("Sequences");
+                    b.ToView("Vw_GetGeneralTypeItemWithGroups", (string)null);
+                });
 
-                b.Navigation("Users");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.VwGetRolePermission", b =>
+                {
+                    b.Property<long>("ApplicationId")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembership", b =>
-            {
-                b.Navigation("CompanyMembershipPermissions");
-            });
+                    b.Property<bool>("ApplicationIsActive")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Component", b =>
-            {
-                b.Navigation("RolePermissions");
-            });
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Country", b =>
-            {
-                b.Navigation("Companies");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("Cultures");
-            });
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Culture", b =>
-            {
-                b.Navigation("Companies");
+                    b.Property<long?>("ComponentFk")
+                        .HasColumnType("bigint");
 
-                b.Navigation("CultureTranslations");
+                    b.Property<long>("ModuleId")
+                        .HasColumnType("bigint");
 
-                b.Navigation("NotificationTemplates");
+                    b.Property<bool>("ModuleIsActive")
+                        .HasColumnType("bit");
 
-                b.Navigation("Notifications");
-            });
+                    b.Property<string>("ModuleName")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Language", b =>
-            {
-                b.Navigation("Cultures");
-            });
+                    b.Property<long>("PageId")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ListItem", b =>
-            {
-                b.Navigation("ActivityLogs");
+                    b.Property<bool>("PageIsActive")
+                        .HasColumnType("bit");
 
-                b.Navigation("Notifications");
-            });
+                    b.Property<string>("PageName")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ListItemGroup", b =>
-            {
-                b.Navigation("ListItems");
-            });
+                    b.Property<long>("RoleFk")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembershipType", b =>
-            {
-                b.Navigation("CompanyMemberships");
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.Navigation("MembersipPriceHistories");
-            });
+                    b.Property<long>("RolePermissionsId")
+                        .HasColumnType("bigint");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Module", b =>
-            {
-                b.Navigation("Pages");
+                    b.ToTable((string)null);
 
-                b.Navigation("RolePermissions");
-            });
+                    b.ToView("Vw_GetRolePermissions", (string)null);
+                });
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
-            {
-                b.Navigation("Notifications");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.ActivityLog", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", "ActionTypeFkNavigation")
+                        .WithMany("ActivityLogs")
+                        .HasForeignKey("ActionTypeFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_ActivityLogs_ListItems");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Page", b =>
-            {
-                b.Navigation("Components");
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.User", "UserFkNavigation")
+                        .WithMany("ActivityLogs")
+                        .HasForeignKey("UserFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_ActivityLogs_Users");
 
-                b.Navigation("RolePermissions");
-            });
+                    b.Navigation("ActionTypeFkNavigation");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Role", b =>
-            {
-                b.Navigation("RolePermissions");
+                    b.Navigation("UserFkNavigation");
+                });
 
-                b.Navigation("Users");
-            });
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.AuditRecord", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.AuditEntity", "AuditEntityFkNavigation")
+                        .WithMany("AuditRecords")
+                        .HasForeignKey("AuditEntityFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_AuditRecords_AuditEntities");
 
-        modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.User", b =>
-            {
-                b.Navigation("ActivityLogs");
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", "AuditTypeFkNavigation")
+                        .WithMany("AuditRecords")
+                        .HasForeignKey("AuditTypeFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_AuditRecords_GeneralTypeItems");
 
-                b.Navigation("Roles");
-            });
+                    b.Navigation("AuditEntityFkNavigation");
+
+                    b.Navigation("AuditTypeFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Company", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Country", "CountryFkNavigation")
+                        .WithMany("Companies")
+                        .HasForeignKey("CountryFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Companies_Countries");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "DefaultCultureFkNavigation")
+                        .WithMany("Companies")
+                        .HasForeignKey("DefaultCultureFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Companies_Cultures");
+
+                    b.Navigation("CountryFkNavigation");
+
+                    b.Navigation("DefaultCultureFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyEntityAudit", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.AuditEntity", "AuditEntityFkNavigation")
+                        .WithMany("CompanyEntityAudits")
+                        .HasForeignKey("AuditEntityFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyEntityAudits_AuditEntities");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", "AuditTypeFkNavigation")
+                        .WithMany("CompanyEntityAudits")
+                        .HasForeignKey("AuditTypeFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyEntityAudits_GeneralTypeItems");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
+                        .WithMany("CompanyEntityAudits")
+                        .HasForeignKey("CompanyFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyEntityAudits_Companies");
+
+                    b.Navigation("AuditEntityFkNavigation");
+
+                    b.Navigation("AuditTypeFkNavigation");
+
+                    b.Navigation("CompanyFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembership", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("CompanyMemberships")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyMemberships_Applications");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
+                        .WithMany("CompanyMemberships")
+                        .HasForeignKey("CompanyFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyMemberships_Companies");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.MembershipType", "MembershipTypeFkNavigation")
+                        .WithMany("CompanyMemberships")
+                        .HasForeignKey("MembershipTypeFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyMemberships_Memberships");
+
+                    b.Navigation("ApplicationFkNavigation");
+
+                    b.Navigation("CompanyFkNavigation");
+
+                    b.Navigation("MembershipTypeFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembershipPermission", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.CompanyMembership", "CompanyMembershipFkNavigation")
+                        .WithMany("CompanyMembershipPermissions")
+                        .HasForeignKey("CompanyMembershipFk")
+                        .HasPrincipalKey("Id")
+                        .IsRequired()
+                        .HasConstraintName("FK_CompanyMembershipPermissions_CompanyMemberships");
+
+                    b.Navigation("CompanyMembershipFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Component", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("Components")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Components_Applications");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Page", "PageFkNavigation")
+                        .WithMany("Components")
+                        .HasForeignKey("PageFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_PageComponents_ModulePages");
+
+                    b.Navigation("ApplicationFkNavigation");
+
+                    b.Navigation("PageFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Culture", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Country", "CountryFkNavigation")
+                        .WithMany("Cultures")
+                        .HasForeignKey("CountryFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Cultures_Countries");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Language", "LanguageFkNavigation")
+                        .WithMany("Cultures")
+                        .HasForeignKey("LanguageFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Cultures_Languages");
+
+                    b.Navigation("CountryFkNavigation");
+
+                    b.Navigation("LanguageFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CultureTranslation", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("CultureTranslations")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CultureTranslations_Applications");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "CultureFkNavigation")
+                        .WithMany("CultureTranslations")
+                        .HasForeignKey("CultureFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_CultureTranslations_Cultures");
+
+                    b.Navigation("ApplicationFkNavigation");
+
+                    b.Navigation("CultureFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.GeneralTypeGroup", "ListItemGroupFkNavigation")
+                        .WithMany("GeneralTypeItems")
+                        .HasForeignKey("ListItemGroupFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_ListItems_ListItemGroup");
+
+                    b.Navigation("ListItemGroupFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembersipPriceHistory", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.MembershipType", "MembershipTypeFkNavigation")
+                        .WithMany("MembersipPriceHistories")
+                        .HasForeignKey("MembershipTypeFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_MembersipPriceHistory_Memberships");
+
+                    b.Navigation("MembershipTypeFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Module", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("Modules")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Modules_Applications");
+
+                    b.Navigation("ApplicationFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Notification", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
+                        .WithMany("Notifications")
+                        .HasForeignKey("CompanyFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Notifications_Companies");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "CultureFkNavigation")
+                        .WithMany("Notifications")
+                        .HasForeignKey("CultureFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_NotificationTraces_Cultures");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", "NotificationTypeFkNavigation")
+                        .WithMany("Notifications")
+                        .HasForeignKey("NotificationTypeFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Notifications_ListItems");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", "NotificationTemplate")
+                        .WithMany("Notifications")
+                        .HasForeignKey("NotificationTemplateGroupFk", "CultureFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Notifications_NotificationTemplates");
+
+                    b.Navigation("CompanyFkNavigation");
+
+                    b.Navigation("CultureFkNavigation");
+
+                    b.Navigation("NotificationTemplate");
+
+                    b.Navigation("NotificationTypeFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Culture", "CultureFkNavigation")
+                        .WithMany("NotificationTemplates")
+                        .HasForeignKey("CultureFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_NotificationTemplates_Cultures");
+
+                    b.Navigation("CultureFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Page", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("Pages")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Pages_Applications");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Module", "ModuleFkNavigation")
+                        .WithMany("Pages")
+                        .HasForeignKey("ModuleFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_ModulePages_Modules");
+
+                    b.Navigation("ApplicationFkNavigation");
+
+                    b.Navigation("ModuleFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Role", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("Roles")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Roles_Applications");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
+                        .WithMany("Roles")
+                        .HasForeignKey("CompanyFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Roles_Companies");
+
+                    b.Navigation("ApplicationFkNavigation");
+
+                    b.Navigation("CompanyFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.RolePermission", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Component", "ComponentFkNavigation")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("ComponentFk")
+                        .HasConstraintName("FK_UserRolePermissions_Components");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Module", "ModuleFkNavigation")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("ModuleFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_UserRolePermissions_Modules");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Page", "PageFkNavigation")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PageFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_UserRolePermissions_Pages");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Role", "RoleFkNavigation")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_RolePermissions_Roles");
+
+                    b.Navigation("ComponentFkNavigation");
+
+                    b.Navigation("ModuleFkNavigation");
+
+                    b.Navigation("PageFkNavigation");
+
+                    b.Navigation("RoleFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Sequence", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Application", "ApplicationFkNavigation")
+                        .WithMany("Sequences")
+                        .HasForeignKey("ApplicationFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Sequences_Applications");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
+                        .WithMany("Sequences")
+                        .HasForeignKey("CompanyFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Sequences_Companies");
+
+                    b.Navigation("ApplicationFkNavigation");
+
+                    b.Navigation("CompanyFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.User", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Company", "CompanyFkNavigation")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_Users_Companies");
+
+                    b.Navigation("CompanyFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.UserRole", b =>
+                {
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.Role", "RoleFkNavigation")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_UserRoles_Roles");
+
+                    b.HasOne("Vito.Transverse.Identity.Domain.Models.User", "UserFkNavigation")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserFk")
+                        .IsRequired()
+                        .HasConstraintName("FK_UserRoles_Users");
+
+                    b.Navigation("RoleFkNavigation");
+
+                    b.Navigation("UserFkNavigation");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Application", b =>
+                {
+                    b.Navigation("CompanyMemberships");
+
+                    b.Navigation("Components");
+
+                    b.Navigation("CultureTranslations");
+
+                    b.Navigation("Modules");
+
+                    b.Navigation("Pages");
+
+                    b.Navigation("Roles");
+
+                    b.Navigation("Sequences");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.AuditEntity", b =>
+                {
+                    b.Navigation("AuditRecords");
+
+                    b.Navigation("CompanyEntityAudits");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Company", b =>
+                {
+                    b.Navigation("CompanyEntityAudits");
+
+                    b.Navigation("CompanyMemberships");
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Roles");
+
+                    b.Navigation("Sequences");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.CompanyMembership", b =>
+                {
+                    b.Navigation("CompanyMembershipPermissions");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Component", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Country", b =>
+                {
+                    b.Navigation("Companies");
+
+                    b.Navigation("Cultures");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Culture", b =>
+                {
+                    b.Navigation("Companies");
+
+                    b.Navigation("CultureTranslations");
+
+                    b.Navigation("NotificationTemplates");
+
+                    b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.GeneralTypeGroup", b =>
+                {
+                    b.Navigation("GeneralTypeItems");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.GeneralTypeItem", b =>
+                {
+                    b.Navigation("ActivityLogs");
+
+                    b.Navigation("AuditRecords");
+
+                    b.Navigation("CompanyEntityAudits");
+
+                    b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Language", b =>
+                {
+                    b.Navigation("Cultures");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.MembershipType", b =>
+                {
+                    b.Navigation("CompanyMemberships");
+
+                    b.Navigation("MembersipPriceHistories");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Module", b =>
+                {
+                    b.Navigation("Pages");
+
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.NotificationTemplate", b =>
+                {
+                    b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Page", b =>
+                {
+                    b.Navigation("Components");
+
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Vito.Transverse.Identity.Domain.Models.User", b =>
+                {
+                    b.Navigation("ActivityLogs");
+
+                    b.Navigation("UserRoles");
+                });
 #pragma warning restore 612, 618
+        }
     }
 }

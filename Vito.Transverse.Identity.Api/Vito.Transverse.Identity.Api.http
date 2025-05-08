@@ -4,7 +4,7 @@
 
 ### Ping
 
-GET {{Vito.Transverse.Identity.Api_HostAddress}}/Home/v1/Ping
+GET {{Vito.Transverse.Identity.Api_HostAddress}}/api//Home/v1/Ping
 Accept: application/json
 
 ### Detect

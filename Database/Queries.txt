@@ -1,0 +1,13 @@
+select * from Vw_CompanyUserRoles
+
+select * from Vw_GetAllCompanyPermissions
+
+select * from Vw_GetAuditRecords
+
+select * from Vw_GetCompanyMemberships
+
+select * from Vw_GetDatabaseTables
+
+select * from Vw_GetGeneralTypeItemWithGroups
+
+select * from Vw_GetRolePermissions
