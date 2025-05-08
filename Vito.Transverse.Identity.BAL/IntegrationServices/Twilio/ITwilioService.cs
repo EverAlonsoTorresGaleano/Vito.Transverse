@@ -11,5 +11,5 @@ public interface ITwilioService
     /// <param name="message"></param>
     /// <param name="targetPhoneNumber"></param>
     /// <returns></returns>
-    public Task<string> SendSMS(string message, string targetPhoneNumber);
+    public Task<string> SendSMSAsync(string message, string targetPhoneNumber);
 }

@@ -14,7 +14,7 @@ namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 public class CultureRepository(IDataBaseContextFactory _dataBaseContextFactory, ILogger<LocalizationRepository> _logger) : ICultureRepository
 {
 
-    public async Task<List<CultureDTO>> GetActiveCultureList()
+    public async Task<List<CultureDTO>> GetActiveCultureListAsync()
     {
 
         List<CultureDTO> returnListDTO = default!;
@@ -27,7 +27,7 @@ public class CultureRepository(IDataBaseContextFactory _dataBaseContextFactory, 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetActiveCultureList));
+            _logger.LogError(ex, message: nameof(GetActiveCultureListAsync));
         }
         finally
         {

@@ -37,7 +37,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
 
 
 
-    public CultureTranslationDTO GetLocalizedMessage(string localizationMessageKey, long applicationId, params object?[] parameters)
+    public CultureTranslationDTO GetLocalizedMessageAsync(string localizationMessageKey, long applicationId, params object?[] parameters)
     {
         parameters = ValidateParamArray(parameters);
 

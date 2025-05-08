@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 using Vito.Framework.Common.Enums;
+using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
@@ -18,7 +19,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
 {
     EmailSettingsOptions _emailSettingsOptionsValues => _emailSettingsOptions.Value;
 
-    public async Task<NotificationTemplateDTO> GetNotificationTemplateById(string id)
+    public async Task<NotificationTemplateDTO> GetNotificationTemplateByIdAsync(string id)
     {
         DataBaseServiceContext context = default!;
         NotificationTemplateDTO notificationTemplateInfoDTO = default!;
@@ -30,7 +31,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetNotificationTemplateById));
+            _logger.LogError(ex, message: nameof(GetNotificationTemplateByIdAsync));
         }
         finally
         {
@@ -40,7 +41,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
     }
 
 
-    public async Task<bool> SendNotificationByTemplate(long companyId, NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null)
+    public async Task<bool> SendNotificationByTemplateAsync(long companyId, NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null)
     {
         bool notificationSent = false;
         bool savedSuccesfuly = false;
@@ -67,19 +68,19 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
                     Subject = templateInfo.SubjectTemplateText?.ReplaceParameterOnString(templateParameters),
                     Message = templateInfo.MessageTemplateText?.ReplaceParameterOnString(templateParameters),
                 };
-                notificationSent = await SendNotification(notificationInfoDTO, context);
+                notificationSent = await SendNotificationAsync(notificationInfoDTO, context);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(SendNotificationByTemplate));
+            _logger.LogError(ex, nameof(SendNotificationByTemplateAsync));
             throw;
         }
 
         return notificationSent;
     }
 
-    public async Task<bool> SendNotification(NotificationDTO notificationInfoDTO, DataBaseServiceContext? context = null)
+    public async Task<bool> SendNotificationAsync(NotificationDTO notificationInfoDTO, DataBaseServiceContext? context = null)
     {
 
         bool notificationSent = false;
@@ -109,7 +110,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(SendNotification));
+            _logger.LogError(ex, nameof(SendNotificationAsync));
             throw;
         }
 

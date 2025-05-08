@@ -63,7 +63,7 @@ public static class LocalizationEndpoint
         [FromQuery] params string[]? parameters)
     {
         var applicationId = request.GetCompanyIdFromHeader();
-        var returnObject = localizationService.GetLocalizedMessage(localizationMessageKey,applicationId, parameters ?? []);
+        var returnObject = localizationService.GetLocalizedMessageAsync(localizationMessageKey,applicationId, parameters ?? []);
         return TypedResults.Ok(returnObject);
     }
 

@@ -39,7 +39,7 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
     {
         var returnList = await GetActiveCultureListAsync(applicationId);
         var returnListDTO = returnList.ToListItemDTOList();
-        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessage(c.NameTranslationKey, applicationId).TranslationValue);
+        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageAsync(c.NameTranslationKey, applicationId).TranslationValue);
         return returnListDTO;
     }
 
@@ -49,9 +49,9 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
         List<CultureDTO> returnList = new();
         if (cacheList == null)
         {
-            cacheList = await _cultureRepository.GetActiveCultureList();
+            cacheList = await _cultureRepository.GetActiveCultureListAsync();
             //Localize
-            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessage(c.NameTranslationKey, applicationId).TranslationValue);
+            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageAsync(c.NameTranslationKey, applicationId).TranslationValue);
             _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString(), cacheList);
         }
         return cacheList;

@@ -9,7 +9,7 @@ public partial class AuditEntity
 
     public string SchemaName { get; set; } = null!;
 
-    public string EnityName { get; set; } = null!;
+    public string EntityName { get; set; } = null!;
 
     public bool IsActive { get; set; }
 

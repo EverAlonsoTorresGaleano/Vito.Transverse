@@ -19,7 +19,7 @@ public interface ISecurityRepository
     /// <param name="applicationSecret"></param>
     /// <param name="deviceInformation"></param>
     /// <returns></returns>
-    Task<UserDTO?> TokenValidateAuthorizationCode(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? scope, DeviceInformationDTO deviceInformation);
+    Task<UserDTO?> TokenValidateAuthorizationCodeAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? scope, DeviceInformationDTO deviceInformation);
 
     /// <summary>
     /// Get Token with GrantType=ClientCredentials
@@ -33,7 +33,7 @@ public interface ISecurityRepository
     /// <param name="password"></param>
     /// <param name="deviceInformation"></param>
     /// <returns></returns>
-    Task<UserDTO?> TokenValidateClientCredentials(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation);
+    Task<UserDTO?> TokenValidateClientCredentialsAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation);
 
     /// <summary>
     /// Add new Record for Access Action Logging
@@ -44,7 +44,7 @@ public interface ISecurityRepository
     /// <param name="deviceInformation"></param>
     /// <param name="actionStatus"></param>
     /// <returns></returns>
-    Task<bool> AddNewActivityLog(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+    Task<bool> AddNewActivityLogAsync(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
     /// <summary>
     /// Update user logging information
@@ -53,31 +53,31 @@ public interface ISecurityRepository
     /// <param name="deviceInformation"></param>
     /// <param name="actionStatus"></param>
     /// <returns></returns>
-    Task<bool> UpdateLastUserAccess(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+    Task<bool> UpdateLastUserAccessAsync(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
 
-    Task<ApplicationDTO> CreateNewApplication(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId, DataBaseServiceContext? context = null);
+    Task<ApplicationDTO> CreateNewApplicationAsync(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId, DataBaseServiceContext? context = null);
 
     /// <summary>
     /// Create a new company and asociate a new person and new api-user to enable acces
     /// </summary>
     /// <param name="companyInfo"></param>
     /// <returns></returns>
-    Task<CompanyDTO> CreateNewCompany(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, long userId, DataBaseServiceContext? context = null);
+    Task<CompanyDTO> CreateNewCompanyAsync(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, long userId, DataBaseServiceContext? context = null);
 
     //Task<PersonDTO> CreateNewPerson(PersonDTO personInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<UserDTO> CreateNewUser(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<UserDTO> CreateNewUserAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> ChangeUserPassword(UserDTO userInfo, DeviceInformationDTO deviceInformation);
+    Task<bool> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation);
 
-    Task<bool> UpdateCompanyApplications(CompanyDTO companyInfo, List<ApplicationDTO> applicationInfoList, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<bool> UpdateCompanyApplicationsAsync(CompanyDTO companyInfo, List<ApplicationDTO> applicationInfoList, long userId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> SendActivationEmail(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<bool> SendActivationEmailAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> ActivateAccount(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!);
+    Task<bool> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!);
 
-    Task<List<ApplicationDTO>> GetAllApplicationList();
+    Task<List<ApplicationDTO>> GetAllApplicationListAsync();
 
-    Task<List<CompanyDTO>> GetAllCompanyList();
+    Task<List<CompanyDTO>> GetAllCompanyListAsync();
 }

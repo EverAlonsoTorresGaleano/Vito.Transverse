@@ -18,6 +18,7 @@ using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.SocialNetworks;
+using Vito.Transverse.Identity.DAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.Domain.Constants;
 using Vito.Transverse.Identity.Domain.Options;
 
@@ -81,6 +82,8 @@ try
     builder.Services.AddTransient<ProblemDetailsFactory, CustomProblemDetailsFactory>();
     builder.Services.AddTransient<ICultureRepository, CultureRepository>();
     builder.Services.AddTransient<ILocalizationRepository, LocalizationRepository>();
+    builder.Services.AddTransient<IAuditRepository, AuditRepository>();
+
     builder.Services.AddTransient<ISecurityRepository, SecurityRepository>();
 
     //Register REpositories

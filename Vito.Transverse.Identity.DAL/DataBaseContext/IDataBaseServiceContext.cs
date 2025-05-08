@@ -64,9 +64,13 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<VwGetAllCompanyPermission> VwGetAllCompanyPermissions { get; set; }
 
+    DbSet<VwGetAuditRecord> VwGetAuditRecords { get; set; }
+
     DbSet<VwGetCompanyMembership> VwGetCompanyMemberships { get; set; }
 
-    DbSet<VwGetListItemWithGroup> VwGetListItemWithGroups { get; set; }
+    DbSet<VwGetDatabaseTable> VwGetDatabaseTables { get; set; }
+
+    DbSet<VwGetGeneralTypeItemWithGroup> VwGetGeneralTypeItemWithGroups { get; set; }
 
     DbSet<VwGetRolePermission> VwGetRolePermissions { get; set; }
 

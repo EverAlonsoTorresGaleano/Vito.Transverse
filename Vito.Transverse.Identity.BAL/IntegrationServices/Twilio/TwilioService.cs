@@ -12,8 +12,8 @@ public class TwilioService(IOptions<TwilioSettingsOptions> twilioIOption) : ITwi
 {
     private TwilioSettingsOptions twilioOptions => twilioIOption.Value;
 
-    /// <see cref="ITwilioService.SendSMS(string, string)"/>
-    public Task<string> SendSMS(string message, string targetPhoneNumber)
+    /// <see cref="ITwilioService.SendSMSAsync(string, string)"/>
+    public Task<string> SendSMSAsync(string message, string targetPhoneNumber)
     {
         var accountSid = twilioOptions.AccountSid;
         var authToken = twilioOptions.AuthToken;

@@ -33,7 +33,7 @@ public static class TwilioEndPoint
 
     public static async Task<Ok<PingResponseDTO>> SendSMSAync(HttpRequest request, [FromServices] ICultureService cultureService, [FromServices] ITwilioService twilioService, [FromQuery] string message)
     {
-        var returnMessage = await twilioService.SendSMS(message + "Les comparto el nuevo emprendimiento visítenos en https://www.instagram.com/chicas.store.med fron DotNet", "+573146625684");
+        var returnMessage = await twilioService.SendSMSAsync(message + "Les comparto el nuevo emprendimiento visítenos en https://www.instagram.com/chicas.store.med fron DotNet", "+573146625684");
         PingResponseDTO returnObject = new()
         {
             PingMessage = returnMessage,

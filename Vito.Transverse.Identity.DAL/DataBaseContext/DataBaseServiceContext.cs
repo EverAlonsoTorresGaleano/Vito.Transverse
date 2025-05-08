@@ -63,9 +63,13 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
     public virtual DbSet<VwGetAllCompanyPermission> VwGetAllCompanyPermissions { get; set; }
 
+    public virtual DbSet<VwGetAuditRecord> VwGetAuditRecords { get; set; }
+
     public virtual DbSet<VwGetCompanyMembership> VwGetCompanyMemberships { get; set; }
 
-    public virtual DbSet<VwGetListItemWithGroup> VwGetListItemWithGroups { get; set; }
+    public virtual DbSet<VwGetDatabaseTable> VwGetDatabaseTables { get; set; }
+
+    public virtual DbSet<VwGetGeneralTypeItemWithGroup> VwGetGeneralTypeItemWithGroups { get; set; }
 
     public virtual DbSet<VwGetRolePermission> VwGetRolePermissions { get; set; }
 
@@ -115,7 +119,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         modelBuilder.Entity<AuditEntity>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.EnityName)
+            entity.Property(e => e.EntityName)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.SchemaName)
@@ -125,7 +129,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
         modelBuilder.Entity<AuditRecord>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.AuditEntityIndex)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -133,6 +136,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.Browser)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.CultureFk)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -611,6 +615,43 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<VwGetAuditRecord>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vw_GetAuditRecords");
+
+            entity.Property(e => e.AuditInfoJson).HasColumnType("text");
+            entity.Property(e => e.Browser)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.CultureFk)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DeviceType)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Engine)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.EntityName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.HostName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
+            entity.Property(e => e.Platform)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SchemaName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UserName).HasMaxLength(30);
+        });
+
         modelBuilder.Entity<VwGetCompanyMembership>(entity =>
         {
             entity
@@ -626,15 +667,27 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.Subdomain).HasMaxLength(150);
         });
 
-        modelBuilder.Entity<VwGetListItemWithGroup>(entity =>
+        modelBuilder.Entity<VwGetDatabaseTable>(entity =>
         {
             entity
                 .HasNoKey()
-                .ToView("Vw_GetListItemWithGroups");
+                .ToView("Vw_GetDatabaseTables");
 
-            entity.Property(e => e.ListItemGroupIsSystemType).HasColumnName("ListITemGroupIsSystemType");
-            entity.Property(e => e.ListItemGroupName).HasMaxLength(100);
-            entity.Property(e => e.ListItemName).HasMaxLength(100);
+            entity.Property(e => e.Expr1).HasMaxLength(128);
+            entity.Property(e => e.Name)
+                .HasMaxLength(128)
+                .HasColumnName("name");
+            entity.Property(e => e.NameRowNumber).HasColumnName("name_row_number");
+        });
+
+        modelBuilder.Entity<VwGetGeneralTypeItemWithGroup>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vw_GetGeneralTypeItemWithGroups");
+
+            entity.Property(e => e.GeneralTypeGroupName).HasMaxLength(100);
+            entity.Property(e => e.GeneralTypeName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<VwGetRolePermission>(entity =>

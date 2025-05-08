@@ -5,7 +5,7 @@ namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 
 public interface ICultureRepository
 {
-    Task<List<CultureDTO>> GetActiveCultureList();
+    Task<List<CultureDTO>> GetActiveCultureListAsync();
 
     DateTimeOffset UtcNow();
     string MomentToString(DateTimeOffset currentDateTime);

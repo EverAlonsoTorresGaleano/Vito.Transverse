@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="EFCore.BulkExtensions" />
+    <PackageReference Include="Vito.Framework.Common" />
   </ItemGroup>
 
   <ItemGroup>

@@ -36,10 +36,10 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             switch (grantType)
             {
                 case TokenGrantTypeEnum.AuthorizationCode:
-                    userInfoDTO = await _securityRepository.TokenValidateAuthorizationCode(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.scope, deviceInformation);
+                    userInfoDTO = await _securityRepository.TokenValidateAuthorizationCodeAsync(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.scope, deviceInformation);
                     break;
                 case TokenGrantTypeEnum.ClientCredentials:
-                    userInfoDTO = await _securityRepository.TokenValidateClientCredentials(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id, requestBody.user_secret, requestBody.scope, deviceInformation);
+                    userInfoDTO = await _securityRepository.TokenValidateClientCredentialsAsync(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id, requestBody.user_secret, requestBody.scope, deviceInformation);
                     break;
                 case TokenGrantTypeEnum.RefreshToken:
                     break;
