@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System.Net;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Options;
@@ -17,7 +16,6 @@ public class InfrastructureFilter : IEndpointFilter
     {
         ApilHelper.InitializeApiHelper(cultureService, securityService, cultureOptions);
         _userDeviceDetectionService = userDeviceDetectionService;
-
     }
 
     public ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
@@ -41,14 +39,14 @@ public class InfrastructureFilter : IEndpointFilter
 
         DeviceInformationDTO deviceInfo = new()
         {
-            Name = Dns.GetHostName(),
-            IpAddress = string.Join(",", Dns.GetHostEntry(Dns.GetHostName()).AddressList.Where(x => !x.IsIPv6LinkLocal).ToList().Select(x => x)),
+            Name = request.Host.ToString(),
+            IpAddress = context.Connection.RemoteIpAddress?.ToString(),
             DeviceType = _userDeviceDetectionService.Device.Type.ToString(),
             Browser = $"{_userDeviceDetectionService.Browser.Name.ToString()} v{_userDeviceDetectionService.Browser.Version.ToString()}",
             Platform = $"{_userDeviceDetectionService.Platform.Name.ToString()} v{_userDeviceDetectionService.Platform.Version.ToString()} [{_userDeviceDetectionService.Platform.Processor.ToString()}]",
             Engine = $"{_userDeviceDetectionService.Engine.Name.ToString()}",
             CultureId = request.GetCurrectCulture().Name,
-            Scope= request.HttpContext.Request.Path,
+            Scope = request.HttpContext.Request.Path,
         };
 
         var additionalInfo = deviceInfo.AddtionalInfo;
