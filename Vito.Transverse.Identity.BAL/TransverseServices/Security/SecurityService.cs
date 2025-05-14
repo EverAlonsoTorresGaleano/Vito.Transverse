@@ -18,19 +18,18 @@ namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
 
 
 /// <see cref="ISecurityService"/>
-public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, ILocalizationService _localizationService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions, ILogger<ISecurityService> _logger) : ISecurityService
+public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions, ILogger<ISecurityService> _logger) : ISecurityService
 {
     private readonly IdentityServiceServerSettingsOptions _jwtIdentityServerOptionsValues = _jwtIdentityServerOptions.Value;
 
     #region Public Methods
-    /// <see cref="ISecurityService.CreateAuthenticationTokenAsync(TokenRequestDTO, DeviceInformationDTO)"/>
     public async Task<TokenResponseDTO> CreateAuthenticationTokenAsync(TokenRequestDTO requestBody, DeviceInformationDTO deviceInformation)
     {
         try
         {
 
 
-            UserDTO? userInfoDTO = default;
+            UserDTOToken? userInfoDTO = default;
             var grantType = Enum.Parse<TokenGrantTypeEnum>(requestBody.grant_type, true);
             TokenResponseDTO tokenResponse = default!;
             switch (grantType)
@@ -58,7 +57,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             }
             else
             {
-                tokenResponse = await CreateEmptyJwtTokenAsync(requestBody, userInfoDTO);
+                tokenResponse = await CreateEmptyJwtTokenAsync(requestBody, userInfoDTO!);
             }
             return tokenResponse;
         }
@@ -68,7 +67,316 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             throw;
         }
     }
+
+
+    public async Task<ApplicationDTO> CreateNewApplicationAsync(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.CreateNewApplicationAsync(applicationInfoDTO, deviceInformation, companyId, userId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(CreateNewApplicationAsync));
+            throw;
+        }
+    }
+
+    public async Task<CompanyDTO> CreateNewCompanyAsync(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, long userId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.CreateNewCompanyAsync(companyInfo, deviceInformation, userId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(CreateNewCompanyAsync));
+            throw;
+        }
+    }
+
+    public async Task<UserDTO?> CreateNewUserAsync(UserDTO userInfo, long companyId, DeviceInformationDTO deviceInformation)
+    {
+        UserDTO? returnValue = null;
+        try
+        {
+            returnValue = await _securityRepository.CreateNewUserAsync(userInfo, deviceInformation);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(CreateNewUserAsync));
+            throw;
+        }
+        return returnValue;
+    }
+
+    public async Task<bool?> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation)
+    {
+        bool? returnValue=null;
+        try
+        {
+            returnValue = await _securityRepository.ChangeUserPasswordAsync(userInfo, deviceInformation);
+            
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(ChangeUserPasswordAsync));
+            throw;
+        }
+        return returnValue;
+    }
+
+    public async Task<bool?> UpdateCompanyApplicationsAsync(CompanyDTO companyInfo, List<ApplicationDTO> applicationInfoList, long userId, DeviceInformationDTO deviceInformation)
+    {
+        bool? returnValue = null;
+        try
+        {
+             returnValue = await _securityRepository.UpdateCompanyApplicationsAsync(companyInfo, applicationInfoList, userId, deviceInformation);
+         
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(UpdateCompanyApplicationsAsync));
+            throw;
+        }
+        return returnValue;
+    }
+
+    public async Task<bool?> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation)
+    {
+        bool? returnValue = null;
+        try
+        {
+             returnValue = await _securityRepository.SendActivationEmailAsync(companyId, userId, deviceInformation);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(SendActivationEmailAsync));
+            throw;
+        }
+        return returnValue;
+
+    }
+
+    public async Task<bool?> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation)
+    {
+        bool? returnValue = null;
+        try
+        {
+            returnValue = await _securityRepository.ActivateAccountAsync(companyId, userId, activationId, deviceInformation);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(ActivateAccountAsync));
+            throw;
+        }
+        return returnValue;
+    }
+
+    public async Task<List<ApplicationDTO>> GetAllApplicationListAsync()
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetAllApplicationListAsync();
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<ApplicationDTO>> GetApplicationListAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetApplicationListAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+            throw;
+        }
+    }
+
+
+    public async Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetCompanyMemberhipAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+            throw;
+        }
+    }
+
+
+    public async Task<List<CompanyDTO>> GetAllCompanyListAsync()
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetAllCompanyListAsync();
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAllCompanyListAsync));
+            throw;
+        }
+
+    }
+
+    public async Task<List<RoleDTO>> GetRoleListAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetRoleListAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetRoleListAsync));
+            throw;
+        }
+    }
+
+    public async Task<RoleDTO> GetRolePermissionListAsync(long roleId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetRolePermissionListAsync(roleId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetRolePermissionListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<ModuleDTO>> GetModuleListAsync(long? applicationId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetModuleListAsync(applicationId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetModuleListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<PageDTO>> GetPageListAsync(long moduleId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetPageListAsync(moduleId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetPageListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<ComponentDTO>> GetComponentListAsync(long pageId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetComponentListAsync(pageId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetComponentListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<UserRoleDTO>> GetUserRolesListAsync(long userId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetUserRolesListAsync(userId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetUserRolesListAsync));
+            throw;
+        }
+    }
+
+    public async Task<UserDTO> GetUserPermissionListAsync(long userId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetUserPermissionListAsync(userId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetCompanyEntityAuditsListAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<AuditRecordDTO>> GetAuditRecordsListAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetAuditRecordsListAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAuditRecordsListAsync));
+            throw;
+        }
+    }
+
+
+    public async Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetActivityLogListAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetActivityLogListAsync));
+            throw;
+        }
+    }
     #endregion
+
 
     #region Private Methods
     /// <summary>
@@ -77,7 +385,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     /// <param name="requestBody"></param>
     /// <param name="userInfoDTO"></param>
     /// <returns></returns>
-    private Task<TokenResponseDTO> CreateEmptyJwtTokenAsync(TokenRequestDTO requestBody, UserDTO userInfoDTO)
+    private Task<TokenResponseDTO> CreateEmptyJwtTokenAsync(TokenRequestDTO requestBody, UserDTOToken userInfoDTO)
     {
         TokenResponseDTO response = new()
         {
@@ -100,7 +408,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     /// </summary>
     /// <param name="userInfo"></param>
     /// <returns></returns>
-    private List<Claim> CreateAuthenticationClaims(UserDTO userInfo)
+    private List<Claim> CreateAuthenticationClaims(UserDTOToken userInfo)
     {
         List<Claim> claimList =
         [
@@ -109,7 +417,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             new (ClaimTypes.Sid, userInfo.Id.ToString()), //USer Id
             new (ClaimTypes.Name, $"{userInfo.Name} {userInfo.LastName}"),
             new (ClaimTypes.Email, userInfo.Email!),
-            new (ClaimTypes.Role, userInfo.RoleName ),
+            new (ClaimTypes.Role, userInfo.RoleName! ),
         ];
         return claimList;
     }
@@ -121,7 +429,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     /// <param name="claimList"></param>
     /// <param name="userInfoDTO"></param>
     /// <returns></returns>
-    private Task<TokenResponseDTO> CreateJwtTokenAsync(TokenRequestDTO requestBody, List<Claim> claimList, UserDTO userInfoDTO)
+    private Task<TokenResponseDTO> CreateJwtTokenAsync(TokenRequestDTO requestBody, List<Claim> claimList, UserDTOToken userInfoDTO)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = CreateJwtAuthenticationTokenDescriptor(claimList);
@@ -143,7 +451,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             company_id = requestBody.company_id,
             user_id = requestBody.user_id,
             user_avatar = [],
-             
+
         };
         return Task.FromResult(response);
     }
@@ -171,7 +479,9 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         return tokenDescriptor;
     }
 
-#endregion
+
+
+    #endregion
 
     //decodejw token on react/NodeJS
     //    import jwt_decode from 'jwt-decode';

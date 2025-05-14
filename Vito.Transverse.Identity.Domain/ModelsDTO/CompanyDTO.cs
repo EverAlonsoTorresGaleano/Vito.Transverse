@@ -4,7 +4,7 @@ public record CompanyDTO
 (
     long Id,
 
-    string Name,
+    string NameTranslationKey,
 
     Guid CompanyClient,
 
@@ -30,5 +30,7 @@ public record CompanyDTO
 
     long? LastUpdateByUserFk,
 
-    bool IsActive
+    bool IsActive,
+    string CountryNameTranslationKey,
+    string LanguageNameTranslationKey
 );

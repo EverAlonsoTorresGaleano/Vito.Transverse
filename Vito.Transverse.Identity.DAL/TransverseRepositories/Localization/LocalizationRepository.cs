@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Data;
 using System.Globalization;
 using System.Text;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
+using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
-using Vito.Transverse.Identity.Domain.Extensions;
-using System;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 
@@ -17,40 +17,24 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 {
     CultureSettingsOptions _cultureSettingsOptionsValues => _cultureSettingsOptions.Value;
 
-
-
-    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByCultureIdAsync(string cultureId, long applicationId)
+    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByApplicationAsync(long applicationId)
     {
         List<CultureTranslation> returnList;
         DataBaseServiceContext context = default!;
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
-            returnList = await context.CultureTranslations.Where(x => x.CultureFk.Equals(cultureId) && x.ApplicationFk == applicationId).ToListAsync();
-#if DEBUG
-            var fileName = string.Format(_cultureSettingsOptionsValues.LocalizationJsonFilePath!, cultureId);
-            var localizationFile = new StringBuilder("{");
-            returnList.ForEach(localizationRow =>
-            {
-                localizationFile.Append($"{(char)34}{localizationRow.TranslationKey}{(char)34}:{(char)34}{localizationRow.TranslationValue}{(char)34},");
-            });
-            localizationFile.Remove(localizationFile.Length - 1, 1);
-            localizationFile.Append("}");
-
-            File.Delete(fileName);
-            File.WriteAllText(fileName, localizationFile.ToString());
-#endif
+            returnList = await context.CultureTranslations
+                .Include(x => x.ApplicationFkNavigation)
+                .Include(x => x.CultureFkNavigation.LanguageFkNavigation)
+                .Where(x => x.ApplicationFk == applicationId).ToListAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAllLocalizedMessagesByCultureIdAsync));
+            _logger.LogError(ex, nameof(GetAllLocalizedMessagesByApplicationAsync));
             throw;
-            returnList = [];// MockDataPopulateEntity.CreateMockDataLocalization().Where(x => x.CultureFk.Equals(cultureId)).ToList();
         }
-        finally
-        {
-            context.Dispose();
-        }
+
         var returnListDTO = returnList.ToCultureTranslationDTOList();
         return returnListDTO;
     }
@@ -70,11 +54,9 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(AddAsync));
+            throw;
         }
-        finally
-        {
-            context.Dispose();
-        }
+
         return saveSuccessfuly;
     }
 
@@ -97,11 +79,9 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(UpdateAsync));
+            throw;
         }
-        finally
-        {
-            context.Dispose();
-        }
+
         return saveSuccessfuly;
     }
 
@@ -123,11 +103,9 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(DeleteAsync));
+            throw;
         }
-        finally
-        {
-            context.Dispose();
-        }
+
         return saveSuccessfuly;
     }
 }

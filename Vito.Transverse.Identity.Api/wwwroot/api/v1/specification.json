@@ -99,9 +99,1025 @@
         }
       }
     },
-    "/api/Localization/v1/AllLocalizedMessagesAsync": {
+    "/api/Oauth2/v1/CreateNewCompanyAsync": {
+      "post": {
+        "operationId": "PostApiOauth2V1CreateNewCompanyAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 3
+          }
+        ],
+        "requestBody": {
+          "x-name": "companyDTO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/CreateNewApplicationAsync": {
+      "post": {
+        "operationId": "PostApiOauth2V1CreateNewApplicationAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 3
+          }
+        ],
+        "requestBody": {
+          "x-name": "applicationDTO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/CreateNewUserAsync": {
+      "post": {
+        "operationId": "PostApiOauth2V1CreateNewUserAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "userInfo",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/ChangeUserPasswordAsync": {
+      "put": {
+        "operationId": "PutApiOauth2V1ChangeUserPasswordAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "userInfo",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/UpdateCompanyApplicationsAsync": {
+      "put": {
+        "operationId": "PutApiOauth2V1UpdateCompanyApplicationsAsync",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "companyApplicationInfo",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyApplicationDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/SendActivationEmailAsync": {
       "get": {
-        "operationId": "GetApiLocalizationV1AllLocalizedMessagesAsync",
+        "operationId": "GetApiOauth2V1SendActivationEmailAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/ActivateAccountAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1ActivateAccountAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "activationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetAllApplicationListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetAllApplicationListAsync",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetApplicationListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetApplicationListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetCompanyMemberhipAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetCompanyMemberhipAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyMembershipsDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetAllCompanyListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetAllCompanyListAsync",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetRoleListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetRoleListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetRolePermissionListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetRolePermissionListAsync",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetModuleListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetModuleListAsync",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModuleDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetPageListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetPageListAsync",
+        "parameters": [
+          {
+            "name": "moduleId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PageDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetComponentListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetComponentListAsync",
+        "parameters": [
+          {
+            "name": "pageId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ComponentDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetUserRolesListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetUserRolesListAsync",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserRoleDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetUserPermissionListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetUserPermissionListAsync",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetCompanyEntityAuditsListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetCompanyEntityAuditsListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyEntityAuditDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetAuditRecordsListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetAuditRecordsListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditRecordDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/GetActivityLogListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1GetActivityLogListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityLogDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Localization/v1/GetAllLocalizedMessagesByApplicationAsync": {
+      "get": {
+        "operationId": "GetApiLocalizationV1GetAllLocalizedMessagesByApplicationAsync",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -132,10 +1148,74 @@
         }
       }
     },
-    "/api/Localization/v1/LocalizedMessage": {
+    "/api/Localization/v1/GetAllLocalizedMessagesAsync": {
       "get": {
-        "operationId": "GetApiLocalizationV1LocalizedMessage",
+        "operationId": "GetApiLocalizationV1GetAllLocalizedMessagesAsync",
         "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "cultureId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CultureTranslationDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Localization/v1/GetLocalizedMessagesByKeyAsync": {
+      "get": {
+        "operationId": "GetApiLocalizationV1GetLocalizedMessagesByKeyAsync",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
           {
             "name": "localizationMessageKey",
             "in": "query",
@@ -143,7 +1223,70 @@
             "schema": {
               "type": "string"
             },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CultureTranslationDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Localization/v1/GetLocalizedMessageByKeyAndParamsSync": {
+      "get": {
+        "operationId": "GetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
             "x-position": 1
+          },
+          {
+            "name": "cultureId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "localizationMessageKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 3
           },
           {
             "name": "parameters",
@@ -157,7 +1300,7 @@
                 "type": "string"
               }
             },
-            "x-position": 2
+            "x-position": 4
           }
         ],
         "responses": {
@@ -476,6 +1619,714 @@
           }
         }
       },
+      "CompanyDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nameTranslationKey": {
+            "type": "string"
+          },
+          "companyClient": {
+            "type": "string",
+            "format": "guid"
+          },
+          "companySecret": {
+            "type": "string",
+            "format": "guid"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "subdomain": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "defaultCultureFk": {
+            "type": "string"
+          },
+          "countryFk": {
+            "type": "string"
+          },
+          "isSystemCompany": {
+            "type": "boolean"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdateByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "countryNameTranslationKey": {
+            "type": "string"
+          },
+          "languageNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ApplicationDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nameTranslationKey": {
+            "type": "string"
+          },
+          "applicationClient": {
+            "type": "string",
+            "format": "guid"
+          },
+          "applicationSecret": {
+            "type": "string",
+            "format": "guid"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdateByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "companyId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "UserDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "emailValidated": {
+            "type": "boolean"
+          },
+          "requirePasswordChange": {
+            "type": "boolean"
+          },
+          "retryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastAccess": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "activationEmailSent": {
+            "type": "boolean"
+          },
+          "activationId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "isLocked": {
+            "type": "boolean"
+          },
+          "lockedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleDTO"
+            }
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "RoleDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nameTranslationKey": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdateByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModuleDTO"
+            }
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ModuleDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicationFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nameTranslationKey": {
+            "type": "string"
+          },
+          "positionIndex": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "isApi": {
+            "type": "boolean"
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PageDTO"
+            }
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "PageDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicationFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "moduleFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "positionIndex": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "nameTranslationKey": {
+            "type": "string"
+          },
+          "pageUrl": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "isApi": {
+            "type": "boolean"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentDTO"
+            }
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ComponentDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicationFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nameTranslationKey": {
+            "type": "string"
+          },
+          "objectId": {
+            "type": "string"
+          },
+          "objectName": {
+            "type": "string"
+          },
+          "objectPropertyName": {
+            "type": "string"
+          },
+          "defaultPropertyValue": {
+            "type": "string"
+          },
+          "positionIndex": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "CompanyApplicationDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyInfo": {
+            "$ref": "#/components/schemas/CompanyDTO"
+          },
+          "applicationInfoList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationDTO"
+            }
+          }
+        }
+      },
+      "CompanyMembershipsDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "membershipTypeFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdateByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "membershipTypeNameTranslationKey": {
+            "type": "string"
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "UserRoleDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "roleFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          },
+          "roleNameTranslationKey": {
+            "type": "string"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "CompanyEntityAuditDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auditEntityFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auditTypeFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "auditTypeNameTranslationKey": {
+            "type": "string"
+          },
+          "auditEntitySchemaName": {
+            "type": "string"
+          },
+          "auditEntityName": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditRecordDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auditEntityFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auditTypeFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "auditEntityIndex": {
+            "type": "string"
+          },
+          "hostName": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "browser": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "engine": {
+            "type": "string"
+          },
+          "cultureFk": {
+            "type": "string"
+          },
+          "auditInfoJson": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "auditEntitySchemaName": {
+            "type": "string"
+          },
+          "auditEntityName": {
+            "type": "string"
+          },
+          "auditTypeNameTranslationKey": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ActivityLogDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "traceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "eventDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deviceName": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "actionTypeFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "browser": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "engine": {
+            "type": "string"
+          },
+          "cultureId": {
+            "type": "string"
+          },
+          "requestEndpoint": {
+            "type": "string"
+          },
+          "addtionalInformation": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "actionTypeNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
       "CultureTranslationDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -491,6 +2342,12 @@
             "type": "string"
           },
           "translationValue": {
+            "type": "string"
+          },
+          "applicationNameTranslationKey": {
+            "type": "string"
+          },
+          "languageNameTranslationKey": {
             "type": "string"
           }
         }

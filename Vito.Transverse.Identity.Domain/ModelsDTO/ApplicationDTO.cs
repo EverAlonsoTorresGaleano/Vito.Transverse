@@ -1,10 +1,10 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public  class ApplicationDTO
+public class ApplicationDTO
 {
     public long Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string NameTranslationKey { get; set; } = null!;
 
     public Guid ApplicationClient { get; set; }
 
@@ -22,4 +22,10 @@ public  class ApplicationDTO
 
     public bool IsActive { get; set; }
 
+
+
+
+
+    public long CompanyId { get;  set; }
+    public string CompanyNameTranslationKey { get; set; } = null!;
 }

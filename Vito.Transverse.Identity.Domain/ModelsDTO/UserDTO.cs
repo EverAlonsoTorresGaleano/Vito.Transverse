@@ -48,14 +48,7 @@ public class UserDTO
 
     public bool IsActive { get; set; }
 
+    public List<RoleDTO> Roles { get; set; } = new();
 
-
-    public long? ApplicationId { get; set; }
-    public string? ApplicationName { get; set; }
-
-    public Guid? CompanySecret { get; set; }
-    public string? CompanyName { get; set; }
-    public long? RoleId { get; set; }
-    public string? RoleName { get; set; }
-    public OAuthActionTypeEnum? ActionStatus { get; set; }
+    public string CompanyNameTranslationKey { get; set; } = null!;
 }

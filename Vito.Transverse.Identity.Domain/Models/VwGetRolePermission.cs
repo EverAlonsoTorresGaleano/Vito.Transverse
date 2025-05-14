@@ -31,6 +31,8 @@ public partial class VwGetRolePermission
 
     public string PageName { get; set; } = null!;
 
+    public string PageUrl { get; set; } = null!;
+
     public bool PageIsActive { get; set; }
 
     public long? ComponentFk { get; set; }

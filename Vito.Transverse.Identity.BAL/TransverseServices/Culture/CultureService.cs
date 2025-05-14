@@ -37,21 +37,23 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
 
     public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync(long applicationId)
     {
+        string cultureId = _cultureRepository.GetCurrentCultureId();
         var returnList = await GetActiveCultureListAsync(applicationId);
         var returnListDTO = returnList.ToListItemDTOList();
-        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageAsync(c.NameTranslationKey, applicationId).TranslationValue);
+        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
         return returnListDTO;
     }
 
     public async Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId)
     {
+        string cultureId = _cultureRepository.GetCurrentCultureId();
         var cacheList = _cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
         List<CultureDTO> returnList = new();
         if (cacheList == null)
         {
             cacheList = await _cultureRepository.GetActiveCultureListAsync();
             //Localize
-            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageAsync(c.NameTranslationKey, applicationId).TranslationValue);
+            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
             _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString(), cacheList);
         }
         return cacheList;

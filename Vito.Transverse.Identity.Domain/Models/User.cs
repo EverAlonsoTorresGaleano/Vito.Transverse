@@ -49,6 +49,8 @@ public partial class User
 
     public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
 
+    public virtual ICollection<AuditRecord> AuditRecords { get; set; } = new List<AuditRecord>();
+
     public virtual Company CompanyFkNavigation { get; set; } = null!;
 
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

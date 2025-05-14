@@ -105,7 +105,7 @@ try
 
     //Identity Service Server 
     var identityServiceServerOptions = configuration.GetSection(IdentityServiceServerSettingsOptions.SectionName).Get<IdentityServiceServerSettingsOptions>();
-    builder.AddAuthenticationForJwtServer(identityServiceServerOptions);
+    builder.AddAuthenticationForJwtServer(identityServiceServerOptions!);
     builder.Services.AddAuthorization();
 
     //Identity Service Client (Api server)

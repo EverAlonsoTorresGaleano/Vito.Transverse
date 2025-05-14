@@ -7,7 +7,7 @@ public partial class Application
 {
     public long Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string NameTranslationKey { get; set; } = null!;
 
     public Guid ApplicationClient { get; set; }
 

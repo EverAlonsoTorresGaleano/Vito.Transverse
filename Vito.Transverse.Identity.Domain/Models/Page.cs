@@ -11,9 +11,11 @@ public partial class Page
 
     public long Id { get; set; }
 
+    public long? PositionIndex { get; set; }
+
     public string NameTranslationKey { get; set; } = null!;
 
-    public long? PositionIndex { get; set; }
+    public string PageUrl { get; set; } = null!;
 
     public bool IsActive { get; set; }
 

@@ -4,7 +4,11 @@ namespace Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 
 public interface ILocalizationService
 {
-    Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync(long applicationId);
+    Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByApplicationAsync(long applicationId);
 
-    CultureTranslationDTO GetLocalizedMessageAsync(string localizationMessageKey, long applicationId, params object?[] parameters);
+    Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync(long applicationId, string cultureId);
+
+    Task<List<CultureTranslationDTO>> GetLocalizedMessagesByKeyAsync(long applicationId, string localizationMessageKey);
+
+    CultureTranslationDTO GetLocalizedMessageByKeyAndParamsSync(long applicationId, string cultureId, string localizationMessageKey, params object?[] parameters);
 }

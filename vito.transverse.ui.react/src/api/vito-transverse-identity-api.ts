@@ -18,9 +18,55 @@ export interface IClient {
 
     postApiOauth2V1Token(requestBody: TokenRequestDTO): Promise<TokenResponseDTO>;
 
-    getApiLocalizationV1AllLocalizedMessages(): Promise<CultureTranslationDTO[]>;
+    postApiOauth2V1CreateNewCompany(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO>;
 
-    getApiLocalizationV1LocalizedMessage(localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
+    postApiOauth2V1CreateNewApplication(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO>;
+
+    postApiOauth2V1CreateNewUser(companyId: number, userInfo: UserDTO): Promise<UserDTO>;
+
+    putApiOauth2V1ChangeUserPassword(companyId: number, userInfo: UserDTO): Promise<boolean>;
+
+    putApiOauth2V1UpdateCompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean>;
+
+    getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean>;
+
+    getApiOauth2V1ActivateAccount(companyId: number, userId: number, activationId: string): Promise<boolean>;
+
+    getApiOauth2V1GetAllApplicationList(): Promise<ApplicationDTO[]>;
+
+    getApiOauth2V1GetApplicationList(companyId: number | null | undefined): Promise<ApplicationDTO[]>;
+
+    getApiOauth2V1GetCompanyMemberhip(companyId: number | null | undefined): Promise<CompanyMembershipsDTO[]>;
+
+    getApiOauth2V1GetAllCompanyList(): Promise<CompanyDTO[]>;
+
+    getApiOauth2V1GetRoleList(companyId: number | null | undefined): Promise<RoleDTO[]>;
+
+    getApiOauth2V1GetRolePermissionList(roleId: number): Promise<RoleDTO>;
+
+    getApiOauth2V1GetModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]>;
+
+    getApiOauth2V1GetPageList(moduleId: number): Promise<PageDTO[]>;
+
+    getApiOauth2V1GetComponentList(pageId: number): Promise<ComponentDTO[]>;
+
+    getApiOauth2V1GetUserRolesList(userId: number): Promise<UserRoleDTO[]>;
+
+    getApiOauth2V1GetUserPermissionList(userId: number): Promise<UserDTO>;
+
+    getApiOauth2V1GetCompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]>;
+
+    getApiOauth2V1GetAuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]>;
+
+    getApiOauth2V1GetActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]>;
+
+    getApiLocalizationV1GetAllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
+
+    getApiLocalizationV1GetAllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]>;
+
+    getApiLocalizationV1GetLocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]>;
+
+    getApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
 
     getApiCultureV1UtcNow(): Promise<Date>;
 
@@ -187,8 +233,279 @@ export class Client implements IClient {
         return Promise.resolve<TokenResponseDTO>(null as any);
     }
 
-    getApiLocalizationV1AllLocalizedMessages(): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/AllLocalizedMessagesAsync";
+    postApiOauth2V1CreateNewCompany(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CreateNewCompanyAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(companyDTO);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPostApiOauth2V1CreateNewCompany(_response);
+        });
+    }
+
+    protected processPostApiOauth2V1CreateNewCompany(response: Response): Promise<CompanyDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyDTO;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CompanyDTO>(null as any);
+    }
+
+    postApiOauth2V1CreateNewApplication(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CreateNewApplicationAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(applicationDTO);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPostApiOauth2V1CreateNewApplication(_response);
+        });
+    }
+
+    protected processPostApiOauth2V1CreateNewApplication(response: Response): Promise<ApplicationDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ApplicationDTO;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ApplicationDTO>(null as any);
+    }
+
+    postApiOauth2V1CreateNewUser(companyId: number, userInfo: UserDTO): Promise<UserDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CreateNewUserAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(userInfo);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPostApiOauth2V1CreateNewUser(_response);
+        });
+    }
+
+    protected processPostApiOauth2V1CreateNewUser(response: Response): Promise<UserDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDTO;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserDTO>(null as any);
+    }
+
+    putApiOauth2V1ChangeUserPassword(companyId: number, userInfo: UserDTO): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ChangeUserPasswordAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(userInfo);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPutApiOauth2V1ChangeUserPassword(_response);
+        });
+    }
+
+    protected processPutApiOauth2V1ChangeUserPassword(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
+
+    putApiOauth2V1UpdateCompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/UpdateCompanyApplicationsAsync?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(companyApplicationInfo);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPutApiOauth2V1UpdateCompanyApplications(_response);
+        });
+    }
+
+    protected processPutApiOauth2V1UpdateCompanyApplications(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
+
+    getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/SendActivationEmailAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -199,11 +516,749 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1AllLocalizedMessages(_response);
+            return this.processGetApiOauth2V1SendActivationEmail(_response);
         });
     }
 
-    protected processGetApiLocalizationV1AllLocalizedMessages(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiOauth2V1SendActivationEmail(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
+
+    getApiOauth2V1ActivateAccount(companyId: number, userId: number, activationId: string): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ActivateAccountAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        if (activationId === undefined || activationId === null)
+            throw new Error("The parameter 'activationId' must be defined and cannot be null.");
+        else
+            url_ += "activationId=" + encodeURIComponent("" + activationId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1ActivateAccount(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1ActivateAccount(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
+
+    getApiOauth2V1GetAllApplicationList(): Promise<ApplicationDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetAllApplicationListAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetAllApplicationList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetAllApplicationList(response: Response): Promise<ApplicationDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ApplicationDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ApplicationDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetApplicationList(companyId: number | null | undefined): Promise<ApplicationDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetApplicationListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetApplicationList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetApplicationList(response: Response): Promise<ApplicationDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ApplicationDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ApplicationDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetCompanyMemberhip(companyId: number | null | undefined): Promise<CompanyMembershipsDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetCompanyMemberhipAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetCompanyMemberhip(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetCompanyMemberhip(response: Response): Promise<CompanyMembershipsDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyMembershipsDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CompanyMembershipsDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetAllCompanyList(): Promise<CompanyDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetAllCompanyListAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetAllCompanyList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetAllCompanyList(response: Response): Promise<CompanyDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CompanyDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetRoleList(companyId: number | null | undefined): Promise<RoleDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetRoleListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetRoleList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetRoleList(response: Response): Promise<RoleDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as RoleDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RoleDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetRolePermissionList(roleId: number): Promise<RoleDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetRolePermissionListAsync?";
+        if (roleId === undefined || roleId === null)
+            throw new Error("The parameter 'roleId' must be defined and cannot be null.");
+        else
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetRolePermissionList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetRolePermissionList(response: Response): Promise<RoleDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as RoleDTO;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RoleDTO>(null as any);
+    }
+
+    getApiOauth2V1GetModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetModuleListAsync?";
+        if (applicationId !== undefined && applicationId !== null)
+            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetModuleList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetModuleList(response: Response): Promise<ModuleDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ModuleDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ModuleDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetPageList(moduleId: number): Promise<PageDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetPageListAsync?";
+        if (moduleId === undefined || moduleId === null)
+            throw new Error("The parameter 'moduleId' must be defined and cannot be null.");
+        else
+            url_ += "moduleId=" + encodeURIComponent("" + moduleId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetPageList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetPageList(response: Response): Promise<PageDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PageDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PageDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetComponentList(pageId: number): Promise<ComponentDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetComponentListAsync?";
+        if (pageId === undefined || pageId === null)
+            throw new Error("The parameter 'pageId' must be defined and cannot be null.");
+        else
+            url_ += "pageId=" + encodeURIComponent("" + pageId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetComponentList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetComponentList(response: Response): Promise<ComponentDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ComponentDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ComponentDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetUserRolesList(userId: number): Promise<UserRoleDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetUserRolesListAsync?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetUserRolesList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetUserRolesList(response: Response): Promise<UserRoleDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserRoleDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserRoleDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetUserPermissionList(userId: number): Promise<UserDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetUserPermissionListAsync?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetUserPermissionList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetUserPermissionList(response: Response): Promise<UserDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDTO;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserDTO>(null as any);
+    }
+
+    getApiOauth2V1GetCompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetCompanyEntityAuditsListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetCompanyEntityAuditsList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetCompanyEntityAuditsList(response: Response): Promise<CompanyEntityAuditDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyEntityAuditDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CompanyEntityAuditDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetAuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetAuditRecordsListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetAuditRecordsList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetAuditRecordsList(response: Response): Promise<AuditRecordDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuditRecordDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AuditRecordDTO[]>(null as any);
+    }
+
+    getApiOauth2V1GetActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/GetActivityLogListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1GetActivityLogList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1GetActivityLogList(response: Response): Promise<ActivityLogDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ActivityLogDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ActivityLogDTO[]>(null as any);
+    }
+
+    getApiLocalizationV1GetAllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/GetAllLocalizedMessagesByApplicationAsync?";
+        if (applicationId === undefined || applicationId === null)
+            throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
+        else
+            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiLocalizationV1GetAllLocalizedMessagesByApplication(_response);
+        });
+    }
+
+    protected processGetApiLocalizationV1GetAllLocalizedMessagesByApplication(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -230,8 +1285,114 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1LocalizedMessage(localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
-        let url_ = this.baseUrl + "/api/Localization/v1/LocalizedMessage?";
+    getApiLocalizationV1GetAllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/GetAllLocalizedMessagesAsync?";
+        if (applicationId === undefined || applicationId === null)
+            throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
+        else
+            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
+        if (cultureId !== undefined && cultureId !== null)
+            url_ += "cultureId=" + encodeURIComponent("" + cultureId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiLocalizationV1GetAllLocalizedMessages(_response);
+        });
+    }
+
+    protected processGetApiLocalizationV1GetAllLocalizedMessages(response: Response): Promise<CultureTranslationDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CultureTranslationDTO[]>(null as any);
+    }
+
+    getApiLocalizationV1GetLocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/GetLocalizedMessagesByKeyAsync?";
+        if (applicationId === undefined || applicationId === null)
+            throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
+        else
+            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
+        if (localizationMessageKey === undefined || localizationMessageKey === null)
+            throw new Error("The parameter 'localizationMessageKey' must be defined and cannot be null.");
+        else
+            url_ += "localizationMessageKey=" + encodeURIComponent("" + localizationMessageKey) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiLocalizationV1GetLocalizedMessagesByKey(_response);
+        });
+    }
+
+    protected processGetApiLocalizationV1GetLocalizedMessagesByKey(response: Response): Promise<CultureTranslationDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CultureTranslationDTO[]>(null as any);
+    }
+
+    getApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
+        let url_ = this.baseUrl + "/api/Localization/v1/GetLocalizedMessageByKeyAndParamsSync?";
+        if (applicationId === undefined || applicationId === null)
+            throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
+        else
+            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
+        if (cultureId !== undefined && cultureId !== null)
+            url_ += "cultureId=" + encodeURIComponent("" + cultureId) + "&";
         if (localizationMessageKey === undefined || localizationMessageKey === null)
             throw new Error("The parameter 'localizationMessageKey' must be defined and cannot be null.");
         else
@@ -248,11 +1409,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1LocalizedMessage(_response);
+            return this.processGetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(_response);
         });
     }
 
-    protected processGetApiLocalizationV1LocalizedMessage(response: Response): Promise<CultureTranslationDTO> {
+    protected processGetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(response: Response): Promise<CultureTranslationDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -496,11 +1657,222 @@ export interface TokenRequestDTO {
     refresh_token?: string | undefined;
 }
 
+export interface CompanyDTO {
+    id?: number;
+    nameTranslationKey?: string;
+    companyClient?: string;
+    companySecret?: string;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    subdomain?: string;
+    email?: string;
+    defaultCultureFk?: string;
+    countryFk?: string;
+    isSystemCompany?: boolean;
+    avatar?: string | undefined;
+    lastUpdateDate?: Date | undefined;
+    lastUpdateByUserFk?: number | undefined;
+    isActive?: boolean;
+    countryNameTranslationKey?: string;
+    languageNameTranslationKey?: string;
+}
+
+export interface ApplicationDTO {
+    id?: number;
+    nameTranslationKey?: string;
+    applicationClient?: string;
+    applicationSecret?: string;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    avatar?: string | undefined;
+    lastUpdateDate?: Date | undefined;
+    lastUpdateByUserFk?: number | undefined;
+    isActive?: boolean;
+    companyId?: number;
+    companyNameTranslationKey?: string;
+}
+
+export interface UserDTO {
+    companyFk?: number;
+    userName?: string;
+    id?: number;
+    name?: string;
+    lastName?: string;
+    email?: string;
+    password?: string;
+    emailValidated?: boolean;
+    requirePasswordChange?: boolean;
+    retryCount?: number;
+    lastAccess?: Date | undefined;
+    activationEmailSent?: boolean;
+    activationId?: string;
+    isLocked?: boolean;
+    lockedDate?: Date | undefined;
+    creationDate?: Date | undefined;
+    createdByUserFk?: number | undefined;
+    lastUpdateDate?: Date | undefined;
+    updatedByUserFk?: number | undefined;
+    avatar?: string | undefined;
+    isActive?: boolean;
+    roles?: RoleDTO[];
+    companyNameTranslationKey?: string;
+}
+
+export interface RoleDTO {
+    companyFk?: number;
+    applicationFk?: number;
+    id?: number;
+    nameTranslationKey?: string;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    isActive?: boolean;
+    lastUpdateDate?: Date | undefined;
+    lastUpdateByUserFk?: number | undefined;
+    modules?: ModuleDTO[];
+    companyNameTranslationKey?: string;
+    applicationNameTranslationKey?: string;
+}
+
+export interface ModuleDTO {
+    applicationFk?: number;
+    id?: number;
+    nameTranslationKey?: string;
+    positionIndex?: number | undefined;
+    isActive?: boolean;
+    isVisible?: boolean;
+    isApi?: boolean;
+    pages?: PageDTO[];
+    applicationNameTranslationKey?: string;
+}
+
+export interface PageDTO {
+    applicationFk?: number;
+    moduleFk?: number;
+    id?: number;
+    positionIndex?: number | undefined;
+    nameTranslationKey?: string;
+    pageUrl?: string;
+    isActive?: boolean;
+    isVisible?: boolean;
+    isApi?: boolean;
+    components?: ComponentDTO[];
+    applicationNameTranslationKey?: string;
+}
+
+export interface ComponentDTO {
+    applicationFk?: number;
+    pageFk?: number;
+    id?: number;
+    nameTranslationKey?: string;
+    objectId?: string;
+    objectName?: string;
+    objectPropertyName?: string;
+    defaultPropertyValue?: string;
+    positionIndex?: number | undefined;
+    applicationNameTranslationKey?: string;
+}
+
+export interface CompanyApplicationDTO {
+    companyInfo?: CompanyDTO;
+    applicationInfoList?: ApplicationDTO[];
+}
+
+export interface CompanyMembershipsDTO {
+    id?: number;
+    companyFk?: number;
+    applicationFk?: number;
+    membershipTypeFk?: number;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    startDate?: Date;
+    endDate?: Date | undefined;
+    lastUpdateDate?: Date | undefined;
+    lastUpdateByUserFk?: number | undefined;
+    isActive?: boolean;
+    membershipTypeNameTranslationKey?: string;
+    applicationNameTranslationKey?: string;
+    companyNameTranslationKey?: string;
+}
+
+export interface UserRoleDTO {
+    companyFk?: number;
+    applicationFk?: number;
+    userFk?: number;
+    roleFk?: number;
+    createdDate?: Date;
+    createdByUserFk?: number;
+    isActive?: boolean;
+    applicationNameTranslationKey?: string;
+    roleNameTranslationKey?: string;
+    companyNameTranslationKey?: string;
+}
+
+export interface CompanyEntityAuditDTO {
+    companyFk?: number;
+    id?: number;
+    auditEntityFk?: number;
+    auditTypeFk?: number;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    lastUpdateDate?: Date | undefined;
+    updatedByUserFk?: number | undefined;
+    isActive?: boolean;
+    companyNameTranslationKey?: string;
+    auditTypeNameTranslationKey?: string;
+    auditEntitySchemaName?: string;
+    auditEntityName?: string;
+}
+
+export interface AuditRecordDTO {
+    companyFk?: number;
+    id?: number;
+    userFk?: number;
+    auditEntityFk?: number;
+    auditTypeFk?: number;
+    auditEntityIndex?: string;
+    hostName?: string;
+    ipAddress?: string;
+    deviceType?: string | undefined;
+    browser?: string;
+    platform?: string;
+    engine?: string;
+    cultureFk?: string;
+    auditInfoJson?: string;
+    creationDate?: Date;
+    auditEntitySchemaName?: string;
+    auditEntityName?: string;
+    auditTypeNameTranslationKey?: string;
+    userName?: string;
+    companyNameTranslationKey?: string;
+}
+
+export interface ActivityLogDTO {
+    companyFk?: number;
+    userFk?: number;
+    traceId?: number;
+    eventDate?: Date;
+    deviceName?: string;
+    deviceType?: string;
+    actionTypeFk?: number;
+    ipAddress?: string;
+    browser?: string;
+    platform?: string;
+    engine?: string;
+    cultureId?: string;
+    requestEndpoint?: string;
+    addtionalInformation?: string;
+    userName?: string;
+    companyNameTranslationKey?: string;
+    actionTypeNameTranslationKey?: string;
+}
+
 export interface CultureTranslationDTO {
     applicationFk?: number;
     cultureFk?: string;
     translationKey?: string;
     translationValue?: string;
+    applicationNameTranslationKey?: string;
+    languageNameTranslationKey?: string;
 }
 
 export interface CultureDTO {

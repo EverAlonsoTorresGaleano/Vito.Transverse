@@ -15,7 +15,7 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
 {
     public async Task<AuditRecord> DeleteRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null)
     {
-        AuditRecord? auditInfo = null;
+        AuditRecord? auditInfo = null!;
         context = _dataBaseContextFactory.GetDbContext();
 
         var entityName = entity.GetType().Name;
@@ -25,10 +25,10 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
         {
             var auditInformation = GetChangesInformationSummary(entity);
             auditInfo = CreateNewAuditRecord(companyId, userId, auditType, companyauditEntityInfo, entityIndex, auditInformation, devideInformation);
-            context.AuditRecords.Add(auditInfo);
+            context.AuditRecords.Add(auditInfo!);
             context.SaveChanges();
         }
-        return auditInfo;
+        return auditInfo!;
     }
 
     public async Task<AuditRecord> NewRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null)
@@ -43,10 +43,10 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
         {
             var auditInformation = GetChangesInformationSummary(entity);
             auditInfo = CreateNewAuditRecord(companyId, userId, auditType, companyauditEntityInfo, entityIndex, auditInformation, devideInformation);
-            context.AuditRecords.Add(auditInfo);
+            context.AuditRecords.Add(auditInfo!);
             context.SaveChanges();
         }
-        return auditInfo;
+        return auditInfo!;
     }
 
     public async Task<AuditRecord> UpdateRowAuditAsync(long companyId, long userId, object oldEntity, object newEntity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null)
@@ -60,16 +60,16 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
         {
             var auditInformation = GetChangesInformationSummary(oldEntity, newEntity);
             auditInfo = CreateNewAuditRecord(companyId, userId, auditType, companyauditEntityInfo, entityIndex, auditInformation, devideInformation);
-            context.AuditRecords.Add(auditInfo);
+            context.AuditRecords.Add(auditInfo!);
             context.SaveChanges();
         }
-        return auditInfo;
+        return auditInfo!;
     }
 
-    public async Task<List<AuditRecord>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>> filters, DataBaseServiceContext context = null)
+    public async Task<List<AuditRecord>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>>? filters, DataBaseServiceContext? context = null)
     {
         context = _dataBaseContextFactory.GetDbContext();
-        var returnList = await context.AuditRecords.Where(filters).ToListAsync();
+        var returnList = await context.AuditRecords.Where(filters!).ToListAsync();
         return returnList;
     }
 
@@ -81,7 +81,7 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
                         && x.AuditTypeFk == (long)auditType
                         && x.AuditEntityFkNavigation.EntityName.Equals($"{entityName}{"s"}")
                         && x.AuditEntityFkNavigation.IsActive == true);
-        return auditEntity;
+        return auditEntity!;
     }
 
     private AuditRecord? CreateNewAuditRecord(long companyId, long userId, EntityAuditTypeEnum auditType, CompanyEntityAudit companyEntity, string entityIndex, string auditInformation, DeviceInformationDTO devideInformation)
@@ -97,12 +97,12 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
             AuditEntityIndex = entityIndex,
             CultureFk = cultureId,
             AuditInfoJson = auditInformation,
-            Browser = devideInformation.Browser,
+            Browser = devideInformation.Browser!,
             DeviceType = devideInformation.DeviceType,
-            Engine = devideInformation.Engine,
-            HostName = devideInformation.Name,
-            IpAddress = devideInformation.IpAddress,
-            Platform = devideInformation.Platform,
+            Engine = devideInformation.Engine!,
+            HostName = devideInformation.Name!,
+            IpAddress = devideInformation.IpAddress!,
+            Platform = devideInformation.Platform!,
         };
         return newRecord;
     }
@@ -116,13 +116,13 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
         object? newPropertyValue = null;
         propertyList.ForEach(itemProperty =>
         {
-            if (!itemProperty.Name.Contains("Navigation") && itemProperty.PropertyType.FullName.Contains("System"))
+            if (!itemProperty.Name.Contains("Navigation") && itemProperty.PropertyType.FullName!.Contains("System"))
             {
                 oldPropertyValue = GetPropertyValue(oldEntity, itemProperty.Name);
                 if (newEntity is not null)
                 {
                     newPropertyValue = newEntity is null ? null : GetPropertyValue(newEntity, itemProperty.Name);
-                    if (!string.IsNullOrEmpty(oldPropertyValue?.ToString()) && !oldPropertyValue.ToString().Equals(newPropertyValue.ToString(), StringComparison.Ordinal))
+                    if (!string.IsNullOrEmpty(oldPropertyValue?.ToString()) && !oldPropertyValue!.ToString()!.Equals(newPropertyValue!.ToString(), StringComparison.Ordinal))
                     {
                         changeList.Add(new(itemProperty.Name, $"Before= {oldPropertyValue} | After={newPropertyValue}"));
                     }
@@ -131,7 +131,7 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
                 {
                     if (!string.IsNullOrEmpty(oldPropertyValue?.ToString()))
                     {
-                        changeList.Add(new(itemProperty.Name, oldPropertyValue.ToString()));
+                        changeList.Add(new(itemProperty.Name, oldPropertyValue!.ToString()!));
                     }
                 }
             }
@@ -143,7 +143,7 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
 
     public object GetPropertyValue(object Entidad, string PropertyName)
     {
-        PropertyInfo infoColumna = Entidad.GetType().GetProperty(PropertyName);
-        return infoColumna.GetValue(Entidad, null);
+        PropertyInfo infoColumna = Entidad.GetType().GetProperty(PropertyName)!;
+        return infoColumna.GetValue(Entidad, null)!;
     }
 }

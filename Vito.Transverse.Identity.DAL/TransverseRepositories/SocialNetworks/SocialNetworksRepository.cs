@@ -44,7 +44,6 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
     public async Task<bool> SendNotificationByTemplateAsync(long companyId, NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null)
     {
         bool notificationSent = false;
-        bool savedSuccesfuly = false;
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
@@ -65,8 +64,8 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
                     CultureFk = cultureId,
                     IsHtml = templateInfo.IsHtml,
                     IsSent = false,
-                    Subject = templateInfo.SubjectTemplateText?.ReplaceParameterOnString(templateParameters),
-                    Message = templateInfo.MessageTemplateText?.ReplaceParameterOnString(templateParameters),
+                    Subject = templateInfo.SubjectTemplateText?.ReplaceParameterOnString(templateParameters)!,
+                    Message = templateInfo.MessageTemplateText?.ReplaceParameterOnString(templateParameters)!,
                 };
                 notificationSent = await SendNotificationAsync(notificationInfoDTO, context);
             }

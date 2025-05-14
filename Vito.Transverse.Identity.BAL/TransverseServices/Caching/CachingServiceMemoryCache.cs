@@ -77,7 +77,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         {
             returnEntity = default;
         }
-        return returnEntity;
+        return returnEntity!;
     }
 
     public bool RefreshCacheDataByKey(string itemCacheKey)

@@ -38,4 +38,8 @@ public partial class AuditRecord
     public virtual AuditEntity AuditEntityFkNavigation { get; set; } = null!;
 
     public virtual GeneralTypeItem AuditTypeFkNavigation { get; set; } = null!;
+
+    public virtual Company CompanyFkNavigation { get; set; } = null!;
+
+    public virtual User UserFkNavigation { get; set; } = null!;
 }

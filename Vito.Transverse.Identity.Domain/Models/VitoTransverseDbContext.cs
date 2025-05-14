@@ -124,7 +124,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.ApplicationSecret).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
-            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(75)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<AuditEntity>(entity =>
@@ -176,6 +178,16 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasForeignKey(d => d.AuditTypeFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_AuditRecords_GeneralTypeItems");
+
+            entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.AuditRecords)
+                .HasForeignKey(d => d.CompanyFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AuditRecords_Companies");
+
+            entity.HasOne(d => d.UserFkNavigation).WithMany(p => p.AuditRecords)
+                .HasForeignKey(d => d.UserFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AuditRecords_Users");
         });
 
         modelBuilder.Entity<Company>(entity =>
@@ -188,7 +200,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.DefaultCultureFk).HasMaxLength(5);
             entity.Property(e => e.Email).HasMaxLength(150);
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
-            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(75)
+                .IsUnicode(false);
             entity.Property(e => e.Subdomain).HasMaxLength(150);
 
             entity.HasOne(d => d.CountryFkNavigation).WithMany(p => p.Companies)
@@ -205,6 +219,8 @@ public partial class VitoTransverseDbContext : DbContext
         modelBuilder.Entity<CompanyEntityAudit>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.AuditEntityFkNavigation).WithMany(p => p.CompanyEntityAudits)
                 .HasForeignKey(d => d.AuditEntityFk)
@@ -474,6 +490,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.NameTranslationKey)
                 .HasMaxLength(75)
                 .IsUnicode(false);
+            entity.Property(e => e.PageUrl)
+                .HasMaxLength(75)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Pages)
                 .HasForeignKey(d => d.ApplicationFk)
@@ -493,7 +512,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(150);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(150)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Roles)
                 .HasForeignKey(d => d.ApplicationFk)
@@ -561,17 +582,18 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
-                .IsFixedLength();
+                .IsUnicode(false);
             entity.Property(e => e.IsLocked).HasDefaultValue(true);
             entity.Property(e => e.LastAccess).HasColumnType("datetime");
             entity.Property(e => e.LastName)
                 .HasMaxLength(100)
-                .IsFixedLength();
+                .IsUnicode(false);
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
             entity.Property(e => e.LockedDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
-                .IsFixedLength();
+                .IsUnicode(false);
+            entity.Property(e => e.Password).IsUnicode(false);
             entity.Property(e => e.RequirePasswordChange).HasDefaultValue(true);
             entity.Property(e => e.UserName).HasMaxLength(30);
 
@@ -622,6 +644,9 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.PageName)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.PageUrl)
                 .HasMaxLength(75)
                 .IsUnicode(false);
         });
@@ -713,6 +738,9 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.PageName)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.PageUrl)
                 .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.RoleName).HasMaxLength(150);

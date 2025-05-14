@@ -13,6 +13,16 @@ public partial class CompanyEntityAudit
 
     public long AuditTypeFk { get; set; }
 
+    public DateTime CreationDate { get; set; }
+
+    public long CreatedByUserFk { get; set; }
+
+    public DateTime? LastUpdateDate { get; set; }
+
+    public long? UpdatedByUserFk { get; set; }
+
+    public bool IsActive { get; set; }
+
     public virtual AuditEntity AuditEntityFkNavigation { get; set; } = null!;
 
     public virtual GeneralTypeItem AuditTypeFkNavigation { get; set; } = null!;

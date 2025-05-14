@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Reflection.Metadata;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
@@ -14,6 +11,7 @@ using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.SocialNetworks;
 using Vito.Transverse.Identity.DAL.TransverseServices.Audit;
+using Vito.Transverse.Identity.Domain.Enums;
 using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
@@ -21,17 +19,15 @@ using Vito.Transverse.Identity.Domain.Options;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 
-/// <see cref="ISecurityRepository"/>
 public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory, ICultureRepository _cultureRepository, ISocialNetworksRepository _socialNetworksRepository, IAuditRepository _auditRepository, IOptions<IdentityServiceServerSettingsOptions> _identityServiceOptions, IOptions<EncryptionSettingsOptions> _encryptionSettingsOptions, ILogger<SecurityRepository> _logger) : ISecurityRepository
 {
     private IdentityServiceServerSettingsOptions identityServiceOptionsValues = _identityServiceOptions.Value;
     private EncryptionSettingsOptions _encryptionSettingsOptions = _encryptionSettingsOptions.Value;
 
     #region Public Methods
-    /// <see cref="ISecurityRepository.TokenValidateAuthorizationCodeAsync(Guid, Guid, Guid, Guid, string?, DeviceInformationDTO)"/>
-    public async Task<UserDTO?> TokenValidateAuthorizationCodeAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? scope, DeviceInformationDTO deviceInformation)
+    public async Task<UserDTOToken?> TokenValidateAuthorizationCodeAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? scope, DeviceInformationDTO deviceInformation)
     {
-        UserDTO? userInfoDTO = default;
+        UserDTOToken? userInfoDTO = default;
         DataBaseServiceContext? context = default;
 
         context = _dataBaseContextFactory.GetDbContext();
@@ -61,10 +57,9 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return userInfoDTO;
     }
 
-    /// <see cref="ISecurityRepository.TokenValidateClientCredentialsAsync(Guid, Guid, Guid, Guid, string?, string?, string?, DeviceInformationDTO)"/>
-    public async Task<UserDTO?> TokenValidateClientCredentialsAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation)
+    public async Task<UserDTOToken?> TokenValidateClientCredentialsAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation)
     {
-        UserDTO? userInfoDTO = default;
+        UserDTOToken? userInfoDTO = default;
         DataBaseServiceContext? context = default;
 
         context = _dataBaseContextFactory.GetDbContext();
@@ -110,7 +105,6 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return userInfoDTO;
     }
 
-    /// <see cref="ISecurityRepository.UpdateLastUserAccess(long, DeviceInformationDTO, OAuthActionTypeEnum)"/>
     public async Task<bool> UpdateLastUserAccessAsync(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
     {
         var savedSuccesfuly = false;
@@ -154,7 +148,6 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return savedSuccesfuly;
     }
 
-    /// <see cref="ISecurityRepository.AddNewActivityLog(Guid, Guid?, long?, DeviceInformationDTO, OAuthActionTypeEnum)"/>
     public async Task<bool> AddNewActivityLogAsync(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
     {
         var savedSuccesfuly = false;
@@ -174,7 +167,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 EventDate = _cultureRepository.UtcNow().DateTime,
                 IpAddress = deviceInformation.IpAddress!,
                 Platform = deviceInformation.Platform!,
-                RequestEndpoint = deviceInformation.Scope,
+                RequestEndpoint = deviceInformation.Scope!,
                 AddtionalInformation = deviceInformation.AddtionalInfo!.Serialize(),
             };
             context.ActivityLogs.Add(userTrace);
@@ -301,17 +294,17 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     {
         bool savedSuccesfuly = false;
         var userInfo = userInfoDTO.ToUser();
-        UserDTO userDTOReturn = new();
+        UserDTOToken userDTOReturn = new();
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
             context.Users.Add(userInfo);
             await context.SaveChangesAsync();
             await _auditRepository.NewRowAuditAsync(userInfo.CompanyFk, userInfo.Id, userInfo, userInfo.Id.ToString(), deviceInformation, context);
-            userDTOReturn = userInfo.ToUserDTO();
+            userDTOReturn = userInfo.ToUserDTOToken();
             OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewUser;
             savedSuccesfuly = await AddNewActivityLogAsync(userInfo.CompanyFkNavigation.Id, null, userDTOReturn.Id, deviceInformation, actionStatus);
-            await SendActivationEmailAsync(userInfoDTO, deviceInformation, context);
+            await SendActivationEmailAsync(userInfo.Id, userInfo.CompanyFk, deviceInformation, context);
         }
         catch (Exception ex)
         {
@@ -324,53 +317,9 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return userDTOReturn;
     }
 
-    public async Task<List<ApplicationDTO>> GetAllApplicationListAsync()
-    {
-        List<ApplicationDTO> applicationDTOList = new();
-        DataBaseServiceContext context = default!;
-        try
-        {
-            context = _dataBaseContextFactory.CreateDbContext();
-            var appicationList = await context.Applications.ToListAsync();
-            applicationDTOList = appicationList.ToApplicationDTOList();
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
-        }
-        finally
-        {
-            context.Dispose();
-        }
-        return applicationDTOList;
-    }
-
-    public async Task<List<CompanyDTO>> GetAllCompanyListAsync()
-    {
-        List<CompanyDTO> companyDTOList = new();
-        DataBaseServiceContext context = default!;
-        try
-        {
-            context = _dataBaseContextFactory.CreateDbContext();
-            var companyList = await context.Companies.ToListAsync();
-            companyDTOList = companyList.ToCompanyDTOList();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, message: nameof(GetAllCompanyListAsync));
-        }
-        finally
-        {
-            context.Dispose();
-        }
-        return companyDTOList;
-    }
-
-    public async Task<bool> ChangeUserPasswordAsync(UserDTO userInfoDTO, DeviceInformationDTO deviceInformation)
+    public async Task<bool> ChangeUserPasswordAsync(UserDTO userInfoDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         bool savedSuccesfuly = false;
-        DataBaseServiceContext context = default!;
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
@@ -418,25 +367,23 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             context = _dataBaseContextFactory.GetDbContext(context);
             var companyInfoDb = await context.Companies.FirstOrDefaultAsync(x => x.Id == companyInfo.Id);
-            var companyInfoDbBackup = (Company)context.Entry(companyInfoDb).OriginalValues.ToObject();
+            var companyInfoDbBackup = (Company)context.Entry(companyInfoDb!).OriginalValues.ToObject();
             //TODO
             await context.SaveChangesAsync();
-            await _auditRepository.UpdateRowAuditAsync(companyInfo.Id, userId, companyInfoDbBackup, companyInfoDb, companyInfo.Id.ToString(), deviceInformation, context);
+            await _auditRepository.UpdateRowAuditAsync(companyInfo.Id, userId, companyInfoDbBackup, companyInfoDb!, companyInfo.Id.ToString(), deviceInformation, context);
 
             savedSuccesfuly = true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(UpdateCompanyApplicationsAsync));
+            throw;
         }
-        finally
-        {
-            _dataBaseContextFactory.DisposeDbContext(context);
-        }
+
         return savedSuccesfuly;
     }
 
-    public async Task<bool> SendActivationEmailAsync(UserDTO userInfoDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<bool> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         bool savedSuccesfuly = false;
 
@@ -445,12 +392,12 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
             context = _dataBaseContextFactory.GetDbContext(context);
             //TODO send email with teplate logic
-            var userInfo = await context.Users.FirstOrDefaultAsync(u => u.Id == userInfoDTO.Id && u.CompanyFk.Equals(userInfoDTO.CompanyFk));
+            var userInfo = await context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.CompanyFk.Equals(companyId));
             if (userInfo is not null)
             {
                 //var userInfoDTOBackup = (User)context.Entry(userInfo).OriginalValues.ToObject();
                 var userInfoDTOBackup = userInfo.CloneEntity();
-                var companyId = userInfo.CompanyFkNavigation.Id;
+                // var companyId = userInfo.CompanyFkNavigation.Id;
 
                 userInfo.IsActive = true;
                 userInfo.EmailValidated = true;
@@ -459,19 +406,19 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 userInfo.RetryCount = 0;
                 userInfo.LastAccess = _cultureRepository.UtcNow().DateTime;
                 await context.SaveChangesAsync();
-                await _auditRepository.UpdateRowAuditAsync(userInfoDTO.CompanyFk, userInfoDTO.Id, userInfoDTOBackup, userInfoDTO, userInfoDTO.Id.ToString(), deviceInformation, context);
+                await _auditRepository.UpdateRowAuditAsync(userInfo.CompanyFk, userInfo.Id, userInfoDTOBackup, userInfo, userInfo.Id.ToString(), deviceInformation, context);
 
                 OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_SendActivationEmail;
 
-                savedSuccesfuly = await AddNewActivityLogAsync(companyId, null, userInfoDTO.Id, deviceInformation, actionStatus);
+                savedSuccesfuly = await AddNewActivityLogAsync(companyId, null, userInfo.Id, deviceInformation, actionStatus);
 
                 //Send Activation Email
-                //List<KeyValuePair<string, string>> emailTemplateParams = new()
-                //{
-                //     new KeyValuePair<string, string>("{{EMAIL}}",userInfoDTO?.Email!),
-                //     new KeyValuePair<string, string>("{{ACTIVATION_LINK}}",userInfoDTO?.Email!),
-                //};
-                //await _socialNetworksRepository.SendNotificationByTemplate(companyId, NotificationTypeEnum.Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfoDTO?.Email], null, null, _cultureRepository.GetCurrentCultureId(), context);
+                List<KeyValuePair<string, string>> emailTemplateParams = new()
+                {
+                     new KeyValuePair<string, string>("{{EMAIL}}",userInfo?.Email!),
+                     new KeyValuePair<string, string>("{{ACTIVATION_LINK}}",userInfo?.ActivationId.ToString()!),
+                };
+                await _socialNetworksRepository.SendNotificationByTemplateAsync(companyId, NotificationTypeEnum.NotificationType_Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfo?.Email], null, null, _cultureRepository.GetCurrentCultureId(), context);
 
             }
         }
@@ -521,12 +468,319 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         }
         return savedSuccesfuly;
     }
+
+
+    public async Task<List<ApplicationDTO>> GetAllApplicationListAsync(DataBaseServiceContext? context = null)
+    {
+        List<ApplicationDTO> applicationDTOList = new();
+
+        try
+        {
+            context = _dataBaseContextFactory.CreateDbContext();
+            var appicationList = await context.Applications.ToListAsync();
+            applicationDTOList = appicationList.ToApplicationDTOList();
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+        }
+       
+        return applicationDTOList;
+    }
+
+
+    public async Task<List<ApplicationDTO>> GetApplicationListAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        List<ApplicationDTO> applicationDTOList = new();
+
+        try
+        {
+            context = _dataBaseContextFactory.CreateDbContext();
+            var companyMembershipList = await context.CompanyMemberships
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.ApplicationFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            applicationDTOList = companyMembershipList.ToApplicationDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetApplicationListAsync));
+        }
+       
+        return applicationDTOList;
+    }
+
+    public async Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        List<CompanyMembershipsDTO> applicationDTOList = new();
+
+        try
+        {
+            context = _dataBaseContextFactory.CreateDbContext();
+            var companyMembershipsList = await context.CompanyMemberships
+                .Include(x => x.ApplicationFkNavigation)
+                .Include(x => x.MembershipTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            applicationDTOList = companyMembershipsList.ToCompanyMembershipsDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetApplicationListAsync));
+        }
+       
+        return applicationDTOList;
+    }
+
+    public async Task<List<CompanyDTO>> GetAllCompanyListAsync(DataBaseServiceContext? context = null)
+    {
+        List<CompanyDTO> companyDTOList = new();
+
+        try
+        {
+            context = _dataBaseContextFactory.CreateDbContext();
+            var companyList = await context.Companies
+
+                .Include(x => x.CountryFkNavigation)
+                .Include(x => x.DefaultCultureFkNavigation)
+                .ThenInclude(x => x.LanguageFkNavigation)
+                .ToListAsync();
+            companyDTOList = companyList.ToCompanyDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAllCompanyListAsync));
+        }
+       
+        return companyDTOList;
+    }
+
+    public async Task<List<RoleDTO>> GetRoleListAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<RoleDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Roles
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.ApplicationFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            returnList = bdList.ToRoleDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetRoleListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<RoleDTO> GetRolePermissionListAsync(long roleId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new RoleDTO();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Roles
+                .Include(x => x.ApplicationFkNavigation)
+                .Include(x => x.RolePermissions)
+                .ThenInclude(x => x.ModuleFkNavigation)
+                .ThenInclude(x => x.Pages)
+                .ThenInclude(x => x.Components).FirstOrDefaultAsync(x => x.Id == roleId);
+            returnList = bdList.ToRoleDTO();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetRolePermissionListAsync));
+            throw;
+        }
+
+        return returnList!;
+    }
+
+    public async Task<List<ModuleDTO>> GetModuleListAsync(long? applicationId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<ModuleDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Modules
+                .Include(x => x.ApplicationFkNavigation)
+                .Where(x => applicationId == null || x.ApplicationFk == applicationId).ToListAsync();
+            returnList = bdList.ToModuleDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetModuleListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<PageDTO>> GetPageListAsync(long moduleId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<PageDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Pages
+                .Include(x => x.ApplicationFkNavigation)
+                .Where(x => x.ModuleFk == moduleId).ToListAsync();
+            returnList = bdList.ToPageDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetPageListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<ComponentDTO>> GetComponentListAsync(long pageId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<ComponentDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Components
+                .Include(x => x.ApplicationFkNavigation)
+                .Where(x => x.PageFk == pageId).ToListAsync();
+            returnList = bdList.ToComponentDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetComponentListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<UserRoleDTO>> GetUserRolesListAsync(long userId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<UserRoleDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.UserRoles
+                .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
+                .Where(x => x.UserFk == userId).ToListAsync();
+            returnList = bdList.ToUserRoleDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetUserRolesListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<UserDTO> GetUserPermissionListAsync(long userId, DataBaseServiceContext? context = null)
+    {
+        var returnValue = new UserDTO();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Users
+                .Include(x => x.UserRoles)
+                .ThenInclude(x => x.RoleFkNavigation)
+                .ThenInclude(x => x.RolePermissions)
+                .ThenInclude(x => x.ModuleFkNavigation.ApplicationFkNavigation)
+                .ThenInclude(x => x.Pages)
+                .ThenInclude(x => x.Components)
+                .Include(x => x.CompanyFkNavigation)
+                //.Include.(x=>x.)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+            returnValue = bdList!.ToUserDTO()!;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
+            throw;
+        }
+
+        return returnValue;
+    }
+
+
+    public async Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<CompanyEntityAuditDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.CompanyEntityAudits
+                .Include(x => x.AuditEntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            returnList = bdList.ToCompanyEntityAuditDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<AuditRecordDTO>> GetAuditRecordsListAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<AuditRecordDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.AuditRecords
+                .Include(x => x.AuditEntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.UserFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            returnList = bdList.ToAuditRecordDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetAuditRecordsListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<ActivityLogDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.ActivityLogs
+                .Include(x => x.UserFkNavigation)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.ActionTypeFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            returnList = bdList.ToActivityLogDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetActivityLogListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
     #endregion
 
     #region Private Methods
-    private async Task<UserDTO?> TokenValidateCompany(Guid companyClient, Guid companySecret, Guid applicationClient, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    private async Task<UserDTOToken?> TokenValidateCompany(Guid companyClient, Guid companySecret, Guid applicationClient, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
-        UserDTO? userInfoDTO = default;
+        UserDTOToken? userInfoDTO = default;
         var scopeRequest = !String.IsNullOrEmpty(scope) ? scope : deviceInformation.Scope;
         try
         {
@@ -596,9 +850,9 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     }
 
 
-    private async Task<UserDTO?> TokenValidateApplication(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    private async Task<UserDTOToken?> TokenValidateApplication(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
-        UserDTO? userInfoDTO = default;
+        UserDTOToken? userInfoDTO = default;
         OAuthActionTypeEnum actionStatus = default;
 
         try
@@ -644,20 +898,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return userInfoDTO;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="companyId"></param>
-    /// <param name="companySecret"></param>
-    /// <param name="applicationId"></param>
-    /// <param name="applicationSecret"></param>
-    /// <param name="userName"></param>
-    /// <param name="password"></param>
-    /// <param name="deviceInformation"></param>
-    /// <returns></returns>
-    private async Task<UserDTO?> TokenValidateUser(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+
+    private async Task<UserDTOToken?> TokenValidateUser(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
-        UserDTO? userInfoDTO = default;
+        UserDTOToken? userInfoDTO = default;
         OAuthActionTypeEnum actionStatus = default;
 
         try
@@ -689,7 +933,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 else
                 {
                     var rolePermissions = context.RolePermissions.Include(x => x.PageFkNavigation).Where(x => x.RoleFk == userRoleInfo.RoleFk).ToList();
-                    var pageAccesInfo = rolePermissions.FirstOrDefault(x => x.PageFkNavigation.NameTranslationKey.Equals(scope));
+                    var pageAccesInfo = rolePermissions.FirstOrDefault(x => x.PageFkNavigation.PageUrl.Equals(scope));
 
                     if (pageAccesInfo is null)
                     {
@@ -701,7 +945,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                         //user valid
                         actionStatus = userRoleInfo.UserFkNavigation.UserName.Equals(FrameworkConstants.Username_UserApi) ? OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode : OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials;
                         Application applicationInfo = userRoleInfo.RoleFkNavigation.ApplicationFkNavigation;
-                        userInfoDTO = userRoleInfo.UserFkNavigation.ToUserDTO(applicationId, applicationInfo.Name, actionStatus);
+                        userInfoDTO = userRoleInfo.UserFkNavigation.ToUserDTOToken(applicationId, applicationInfo.NameTranslationKey, actionStatus);
                     }
                 }
                 var userUpdatedSuccessfully = await UpdateLastUserAccessAsync(userRoleInfo.UserFkNavigation.Id, deviceInformation, actionStatus, context);
@@ -729,5 +973,9 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
         return userInfoDTO;
     }
+
+
+
+
     #endregion
 }

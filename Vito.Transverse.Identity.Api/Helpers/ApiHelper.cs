@@ -26,11 +26,11 @@ public static class ApilHelper
     }
 
 
-    public static string GetValueFromHeader(this HttpRequest request, string headerKey, string defaultValue = "")
+    public static string GetValueFromHeader(this HttpRequest request, string headerKey, string? defaultValue = "")
     {
         var hasHeaderKey = request.Headers.ContainsKey(headerKey);
         var returnValue = hasHeaderKey ? request.Headers[headerKey].ToString() : defaultValue;
-        return returnValue;
+        return returnValue!;
     }
 
 
@@ -77,7 +77,7 @@ public static class ApilHelper
 
     public static void SetCurrectCultureFromHeader(this HttpRequest request)
     {
-        var cultureId = request.GetValueFromHeader(FrameworkConstants.Header_CultureId, _cultureOptions.DefaultCulture);
+        var cultureId = request.GetValueFromHeader(FrameworkConstants.Header_CultureId, _cultureOptions?.DefaultCulture!);
         //Set Culture on Main Thread
         _cultureService.SetCurrectCulture(cultureId!);
 

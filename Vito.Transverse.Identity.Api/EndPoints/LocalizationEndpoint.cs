@@ -1,14 +1,8 @@
 ﻿using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Microsoft.Extensions.Primitives;
 using Vito.Framework.Api.Filters;
-using Vito.Framework.Common.Constants;
-using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
-using Vito.Transverse.Identity.Api.Helpers;
-using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
@@ -36,34 +30,77 @@ public static class LocalizationEndpoint
             .RequireAuthorization();
 
 
-        endPointGroupVersioned.MapGet("AllLocalizedMessagesAsync", GetAllLocalizedMessagesAsync)
+        endPointGroupVersioned.MapGet("GetAllLocalizedMessagesByApplicationAsync", GetAllLocalizedMessagesByApplicationAsync)
              .MapToApiVersion(1.0)
-            .WithSummary("GetAllLocalizedMessagesAsync");
+            .WithSummary("GetAllLocalizedMessagesByApplicationAsync")
+            .AddEndpointFilter<LocalizationFeatureFlagFilter>()
+            .AddEndpointFilter<InfrastructureFilter>()
+            .RequireAuthorization();
 
-        endPointGroupVersioned.MapGet("LocalizedMessage", GetLocalizedMessage)
+
+        endPointGroupVersioned.MapGet("GetAllLocalizedMessagesAsync", GetAllLocalizedMessagesAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("GetAllLocalizedMessagesAsync")
+            .AddEndpointFilter<LocalizationFeatureFlagFilter>()
+            .AddEndpointFilter<InfrastructureFilter>()
+            .RequireAuthorization();
+
+        endPointGroupVersioned.MapGet("GetLocalizedMessagesByKeyAsync", GetLocalizedMessagesByKeyAsync)
+           .MapToApiVersion(1.0)
+           .WithSummary("GetLocalizedMessagesByKeyAsync")
+           .AddEndpointFilter<LocalizationFeatureFlagFilter>()
+            .AddEndpointFilter<InfrastructureFilter>()
+            .RequireAuthorization();
+
+
+        endPointGroupVersioned.MapGet("GetLocalizedMessageByKeyAndParamsSync", GetLocalizedMessageByKeyAndParamsSync)
              .MapToApiVersion(1.0)
-            .WithSummary("GetLocalizedMessage");
+            .WithSummary("GetLocalizedMessageByKeyAsync")
+             .AddEndpointFilter<LocalizationFeatureFlagFilter>()
+            .AddEndpointFilter<InfrastructureFilter>()
+            .RequireAuthorization();
+    }
+
+
+    public static async Task<Results<Ok<List<CultureTranslationDTO>>, NotFound, ValidationProblem>> GetAllLocalizedMessagesByApplicationAsync(
+        HttpRequest request,
+        [FromServices] ILocalizationService localizationService,
+        [FromQuery] long applicationId)
+    {
+        var returnObject = await localizationService.GetAllLocalizedMessagesByApplicationAsync(applicationId);
+        return TypedResults.Ok(returnObject);
     }
 
 
     public static async Task<Results<Ok<List<CultureTranslationDTO>>, NotFound, ValidationProblem>> GetAllLocalizedMessagesAsync(
         HttpRequest request,
-        [FromServices] ILocalizationService localizationService)
+        [FromServices] ILocalizationService localizationService,
+        [FromQuery] long applicationId,
+        [FromQuery] string? cultureId)
     {
-        var applicationId = request.GetCompanyIdFromHeader();
-
-        var returnObject = await localizationService.GetAllLocalizedMessagesAsync(applicationId);
+        var returnObject = await localizationService.GetAllLocalizedMessagesAsync(applicationId, cultureId!);
         return TypedResults.Ok(returnObject);
     }
 
-    public static Results<Ok<CultureTranslationDTO>, NotFound, ValidationProblem> GetLocalizedMessage(
+    public static async Task<Results<Ok<List<CultureTranslationDTO>>, NotFound, ValidationProblem>> GetLocalizedMessagesByKeyAsync(
+    HttpRequest request,
+    [FromServices] ILocalizationService localizationService,
+    [FromQuery] long applicationId,
+    [FromQuery] string localizationMessageKey)
+    {
+        var returnObject = await localizationService.GetLocalizedMessagesByKeyAsync(applicationId, localizationMessageKey);
+        return TypedResults.Ok(returnObject);
+    }
+
+    public static Results<Ok<CultureTranslationDTO>, NotFound, ValidationProblem> GetLocalizedMessageByKeyAndParamsSync(
         HttpRequest request,
         [FromServices] ILocalizationService localizationService,
+        [FromQuery] long applicationId,
+        [FromQuery] string? cultureId,
         [FromQuery] string localizationMessageKey,
         [FromQuery] params string[]? parameters)
     {
-        var applicationId = request.GetCompanyIdFromHeader();
-        var returnObject = localizationService.GetLocalizedMessageAsync(localizationMessageKey,applicationId, parameters ?? []);
+        var returnObject = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId!, localizationMessageKey, parameters ?? []);
         return TypedResults.Ok(returnObject);
     }
 
