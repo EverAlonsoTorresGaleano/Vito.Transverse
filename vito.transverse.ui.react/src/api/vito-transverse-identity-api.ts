@@ -10,6 +10,8 @@
 
 export interface IClient {
 
+    getApiHomeV0_9Detect(): Promise<PingResponseDTO>;
+
     getApiHomeV0_9Ping(): Promise<PingResponseDTO>;
 
     getApiHomeV1Detect(): Promise<PingResponseDTO>;
@@ -18,55 +20,57 @@ export interface IClient {
 
     postApiOauth2V1Token(requestBody: TokenRequestDTO): Promise<TokenResponseDTO>;
 
-    postApiOauth2V1CreateNewCompany(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO>;
+    postApiOauth2V1Company(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO>;
 
-    postApiOauth2V1CreateNewApplication(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO>;
+    postApiOauth2V1Application(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO>;
 
-    postApiOauth2V1CreateNewUser(companyId: number, userInfo: UserDTO): Promise<UserDTO>;
+    postApiOauth2V1User(companyId: number, userInfo: UserDTO): Promise<UserDTO>;
 
-    putApiOauth2V1ChangeUserPassword(companyId: number, userInfo: UserDTO): Promise<boolean>;
+    putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<boolean>;
 
-    putApiOauth2V1UpdateCompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean>;
+    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean>;
 
     getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean>;
 
     getApiOauth2V1ActivateAccount(companyId: number, userId: number, activationId: string): Promise<boolean>;
 
-    getApiOauth2V1GetAllApplicationList(): Promise<ApplicationDTO[]>;
+    getApiOauth2V1AllApplicationList(): Promise<ApplicationDTO[]>;
 
-    getApiOauth2V1GetApplicationList(companyId: number | null | undefined): Promise<ApplicationDTO[]>;
+    getApiOauth2V1ApplicationList(companyId: number | null | undefined): Promise<ApplicationDTO[]>;
 
-    getApiOauth2V1GetCompanyMemberhip(companyId: number | null | undefined): Promise<CompanyMembershipsDTO[]>;
+    getApiOauth2V1CompanyMemberhip(companyId: number | null | undefined): Promise<CompanyMembershipsDTO[]>;
 
-    getApiOauth2V1GetAllCompanyList(): Promise<CompanyDTO[]>;
+    getApiOauth2V1AllCompanyList(): Promise<CompanyDTO[]>;
 
-    getApiOauth2V1GetRoleList(companyId: number | null | undefined): Promise<RoleDTO[]>;
+    getApiOauth2V1RoleList(companyId: number | null | undefined): Promise<RoleDTO[]>;
 
-    getApiOauth2V1GetRolePermissionList(roleId: number): Promise<RoleDTO>;
+    getApiOauth2V1RolePermissionList(roleId: number): Promise<RoleDTO>;
 
-    getApiOauth2V1GetModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]>;
+    getApiOauth2V1ModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]>;
 
-    getApiOauth2V1GetPageList(moduleId: number): Promise<PageDTO[]>;
+    getApiOauth2V1PageList(moduleId: number): Promise<PageDTO[]>;
 
-    getApiOauth2V1GetComponentList(pageId: number): Promise<ComponentDTO[]>;
+    getApiOauth2V1ComponentList(pageId: number): Promise<ComponentDTO[]>;
 
-    getApiOauth2V1GetUserRolesList(userId: number): Promise<UserRoleDTO[]>;
+    getApiOauth2V1UserRolesList(userId: number): Promise<UserRoleDTO[]>;
 
-    getApiOauth2V1GetUserPermissionList(userId: number): Promise<UserDTO>;
+    getApiOauth2V1UserPermissionList(userId: number): Promise<UserDTO>;
 
-    getApiOauth2V1GetCompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]>;
+    getApiOauth2V1CompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]>;
 
-    getApiOauth2V1GetAuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]>;
+    getApiOauth2V1AuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]>;
 
-    getApiOauth2V1GetActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]>;
+    getApiOauth2V1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]>;
 
-    getApiLocalizationV1GetAllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
+    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO1[]>;
 
-    getApiLocalizationV1GetAllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]>;
+    getApiLocalizationV1AllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
 
-    getApiLocalizationV1GetLocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]>;
+    getApiLocalizationV1AllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]>;
 
-    getApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
+    getApiLocalizationV1LocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]>;
+
+    getApiLocalizationV1LocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
 
     getApiCultureV1UtcNow(): Promise<Date>;
 
@@ -87,8 +91,41 @@ export class Client implements IClient {
         this.baseUrl = baseUrl ?? "";
     }
 
+    getApiHomeV0_9Detect(): Promise<PingResponseDTO> {
+        let url_ = this.baseUrl + "/api/Home/v0.9/DetectAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiHomeV0_9Detect(_response);
+        });
+    }
+
+    protected processGetApiHomeV0_9Detect(response: Response): Promise<PingResponseDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PingResponseDTO;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PingResponseDTO>(null as any);
+    }
+
     getApiHomeV0_9Ping(): Promise<PingResponseDTO> {
-        let url_ = this.baseUrl + "/api/Home/v0.9/Ping";
+        let url_ = this.baseUrl + "/api/Home/v0.9/PingAsync";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -121,7 +158,7 @@ export class Client implements IClient {
     }
 
     getApiHomeV1Detect(): Promise<PingResponseDTO> {
-        let url_ = this.baseUrl + "/api/Home/v1/Detect";
+        let url_ = this.baseUrl + "/api/Home/v1/DetectAsync";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -154,7 +191,7 @@ export class Client implements IClient {
     }
 
     getApiHomeV1Ping(): Promise<PingResponseDTO> {
-        let url_ = this.baseUrl + "/api/Home/v1/Ping";
+        let url_ = this.baseUrl + "/api/Home/v1/PingAsync";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -187,7 +224,7 @@ export class Client implements IClient {
     }
 
     postApiOauth2V1Token(requestBody: TokenRequestDTO): Promise<TokenResponseDTO> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/Token";
+        let url_ = this.baseUrl + "/api/Oauth2/v1/TokenAsync";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(requestBody);
@@ -233,8 +270,8 @@ export class Client implements IClient {
         return Promise.resolve<TokenResponseDTO>(null as any);
     }
 
-    postApiOauth2V1CreateNewCompany(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/CreateNewCompanyAsync?";
+    postApiOauth2V1Company(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
         else
@@ -257,11 +294,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processPostApiOauth2V1CreateNewCompany(_response);
+            return this.processPostApiOauth2V1Company(_response);
         });
     }
 
-    protected processPostApiOauth2V1CreateNewCompany(response: Response): Promise<CompanyDTO> {
+    protected processPostApiOauth2V1Company(response: Response): Promise<CompanyDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -288,8 +325,8 @@ export class Client implements IClient {
         return Promise.resolve<CompanyDTO>(null as any);
     }
 
-    postApiOauth2V1CreateNewApplication(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/CreateNewApplicationAsync?";
+    postApiOauth2V1Application(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ApplicationAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
         else
@@ -312,11 +349,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processPostApiOauth2V1CreateNewApplication(_response);
+            return this.processPostApiOauth2V1Application(_response);
         });
     }
 
-    protected processPostApiOauth2V1CreateNewApplication(response: Response): Promise<ApplicationDTO> {
+    protected processPostApiOauth2V1Application(response: Response): Promise<ApplicationDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -343,8 +380,8 @@ export class Client implements IClient {
         return Promise.resolve<ApplicationDTO>(null as any);
     }
 
-    postApiOauth2V1CreateNewUser(companyId: number, userInfo: UserDTO): Promise<UserDTO> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/CreateNewUserAsync?";
+    postApiOauth2V1User(companyId: number, userInfo: UserDTO): Promise<UserDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/UserAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
         else
@@ -363,11 +400,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processPostApiOauth2V1CreateNewUser(_response);
+            return this.processPostApiOauth2V1User(_response);
         });
     }
 
-    protected processPostApiOauth2V1CreateNewUser(response: Response): Promise<UserDTO> {
+    protected processPostApiOauth2V1User(response: Response): Promise<UserDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -394,8 +431,8 @@ export class Client implements IClient {
         return Promise.resolve<UserDTO>(null as any);
     }
 
-    putApiOauth2V1ChangeUserPassword(companyId: number, userInfo: UserDTO): Promise<boolean> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/ChangeUserPasswordAsync?";
+    putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/UserPasswordAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
         else
@@ -414,11 +451,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processPutApiOauth2V1ChangeUserPassword(_response);
+            return this.processPutApiOauth2V1UserPassword(_response);
         });
     }
 
-    protected processPutApiOauth2V1ChangeUserPassword(response: Response): Promise<boolean> {
+    protected processPutApiOauth2V1UserPassword(response: Response): Promise<boolean> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -445,8 +482,8 @@ export class Client implements IClient {
         return Promise.resolve<boolean>(null as any);
     }
 
-    putApiOauth2V1UpdateCompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/UpdateCompanyApplicationsAsync?";
+    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyApplicationsAsync?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
         else
@@ -465,11 +502,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processPutApiOauth2V1UpdateCompanyApplications(_response);
+            return this.processPutApiOauth2V1CompanyApplications(_response);
         });
     }
 
-    protected processPutApiOauth2V1UpdateCompanyApplications(response: Response): Promise<boolean> {
+    protected processPutApiOauth2V1CompanyApplications(response: Response): Promise<boolean> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -602,8 +639,8 @@ export class Client implements IClient {
         return Promise.resolve<boolean>(null as any);
     }
 
-    getApiOauth2V1GetAllApplicationList(): Promise<ApplicationDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetAllApplicationListAsync";
+    getApiOauth2V1AllApplicationList(): Promise<ApplicationDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/AllApplicationListAsync";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -614,11 +651,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetAllApplicationList(_response);
+            return this.processGetApiOauth2V1AllApplicationList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetAllApplicationList(response: Response): Promise<ApplicationDTO[]> {
+    protected processGetApiOauth2V1AllApplicationList(response: Response): Promise<ApplicationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -645,8 +682,8 @@ export class Client implements IClient {
         return Promise.resolve<ApplicationDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetApplicationList(companyId: number | null | undefined): Promise<ApplicationDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetApplicationListAsync?";
+    getApiOauth2V1ApplicationList(companyId: number | null | undefined): Promise<ApplicationDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ApplicationListAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -659,11 +696,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetApplicationList(_response);
+            return this.processGetApiOauth2V1ApplicationList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetApplicationList(response: Response): Promise<ApplicationDTO[]> {
+    protected processGetApiOauth2V1ApplicationList(response: Response): Promise<ApplicationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -690,8 +727,8 @@ export class Client implements IClient {
         return Promise.resolve<ApplicationDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetCompanyMemberhip(companyId: number | null | undefined): Promise<CompanyMembershipsDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetCompanyMemberhipAsync?";
+    getApiOauth2V1CompanyMemberhip(companyId: number | null | undefined): Promise<CompanyMembershipsDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyMemberhipAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -704,11 +741,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetCompanyMemberhip(_response);
+            return this.processGetApiOauth2V1CompanyMemberhip(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetCompanyMemberhip(response: Response): Promise<CompanyMembershipsDTO[]> {
+    protected processGetApiOauth2V1CompanyMemberhip(response: Response): Promise<CompanyMembershipsDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -735,8 +772,8 @@ export class Client implements IClient {
         return Promise.resolve<CompanyMembershipsDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetAllCompanyList(): Promise<CompanyDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetAllCompanyListAsync";
+    getApiOauth2V1AllCompanyList(): Promise<CompanyDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/AllCompanyListAsync";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -747,11 +784,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetAllCompanyList(_response);
+            return this.processGetApiOauth2V1AllCompanyList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetAllCompanyList(response: Response): Promise<CompanyDTO[]> {
+    protected processGetApiOauth2V1AllCompanyList(response: Response): Promise<CompanyDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -778,8 +815,8 @@ export class Client implements IClient {
         return Promise.resolve<CompanyDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetRoleList(companyId: number | null | undefined): Promise<RoleDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetRoleListAsync?";
+    getApiOauth2V1RoleList(companyId: number | null | undefined): Promise<RoleDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/RoleListAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -792,11 +829,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetRoleList(_response);
+            return this.processGetApiOauth2V1RoleList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetRoleList(response: Response): Promise<RoleDTO[]> {
+    protected processGetApiOauth2V1RoleList(response: Response): Promise<RoleDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -823,8 +860,8 @@ export class Client implements IClient {
         return Promise.resolve<RoleDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetRolePermissionList(roleId: number): Promise<RoleDTO> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetRolePermissionListAsync?";
+    getApiOauth2V1RolePermissionList(roleId: number): Promise<RoleDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/RolePermissionListAsync?";
         if (roleId === undefined || roleId === null)
             throw new Error("The parameter 'roleId' must be defined and cannot be null.");
         else
@@ -839,11 +876,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetRolePermissionList(_response);
+            return this.processGetApiOauth2V1RolePermissionList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetRolePermissionList(response: Response): Promise<RoleDTO> {
+    protected processGetApiOauth2V1RolePermissionList(response: Response): Promise<RoleDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -870,8 +907,8 @@ export class Client implements IClient {
         return Promise.resolve<RoleDTO>(null as any);
     }
 
-    getApiOauth2V1GetModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetModuleListAsync?";
+    getApiOauth2V1ModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ModuleListAsync?";
         if (applicationId !== undefined && applicationId !== null)
             url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -884,11 +921,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetModuleList(_response);
+            return this.processGetApiOauth2V1ModuleList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetModuleList(response: Response): Promise<ModuleDTO[]> {
+    protected processGetApiOauth2V1ModuleList(response: Response): Promise<ModuleDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -915,8 +952,8 @@ export class Client implements IClient {
         return Promise.resolve<ModuleDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetPageList(moduleId: number): Promise<PageDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetPageListAsync?";
+    getApiOauth2V1PageList(moduleId: number): Promise<PageDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/PageListAsync?";
         if (moduleId === undefined || moduleId === null)
             throw new Error("The parameter 'moduleId' must be defined and cannot be null.");
         else
@@ -931,11 +968,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetPageList(_response);
+            return this.processGetApiOauth2V1PageList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetPageList(response: Response): Promise<PageDTO[]> {
+    protected processGetApiOauth2V1PageList(response: Response): Promise<PageDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -962,8 +999,8 @@ export class Client implements IClient {
         return Promise.resolve<PageDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetComponentList(pageId: number): Promise<ComponentDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetComponentListAsync?";
+    getApiOauth2V1ComponentList(pageId: number): Promise<ComponentDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ComponentListAsync?";
         if (pageId === undefined || pageId === null)
             throw new Error("The parameter 'pageId' must be defined and cannot be null.");
         else
@@ -978,11 +1015,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetComponentList(_response);
+            return this.processGetApiOauth2V1ComponentList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetComponentList(response: Response): Promise<ComponentDTO[]> {
+    protected processGetApiOauth2V1ComponentList(response: Response): Promise<ComponentDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1009,8 +1046,8 @@ export class Client implements IClient {
         return Promise.resolve<ComponentDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetUserRolesList(userId: number): Promise<UserRoleDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetUserRolesListAsync?";
+    getApiOauth2V1UserRolesList(userId: number): Promise<UserRoleDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/UserRolesListAsync?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
         else
@@ -1025,11 +1062,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetUserRolesList(_response);
+            return this.processGetApiOauth2V1UserRolesList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetUserRolesList(response: Response): Promise<UserRoleDTO[]> {
+    protected processGetApiOauth2V1UserRolesList(response: Response): Promise<UserRoleDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1056,8 +1093,8 @@ export class Client implements IClient {
         return Promise.resolve<UserRoleDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetUserPermissionList(userId: number): Promise<UserDTO> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetUserPermissionListAsync?";
+    getApiOauth2V1UserPermissionList(userId: number): Promise<UserDTO> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/UserPermissionListAsync?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
         else
@@ -1072,11 +1109,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetUserPermissionList(_response);
+            return this.processGetApiOauth2V1UserPermissionList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetUserPermissionList(response: Response): Promise<UserDTO> {
+    protected processGetApiOauth2V1UserPermissionList(response: Response): Promise<UserDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1103,8 +1140,8 @@ export class Client implements IClient {
         return Promise.resolve<UserDTO>(null as any);
     }
 
-    getApiOauth2V1GetCompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetCompanyEntityAuditsListAsync?";
+    getApiOauth2V1CompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyEntityAuditsListAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -1117,11 +1154,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetCompanyEntityAuditsList(_response);
+            return this.processGetApiOauth2V1CompanyEntityAuditsList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetCompanyEntityAuditsList(response: Response): Promise<CompanyEntityAuditDTO[]> {
+    protected processGetApiOauth2V1CompanyEntityAuditsList(response: Response): Promise<CompanyEntityAuditDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1148,8 +1185,8 @@ export class Client implements IClient {
         return Promise.resolve<CompanyEntityAuditDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetAuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetAuditRecordsListAsync?";
+    getApiOauth2V1AuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/AuditRecordsListAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -1162,11 +1199,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetAuditRecordsList(_response);
+            return this.processGetApiOauth2V1AuditRecordsList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetAuditRecordsList(response: Response): Promise<AuditRecordDTO[]> {
+    protected processGetApiOauth2V1AuditRecordsList(response: Response): Promise<AuditRecordDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1193,8 +1230,8 @@ export class Client implements IClient {
         return Promise.resolve<AuditRecordDTO[]>(null as any);
     }
 
-    getApiOauth2V1GetActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/GetActivityLogListAsync?";
+    getApiOauth2V1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/ActivityLogListAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
         url_ = url_.replace(/[?&]$/, "");
@@ -1207,11 +1244,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1GetActivityLogList(_response);
+            return this.processGetApiOauth2V1ActivityLogList(_response);
         });
     }
 
-    protected processGetApiOauth2V1GetActivityLogList(response: Response): Promise<ActivityLogDTO[]> {
+    protected processGetApiOauth2V1ActivityLogList(response: Response): Promise<ActivityLogDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1238,8 +1275,53 @@ export class Client implements IClient {
         return Promise.resolve<ActivityLogDTO[]>(null as any);
     }
 
-    getApiLocalizationV1GetAllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/GetAllLocalizedMessagesByApplicationAsync?";
+    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO1[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/NotificationsListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1NotificationsList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1NotificationsList(response: Response): Promise<NotificationDTO1[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as NotificationDTO1[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<NotificationDTO1[]>(null as any);
+    }
+
+    getApiLocalizationV1AllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/AllLocalizedMessagesByApplicationAsync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1254,11 +1336,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1GetAllLocalizedMessagesByApplication(_response);
+            return this.processGetApiLocalizationV1AllLocalizedMessagesByApplication(_response);
         });
     }
 
-    protected processGetApiLocalizationV1GetAllLocalizedMessagesByApplication(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiLocalizationV1AllLocalizedMessagesByApplication(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1285,8 +1367,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1GetAllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/GetAllLocalizedMessagesAsync?";
+    getApiLocalizationV1AllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/AllLocalizedMessagesAsync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1303,11 +1385,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1GetAllLocalizedMessages(_response);
+            return this.processGetApiLocalizationV1AllLocalizedMessages(_response);
         });
     }
 
-    protected processGetApiLocalizationV1GetAllLocalizedMessages(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiLocalizationV1AllLocalizedMessages(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1334,8 +1416,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1GetLocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/GetLocalizedMessagesByKeyAsync?";
+    getApiLocalizationV1LocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/LocalizedMessagesByKeyAsync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1354,11 +1436,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1GetLocalizedMessagesByKey(_response);
+            return this.processGetApiLocalizationV1LocalizedMessagesByKey(_response);
         });
     }
 
-    protected processGetApiLocalizationV1GetLocalizedMessagesByKey(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiLocalizationV1LocalizedMessagesByKey(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1385,8 +1467,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
-        let url_ = this.baseUrl + "/api/Localization/v1/GetLocalizedMessageByKeyAndParamsSync?";
+    getApiLocalizationV1LocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
+        let url_ = this.baseUrl + "/api/Localization/v1/LocalizedMessageByKeyAndParamsSync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1409,11 +1491,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(_response);
+            return this.processGetApiLocalizationV1LocalizedMessageByKeyAndParamsSync(_response);
         });
     }
 
-    protected processGetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync(response: Response): Promise<CultureTranslationDTO> {
+    protected processGetApiLocalizationV1LocalizedMessageByKeyAndParamsSync(response: Response): Promise<CultureTranslationDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1864,6 +1946,28 @@ export interface ActivityLogDTO {
     userName?: string;
     companyNameTranslationKey?: string;
     actionTypeNameTranslationKey?: string;
+}
+
+export interface NotificationDTO1 {
+    companyFk?: number;
+    notificationTemplateGroupFk?: number;
+    cultureFk?: string;
+    notificationTypeFk?: number;
+    id?: number;
+    creationDate?: Date;
+    sender?: string;
+    receiver?: string;
+    cc?: string | undefined;
+    bcc?: string | undefined;
+    subject?: string;
+    message?: string;
+    isSent?: boolean;
+    sentDate?: Date | undefined;
+    isHtml?: boolean;
+    companyNameTranslationKey?: string;
+    notificationTypeNameTranslationKey?: string;
+    notificationTemplateName?: string;
+    cultureNameTranslationKey?: string;
 }
 
 export interface CultureTranslationDTO {

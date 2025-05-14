@@ -71,6 +71,82 @@ namespace Vito.Transverse.Identity.Api
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PingResponseDTO> GetApiHomeV0_9DetectAsync()
+        {
+            return GetApiHomeV0_9DetectAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PingResponseDTO> GetApiHomeV0_9DetectAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Home/v0.9/DetectAsync"
+                    urlBuilder_.Append("api/Home/v0.9/DetectAsync");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PingResponseDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PingResponseDTO> GetApiHomeV0_9PingAsync()
         {
             return GetApiHomeV0_9PingAsync(System.Threading.CancellationToken.None);
@@ -91,8 +167,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Home/v0.9/Ping"
-                    urlBuilder_.Append("api/Home/v0.9/Ping");
+                    // Operation Path: "api/Home/v0.9/PingAsync"
+                    urlBuilder_.Append("api/Home/v0.9/PingAsync");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -167,8 +243,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Home/v1/Detect"
-                    urlBuilder_.Append("api/Home/v1/Detect");
+                    // Operation Path: "api/Home/v1/DetectAsync"
+                    urlBuilder_.Append("api/Home/v1/DetectAsync");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -243,8 +319,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Home/v1/Ping"
-                    urlBuilder_.Append("api/Home/v1/Ping");
+                    // Operation Path: "api/Home/v1/PingAsync"
+                    urlBuilder_.Append("api/Home/v1/PingAsync");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -326,8 +402,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/Token"
-                    urlBuilder_.Append("api/Oauth2/v1/Token");
+                    // Operation Path: "api/Oauth2/v1/TokenAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/TokenAsync");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -398,14 +474,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CompanyDTO> PostApiOauth2V1CreateNewCompanyAsync(long companyId, long userId, CompanyDTO companyDTO)
+        public virtual System.Threading.Tasks.Task<CompanyDTO> PostApiOauth2V1CompanyAsync(long companyId, long userId, CompanyDTO companyDTO)
         {
-            return PostApiOauth2V1CreateNewCompanyAsync(companyId, userId, companyDTO, System.Threading.CancellationToken.None);
+            return PostApiOauth2V1CompanyAsync(companyId, userId, companyDTO, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CompanyDTO> PostApiOauth2V1CreateNewCompanyAsync(long companyId, long userId, CompanyDTO companyDTO, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CompanyDTO> PostApiOauth2V1CompanyAsync(long companyId, long userId, CompanyDTO companyDTO, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -431,8 +507,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/CreateNewCompanyAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/CreateNewCompanyAsync");
+                    // Operation Path: "api/Oauth2/v1/CompanyAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/CompanyAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
@@ -507,14 +583,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ApplicationDTO> PostApiOauth2V1CreateNewApplicationAsync(long companyId, long userId, ApplicationDTO applicationDTO)
+        public virtual System.Threading.Tasks.Task<ApplicationDTO> PostApiOauth2V1ApplicationAsync(long companyId, long userId, ApplicationDTO applicationDTO)
         {
-            return PostApiOauth2V1CreateNewApplicationAsync(companyId, userId, applicationDTO, System.Threading.CancellationToken.None);
+            return PostApiOauth2V1ApplicationAsync(companyId, userId, applicationDTO, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ApplicationDTO> PostApiOauth2V1CreateNewApplicationAsync(long companyId, long userId, ApplicationDTO applicationDTO, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ApplicationDTO> PostApiOauth2V1ApplicationAsync(long companyId, long userId, ApplicationDTO applicationDTO, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -540,8 +616,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/CreateNewApplicationAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/CreateNewApplicationAsync");
+                    // Operation Path: "api/Oauth2/v1/ApplicationAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/ApplicationAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
@@ -616,14 +692,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDTO> PostApiOauth2V1CreateNewUserAsync(long companyId, UserDTO userInfo)
+        public virtual System.Threading.Tasks.Task<UserDTO> PostApiOauth2V1UserAsync(long companyId, UserDTO userInfo)
         {
-            return PostApiOauth2V1CreateNewUserAsync(companyId, userInfo, System.Threading.CancellationToken.None);
+            return PostApiOauth2V1UserAsync(companyId, userInfo, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDTO> PostApiOauth2V1CreateNewUserAsync(long companyId, UserDTO userInfo, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDTO> PostApiOauth2V1UserAsync(long companyId, UserDTO userInfo, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -646,8 +722,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/CreateNewUserAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/CreateNewUserAsync");
+                    // Operation Path: "api/Oauth2/v1/UserAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/UserAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -721,14 +797,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> PutApiOauth2V1ChangeUserPasswordAsync(long companyId, UserDTO userInfo)
+        public virtual System.Threading.Tasks.Task<bool> PutApiOauth2V1UserPasswordAsync(long companyId, UserDTO userInfo)
         {
-            return PutApiOauth2V1ChangeUserPasswordAsync(companyId, userInfo, System.Threading.CancellationToken.None);
+            return PutApiOauth2V1UserPasswordAsync(companyId, userInfo, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> PutApiOauth2V1ChangeUserPasswordAsync(long companyId, UserDTO userInfo, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> PutApiOauth2V1UserPasswordAsync(long companyId, UserDTO userInfo, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -751,8 +827,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/ChangeUserPasswordAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/ChangeUserPasswordAsync");
+                    // Operation Path: "api/Oauth2/v1/UserPasswordAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/UserPasswordAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -826,14 +902,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> PutApiOauth2V1UpdateCompanyApplicationsAsync(long userId, CompanyApplicationDTO companyApplicationInfo)
+        public virtual System.Threading.Tasks.Task<bool> PutApiOauth2V1CompanyApplicationsAsync(long userId, CompanyApplicationDTO companyApplicationInfo)
         {
-            return PutApiOauth2V1UpdateCompanyApplicationsAsync(userId, companyApplicationInfo, System.Threading.CancellationToken.None);
+            return PutApiOauth2V1CompanyApplicationsAsync(userId, companyApplicationInfo, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> PutApiOauth2V1UpdateCompanyApplicationsAsync(long userId, CompanyApplicationDTO companyApplicationInfo, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> PutApiOauth2V1CompanyApplicationsAsync(long userId, CompanyApplicationDTO companyApplicationInfo, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -856,8 +932,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/UpdateCompanyApplicationsAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/UpdateCompanyApplicationsAsync");
+                    // Operation Path: "api/Oauth2/v1/CompanyApplicationsAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/CompanyApplicationsAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -1139,14 +1215,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1GetAllApplicationListAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1AllApplicationListAsync()
         {
-            return GetApiOauth2V1GetAllApplicationListAsync(System.Threading.CancellationToken.None);
+            return GetApiOauth2V1AllApplicationListAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1GetAllApplicationListAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1AllApplicationListAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -1159,8 +1235,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetAllApplicationListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetAllApplicationListAsync");
+                    // Operation Path: "api/Oauth2/v1/AllApplicationListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/AllApplicationListAsync");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1231,14 +1307,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1GetApplicationListAsync(long? companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1ApplicationListAsync(long? companyId)
         {
-            return GetApiOauth2V1GetApplicationListAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1ApplicationListAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1GetApplicationListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ApplicationDTO>> GetApiOauth2V1ApplicationListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -1251,8 +1327,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetApplicationListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetApplicationListAsync");
+                    // Operation Path: "api/Oauth2/v1/ApplicationListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/ApplicationListAsync");
                     urlBuilder_.Append('?');
                     if (companyId != null)
                     {
@@ -1329,14 +1405,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyMembershipsDTO>> GetApiOauth2V1GetCompanyMemberhipAsync(long? companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyMembershipsDTO>> GetApiOauth2V1CompanyMemberhipAsync(long? companyId)
         {
-            return GetApiOauth2V1GetCompanyMemberhipAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1CompanyMemberhipAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyMembershipsDTO>> GetApiOauth2V1GetCompanyMemberhipAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyMembershipsDTO>> GetApiOauth2V1CompanyMemberhipAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -1349,8 +1425,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetCompanyMemberhipAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetCompanyMemberhipAsync");
+                    // Operation Path: "api/Oauth2/v1/CompanyMemberhipAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/CompanyMemberhipAsync");
                     urlBuilder_.Append('?');
                     if (companyId != null)
                     {
@@ -1427,14 +1503,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyDTO>> GetApiOauth2V1GetAllCompanyListAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyDTO>> GetApiOauth2V1AllCompanyListAsync()
         {
-            return GetApiOauth2V1GetAllCompanyListAsync(System.Threading.CancellationToken.None);
+            return GetApiOauth2V1AllCompanyListAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyDTO>> GetApiOauth2V1GetAllCompanyListAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyDTO>> GetApiOauth2V1AllCompanyListAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -1447,8 +1523,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetAllCompanyListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetAllCompanyListAsync");
+                    // Operation Path: "api/Oauth2/v1/AllCompanyListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/AllCompanyListAsync");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1519,14 +1595,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<RoleDTO>> GetApiOauth2V1GetRoleListAsync(long? companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<RoleDTO>> GetApiOauth2V1RoleListAsync(long? companyId)
         {
-            return GetApiOauth2V1GetRoleListAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1RoleListAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<RoleDTO>> GetApiOauth2V1GetRoleListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<RoleDTO>> GetApiOauth2V1RoleListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -1539,8 +1615,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetRoleListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetRoleListAsync");
+                    // Operation Path: "api/Oauth2/v1/RoleListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/RoleListAsync");
                     urlBuilder_.Append('?');
                     if (companyId != null)
                     {
@@ -1617,14 +1693,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<RoleDTO> GetApiOauth2V1GetRolePermissionListAsync(long roleId)
+        public virtual System.Threading.Tasks.Task<RoleDTO> GetApiOauth2V1RolePermissionListAsync(long roleId)
         {
-            return GetApiOauth2V1GetRolePermissionListAsync(roleId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1RolePermissionListAsync(roleId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<RoleDTO> GetApiOauth2V1GetRolePermissionListAsync(long roleId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<RoleDTO> GetApiOauth2V1RolePermissionListAsync(long roleId, System.Threading.CancellationToken cancellationToken)
         {
             if (roleId == null)
                 throw new System.ArgumentNullException("roleId");
@@ -1640,8 +1716,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetRolePermissionListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetRolePermissionListAsync");
+                    // Operation Path: "api/Oauth2/v1/RolePermissionListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/RolePermissionListAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("roleId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(roleId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -1715,14 +1791,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ModuleDTO>> GetApiOauth2V1GetModuleListAsync(long? applicationId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ModuleDTO>> GetApiOauth2V1ModuleListAsync(long? applicationId)
         {
-            return GetApiOauth2V1GetModuleListAsync(applicationId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1ModuleListAsync(applicationId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ModuleDTO>> GetApiOauth2V1GetModuleListAsync(long? applicationId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ModuleDTO>> GetApiOauth2V1ModuleListAsync(long? applicationId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -1735,8 +1811,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetModuleListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetModuleListAsync");
+                    // Operation Path: "api/Oauth2/v1/ModuleListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/ModuleListAsync");
                     urlBuilder_.Append('?');
                     if (applicationId != null)
                     {
@@ -1813,14 +1889,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PageDTO>> GetApiOauth2V1GetPageListAsync(long moduleId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PageDTO>> GetApiOauth2V1PageListAsync(long moduleId)
         {
-            return GetApiOauth2V1GetPageListAsync(moduleId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1PageListAsync(moduleId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PageDTO>> GetApiOauth2V1GetPageListAsync(long moduleId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PageDTO>> GetApiOauth2V1PageListAsync(long moduleId, System.Threading.CancellationToken cancellationToken)
         {
             if (moduleId == null)
                 throw new System.ArgumentNullException("moduleId");
@@ -1836,8 +1912,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetPageListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetPageListAsync");
+                    // Operation Path: "api/Oauth2/v1/PageListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/PageListAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("moduleId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(moduleId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -1911,14 +1987,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ComponentDTO>> GetApiOauth2V1GetComponentListAsync(long pageId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ComponentDTO>> GetApiOauth2V1ComponentListAsync(long pageId)
         {
-            return GetApiOauth2V1GetComponentListAsync(pageId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1ComponentListAsync(pageId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ComponentDTO>> GetApiOauth2V1GetComponentListAsync(long pageId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ComponentDTO>> GetApiOauth2V1ComponentListAsync(long pageId, System.Threading.CancellationToken cancellationToken)
         {
             if (pageId == null)
                 throw new System.ArgumentNullException("pageId");
@@ -1934,8 +2010,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetComponentListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetComponentListAsync");
+                    // Operation Path: "api/Oauth2/v1/ComponentListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/ComponentListAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("pageId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -2009,14 +2085,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserRoleDTO>> GetApiOauth2V1GetUserRolesListAsync(long userId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserRoleDTO>> GetApiOauth2V1UserRolesListAsync(long userId)
         {
-            return GetApiOauth2V1GetUserRolesListAsync(userId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1UserRolesListAsync(userId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserRoleDTO>> GetApiOauth2V1GetUserRolesListAsync(long userId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserRoleDTO>> GetApiOauth2V1UserRolesListAsync(long userId, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -2032,8 +2108,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetUserRolesListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetUserRolesListAsync");
+                    // Operation Path: "api/Oauth2/v1/UserRolesListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/UserRolesListAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -2107,14 +2183,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDTO> GetApiOauth2V1GetUserPermissionListAsync(long userId)
+        public virtual System.Threading.Tasks.Task<UserDTO> GetApiOauth2V1UserPermissionListAsync(long userId)
         {
-            return GetApiOauth2V1GetUserPermissionListAsync(userId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1UserPermissionListAsync(userId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDTO> GetApiOauth2V1GetUserPermissionListAsync(long userId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDTO> GetApiOauth2V1UserPermissionListAsync(long userId, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -2130,8 +2206,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetUserPermissionListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetUserPermissionListAsync");
+                    // Operation Path: "api/Oauth2/v1/UserPermissionListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/UserPermissionListAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -2205,14 +2281,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyEntityAuditDTO>> GetApiOauth2V1GetCompanyEntityAuditsListAsync(long? companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyEntityAuditDTO>> GetApiOauth2V1CompanyEntityAuditsListAsync(long? companyId)
         {
-            return GetApiOauth2V1GetCompanyEntityAuditsListAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1CompanyEntityAuditsListAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyEntityAuditDTO>> GetApiOauth2V1GetCompanyEntityAuditsListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CompanyEntityAuditDTO>> GetApiOauth2V1CompanyEntityAuditsListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -2225,8 +2301,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetCompanyEntityAuditsListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetCompanyEntityAuditsListAsync");
+                    // Operation Path: "api/Oauth2/v1/CompanyEntityAuditsListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/CompanyEntityAuditsListAsync");
                     urlBuilder_.Append('?');
                     if (companyId != null)
                     {
@@ -2303,14 +2379,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<AuditRecordDTO>> GetApiOauth2V1GetAuditRecordsListAsync(long? companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<AuditRecordDTO>> GetApiOauth2V1AuditRecordsListAsync(long? companyId)
         {
-            return GetApiOauth2V1GetAuditRecordsListAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1AuditRecordsListAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<AuditRecordDTO>> GetApiOauth2V1GetAuditRecordsListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<AuditRecordDTO>> GetApiOauth2V1AuditRecordsListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -2323,8 +2399,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetAuditRecordsListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetAuditRecordsListAsync");
+                    // Operation Path: "api/Oauth2/v1/AuditRecordsListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/AuditRecordsListAsync");
                     urlBuilder_.Append('?');
                     if (companyId != null)
                     {
@@ -2401,14 +2477,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ActivityLogDTO>> GetApiOauth2V1GetActivityLogListAsync(long? companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ActivityLogDTO>> GetApiOauth2V1ActivityLogListAsync(long? companyId)
         {
-            return GetApiOauth2V1GetActivityLogListAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1ActivityLogListAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ActivityLogDTO>> GetApiOauth2V1GetActivityLogListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<ActivityLogDTO>> GetApiOauth2V1ActivityLogListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -2421,8 +2497,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Oauth2/v1/GetActivityLogListAsync"
-                    urlBuilder_.Append("api/Oauth2/v1/GetActivityLogListAsync");
+                    // Operation Path: "api/Oauth2/v1/ActivityLogListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/ActivityLogListAsync");
                     urlBuilder_.Append('?');
                     if (companyId != null)
                     {
@@ -2499,14 +2575,112 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1GetAllLocalizedMessagesByApplicationAsync(long applicationId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<NotificationDTO1>> GetApiOauth2V1NotificationsListAsync(long? companyId)
         {
-            return GetApiLocalizationV1GetAllLocalizedMessagesByApplicationAsync(applicationId, System.Threading.CancellationToken.None);
+            return GetApiOauth2V1NotificationsListAsync(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1GetAllLocalizedMessagesByApplicationAsync(long applicationId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<NotificationDTO1>> GetApiOauth2V1NotificationsListAsync(long? companyId, System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Oauth2/v1/NotificationsListAsync"
+                    urlBuilder_.Append("api/Oauth2/v1/NotificationsListAsync");
+                    urlBuilder_.Append('?');
+                    if (companyId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<NotificationDTO1>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<HttpValidationProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new SwaggerException<HttpValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1AllLocalizedMessagesByApplicationAsync(long applicationId)
+        {
+            return GetApiLocalizationV1AllLocalizedMessagesByApplicationAsync(applicationId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1AllLocalizedMessagesByApplicationAsync(long applicationId, System.Threading.CancellationToken cancellationToken)
         {
             if (applicationId == null)
                 throw new System.ArgumentNullException("applicationId");
@@ -2522,8 +2696,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Localization/v1/GetAllLocalizedMessagesByApplicationAsync"
-                    urlBuilder_.Append("api/Localization/v1/GetAllLocalizedMessagesByApplicationAsync");
+                    // Operation Path: "api/Localization/v1/AllLocalizedMessagesByApplicationAsync"
+                    urlBuilder_.Append("api/Localization/v1/AllLocalizedMessagesByApplicationAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("applicationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(applicationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -2597,14 +2771,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1GetAllLocalizedMessagesAsync(long applicationId, string cultureId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1AllLocalizedMessagesAsync(long applicationId, string cultureId)
         {
-            return GetApiLocalizationV1GetAllLocalizedMessagesAsync(applicationId, cultureId, System.Threading.CancellationToken.None);
+            return GetApiLocalizationV1AllLocalizedMessagesAsync(applicationId, cultureId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1GetAllLocalizedMessagesAsync(long applicationId, string cultureId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1AllLocalizedMessagesAsync(long applicationId, string cultureId, System.Threading.CancellationToken cancellationToken)
         {
             if (applicationId == null)
                 throw new System.ArgumentNullException("applicationId");
@@ -2620,8 +2794,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Localization/v1/GetAllLocalizedMessagesAsync"
-                    urlBuilder_.Append("api/Localization/v1/GetAllLocalizedMessagesAsync");
+                    // Operation Path: "api/Localization/v1/AllLocalizedMessagesAsync"
+                    urlBuilder_.Append("api/Localization/v1/AllLocalizedMessagesAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("applicationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(applicationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     if (cultureId != null)
@@ -2699,14 +2873,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1GetLocalizedMessagesByKeyAsync(long applicationId, string localizationMessageKey)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1LocalizedMessagesByKeyAsync(long applicationId, string localizationMessageKey)
         {
-            return GetApiLocalizationV1GetLocalizedMessagesByKeyAsync(applicationId, localizationMessageKey, System.Threading.CancellationToken.None);
+            return GetApiLocalizationV1LocalizedMessagesByKeyAsync(applicationId, localizationMessageKey, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1GetLocalizedMessagesByKeyAsync(long applicationId, string localizationMessageKey, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationV1LocalizedMessagesByKeyAsync(long applicationId, string localizationMessageKey, System.Threading.CancellationToken cancellationToken)
         {
             if (applicationId == null)
                 throw new System.ArgumentNullException("applicationId");
@@ -2725,8 +2899,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Localization/v1/GetLocalizedMessagesByKeyAsync"
-                    urlBuilder_.Append("api/Localization/v1/GetLocalizedMessagesByKeyAsync");
+                    // Operation Path: "api/Localization/v1/LocalizedMessagesByKeyAsync"
+                    urlBuilder_.Append("api/Localization/v1/LocalizedMessagesByKeyAsync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("applicationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(applicationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Append(System.Uri.EscapeDataString("localizationMessageKey")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(localizationMessageKey, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
@@ -2801,14 +2975,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CultureTranslationDTO> GetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSyncAsync(long applicationId, string cultureId, string localizationMessageKey, System.Collections.Generic.IEnumerable<string> parameters)
+        public virtual System.Threading.Tasks.Task<CultureTranslationDTO> GetApiLocalizationV1LocalizedMessageByKeyAndParamsSyncAsync(long applicationId, string cultureId, string localizationMessageKey, System.Collections.Generic.IEnumerable<string> parameters)
         {
-            return GetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSyncAsync(applicationId, cultureId, localizationMessageKey, parameters, System.Threading.CancellationToken.None);
+            return GetApiLocalizationV1LocalizedMessageByKeyAndParamsSyncAsync(applicationId, cultureId, localizationMessageKey, parameters, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CultureTranslationDTO> GetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSyncAsync(long applicationId, string cultureId, string localizationMessageKey, System.Collections.Generic.IEnumerable<string> parameters, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CultureTranslationDTO> GetApiLocalizationV1LocalizedMessageByKeyAndParamsSyncAsync(long applicationId, string cultureId, string localizationMessageKey, System.Collections.Generic.IEnumerable<string> parameters, System.Threading.CancellationToken cancellationToken)
         {
             if (applicationId == null)
                 throw new System.ArgumentNullException("applicationId");
@@ -2827,8 +3001,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Localization/v1/GetLocalizedMessageByKeyAndParamsSync"
-                    urlBuilder_.Append("api/Localization/v1/GetLocalizedMessageByKeyAndParamsSync");
+                    // Operation Path: "api/Localization/v1/LocalizedMessageByKeyAndParamsSync"
+                    urlBuilder_.Append("api/Localization/v1/LocalizedMessageByKeyAndParamsSync");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("applicationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(applicationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     if (cultureId != null)
@@ -7049,6 +7223,337 @@ namespace Vito.Transverse.Identity.Api
         {
 
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ActivityLogDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NotificationDTO1 : System.ComponentModel.INotifyPropertyChanged
+    {
+        private long _companyFk;
+        private long _notificationTemplateGroupFk;
+        private string _cultureFk;
+        private long _notificationTypeFk;
+        private long _id;
+        private System.DateTime _creationDate;
+        private string _sender;
+        private string _receiver;
+        private string _cc;
+        private string _bcc;
+        private string _subject;
+        private string _message;
+        private bool _isSent;
+        private System.DateTime? _sentDate;
+        private bool _isHtml;
+        private string _companyNameTranslationKey;
+        private string _notificationTypeNameTranslationKey;
+        private string _notificationTemplateName;
+        private string _cultureNameTranslationKey;
+
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long CompanyFk
+        {
+            get { return _companyFk; }
+
+            set
+            {
+                if (_companyFk != value)
+                {
+                    _companyFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("notificationTemplateGroupFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long NotificationTemplateGroupFk
+        {
+            get { return _notificationTemplateGroupFk; }
+
+            set
+            {
+                if (_notificationTemplateGroupFk != value)
+                {
+                    _notificationTemplateGroupFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("cultureFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CultureFk
+        {
+            get { return _cultureFk; }
+
+            set
+            {
+                if (_cultureFk != value)
+                {
+                    _cultureFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("notificationTypeFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long NotificationTypeFk
+        {
+            get { return _notificationTypeFk; }
+
+            set
+            {
+                if (_notificationTypeFk != value)
+                {
+                    _notificationTypeFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long Id
+        {
+            get { return _id; }
+
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime CreationDate
+        {
+            get { return _creationDate; }
+
+            set
+            {
+                if (_creationDate != value)
+                {
+                    _creationDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("sender", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Sender
+        {
+            get { return _sender; }
+
+            set
+            {
+                if (_sender != value)
+                {
+                    _sender = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("receiver", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Receiver
+        {
+            get { return _receiver; }
+
+            set
+            {
+                if (_receiver != value)
+                {
+                    _receiver = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("cc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Cc
+        {
+            get { return _cc; }
+
+            set
+            {
+                if (_cc != value)
+                {
+                    _cc = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("bcc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Bcc
+        {
+            get { return _bcc; }
+
+            set
+            {
+                if (_bcc != value)
+                {
+                    _bcc = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("subject", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Subject
+        {
+            get { return _subject; }
+
+            set
+            {
+                if (_subject != value)
+                {
+                    _subject = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Message
+        {
+            get { return _message; }
+
+            set
+            {
+                if (_message != value)
+                {
+                    _message = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSent", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSent
+        {
+            get { return _isSent; }
+
+            set
+            {
+                if (_isSent != value)
+                {
+                    _isSent = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("sentDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? SentDate
+        {
+            get { return _sentDate; }
+
+            set
+            {
+                if (_sentDate != value)
+                {
+                    _sentDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isHtml", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsHtml
+        {
+            get { return _isHtml; }
+
+            set
+            {
+                if (_isHtml != value)
+                {
+                    _isHtml = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("companyNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CompanyNameTranslationKey
+        {
+            get { return _companyNameTranslationKey; }
+
+            set
+            {
+                if (_companyNameTranslationKey != value)
+                {
+                    _companyNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("notificationTypeNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NotificationTypeNameTranslationKey
+        {
+            get { return _notificationTypeNameTranslationKey; }
+
+            set
+            {
+                if (_notificationTypeNameTranslationKey != value)
+                {
+                    _notificationTypeNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("notificationTemplateName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NotificationTemplateName
+        {
+            get { return _notificationTemplateName; }
+
+            set
+            {
+                if (_notificationTemplateName != value)
+                {
+                    _notificationTemplateName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("cultureNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CultureNameTranslationKey
+        {
+            get { return _cultureNameTranslationKey; }
+
+            set
+            {
+                if (_cultureNameTranslationKey != value)
+                {
+                    _cultureNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+        public static NotificationDTO1 FromJson(string data)
+        {
+
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<NotificationDTO1>(data, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
 

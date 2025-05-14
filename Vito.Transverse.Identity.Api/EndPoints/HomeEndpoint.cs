@@ -34,18 +34,25 @@ public static class HomeEndpoint
              .AddEndpointFilter<HomeFeatureFlagFilter>()
              .AddEndpointFilter<InfrastructureFilter>();
 
-        endPointGroupVersioned.MapGet("Detect", DetectAync)
+        endPointGroupVersioned.MapGet("DetectAsync", DetectAync)
              .MapToApiVersion(1.0)
              .WithSummary("Detect version 1.0"); ;
 
-        endPointGroupVersioned.MapGet("Ping", HomePingAync)
+        endPointGroupVersioned.MapGet("PingAsync", HomePingAync)
             .MapToApiVersion(1.0)
             .WithSummary("Ping version 1.0"); ;
 
-        endPointGroupVersioned.MapGet("Ping", HomePingV0_9Aync)
+        endPointGroupVersioned.MapGet("DetectAsync", DetectV0_9Aync)
             .MapToApiVersion(0.9)
              .WithSummary("Ping version 0.9")
             .AllowAnonymous();
+
+        endPointGroupVersioned.MapGet("PingAsync", HomePingV0_9Aync)
+            .MapToApiVersion(0.9)
+             .WithSummary("Ping version 0.9")
+            .AllowAnonymous();
+
+
     }
 
 
@@ -55,6 +62,19 @@ public static class HomeEndpoint
         PingResponseDTO returnObject = new()
         {
             PingMessage = "Detect v1.0",
+            PingDate = cultureService.UtcNow().DateTime,
+            DeviceInformation = deviceInformation!
+        };
+        var returnObjectAsync = await Task.FromResult(returnObject);
+        return TypedResults.Ok(returnObjectAsync);
+    }
+
+    public static async Task<Ok<PingResponseDTO>> DetectV0_9Aync(HttpRequest request, [FromServices] ICultureService cultureService)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        PingResponseDTO returnObject = new()
+        {
+            PingMessage = "Detect v0.9",
             PingDate = cultureService.UtcNow().DateTime,
             DeviceInformation = deviceInformation!
         };

@@ -105,7 +105,6 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
             notificationInfo.SentDate = notificationIsSent ? _cultureRepository.UtcNow().DateTime : null;
             context.Notifications.Add(notificationInfo);
             await context.SaveChangesAsync();
-            notificationSent = true;
         }
         catch (Exception ex)
         {

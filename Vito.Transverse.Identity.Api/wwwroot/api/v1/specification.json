@@ -6,9 +6,9 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/Home/v0.9/Ping": {
+    "/api/Home/v0.9/DetectAsync": {
       "get": {
-        "operationId": "GetApiHomeV0.9Ping",
+        "operationId": "GetApiHomeV0.9DetectAsync",
         "responses": {
           "200": {
             "description": "",
@@ -23,9 +23,9 @@
         }
       }
     },
-    "/api/Home/v1/Detect": {
+    "/api/Home/v0.9/PingAsync": {
       "get": {
-        "operationId": "GetApiHomeV1Detect",
+        "operationId": "GetApiHomeV0.9PingAsync",
         "responses": {
           "200": {
             "description": "",
@@ -40,9 +40,9 @@
         }
       }
     },
-    "/api/Home/v1/Ping": {
+    "/api/Home/v1/DetectAsync": {
       "get": {
-        "operationId": "GetApiHomeV1Ping",
+        "operationId": "GetApiHomeV1DetectAsync",
         "responses": {
           "200": {
             "description": "",
@@ -57,9 +57,26 @@
         }
       }
     },
-    "/api/Oauth2/v1/Token": {
+    "/api/Home/v1/PingAsync": {
+      "get": {
+        "operationId": "GetApiHomeV1PingAsync",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PingResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Oauth2/v1/TokenAsync": {
       "post": {
-        "operationId": "PostApiOauth2V1Token",
+        "operationId": "PostApiOauth2V1TokenAsync",
         "requestBody": {
           "x-name": "requestBody",
           "content": {
@@ -99,9 +116,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/CreateNewCompanyAsync": {
+    "/api/Oauth2/v1/CompanyAsync": {
       "post": {
-        "operationId": "PostApiOauth2V1CreateNewCompanyAsync",
+        "operationId": "PostApiOauth2V1CompanyAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -163,9 +180,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/CreateNewApplicationAsync": {
+    "/api/Oauth2/v1/ApplicationAsync": {
       "post": {
-        "operationId": "PostApiOauth2V1CreateNewApplicationAsync",
+        "operationId": "PostApiOauth2V1ApplicationAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -227,9 +244,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/CreateNewUserAsync": {
+    "/api/Oauth2/v1/UserAsync": {
       "post": {
-        "operationId": "PostApiOauth2V1CreateNewUserAsync",
+        "operationId": "PostApiOauth2V1UserAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -281,9 +298,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/ChangeUserPasswordAsync": {
+    "/api/Oauth2/v1/UserPasswordAsync": {
       "put": {
-        "operationId": "PutApiOauth2V1ChangeUserPasswordAsync",
+        "operationId": "PutApiOauth2V1UserPasswordAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -335,9 +352,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/UpdateCompanyApplicationsAsync": {
+    "/api/Oauth2/v1/CompanyApplicationsAsync": {
       "put": {
-        "operationId": "PutApiOauth2V1UpdateCompanyApplicationsAsync",
+        "operationId": "PutApiOauth2V1CompanyApplicationsAsync",
         "parameters": [
           {
             "name": "userId",
@@ -503,9 +520,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetAllApplicationListAsync": {
+    "/api/Oauth2/v1/AllApplicationListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetAllApplicationListAsync",
+        "operationId": "GetApiOauth2V1AllApplicationListAsync",
         "responses": {
           "200": {
             "description": "",
@@ -536,9 +553,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetApplicationListAsync": {
+    "/api/Oauth2/v1/ApplicationListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetApplicationListAsync",
+        "operationId": "GetApiOauth2V1ApplicationListAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -581,9 +598,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetCompanyMemberhipAsync": {
+    "/api/Oauth2/v1/CompanyMemberhipAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetCompanyMemberhipAsync",
+        "operationId": "GetApiOauth2V1CompanyMemberhipAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -626,9 +643,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetAllCompanyListAsync": {
+    "/api/Oauth2/v1/AllCompanyListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetAllCompanyListAsync",
+        "operationId": "GetApiOauth2V1AllCompanyListAsync",
         "responses": {
           "200": {
             "description": "",
@@ -659,9 +676,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetRoleListAsync": {
+    "/api/Oauth2/v1/RoleListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetRoleListAsync",
+        "operationId": "GetApiOauth2V1RoleListAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -704,9 +721,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetRolePermissionListAsync": {
+    "/api/Oauth2/v1/RolePermissionListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetRolePermissionListAsync",
+        "operationId": "GetApiOauth2V1RolePermissionListAsync",
         "parameters": [
           {
             "name": "roleId",
@@ -746,9 +763,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetModuleListAsync": {
+    "/api/Oauth2/v1/ModuleListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetModuleListAsync",
+        "operationId": "GetApiOauth2V1ModuleListAsync",
         "parameters": [
           {
             "name": "applicationId",
@@ -791,9 +808,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetPageListAsync": {
+    "/api/Oauth2/v1/PageListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetPageListAsync",
+        "operationId": "GetApiOauth2V1PageListAsync",
         "parameters": [
           {
             "name": "moduleId",
@@ -836,9 +853,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetComponentListAsync": {
+    "/api/Oauth2/v1/ComponentListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetComponentListAsync",
+        "operationId": "GetApiOauth2V1ComponentListAsync",
         "parameters": [
           {
             "name": "pageId",
@@ -881,9 +898,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetUserRolesListAsync": {
+    "/api/Oauth2/v1/UserRolesListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetUserRolesListAsync",
+        "operationId": "GetApiOauth2V1UserRolesListAsync",
         "parameters": [
           {
             "name": "userId",
@@ -926,9 +943,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetUserPermissionListAsync": {
+    "/api/Oauth2/v1/UserPermissionListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetUserPermissionListAsync",
+        "operationId": "GetApiOauth2V1UserPermissionListAsync",
         "parameters": [
           {
             "name": "userId",
@@ -968,9 +985,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetCompanyEntityAuditsListAsync": {
+    "/api/Oauth2/v1/CompanyEntityAuditsListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetCompanyEntityAuditsListAsync",
+        "operationId": "GetApiOauth2V1CompanyEntityAuditsListAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -1013,9 +1030,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetAuditRecordsListAsync": {
+    "/api/Oauth2/v1/AuditRecordsListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetAuditRecordsListAsync",
+        "operationId": "GetApiOauth2V1AuditRecordsListAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -1058,9 +1075,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/GetActivityLogListAsync": {
+    "/api/Oauth2/v1/ActivityLogListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1GetActivityLogListAsync",
+        "operationId": "GetApiOauth2V1ActivityLogListAsync",
         "parameters": [
           {
             "name": "companyId",
@@ -1103,9 +1120,54 @@
         }
       }
     },
-    "/api/Localization/v1/GetAllLocalizedMessagesByApplicationAsync": {
+    "/api/Oauth2/v1/NotificationsListAsync": {
       "get": {
-        "operationId": "GetApiLocalizationV1GetAllLocalizedMessagesByApplicationAsync",
+        "operationId": "GetApiOauth2V1NotificationsListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationDTO1"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Localization/v1/AllLocalizedMessagesByApplicationAsync": {
+      "get": {
+        "operationId": "GetApiLocalizationV1AllLocalizedMessagesByApplicationAsync",
         "parameters": [
           {
             "name": "applicationId",
@@ -1148,9 +1210,9 @@
         }
       }
     },
-    "/api/Localization/v1/GetAllLocalizedMessagesAsync": {
+    "/api/Localization/v1/AllLocalizedMessagesAsync": {
       "get": {
-        "operationId": "GetApiLocalizationV1GetAllLocalizedMessagesAsync",
+        "operationId": "GetApiLocalizationV1AllLocalizedMessagesAsync",
         "parameters": [
           {
             "name": "applicationId",
@@ -1202,9 +1264,9 @@
         }
       }
     },
-    "/api/Localization/v1/GetLocalizedMessagesByKeyAsync": {
+    "/api/Localization/v1/LocalizedMessagesByKeyAsync": {
       "get": {
-        "operationId": "GetApiLocalizationV1GetLocalizedMessagesByKeyAsync",
+        "operationId": "GetApiLocalizationV1LocalizedMessagesByKeyAsync",
         "parameters": [
           {
             "name": "applicationId",
@@ -1256,9 +1318,9 @@
         }
       }
     },
-    "/api/Localization/v1/GetLocalizedMessageByKeyAndParamsSync": {
+    "/api/Localization/v1/LocalizedMessageByKeyAndParamsSync": {
       "get": {
-        "operationId": "GetApiLocalizationV1GetLocalizedMessageByKeyAndParamsSync",
+        "operationId": "GetApiLocalizationV1LocalizedMessageByKeyAndParamsSync",
         "parameters": [
           {
             "name": "applicationId",
@@ -2323,6 +2385,78 @@
             "type": "string"
           },
           "actionTypeNameTranslationKey": {
+            "type": "string"
+          }
+        }
+      },
+      "NotificationDTO1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "notificationTemplateGroupFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cultureFk": {
+            "type": "string"
+          },
+          "notificationTypeFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sender": {
+            "type": "string"
+          },
+          "receiver": {
+            "type": "string"
+          },
+          "cc": {
+            "type": "string",
+            "nullable": true
+          },
+          "bcc": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "isSent": {
+            "type": "boolean"
+          },
+          "sentDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isHtml": {
+            "type": "boolean"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "notificationTypeNameTranslationKey": {
+            "type": "string"
+          },
+          "notificationTemplateName": {
+            "type": "string"
+          },
+          "cultureNameTranslationKey": {
             "type": "string"
           }
         }

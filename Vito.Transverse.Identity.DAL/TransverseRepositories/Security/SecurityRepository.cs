@@ -385,7 +385,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
     public async Task<bool> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
-        bool savedSuccesfuly = false;
+        bool emailSent = false;
 
         try
         {
@@ -399,8 +399,8 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 var userInfoDTOBackup = userInfo.CloneEntity();
                 // var companyId = userInfo.CompanyFkNavigation.Id;
 
-                userInfo.IsActive = true;
-                userInfo.EmailValidated = true;
+                userInfo.IsActive = false;
+                userInfo.EmailValidated = false;
                 userInfo.IsLocked = false;
                 userInfo.RequirePasswordChange = true;
                 userInfo.RetryCount = 0;
@@ -410,15 +410,15 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
                 OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_SendActivationEmail;
 
-                savedSuccesfuly = await AddNewActivityLogAsync(companyId, null, userInfo.Id, deviceInformation, actionStatus);
+                emailSent = await AddNewActivityLogAsync(companyId, null, userInfo.Id, deviceInformation, actionStatus);
 
                 //Send Activation Email
                 List<KeyValuePair<string, string>> emailTemplateParams = new()
                 {
-                     new KeyValuePair<string, string>("{{EMAIL}}",userInfo?.Email!),
-                     new KeyValuePair<string, string>("{{ACTIVATION_LINK}}",userInfo?.ActivationId.ToString()!),
+                     new KeyValuePair<string, string>("EMAIL",userInfo?.Email!),
+                     new KeyValuePair<string, string>("ACTIVATION_LINK",userInfo?.ActivationId.ToString()!),
                 };
-                await _socialNetworksRepository.SendNotificationByTemplateAsync(companyId, NotificationTypeEnum.NotificationType_Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfo?.Email], null, null, _cultureRepository.GetCurrentCultureId(), context);
+                emailSent = await _socialNetworksRepository.SendNotificationByTemplateAsync(companyId, NotificationTypeEnum.NotificationType_Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfo?.Email], null, null, _cultureRepository.GetCurrentCultureId(), context);
 
             }
         }
@@ -430,7 +430,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             _dataBaseContextFactory.DisposeDbContext(context);
         }
-        return savedSuccesfuly;
+        return emailSent;
     }
 
     public async Task<bool> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!)
@@ -485,7 +485,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
         }
-       
+
         return applicationDTOList;
     }
 
@@ -507,7 +507,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             _logger.LogError(ex, message: nameof(GetApplicationListAsync));
         }
-       
+
         return applicationDTOList;
     }
 
@@ -529,7 +529,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             _logger.LogError(ex, message: nameof(GetApplicationListAsync));
         }
-       
+
         return applicationDTOList;
     }
 
@@ -552,7 +552,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             _logger.LogError(ex, message: nameof(GetAllCompanyListAsync));
         }
-       
+
         return companyDTOList;
     }
 
@@ -775,6 +775,30 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
         return returnList;
     }
+
+    public async Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<NotificationDTO1>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Notifications
+                .Include(x => x.NotificationTemplate)
+                .ThenInclude(x => x.CultureFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.NotificationTypeFkNavigation)
+                .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
+            returnList = bdList.ToNotificationDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetNotificationsListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
     #endregion
 
     #region Private Methods

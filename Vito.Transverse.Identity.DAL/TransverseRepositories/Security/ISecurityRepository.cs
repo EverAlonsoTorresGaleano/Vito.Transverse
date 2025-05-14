@@ -63,4 +63,6 @@ public interface ISecurityRepository
     Task<List<AuditRecordDTO>> GetAuditRecordsListAsync(long? companyId, DataBaseServiceContext? context = null);
 
     Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId, DataBaseServiceContext? context = null);
+
+    Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null);
 }

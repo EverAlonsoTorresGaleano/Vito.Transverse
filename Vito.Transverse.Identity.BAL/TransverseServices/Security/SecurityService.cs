@@ -114,11 +114,11 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
 
     public async Task<bool?> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation)
     {
-        bool? returnValue=null;
+        bool? returnValue = null;
         try
         {
             returnValue = await _securityRepository.ChangeUserPasswordAsync(userInfo, deviceInformation);
-            
+
         }
         catch (Exception ex)
         {
@@ -133,8 +133,8 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         bool? returnValue = null;
         try
         {
-             returnValue = await _securityRepository.UpdateCompanyApplicationsAsync(companyInfo, applicationInfoList, userId, deviceInformation);
-         
+            returnValue = await _securityRepository.UpdateCompanyApplicationsAsync(companyInfo, applicationInfoList, userId, deviceInformation);
+
         }
         catch (Exception ex)
         {
@@ -149,7 +149,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         bool? returnValue = null;
         try
         {
-             returnValue = await _securityRepository.SendActivationEmailAsync(companyId, userId, deviceInformation);
+            returnValue = await _securityRepository.SendActivationEmailAsync(companyId, userId, deviceInformation);
         }
         catch (Exception ex)
         {
@@ -372,6 +372,20 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(GetActivityLogListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId)
+    {
+        try
+        {
+            var returnValue = await _securityRepository.GetNotificationsListAsync(companyId);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetNotificationsListAsync));
             throw;
         }
     }

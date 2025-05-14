@@ -699,6 +699,68 @@ public static class MapperExtension
         return returnObject;
     }
 
+
+
+    public static List<NotificationDTO1> ToNotificationDTOList(this List<Notification> modelObjectList)
+    {
+        List<NotificationDTO1> returnList = [];
+        modelObjectList.ForEach(modelObject =>
+        {
+            returnList.Add(modelObject.ToNotificationDTO()!);
+        });
+        return returnList;
+    }
+
+    public static NotificationDTO1 ToNotificationDTO(this Notification modelObject)
+    {
+        NotificationDTO1 returnObject = new()
+        {
+            Bcc = modelObject.Bcc,
+            Cc = modelObject.Cc,
+            CompanyFk = modelObject.CompanyFk,
+            CreationDate = modelObject.CreationDate,
+            CultureFk = modelObject.CultureFk,
+            Id = modelObject.Id,
+            IsHtml = modelObject.IsHtml,
+            IsSent = modelObject.IsSent,
+            Message = modelObject.Message,
+            NotificationTemplateGroupFk = modelObject.NotificationTemplateGroupFk,
+            NotificationTypeFk = modelObject.NotificationTypeFk,
+            Receiver = modelObject.Receiver,
+            Sender = modelObject.Sender,
+            SentDate = modelObject.SentDate,
+            Subject = modelObject.Subject,
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+            NotificationTypeNameTranslationKey = modelObject.NotificationTypeFkNavigation.NameTranslationKey,
+            NotificationTemplateName = modelObject.NotificationTemplate.Name,
+            CultureNameTranslationKey = modelObject.CultureFkNavigation.NameTranslationKey,
+        };
+        return returnObject;
+    }
+
+    public static Notification ToNotification(this NotificationDTO modelObject)
+    {
+        Notification returnObject;
+        returnObject = new()
+        {
+            CompanyFk = modelObject.CompanyFk,
+            Sender = modelObject.Sender,
+            Subject = modelObject.Subject,
+            Message = modelObject.Message,
+            Receiver = string.Join(",", modelObject.Receiver!),
+            Cc = modelObject.Cc is null ? null : string.Join(",", modelObject.Cc),
+            Bcc = modelObject.Bcc is null ? null : string.Join(",", modelObject.Bcc),
+            CultureFk = modelObject.CultureFk,
+            NotificationTemplateGroupFk = modelObject.NotificationTemplateGroupFk,
+            NotificationTypeFk = modelObject.NotificationTypeFk,
+            CreationDate = modelObject.CreationDate,
+            Id = modelObject.Id,
+            IsHtml = modelObject.IsHtml,
+            IsSent = modelObject.IsSent,
+            SentDate = modelObject.SentDate,
+        };
+        return returnObject;
+    }
     public static RoleDTO? ToRoleDTO(this Role? modelObject)
     {
         RoleDTO? returnObject;
@@ -762,52 +824,4 @@ public static class MapperExtension
         return returnObject;
     }
 
-    public static NotificationDTO ToNotificationDTO(this Notification modelObject)
-    {
-        NotificationDTO returnObject;
-        returnObject = new()
-        {
-            CultureFk = modelObject.CultureFk,
-            Sender = modelObject.Sender,
-            Subject = modelObject.Subject,
-            Message = modelObject.Message,
-            Receiver = modelObject.Receiver.Split(",").ToList(),
-            Cc = modelObject.Cc!.Split(",").ToList(),
-            Bcc = modelObject.Bcc!.Split(",").ToList(),
-            NotificationTemplateGroupFk = modelObject.NotificationTypeFk!,
-            CreationDate = modelObject.CreationDate,
-            Id = modelObject.Id,
-            IsHtml = modelObject.IsHtml,
-            IsSent = modelObject.IsSent,
-            NotificationTypeFk = modelObject.NotificationTypeFk,
-            SentDate = modelObject.SentDate,
-
-        };
-        return returnObject;
-    }
-
-
-    public static Notification ToNotification(this NotificationDTO modelObject)
-    {
-        Notification returnObject;
-        returnObject = new()
-        {
-            CompanyFk = modelObject.CompanyFk,
-            Sender = modelObject.Sender,
-            Subject = modelObject.Subject,
-            Message = modelObject.Message,
-            Receiver = string.Join(",", modelObject.Receiver!),
-            Cc = modelObject.Cc is null ? null : string.Join(",", modelObject.Cc),
-            Bcc = modelObject.Bcc is null ? null : string.Join(",", modelObject.Bcc),
-            CultureFk = modelObject.CultureFk,
-            NotificationTemplateGroupFk = modelObject.NotificationTemplateGroupFk,
-            NotificationTypeFk = modelObject.NotificationTypeFk,
-            CreationDate = modelObject.CreationDate,
-            Id = modelObject.Id,
-            IsHtml = modelObject.IsHtml,
-            IsSent = modelObject.IsSent,
-            SentDate = modelObject.SentDate,
-        };
-        return returnObject;
-    }
 }

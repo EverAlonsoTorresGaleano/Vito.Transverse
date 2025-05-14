@@ -1,5 +1,6 @@
 ﻿using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Models.Security;
+using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
@@ -51,4 +52,6 @@ public interface ISecurityService
     Task<List<AuditRecordDTO>> GetAuditRecordsListAsync(long? companyId);
 
     Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId);
+
+    Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId);
 }

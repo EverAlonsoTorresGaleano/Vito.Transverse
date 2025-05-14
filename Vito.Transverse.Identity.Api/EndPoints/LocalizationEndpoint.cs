@@ -30,7 +30,7 @@ public static class LocalizationEndpoint
             .RequireAuthorization();
 
 
-        endPointGroupVersioned.MapGet("GetAllLocalizedMessagesByApplicationAsync", GetAllLocalizedMessagesByApplicationAsync)
+        endPointGroupVersioned.MapGet("AllLocalizedMessagesByApplicationAsync", GetAllLocalizedMessagesByApplicationAsync)
              .MapToApiVersion(1.0)
             .WithSummary("GetAllLocalizedMessagesByApplicationAsync")
             .AddEndpointFilter<LocalizationFeatureFlagFilter>()
@@ -38,14 +38,14 @@ public static class LocalizationEndpoint
             .RequireAuthorization();
 
 
-        endPointGroupVersioned.MapGet("GetAllLocalizedMessagesAsync", GetAllLocalizedMessagesAsync)
+        endPointGroupVersioned.MapGet("AllLocalizedMessagesAsync", GetAllLocalizedMessagesAsync)
             .MapToApiVersion(1.0)
             .WithSummary("GetAllLocalizedMessagesAsync")
             .AddEndpointFilter<LocalizationFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>()
             .RequireAuthorization();
 
-        endPointGroupVersioned.MapGet("GetLocalizedMessagesByKeyAsync", GetLocalizedMessagesByKeyAsync)
+        endPointGroupVersioned.MapGet("LocalizedMessagesByKeyAsync", GetLocalizedMessagesByKeyAsync)
            .MapToApiVersion(1.0)
            .WithSummary("GetLocalizedMessagesByKeyAsync")
            .AddEndpointFilter<LocalizationFeatureFlagFilter>()
@@ -53,7 +53,7 @@ public static class LocalizationEndpoint
             .RequireAuthorization();
 
 
-        endPointGroupVersioned.MapGet("GetLocalizedMessageByKeyAndParamsSync", GetLocalizedMessageByKeyAndParamsSync)
+        endPointGroupVersioned.MapGet("LocalizedMessageByKeyAndParamsSync", GetLocalizedMessageByKeyAndParamsSync)
              .MapToApiVersion(1.0)
             .WithSummary("GetLocalizedMessageByKeyAsync")
              .AddEndpointFilter<LocalizationFeatureFlagFilter>()
