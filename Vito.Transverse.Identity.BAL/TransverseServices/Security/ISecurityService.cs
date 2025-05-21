@@ -1,6 +1,8 @@
 ﻿using Vito.Framework.Common.DTO;
+using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.Security;
 using Vito.Framework.Common.Models.SocialNetworks;
+using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
@@ -29,6 +31,8 @@ public interface ISecurityService
     Task<EndpointDTO?> ValidateEndpointAuthorizationAsync(DeviceInformationDTO deviceInformation);
 
     Task<EndpointDTO?> ValidateAuthorizationEndpointByRoleIdAsync(long roleId, string endpointUrl, string method);
+
+    Task<bool?> AddNewActivityLogAsync( DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus);
 
     Task<List<ApplicationDTO>> GetAllApplicationListAsync();
 

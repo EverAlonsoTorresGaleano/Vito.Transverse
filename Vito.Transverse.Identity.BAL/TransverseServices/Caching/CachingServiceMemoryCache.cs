@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Reflection;
+using System.Security.AccessControl;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
+using Vito.Transverse.Identity.Domain.Enums;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 
@@ -29,15 +32,23 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         return returValue;
     }
 
-    public bool DeleteCacheDataByKey(string itemCacheKey)
+    public bool DeleteCacheDataByKey(string itemCacheKey, bool removeFromSummary = true)
     {
         bool returValue = false;
         try
         {
             if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
             {
-                _memoryCache.Remove(itemCacheKey);
-                returValue = true;
+                _memoryCache.TryGetValue(itemCacheKey, out object? cacheInfo);
+                if (cacheInfo is not null)
+                {
+                    _memoryCache.Remove(itemCacheKey);
+                    returValue = true;
+                    if (removeFromSummary)
+                    {
+                        HandleSummaryCache(itemCacheKey, false);
+                    }
+                }
             }
         }
         catch (Exception ex)
@@ -47,6 +58,26 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         return returValue;
     }
 
+    public bool ClearCacheData()
+    {
+        bool returValue = false;
+        try
+        {
+            if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
+            {
+                if (_memoryCache is MemoryCache concreteMemoryCache)
+                {
+                    concreteMemoryCache.Clear();
+                    returValue = true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(DeleteCacheDataByKey));
+        }
+        return returValue;
+    }
 
 
     public T? GetCacheDataByKey<T>(string itemCacheName)
@@ -85,7 +116,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         throw new NotImplementedException();
     }
 
-    public bool SetCacheData(string itemCacheName, object itemCacheValue)
+    public bool SetCacheData(string itemCacheName, object itemCacheValue, bool addToSummary = true)
     {
         bool returnValue = false;
         if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
@@ -96,6 +127,10 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
                 var cacheExpiration = _cultureRepository.UtcNow().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
                 _memoryCache.Set(itemCacheName, serializedObject, cacheExpiration);
                 returnValue = true;
+                if (addToSummary)
+                {
+                    HandleSummaryCache(itemCacheName, true, itemCacheValue, cacheExpiration);
+                }
             }
             catch (Exception ex)
             {
@@ -104,4 +139,58 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         }
         return returnValue;
     }
+
+    private void HandleSummaryCache(string itemCacheName, bool isAdd, object? itemCacheValue = null, DateTimeOffset? cacheExpiration = null)
+    {
+        var summaryCacheList = GetCacheDataByKey<List<CacheSummaryDTO>>(CacheItemKeysEnum.All.ToString());
+        if (summaryCacheList is null)
+        {
+            summaryCacheList = new();
+        }
+        else
+        {
+            DeleteCacheDataByKey(CacheItemKeysEnum.All.ToString(), false);
+        }
+
+        if (isAdd)
+        {
+            var numberOfRecords = 0;
+            var cacheType = itemCacheValue!.GetType();
+            summaryCacheList.Add(
+                new()
+                {
+                    Index = summaryCacheList.Count + 1,
+                    Name = itemCacheName,
+                    Type = cacheType.FullName!,
+                    NumberOfRecords = numberOfRecords,
+                    CacheCreation = cacheExpiration!.Value.AddMinutes(-_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes),
+                    CacheExpiration = cacheExpiration!.Value,
+                    //SerilizedContent = CommonExtensions.Serialize(itemCacheValue)!
+                });
+        }
+        else
+        {
+            summaryCacheList.RemoveAll(x => x.Name.Equals(itemCacheName));
+        }
+        SetCacheData(CacheItemKeysEnum.All.ToString(), summaryCacheList, false);
+    }
+
+
+
+
+
+}
+
+public record CacheSummaryDTO
+{
+    public int Index { get; set; }
+    public int NumberOfRecords { get; set; }
+    public string Name { get; set; } = null!;
+    public string Type { get; set; } = null!;
+
+    public DateTimeOffset CacheCreation { get; set; }
+
+    public DateTimeOffset CacheExpiration { get; set; }
+
+    public string SerilizedContent { get; set; } = null!;
 }

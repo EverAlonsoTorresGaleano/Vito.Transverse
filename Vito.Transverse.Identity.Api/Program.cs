@@ -139,6 +139,7 @@ try
     app.MapSecurityEndpoint(versionSet);
     app.MapLocalizationEndpoint(versionSet);
     app.MapCultureEndpoint(versionSet);
+    app.MapCacheEndPoints(versionSet);
     app.MapTwilioEndPoint(versionSet);
 
     if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Container"))

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,6 +15,7 @@ using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 using Vito.Transverse.Identity.Domain.Enums;
+using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
@@ -73,8 +75,9 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
 
     private TokenDTO DecodeJwtSync(string tokenBearer)
     {
+        var jwtToken = tokenBearer!.Replace(FrameworkConstants.TokenBearerPrefix, string.Empty).Trim();
         var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(tokenBearer);
+        var token = handler.ReadJwtToken(jwtToken);
         var keyId = token.Header.Kid;
         var audience = token.Audiences.ToList();
         var claims = token.Claims.Select(claim => (claim.Type, claim.Value)).ToList();
@@ -236,8 +239,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         EndpointDTO? endpointInfo = null!;
         try
         {
-            var jwtToken = deviceInformation.JwtToken!.Replace(FrameworkConstants.TokenBearerPrefix, string.Empty).Trim();
-            var tokenDTO = DecodeJwtSync(jwtToken!);
+            var tokenDTO = DecodeJwtSync(deviceInformation.JwtToken!);
 
             var roleIdString = tokenDTO.Claims.First(x => x.Type.Equals(CustomClaimTypes.RoleId.ToString())).Value;
             if (long.TryParse(roleIdString, out var roleId))
@@ -258,6 +260,25 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         var endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(endpointUrl) && x.Method.Equals(method)) && x.IsActive);
         return endpointInfo;
 
+    }
+
+
+    public async Task<bool?> AddNewActivityLogAsync(DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus)
+    {
+        bool? returnValue = null!;
+        try
+        {
+            var tokenDto = DecodeJwtSync(deviceInformation.JwtToken!);
+            var companyId = tokenDto.Claims.First(x => x.Type.Equals(CustomClaimTypes.CompanyId.ToString())).Value;
+            var applicationId = tokenDto.Claims.First(x => x.Type.Equals(CustomClaimTypes.ApplicationId.ToString())).Value;
+            var userId = tokenDto.Claims.First(x => x.Type.Equals(ClaimTypes.Sid.ToString())).Value;
+            returnValue = await _securityRepository.AddNewActivityLogAsync(long.Parse(companyId), long.Parse(applicationId), long.Parse(userId), deviceInformation, actionStatus);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(AddNewActivityLogAsync));
+        }
+        return returnValue!;
     }
 
 

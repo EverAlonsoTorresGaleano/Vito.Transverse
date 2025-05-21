@@ -23,7 +23,7 @@ public interface ICachingServiceMemoryCache
     /// <param name="itemCacheName"></param>
     /// <param name="itemCache"></param>
     /// <returns>Tru iff sucees otherwize false.</returns>
-    bool SetCacheData(string itemCacheName, object itemCache);
+    bool SetCacheData(string itemCacheName, object itemCache, bool addToSummary = true);
 
 
     /// <summary>
@@ -31,7 +31,10 @@ public interface ICachingServiceMemoryCache
     /// </summary>
     /// <param name="itemCacheKey"></param>
     /// <returns></returns>
-    bool DeleteCacheDataByKey(string itemCacheKey);
+    bool DeleteCacheDataByKey(string itemCacheKey, bool removeFromSummary = true);
+
+
+    bool ClearCacheData();
 
     /// <summary>
     /// Refersh Cache

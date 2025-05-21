@@ -6,10 +6,12 @@ public enum FeatureFlagsNamesEnum
     CultureFeature,
     LocalizationFeature,
     SecurityFeature,
+    CacheFeature,
 }
 
 public enum CacheItemKeysEnum
 {
+    All,
     CultureList,
     CultureTranslationsListByApplicationId,
     CultureTranslationsListByApplicationIdCultureId,

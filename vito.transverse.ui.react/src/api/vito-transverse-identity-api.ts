@@ -78,6 +78,12 @@ export interface IClient {
 
     getApiCultureV1ActiveCultureListItemDTOList(): Promise<ListItemDTO[]>;
 
+    getApiCacheV1ClearCache(): Promise<boolean>;
+
+    getApiCacheV1DeleteCacheDataByKey(cacheName: string): Promise<boolean>;
+
+    getApiCacheV1GetCacheList(): Promise<CacheSummaryDTO[]>;
+
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO>;
 }
 
@@ -1643,6 +1649,109 @@ export class Client implements IClient {
         return Promise.resolve<ListItemDTO[]>(null as any);
     }
 
+    getApiCacheV1ClearCache(): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Cache/v1/ClearCache";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiCacheV1ClearCache(_response);
+        });
+    }
+
+    protected processGetApiCacheV1ClearCache(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
+
+    getApiCacheV1DeleteCacheDataByKey(cacheName: string): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Cache/v1/DeleteCacheDataByKey?";
+        if (cacheName === undefined || cacheName === null)
+            throw new Error("The parameter 'cacheName' must be defined and cannot be null.");
+        else
+            url_ += "cacheName=" + encodeURIComponent("" + cacheName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiCacheV1DeleteCacheDataByKey(_response);
+        });
+    }
+
+    protected processGetApiCacheV1DeleteCacheDataByKey(response: Response): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<boolean>(null as any);
+    }
+
+    getApiCacheV1GetCacheList(): Promise<CacheSummaryDTO[]> {
+        let url_ = this.baseUrl + "/api/Cache/v1/GetCacheList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiCacheV1GetCacheList(_response);
+        });
+    }
+
+    protected processGetApiCacheV1GetCacheList(response: Response): Promise<CacheSummaryDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CacheSummaryDTO[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CacheSummaryDTO[]>(null as any);
+    }
+
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO> {
         let url_ = this.baseUrl + "/api/Twilio/v1/SendSMS?";
         if (message === undefined || message === null)
@@ -2019,6 +2128,16 @@ export interface ListItemDTO {
     nameTranslationKey?: string;
     orderIndex?: number | undefined;
     isEnabled?: boolean;
+}
+
+export interface CacheSummaryDTO {
+    index?: number;
+    numberOfRecords?: number;
+    name?: string;
+    type?: string;
+    cacheCreation?: Date;
+    cacheExpiration?: Date;
+    serilizedContent?: string;
 }
 
 export class ApiException extends Error {
