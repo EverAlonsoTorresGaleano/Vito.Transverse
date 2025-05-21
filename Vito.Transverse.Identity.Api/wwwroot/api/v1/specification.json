@@ -1468,9 +1468,9 @@
         }
       }
     },
-    "/api/Cache/v1/ClearCache": {
-      "get": {
-        "operationId": "GetApiCacheV1ClearCache",
+    "/api/Cache/v1/Cache": {
+      "delete": {
+        "operationId": "DeleteApiCacheV1Cache",
         "responses": {
           "200": {
             "description": "",
@@ -1485,9 +1485,9 @@
         }
       }
     },
-    "/api/Cache/v1/DeleteCacheDataByKey": {
-      "get": {
-        "operationId": "GetApiCacheV1DeleteCacheDataByKey",
+    "/api/Cache/v1/CacheByKey": {
+      "delete": {
+        "operationId": "DeleteApiCacheV1CacheByKey",
         "parameters": [
           {
             "name": "cacheName",
@@ -1513,9 +1513,9 @@
         }
       }
     },
-    "/api/Cache/v1/GetCacheList": {
+    "/api/Cache/v1/CacheList": {
       "get": {
-        "operationId": "GetApiCacheV1GetCacheList",
+        "operationId": "GetApiCacheV1CacheList",
         "responses": {
           "200": {
             "description": "",
@@ -1525,6 +1525,110 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/CacheSummaryDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Media/v1/PictureList": {
+      "get": {
+        "operationId": "GetApiMediaV1PictureList",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PictureDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Media/v1/PictureByName": {
+      "get": {
+        "operationId": "GetApiMediaV1PictureByName",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/Media/v1/PictureByNameWildCard": {
+      "get": {
+        "operationId": "GetApiMediaV1PictureByNameWildCard",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "wildCard",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PictureDTO"
                   }
                 }
               }
@@ -2337,7 +2441,7 @@
             "type": "integer",
             "format": "int64"
           },
-          "auditEntityFk": {
+          "entityFk": {
             "type": "integer",
             "format": "int64"
           },
@@ -2372,10 +2476,10 @@
           "auditTypeNameTranslationKey": {
             "type": "string"
           },
-          "auditEntitySchemaName": {
+          "entitySchemaName": {
             "type": "string"
           },
-          "auditEntityName": {
+          "entityName": {
             "type": "string"
           }
         }
@@ -2722,6 +2826,83 @@
             "format": "date-time"
           },
           "serilizedContent": {
+            "type": "string"
+          }
+        }
+      },
+      "PictureDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "companyFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "entityFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fileTypeFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pictureCategoryFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByUserFk": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdateByUserFk": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "binaryPicture": {
+            "type": "string",
+            "format": "byte"
+          },
+          "pictureSize": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "pictureCategoryNameTranslationKey": {
+            "type": "string"
+          },
+          "fileTypeNameTranslationKey": {
+            "type": "string"
+          },
+          "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "entityName": {
+            "type": "string"
+          },
+          "entitySchemaName": {
             "type": "string"
           }
         }

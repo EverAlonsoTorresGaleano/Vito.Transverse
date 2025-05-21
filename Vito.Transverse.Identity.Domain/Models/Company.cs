@@ -51,6 +51,8 @@ public partial class Company
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
+    public virtual ICollection<Picture> Pictures { get; set; } = new List<Picture>();
+
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 
     public virtual ICollection<Sequence> Sequences { get; set; } = new List<Sequence>();

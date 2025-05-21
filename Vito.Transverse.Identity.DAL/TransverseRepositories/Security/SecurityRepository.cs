@@ -421,12 +421,12 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 List<KeyValuePair<string, string>> emailTemplateParams = new()
                 {
                      new (EmailTemplateParametersEnum.EMAIL.ToString(),userInfo?.Email!),
+                     new (EmailTemplateParametersEnum.FULL_NAME.ToString(),$"{userInfo?.Name!} {userInfo?.LastName!}"),
                      new (EmailTemplateParametersEnum.USER_ID.ToString(),userInfo?.Id.ToString()!),
                      new (EmailTemplateParametersEnum.APPLICATION_CLIENTID.ToString(),userInfo?.CompanyFkNavigation.CompanyClient.ToString()!),
                      new (EmailTemplateParametersEnum.ACTIVATION_ID.ToString(),userInfo?.ActivationId.ToString()!),
                 };
                 emailSent = await _socialNetworksRepository.SendNotificationByTemplateAsync(companyId, NotificationTypeEnum.NotificationType_Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfo?.Email], null, null, _cultureRepository.GetCurrentCultureId(), context);
-
             }
         }
         catch (Exception ex)
@@ -792,11 +792,11 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.CompanyEntityAudits
-                .Include(x => x.AuditEntityFkNavigation)
+                .Include(x => x.EntityFkNavigation)
                 .Include(x => x.AuditTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            returnList = bdList.ToCompanyEntityAuditDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.AuditEntityName).ThenBy(x => x.AuditTypeFk).ToList();
+            returnList = bdList.ToCompanyEntityAuditDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.EntityName).ThenBy(x => x.AuditTypeFk).ToList();
         }
         catch (Exception ex)
         {
@@ -814,7 +814,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.AuditRecords
-                .Include(x => x.AuditEntityFkNavigation)
+                .Include(x => x.EntityFkNavigation)
                 .Include(x => x.AuditTypeFkNavigation)
                 .Include(x => x.UserFkNavigation)
                 .Include(x => x.CompanyFkNavigation)

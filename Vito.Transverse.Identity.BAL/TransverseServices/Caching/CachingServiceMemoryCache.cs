@@ -124,7 +124,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
             try
             {
                 var serializedObject = CommonExtensions.Serialize(itemCacheValue);
-                var cacheExpiration = _cultureRepository.UtcNow().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
+                var cacheExpiration = _cultureRepository.UtcNow().ToLocalTime().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
                 _memoryCache.Set(itemCacheName, serializedObject, cacheExpiration);
                 returnValue = true;
                 if (addToSummary)

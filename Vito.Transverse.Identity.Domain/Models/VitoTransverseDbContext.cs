@@ -23,8 +23,6 @@ public partial class VitoTransverseDbContext : DbContext
 
     public virtual DbSet<ApplicationOwner> ApplicationOwners { get; set; }
 
-    public virtual DbSet<AuditEntity> AuditEntities { get; set; }
-
     public virtual DbSet<AuditRecord> AuditRecords { get; set; }
 
     public virtual DbSet<Company> Companies { get; set; }
@@ -45,6 +43,8 @@ public partial class VitoTransverseDbContext : DbContext
 
     public virtual DbSet<Endpoint> Endpoints { get; set; }
 
+    public virtual DbSet<Entity> Entities { get; set; }
+
     public virtual DbSet<GeneralTypeGroup> GeneralTypeGroups { get; set; }
 
     public virtual DbSet<GeneralTypeItem> GeneralTypeItems { get; set; }
@@ -60,6 +60,8 @@ public partial class VitoTransverseDbContext : DbContext
     public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+
+    public virtual DbSet<Picture> Pictures { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -176,17 +178,6 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasConstraintName("FK_ApplicationOwners_Companies");
         });
 
-        modelBuilder.Entity<AuditEntity>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.EntityName)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-            entity.Property(e => e.SchemaName)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-        });
-
         modelBuilder.Entity<AuditRecord>(entity =>
         {
             entity.Property(e => e.AuditEntityIndex)
@@ -223,11 +214,6 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
 
-            entity.HasOne(d => d.AuditEntityFkNavigation).WithMany(p => p.AuditRecords)
-                .HasForeignKey(d => d.AuditEntityFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AuditRecords_AuditEntities");
-
             entity.HasOne(d => d.AuditTypeFkNavigation).WithMany(p => p.AuditRecords)
                 .HasForeignKey(d => d.AuditTypeFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -237,6 +223,11 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasForeignKey(d => d.CompanyFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_AuditRecords_Companies");
+
+            entity.HasOne(d => d.EntityFkNavigation).WithMany(p => p.AuditRecords)
+                .HasForeignKey(d => d.EntityFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AuditRecords_Entities");
 
             entity.HasOne(d => d.UserFkNavigation).WithMany(p => p.AuditRecords)
                 .HasForeignKey(d => d.UserFk)
@@ -287,11 +278,6 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
-            entity.HasOne(d => d.AuditEntityFkNavigation).WithMany(p => p.CompanyEntityAudits)
-                .HasForeignKey(d => d.AuditEntityFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CompanyEntityAudits_AuditEntities");
-
             entity.HasOne(d => d.AuditTypeFkNavigation).WithMany(p => p.CompanyEntityAudits)
                 .HasForeignKey(d => d.AuditTypeFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -301,6 +287,11 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasForeignKey(d => d.CompanyFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CompanyEntityAudits_Companies");
+
+            entity.HasOne(d => d.EntityFkNavigation).WithMany(p => p.CompanyEntityAudits)
+                .HasForeignKey(d => d.EntityFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CompanyEntityAudits_Entities");
         });
 
         modelBuilder.Entity<CompanyMembership>(entity =>
@@ -476,6 +467,19 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasConstraintName("FK_ModuleEndpoint_Modules");
         });
 
+        modelBuilder.Entity<Entity>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_AuditEntities");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.EntityName)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.SchemaName)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<GeneralTypeGroup>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_ListItemGroup");
@@ -630,6 +634,39 @@ public partial class VitoTransverseDbContext : DbContext
                 .HasForeignKey(d => d.CultureFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NotificationTemplates_Cultures");
+        });
+
+        modelBuilder.Entity<Picture>(entity =>
+        {
+            entity.HasIndex(e => new { e.CompanyFk, e.Name }, "IX_Pictures");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+            entity.Property(e => e.Name)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.PictureSize).HasColumnType("decimal(18, 5)");
+
+            entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.Pictures)
+                .HasForeignKey(d => d.CompanyFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Pictures_Companies");
+
+            entity.HasOne(d => d.EntityFkNavigation).WithMany(p => p.Pictures)
+                .HasForeignKey(d => d.EntityFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Pictures_Entities");
+
+            entity.HasOne(d => d.FileTypeFkNavigation).WithMany(p => p.PictureFileTypeFkNavigations)
+                .HasForeignKey(d => d.FileTypeFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Pictures_GeneralTypeItems");
+
+            entity.HasOne(d => d.PictureCategoryFkNavigation).WithMany(p => p.PicturePictureCategoryFkNavigations)
+                .HasForeignKey(d => d.PictureCategoryFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Pictures_GeneralTypeItems1");
         });
 
         modelBuilder.Entity<Role>(entity =>

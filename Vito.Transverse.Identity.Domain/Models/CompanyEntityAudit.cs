@@ -9,7 +9,7 @@ public partial class CompanyEntityAudit
 
     public long Id { get; set; }
 
-    public long AuditEntityFk { get; set; }
+    public long EntityFk { get; set; }
 
     public long AuditTypeFk { get; set; }
 
@@ -23,9 +23,9 @@ public partial class CompanyEntityAudit
 
     public bool IsActive { get; set; }
 
-    public virtual AuditEntity AuditEntityFkNavigation { get; set; } = null!;
-
     public virtual GeneralTypeItem AuditTypeFkNavigation { get; set; } = null!;
 
     public virtual Company CompanyFkNavigation { get; set; } = null!;
+
+    public virtual Entity EntityFkNavigation { get; set; } = null!;
 }

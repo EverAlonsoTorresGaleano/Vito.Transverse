@@ -13,194 +13,158 @@ using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Api.Endpoints;
 
-/// <summary>
-/// Home Endpoint
-/// </summary>
-/// <example>https://developer.usps.com/api/81</example>
 public static class SecurityEndpoint
 {
     public static void MapSecurityEndpoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        //var endPointGroupNoVersioned = app.MapGroup("api/Oauth2/");
 
-        //endPointGroupNoVersioned.MapPost("Token", TokenAync)
-        //    .WithSummary("Get Authentication Token")
-        //    .AddEndpointFilter<SecurityFeatureFlagFilter>()
-        //    .AddEndpointFilter<InfrastructureFilter>();
-
-
-        var endPointGroupVersioned = app.MapGroup("api/Oauth2/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet);
+        var endPointGroupVersioned = app.MapGroup("api/Oauth2/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+            .AddEndpointFilter<InfrastructureFilter>()
+            .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
         endPointGroupVersioned.MapPost("TokenAsync", TokenAync)
              .MapToApiVersion(1.0)
             .WithSummary("Get Authentication Token")
-            .AllowAnonymous()
-            .AddEndpointFilter<InfrastructureFilter>()
-            .AddEndpointFilter<SecurityFeatureFlagFilter>();
+            .WithDescription("[Anonymous]")
+            .AllowAnonymous();
 
         endPointGroupVersioned.MapPost("CompanyAsync", CreateNewCompanyAsync)
             .MapToApiVersion(1.0)
-           .WithSummary("CreateNewCompanyAsync")
-           .RequireAuthorization()
-           .AddEndpointFilter<InfrastructureFilter>()
-           .AddEndpointFilter<SecurityFeatureFlagFilter>();
+           .WithSummary("Create New Company Async")
+            .WithDescription("[Require Authorization]")
+           .RequireAuthorization();
 
         endPointGroupVersioned.MapPost("ApplicationAsync", CreateNewApplicationAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("CreateNewApplicationAsync")
-            .RequireAuthorization()
-            .AddEndpointFilter<InfrastructureFilter>()
-            .AddEndpointFilter<SecurityFeatureFlagFilter>();
+            .WithSummary("Create New Application Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
 
         endPointGroupVersioned.MapPost("UserAsync", CreateNewUserAsync)
              .MapToApiVersion(1.0)
-             .WithSummary("CreateNewUserAsync")
-             .RequireAuthorization()
-             .AddEndpointFilter<InfrastructureFilter>()
-             .AddEndpointFilter<SecurityFeatureFlagFilter>();
-
-
+             .WithSummary("Create New User Async")
+            .WithDescription("[Require Authorization]")
+             .RequireAuthorization();
 
         endPointGroupVersioned.MapPut("UserPasswordAsync", ChangeUserPasswordAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("ChangeUserPasswordAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Change User Password Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
         endPointGroupVersioned.MapPut("CompanyApplicationsAsync", UpdateCompanyApplicationsAsync)
            .MapToApiVersion(1.0)
-           .WithSummary("UpdateCompanyApplicationsAsync")
-           .RequireAuthorization()
-           .AddEndpointFilter<InfrastructureFilter>()
-           .AddEndpointFilter<SecurityFeatureFlagFilter>();
-
-
+           .WithSummary("Update Company Applications Async")
+            .WithDescription("[Require Authorization]")
+           .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("SendActivationEmailAsync", SendActivationEmailAsync)
            .MapToApiVersion(1.0)
-           .WithSummary("SendActivationEmailAsync")
-           .RequireAuthorization()
-           .AddEndpointFilter<InfrastructureFilter>()
-           .AddEndpointFilter<SecurityFeatureFlagFilter>();
+           .WithSummary("Send Activation Email Async")
+            .WithDescription("[Require Authorization]")
+           .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("ActivateAccountAsync", ActivateAccountAsync)
            .MapToApiVersion(1.0)
-           .WithSummary("ActivateAccountAsync")
-           .AllowAnonymous()
-           .AddEndpointFilter<InfrastructureFilter>()
-           .AddEndpointFilter<SecurityFeatureFlagFilter>();
+           .WithSummary("Activate Account Async")
+            .WithDescription("[Anonymmous]")
+           .AllowAnonymous();
 
         endPointGroupVersioned.MapGet("AllApplicationListAsync", GetAllApplicationListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetAllApplicationListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get All Application List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("ApplicationListAsync", GetApplicationListAsync)
          .MapToApiVersion(1.0)
-         .WithSummary("GetApplicationListAsync")
-         .RequireAuthorization()
-         .AddEndpointFilter<InfrastructureFilter>()
-         .AddEndpointFilter<SecurityFeatureFlagFilter>();
+         .WithSummary("Get Application List Async")
+          .WithDescription("[Require Authorization]")
+         .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("CompanyMemberhipAsync", GetCompanyMemberhipAsync)
          .MapToApiVersion(1.0)
-         .WithSummary("GetCompanyMemberhipByCompanyAsync")
-         .RequireAuthorization()
-         .AddEndpointFilter<InfrastructureFilter>()
-         .AddEndpointFilter<SecurityFeatureFlagFilter>();
+         .WithSummary("Get Company Memberhip By Company Async")
+         .WithDescription("[Require Authorization]")
+         .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("AllCompanyListAsync", GetAllCompanyListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetAllCompanyListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get All Company List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
 
         endPointGroupVersioned.MapGet("RoleListAsync", GetRoleListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetRoleListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get Role List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
 
         endPointGroupVersioned.MapGet("RolePermissionListAsync", GetRolePermissionListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetRolePermissionListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get Role Permission List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
 
         endPointGroupVersioned.MapGet("ModuleListAsync", GetModuleListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetModuleListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get Module List Async")
+          .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
 
         endPointGroupVersioned.MapGet("EndpointsListAsync", GetEndpointsListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetEndpointsListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get Endpoints List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
 
         endPointGroupVersioned.MapGet("ComponentListAsync", GetComponentListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetComponentListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get Component List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("UserRolesListAsync", GetUserRolesListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetUserRolesListAsync")
-          .RequireAuthorization()
-          .AddEndpointFilter<InfrastructureFilter>()
-          .AddEndpointFilter<SecurityFeatureFlagFilter>();
+          .WithSummary("Get User Roles List Async")
+            .WithDescription("[Require Authorization]")
+          .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("UserPermissionListAsync", GetUserPermissionListAsync)
            .MapToApiVersion(1.0)
-           .WithSummary("GetUserPermissionListAsync")
-           .RequireAuthorization()
-           .AddEndpointFilter<InfrastructureFilter>()
-           .AddEndpointFilter<SecurityFeatureFlagFilter>();
+           .WithSummary("Get User Permission List Async")
+            .WithDescription("[Require Authorization]")
+           .RequireAuthorization();
 
 
         endPointGroupVersioned.MapGet("CompanyEntityAuditsListAsync", GetCompanyEntityAuditsListAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("GetCompanyEntityAuditsListAsync")
-            .RequireAuthorization()
-            .AddEndpointFilter<InfrastructureFilter>()
-            .AddEndpointFilter<SecurityFeatureFlagFilter>();
+            .WithSummary("Get Company Entity Audits List Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("AuditRecordsListAsync", GetAuditRecordsListAsync)
            .MapToApiVersion(1.0)
-           .WithSummary("GetAuditRecordsListAsync")
-           .RequireAuthorization()
-           .AddEndpointFilter<InfrastructureFilter>()
-           .AddEndpointFilter<SecurityFeatureFlagFilter>();
+           .WithSummary("Get Audit Records List Async")
+            .WithDescription("[Require Authorization]")
+           .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("ActivityLogListAsync", GetActivityLogListAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("GetActivityLogListAsync")
-            .RequireAuthorization()
-            .AddEndpointFilter<InfrastructureFilter>()
-            .AddEndpointFilter<SecurityFeatureFlagFilter>();
+            .WithSummary("Get Activity Log List Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("NotificationsListAsync", GetNotificationsListAsync)
              .MapToApiVersion(1.0)
-             .WithSummary("GetNotificationsListAsync")
-             .RequireAuthorization()
-             .AddEndpointFilter<InfrastructureFilter>()
-             .AddEndpointFilter<SecurityFeatureFlagFilter>();
+             .WithSummary("Get Notifications List Async")
+            .WithDescription("[Require Authorization]")
+             .RequireAuthorization();
 
     }
 

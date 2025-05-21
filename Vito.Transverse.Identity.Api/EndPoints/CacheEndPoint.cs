@@ -7,55 +7,37 @@ using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
-using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 using Vito.Transverse.Identity.Domain.Enums;
 
 namespace Vito.Transverse.Identity.Api.Endpoints;
 
-/// <summary>
-/// Home Endpoint
-/// </summary>
 public static class CacheEndpoint
 {
     public static void MapCacheEndPoints(this WebApplication app, ApiVersionSet versionSet)
     {
-        //var endPointGroupNoVersioned = app.MapGroup("api/Home/");
-
-        //endPointGroupNoVersioned.MapGet("Detect", DetectAync)
-        //     .WithSummary("Detect version 1.0")
-        //     .AddEndpointFilter<HomeFeatureFlagFilter>()
-        //     .AddEndpointFilter<InfrastructureFilter>();
-
-        //endPointGroupNoVersioned.MapGet("Ping", HomePingAync)
-        //    .WithSummary("Ping version 1.0")
-        //    .AddEndpointFilter<HomeFeatureFlagFilter>()
-        //    .AddEndpointFilter<InfrastructureFilter>();
-
-
-        var endPointGroupVersioned = app.MapGroup("api/Cache/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet);
-
-
-        endPointGroupVersioned.MapGet("ClearCache", ClearCache)
-            .MapToApiVersion(1.0)
-            .WithSummary("ClearCache")
-            .RequireAuthorization()
+        var endPointGroupVersioned = app.MapGroup("api/Cache/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CacheFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
-        endPointGroupVersioned.MapGet("DeleteCacheDataByKey", DeleteCacheDataByKey)
+        endPointGroupVersioned.MapDelete("Cache", ClearCache)
             .MapToApiVersion(1.0)
-            .WithSummary("ClearCache")
-            .RequireAuthorization()
-            .AddEndpointFilter<CacheFeatureFlagFilter>()
-            .AddEndpointFilter<InfrastructureFilter>();
+            .WithSummary("Delete All Cache Collections")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
 
-        endPointGroupVersioned.MapGet("GetCacheList", GetCacheList)
+
+        endPointGroupVersioned.MapDelete("CacheByKey", DeleteCacheDataByKey)
             .MapToApiVersion(1.0)
-            .WithSummary("GetCacheList")
-            .RequireAuthorization()
-            .AddEndpointFilter<CacheFeatureFlagFilter>()
-            .AddEndpointFilter<InfrastructureFilter>();
+            .WithSummary("Delete Cache by Key")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
+
+        endPointGroupVersioned.MapGet("CacheList", GetCacheList)
+            .MapToApiVersion(1.0)
+            .WithSummary("Get Cache Collentions List")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
 
     }
 

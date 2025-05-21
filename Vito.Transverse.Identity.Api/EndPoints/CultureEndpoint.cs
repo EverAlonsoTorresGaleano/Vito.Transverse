@@ -21,12 +21,6 @@ public static class CultureEndpoint
 
     public static void MapCultureEndpoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        //var endPointGroupNoVersioned = app.MapGroup("api/Oauth2/");
-
-        //endPointGroupNoVersioned.MapPost("Token", TokenAync)
-        //    .WithSummary("Get Authentication Token")
-        //    .AddEndpointFilter<SecurityFeatureFlagFilter>()
-        //    .AddEndpointFilter<InfrastructureFilter>();
 
         var endPointGroupVersioned = app.MapGroup("api/Culture/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CultureFeatureFlagFilter>()
@@ -35,16 +29,19 @@ public static class CultureEndpoint
 
         endPointGroupVersioned.MapGet("UtcNow", GetUtcNow)
              .MapToApiVersion(1.0)
-            .WithSummary("GetUtcNow")
-            .AllowAnonymous();
+            .WithSummary("Get Utc Now")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization();
 
         endPointGroupVersioned.MapGet("ActiveCultureListAsync", GetActiveCultureListAsync)
              .MapToApiVersion(1.0)
-            .WithSummary("GetActiveCultureListAsync");
+             .WithSummary("Get Active Culture List Async")
+             .WithDescription("[Require Authorization]");
 
         endPointGroupVersioned.MapGet("ActiveCultureListItemDTOListAsync", GetActiveCultureListItemDTOListAsync)
              .MapToApiVersion(1.0)
-            .WithSummary("GetActiveCultureListItemDTOListAsync");
+             .WithSummary("Get Active Culture ListItemDTO List Async")
+             .WithDescription("[Require Authorization]");
     }
 
     public static async Task<Results<Ok<DateTimeOffset>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetUtcNow(
@@ -52,17 +49,10 @@ public static class CultureEndpoint
         [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
-        if (hasPermissions is null)
-        {
-            return TypedResults.Unauthorized();
-        }
-        else
-        {
-            var returnObject = await Task.FromResult(cultureService.UtcNow());
-            return TypedResults.Ok(returnObject);
-        }
+
+        var returnObject = await Task.FromResult(cultureService.UtcNow());
+        return TypedResults.Ok(returnObject);
+
     }
 
 
@@ -71,18 +61,11 @@ public static class CultureEndpoint
         [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
-        if (hasPermissions is null)
-        {
-            return TypedResults.Unauthorized();
-        }
-        else
-        {
-            var applicationId = request.GetCompanyIdFromHeader();
-            var returnObject = await cultureService.GetActiveCultureListAsync(applicationId);
-            return TypedResults.Ok(returnObject);
-        }
+
+        var applicationId = request.GetCompanyIdFromHeader();
+        var returnObject = await cultureService.GetActiveCultureListAsync(applicationId);
+        return TypedResults.Ok(returnObject);
+
     }
 
     public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetActiveCultureListItemDTOListAsync(
@@ -90,17 +73,10 @@ public static class CultureEndpoint
         [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
-        if (hasPermissions is null)
-        {
-            return TypedResults.Unauthorized();
-        }
-        else
-        {
-            var applicationId = request.GetCompanyIdFromHeader();
-            var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(applicationId);
-            return TypedResults.Ok(returnObject);
-        }
+
+        var applicationId = request.GetCompanyIdFromHeader();
+        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(applicationId);
+        return TypedResults.Ok(returnObject);
+
     }
 }

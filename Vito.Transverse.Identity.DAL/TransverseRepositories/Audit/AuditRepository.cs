@@ -79,8 +79,8 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
         context = _dataBaseContextFactory.GetDbContext();
         var auditEntity = await context.CompanyEntityAudits.FirstOrDefaultAsync(x => x.CompanyFk == companyId
                         && x.AuditTypeFk == (long)auditType
-                        && x.AuditEntityFkNavigation.EntityName.Equals($"{entityName}{"s"}")
-                        && x.AuditEntityFkNavigation.IsActive == true);
+                        && x.EntityFkNavigation.EntityName.Equals($"{entityName}{"s"}")
+                        && x.EntityFkNavigation.IsActive == true);
         return auditEntity!;
     }
 
@@ -93,7 +93,7 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
             CompanyFk = companyId,
             UserFk = userId,
             AuditTypeFk = (long)auditType,
-            AuditEntityFk = companyEntity.AuditEntityFk,
+            EntityFk = companyEntity.EntityFk,
             AuditEntityIndex = entityIndex,
             CultureFk = cultureId,
             AuditInfoJson = auditInformation,

@@ -7,6 +7,7 @@ public enum FeatureFlagsNamesEnum
     LocalizationFeature,
     SecurityFeature,
     CacheFeature,
+    MediaFeature,
 }
 
 public enum CacheItemKeysEnum
@@ -31,6 +32,7 @@ public enum CacheItemKeysEnum
     UserPermissionListByUserId,
     CompanyEntityAuditListByCompanyId,
 
+    PictureListByCompanyId
 }
 
 public enum NotificationTemplatesEnum
@@ -56,5 +58,6 @@ public enum EmailTemplateParametersEnum
     EMAIL,
     USER_ID,
     APPLICATION_CLIENTID,
-    ACTIVATION_ID
+    ACTIVATION_ID,
+    FULL_NAME
 }

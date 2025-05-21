@@ -3353,14 +3353,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> GetApiCacheV1ClearCacheAsync()
+        public virtual System.Threading.Tasks.Task<bool> DeleteApiCacheV1CacheAsync()
         {
-            return GetApiCacheV1ClearCacheAsync(System.Threading.CancellationToken.None);
+            return DeleteApiCacheV1CacheAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> GetApiCacheV1ClearCacheAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> DeleteApiCacheV1CacheAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -3368,13 +3368,13 @@ namespace Vito.Transverse.Identity.Api
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Cache/v1/ClearCache"
-                    urlBuilder_.Append("api/Cache/v1/ClearCache");
+                    // Operation Path: "api/Cache/v1/Cache"
+                    urlBuilder_.Append("api/Cache/v1/Cache");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -3429,14 +3429,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> GetApiCacheV1DeleteCacheDataByKeyAsync(string cacheName)
+        public virtual System.Threading.Tasks.Task<bool> DeleteApiCacheV1CacheByKeyAsync(string cacheName)
         {
-            return GetApiCacheV1DeleteCacheDataByKeyAsync(cacheName, System.Threading.CancellationToken.None);
+            return DeleteApiCacheV1CacheByKeyAsync(cacheName, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> GetApiCacheV1DeleteCacheDataByKeyAsync(string cacheName, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> DeleteApiCacheV1CacheByKeyAsync(string cacheName, System.Threading.CancellationToken cancellationToken)
         {
             if (cacheName == null)
                 throw new System.ArgumentNullException("cacheName");
@@ -3447,13 +3447,13 @@ namespace Vito.Transverse.Identity.Api
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Cache/v1/DeleteCacheDataByKey"
-                    urlBuilder_.Append("api/Cache/v1/DeleteCacheDataByKey");
+                    // Operation Path: "api/Cache/v1/CacheByKey"
+                    urlBuilder_.Append("api/Cache/v1/CacheByKey");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("cacheName")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cacheName, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
@@ -3511,14 +3511,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CacheSummaryDTO>> GetApiCacheV1GetCacheListAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CacheSummaryDTO>> GetApiCacheV1CacheListAsync()
         {
-            return GetApiCacheV1GetCacheListAsync(System.Threading.CancellationToken.None);
+            return GetApiCacheV1CacheListAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CacheSummaryDTO>> GetApiCacheV1GetCacheListAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CacheSummaryDTO>> GetApiCacheV1CacheListAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -3531,8 +3531,8 @@ namespace Vito.Transverse.Identity.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Cache/v1/GetCacheList"
-                    urlBuilder_.Append("api/Cache/v1/GetCacheList");
+                    // Operation Path: "api/Cache/v1/CacheList"
+                    urlBuilder_.Append("api/Cache/v1/CacheList");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -3560,6 +3560,254 @@ namespace Vito.Transverse.Identity.Api
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<CacheSummaryDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PictureDTO>> GetApiMediaV1PictureListAsync(long companyId)
+        {
+            return GetApiMediaV1PictureListAsync(companyId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PictureDTO>> GetApiMediaV1PictureListAsync(long companyId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (companyId == null)
+                throw new System.ArgumentNullException("companyId");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Media/v1/PictureList"
+                    urlBuilder_.Append("api/Media/v1/PictureList");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<PictureDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task GetApiMediaV1PictureByNameAsync(long companyId, string name)
+        {
+            return GetApiMediaV1PictureByNameAsync(companyId, name, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task GetApiMediaV1PictureByNameAsync(long companyId, string name, System.Threading.CancellationToken cancellationToken)
+        {
+            if (companyId == null)
+                throw new System.ArgumentNullException("companyId");
+
+            if (name == null)
+                throw new System.ArgumentNullException("name");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Media/v1/PictureByName"
+                    urlBuilder_.Append("api/Media/v1/PictureByName");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("name")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PictureDTO>> GetApiMediaV1PictureByNameWildCardAsync(long companyId, string wildCard)
+        {
+            return GetApiMediaV1PictureByNameWildCardAsync(companyId, wildCard, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<PictureDTO>> GetApiMediaV1PictureByNameWildCardAsync(long companyId, string wildCard, System.Threading.CancellationToken cancellationToken)
+        {
+            if (companyId == null)
+                throw new System.ArgumentNullException("companyId");
+
+            if (wildCard == null)
+                throw new System.ArgumentNullException("wildCard");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Media/v1/PictureByNameWildCard"
+                    urlBuilder_.Append("api/Media/v1/PictureByNameWildCard");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("wildCard")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(wildCard, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<PictureDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6986,7 +7234,7 @@ namespace Vito.Transverse.Identity.Api
     {
         private long _companyFk;
         private long _id;
-        private long _auditEntityFk;
+        private long _entityFk;
         private long _auditTypeFk;
         private System.DateTime _creationDate;
         private long _createdByUserFk;
@@ -6995,8 +7243,8 @@ namespace Vito.Transverse.Identity.Api
         private bool _isActive;
         private string _companyNameTranslationKey;
         private string _auditTypeNameTranslationKey;
-        private string _auditEntitySchemaName;
-        private string _auditEntityName;
+        private string _entitySchemaName;
+        private string _entityName;
 
         [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public long CompanyFk
@@ -7028,16 +7276,16 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("auditEntityFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long AuditEntityFk
+        [Newtonsoft.Json.JsonProperty("entityFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long EntityFk
         {
-            get { return _auditEntityFk; }
+            get { return _entityFk; }
 
             set
             {
-                if (_auditEntityFk != value)
+                if (_entityFk != value)
                 {
-                    _auditEntityFk = value;
+                    _entityFk = value;
                     RaisePropertyChanged();
                 }
             }
@@ -7163,31 +7411,31 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("auditEntitySchemaName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string AuditEntitySchemaName
+        [Newtonsoft.Json.JsonProperty("entitySchemaName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntitySchemaName
         {
-            get { return _auditEntitySchemaName; }
+            get { return _entitySchemaName; }
 
             set
             {
-                if (_auditEntitySchemaName != value)
+                if (_entitySchemaName != value)
                 {
-                    _auditEntitySchemaName = value;
+                    _entitySchemaName = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("auditEntityName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string AuditEntityName
+        [Newtonsoft.Json.JsonProperty("entityName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityName
         {
-            get { return _auditEntityName; }
+            get { return _entityName; }
 
             set
             {
-                if (_auditEntityName != value)
+                if (_entityName != value)
                 {
-                    _auditEntityName = value;
+                    _entityName = value;
                     RaisePropertyChanged();
                 }
             }
@@ -8800,6 +9048,337 @@ namespace Vito.Transverse.Identity.Api
         {
 
             return Newtonsoft.Json.JsonConvert.DeserializeObject<CacheSummaryDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PictureDTO : System.ComponentModel.INotifyPropertyChanged
+    {
+        private long _companyFk;
+        private long _id;
+        private string _name;
+        private long _entityFk;
+        private long _fileTypeFk;
+        private long _pictureCategoryFk;
+        private System.DateTime _creationDate;
+        private long _createdByUserFk;
+        private System.DateTime? _lastUpdateDate;
+        private long? _lastUpdateByUserFk;
+        private bool _isActive;
+        private byte[] _binaryPicture;
+        private decimal _pictureSize;
+        private string _pictureCategoryNameTranslationKey;
+        private string _fileTypeNameTranslationKey;
+        private string _companyNameTranslationKey;
+        private long _companyId;
+        private string _entityName;
+        private string _entitySchemaName;
+
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long CompanyFk
+        {
+            get { return _companyFk; }
+
+            set
+            {
+                if (_companyFk != value)
+                {
+                    _companyFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long Id
+        {
+            get { return _id; }
+
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name
+        {
+            get { return _name; }
+
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("entityFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long EntityFk
+        {
+            get { return _entityFk; }
+
+            set
+            {
+                if (_entityFk != value)
+                {
+                    _entityFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("fileTypeFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long FileTypeFk
+        {
+            get { return _fileTypeFk; }
+
+            set
+            {
+                if (_fileTypeFk != value)
+                {
+                    _fileTypeFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("pictureCategoryFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long PictureCategoryFk
+        {
+            get { return _pictureCategoryFk; }
+
+            set
+            {
+                if (_pictureCategoryFk != value)
+                {
+                    _pictureCategoryFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime CreationDate
+        {
+            get { return _creationDate; }
+
+            set
+            {
+                if (_creationDate != value)
+                {
+                    _creationDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("createdByUserFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long CreatedByUserFk
+        {
+            get { return _createdByUserFk; }
+
+            set
+            {
+                if (_createdByUserFk != value)
+                {
+                    _createdByUserFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? LastUpdateDate
+        {
+            get { return _lastUpdateDate; }
+
+            set
+            {
+                if (_lastUpdateDate != value)
+                {
+                    _lastUpdateDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("lastUpdateByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? LastUpdateByUserFk
+        {
+            get { return _lastUpdateByUserFk; }
+
+            set
+            {
+                if (_lastUpdateByUserFk != value)
+                {
+                    _lastUpdateByUserFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsActive
+        {
+            get { return _isActive; }
+
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("binaryPicture", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public byte[] BinaryPicture
+        {
+            get { return _binaryPicture; }
+
+            set
+            {
+                if (_binaryPicture != value)
+                {
+                    _binaryPicture = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("pictureSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal PictureSize
+        {
+            get { return _pictureSize; }
+
+            set
+            {
+                if (_pictureSize != value)
+                {
+                    _pictureSize = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("pictureCategoryNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PictureCategoryNameTranslationKey
+        {
+            get { return _pictureCategoryNameTranslationKey; }
+
+            set
+            {
+                if (_pictureCategoryNameTranslationKey != value)
+                {
+                    _pictureCategoryNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("fileTypeNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FileTypeNameTranslationKey
+        {
+            get { return _fileTypeNameTranslationKey; }
+
+            set
+            {
+                if (_fileTypeNameTranslationKey != value)
+                {
+                    _fileTypeNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("companyNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CompanyNameTranslationKey
+        {
+            get { return _companyNameTranslationKey; }
+
+            set
+            {
+                if (_companyNameTranslationKey != value)
+                {
+                    _companyNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long CompanyId
+        {
+            get { return _companyId; }
+
+            set
+            {
+                if (_companyId != value)
+                {
+                    _companyId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("entityName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntityName
+        {
+            get { return _entityName; }
+
+            set
+            {
+                if (_entityName != value)
+                {
+                    _entityName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("entitySchemaName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EntitySchemaName
+        {
+            get { return _entitySchemaName; }
+
+            set
+            {
+                if (_entitySchemaName != value)
+                {
+                    _entitySchemaName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+        public static PictureDTO FromJson(string data)
+        {
+
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<PictureDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
 

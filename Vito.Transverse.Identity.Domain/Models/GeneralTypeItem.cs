@@ -24,4 +24,8 @@ public partial class GeneralTypeItem
     public virtual GeneralTypeGroup ListItemGroupFkNavigation { get; set; } = null!;
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    public virtual ICollection<Picture> PictureFileTypeFkNavigations { get; set; } = new List<Picture>();
+
+    public virtual ICollection<Picture> PicturePictureCategoryFkNavigations { get; set; } = new List<Picture>();
 }

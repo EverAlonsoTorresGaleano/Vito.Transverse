@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Vito.Transverse.DB]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Database [Vito.Transverse.DB]    Script Date: 5/21/2025 6:02:20 PM ******/
 CREATE DATABASE [Vito.Transverse.DB]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -84,12 +84,12 @@ ALTER DATABASE [Vito.Transverse.DB] SET QUERY_STORE (OPERATION_MODE = READ_WRITE
 GO
 USE [Vito.Transverse.DB]
 GO
-/****** Object:  Table [dbo].[AuditEntities]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Entities]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[AuditEntities](
+CREATE TABLE [dbo].[Entities](
 	[Id] [bigint] NOT NULL,
 	[SchemaName] [varchar](75) NOT NULL,
 	[EntityName] [varchar](75) NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[AuditEntities](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -134,7 +134,7 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Companies]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Companies]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -162,7 +162,7 @@ CREATE TABLE [dbo].[Companies](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AuditRecords]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[AuditRecords]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -171,7 +171,7 @@ CREATE TABLE [dbo].[AuditRecords](
 	[CompanyFk] [bigint] NOT NULL,
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[UserFk] [bigint] NOT NULL,
-	[AuditEntityFk] [bigint] NOT NULL,
+	[EntityFk] [bigint] NOT NULL,
 	[AuditTypeFk] [bigint] NOT NULL,
 	[AuditEntityIndex] [varchar](75) NOT NULL,
 	[HostName] [varchar](75) NOT NULL,
@@ -192,7 +192,7 @@ CREATE TABLE [dbo].[AuditRecords](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[GeneralTypeItems]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[GeneralTypeItems]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -209,22 +209,22 @@ CREATE TABLE [dbo].[GeneralTypeItems](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetAuditRecords]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_GetAuditRecords]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[Vw_GetAuditRecords]
 AS
-SELECT ar.CreationDate, ar.CompanyFk, c.NameTranslationKey, ar.UserFk, u.UserName, ar.AuditTypeFk, t.NameTranslationKey AS Expr1, ar.AuditEntityFk, ae.SchemaName, ae.EntityName, ae.IsSystemEntity, ar.HostName, ar.DeviceType, 
-                  ar.Browser, ar.Platform, ar.Engine, ar.CultureFk, ar.AuditInfoJson
+SELECT ar.CreationDate, ar.CompanyFk, c.NameTranslationKey, ar.UserFk, u.UserName, ar.AuditTypeFk, t.NameTranslationKey AS Expr1, ar.EntityFk, ae.SchemaName, ae.EntityName, ae.IsSystemEntity, ar.HostName, ar.DeviceType, ar.Browser, 
+                  ar.Platform, ar.Engine, ar.CultureFk, ar.AuditInfoJson
 FROM     dbo.AuditRecords AS ar INNER JOIN
-                  dbo.AuditEntities AS ae ON ar.AuditEntityFk = ae.Id INNER JOIN
+                  dbo.Entities AS ae ON ar.EntityFk = ae.Id INNER JOIN
                   dbo.Companies AS c ON ar.CompanyFk = c.Id INNER JOIN
                   dbo.Users AS u ON ar.UserFk = u.Id INNER JOIN
                   dbo.GeneralTypeItems AS t ON ar.AuditTypeFk = t.Id
 GO
-/****** Object:  Table [dbo].[GeneralTypeGroups]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[GeneralTypeGroups]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -239,7 +239,7 @@ CREATE TABLE [dbo].[GeneralTypeGroups](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetGeneralTypeItemWithGroups]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_GetGeneralTypeItemWithGroups]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -252,7 +252,7 @@ FROM     dbo.GeneralTypeGroups AS lig INNER JOIN
                   dbo.GeneralTypeItems AS li ON lig.Id = li.ListItemGroupFk
 ORDER BY GeneralTypeGroupId, GeneralTypeItemId, GeneralTypeItemIndex
 GO
-/****** Object:  Table [dbo].[Roles]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Roles]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -274,7 +274,7 @@ CREATE TABLE [dbo].[Roles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserRoles]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[UserRoles]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -294,7 +294,7 @@ CREATE TABLE [dbo].[UserRoles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Applications]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Applications]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -317,7 +317,7 @@ CREATE TABLE [dbo].[Applications](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_CompanyUserRoles]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_CompanyUserRoles]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -332,7 +332,7 @@ FROM     dbo.Roles AS r INNER JOIN
                   dbo.Applications AS a ON ur.ApplicationFk = a.Id INNER JOIN
                   dbo.Companies AS c ON ur.CompanyFk = c.Id
 GO
-/****** Object:  Table [dbo].[CompanyMemberships]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[CompanyMemberships]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -356,7 +356,7 @@ CREATE TABLE [dbo].[CompanyMemberships](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MembershipTypes]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[MembershipTypes]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -378,7 +378,7 @@ CREATE TABLE [dbo].[MembershipTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetCompanyMemberships]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_GetCompanyMemberships]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -393,7 +393,7 @@ FROM     dbo.Companies AS c INNER JOIN
                   dbo.Applications AS a ON cm.ApplicationFk = a.Id AND cm.ApplicationFk = a.Id INNER JOIN
                   dbo.MembershipTypes AS t ON cm.MembershipTypeFk = t.Id
 GO
-/****** Object:  Table [dbo].[Modules]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Modules]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -413,7 +413,7 @@ CREATE TABLE [dbo].[Modules](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Endpoints]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Endpoints]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -436,7 +436,7 @@ CREATE TABLE [dbo].[Endpoints](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CompanyMembershipPermissions]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[CompanyMembershipPermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -456,7 +456,7 @@ CREATE TABLE [dbo].[CompanyMembershipPermissions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetAllCompanyPermissions]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_GetAllCompanyPermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -474,7 +474,7 @@ FROM     dbo.CompanyMembershipPermissions AS cmp INNER JOIN
                   dbo.Modules AS m ON cmp.ModuleFk = m.Id INNER JOIN
                   dbo.Endpoints AS p ON cmp.EndpointFk = p.Id
 GO
-/****** Object:  Table [dbo].[RolePermissions]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[RolePermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -494,7 +494,7 @@ CREATE TABLE [dbo].[RolePermissions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetRolePermissions]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_GetRolePermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -511,7 +511,7 @@ FROM     dbo.RolePermissions AS rp INNER JOIN
                   dbo.Endpoints AS p ON rp.EndpointFk = p.Id INNER JOIN
                   dbo.Roles AS r ON rp.RoleFk = r.Id
 GO
-/****** Object:  View [dbo].[Vw_GetDatabaseTables]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  View [dbo].[Vw_GetDatabaseTables]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -522,7 +522,7 @@ SELECT ROW_NUMBER() OVER (ORDER BY o.name ASC) AS name_row_number, s.name, o.nam
                   sys.schemas AS s ON s.schema_id = o.schema_id
 WHERE  (o.type = 'U') AND (o.schema_id = 1)
 GO
-/****** Object:  Table [dbo].[ActivityLogs]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[ActivityLogs]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -550,7 +550,7 @@ CREATE TABLE [dbo].[ActivityLogs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ApplicationLicenseTypes]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[ApplicationLicenseTypes]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -573,7 +573,7 @@ CREATE TABLE [dbo].[ApplicationLicenseTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ApplicationOwners]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[ApplicationOwners]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -594,7 +594,7 @@ CREATE TABLE [dbo].[ApplicationOwners](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CompanyEntityAudits]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[CompanyEntityAudits]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -602,7 +602,7 @@ GO
 CREATE TABLE [dbo].[CompanyEntityAudits](
 	[CompanyFk] [bigint] NOT NULL,
 	[Id] [bigint] NOT NULL,
-	[AuditEntityFk] [bigint] NOT NULL,
+	[EntityFk] [bigint] NOT NULL,
 	[AuditTypeFk] [bigint] NOT NULL,
 	[CreationDate] [datetime] NOT NULL,
 	[CreatedByUserFk] [bigint] NOT NULL,
@@ -615,7 +615,7 @@ CREATE TABLE [dbo].[CompanyEntityAudits](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Components]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Components]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -637,7 +637,7 @@ CREATE TABLE [dbo].[Components](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Countries]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Countries]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -652,7 +652,7 @@ CREATE TABLE [dbo].[Countries](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Cultures]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Cultures]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -669,7 +669,7 @@ CREATE TABLE [dbo].[Cultures](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CultureTranslations]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[CultureTranslations]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -687,7 +687,7 @@ CREATE TABLE [dbo].[CultureTranslations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Languages]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Languages]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -701,7 +701,7 @@ CREATE TABLE [dbo].[Languages](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MembersipPriceHistory]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[MembersipPriceHistory]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -724,7 +724,7 @@ CREATE TABLE [dbo].[MembersipPriceHistory](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Notifications]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Notifications]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -751,7 +751,7 @@ CREATE TABLE [dbo].[Notifications](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[NotificationTemplates]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[NotificationTemplates]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -771,7 +771,32 @@ CREATE TABLE [dbo].[NotificationTemplates](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Sequences]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Table [dbo].[Pictures]    Script Date: 5/21/2025 6:02:20 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Pictures](
+	[CompanyFk] [bigint] NOT NULL,
+	[Name] [varchar](75) NOT NULL,
+	[Id] [bigint] NOT NULL,
+	[EntityFk] [bigint] NOT NULL,
+	[FileTypeFk] [bigint] NOT NULL,
+	[PictureCategoryFk] [bigint] NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[CreatedByUserFk] [bigint] NOT NULL,
+	[LastUpdateDate] [datetime] NULL,
+	[LastUpdateByUserFk] [bigint] NULL,
+	[IsActive] [bit] NOT NULL,
+	[BinaryPicture] [varbinary](max) NULL,
+	[PictureSize] [decimal](18, 5) NOT NULL,
+ CONSTRAINT [PK_Pictures] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Sequences]    Script Date: 5/21/2025 6:02:20 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -792,25 +817,19 @@ CREATE TABLE [dbo].[Sequences](
 GO
 SET IDENTITY_INSERT [dbo].[ActivityLogs] ON 
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 1, CAST(N'2025-05-21T04:15:23.190' AS DateTime), N'localhost:5237', N'Desktop', 25, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 17, CAST(N'2025-05-21T10:49:21.010' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 2, CAST(N'2025-05-21T04:18:32.763' AS DateTime), N'localhost:5237', N'Desktop', 27, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 18, CAST(N'2025-05-21T11:59:30.817' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 3, CAST(N'2025-05-21T04:24:45.963' AS DateTime), N'localhost:5237', N'Desktop', 27, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 19, CAST(N'2025-05-21T21:21:03.373' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 4, CAST(N'2025-05-21T06:22:55.730' AS DateTime), N'localhost:5237', N'Desktop', 25, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 20, CAST(N'2025-05-21T21:41:33.157' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 5, CAST(N'2025-05-21T06:23:58.167' AS DateTime), N'localhost:5237', N'Desktop', 25, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 21, CAST(N'2025-05-21T22:11:09.753' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 6, CAST(N'2025-05-21T06:24:41.570' AS DateTime), N'localhost:5237', N'Desktop', 27, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 22, CAST(N'2025-05-21T22:24:22.747' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 7, CAST(N'2025-05-21T06:45:00.830' AS DateTime), N'localhost:5237', N'Desktop', 27, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
-GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (1, 4, 8, CAST(N'2025-05-21T06:51:13.613' AS DateTime), N'localhost:5237', N'Desktop', 16, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"Endpoint","value":"HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\u003E SendActivationEmailAsync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
-GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 9, CAST(N'2025-05-21T07:46:05.610' AS DateTime), N'localhost:5237', N'Desktop', 11, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/ClearCache', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"Endpoint","value":"HTTP: GET api/Cache/v{apiVersion:apiVersion}/ClearCache =\u003E ClearCache"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
-GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 10, CAST(N'2025-05-21T07:52:56.083' AS DateTime), N'localhost:5237', N'Desktop', 38, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/ClearCache', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"Endpoint","value":"HTTP: GET api/Cache/v{apiVersion:apiVersion}/ClearCache =\u003E ClearCache"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.43.4"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (1, 4, 25, CAST(N'2025-05-21T22:37:04.270' AS DateTime), N'localhost:5237', N'Desktop', 406, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw', N'[{"key":"Endpoint","value":"HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\u003E SendActivationEmailAsync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
 GO
 SET IDENTITY_INSERT [dbo].[ActivityLogs] OFF
 GO
@@ -824,97 +843,43 @@ INSERT [dbo].[Applications] ([Id], [NameTranslationKey], [DescriptionTranslation
 GO
 INSERT [dbo].[Applications] ([Id], [NameTranslationKey], [DescriptionTranslationKey], [ApplicationClient], [ApplicationSecret], [CreationDate], [CreatedByUserFk], [Avatar], [LastUpdateDate], [LastUpdateByUserFk], [IsActive]) VALUES (2, N'Application_VitoTorresSoft_RealState', N'Application_VitoTorresSoft_RealState_Dsc', N'eb2d4ffc-dc34-435f-8983-ecd42481143f', N'ce09510a-7c12-4121-9f8b-ca0506ca302c', CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (1, N'dbo', N'ActivityLogs', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (2, N'dbo', N'Applications', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (3, N'dbo', N'AuditEntities', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (4, N'dbo', N'AuditRecords', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (5, N'dbo', N'Companies', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (6, N'dbo', N'CompanyEntityAudits', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (7, N'dbo', N'CompanyMembershipPermissions', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (8, N'dbo', N'CompanyMemberships', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (9, N'dbo', N'Components', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (10, N'dbo', N'Countries', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (11, N'dbo', N'Cultures', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (12, N'dbo', N'CultureTranslations', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (13, N'dbo', N'GeneralTypeGroups', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (14, N'dbo', N'GeneralTypeItems', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (15, N'dbo', N'Languages', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (16, N'dbo', N'MembershipTypes', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (17, N'dbo', N'MembersipPriceHistory', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (18, N'dbo', N'Modules', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (19, N'dbo', N'Notifications', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (20, N'dbo', N'NotificationTemplates', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (21, N'dbo', N'Pages', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (22, N'dbo', N'RolePermissions', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (23, N'dbo', N'Roles', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (24, N'dbo', N'Sequences', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (25, N'dbo', N'sysdiagrams', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (26, N'dbo', N'UserRoles', 1, 0)
-GO
-INSERT [dbo].[AuditEntities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (27, N'dbo', N'Users', 1, 0)
-GO
 SET IDENTITY_INSERT [dbo].[AuditRecords] ON 
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 4, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 4:13:02\u202Fa.\u00A0m. | After=21/05/2025 4:14:11\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T04:14:47.830' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 23, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:38:52\u202Fa.\u00A0m. | After=21/05/2025 10:41:09\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T10:41:09.883' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 5, 6, 1, 35, N'1', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"1"},{"key":"EventDate","value":"21/05/2025 4:15:23\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"25"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T04:15:27.240' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 24, 6, 1, 702, N'15', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"15"},{"key":"EventDate","value":"21/05/2025 10:41:10\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T10:41:10.107' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 6, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 4:14:11\u202Fa.\u00A0m. | After=21/05/2025 4:18:32\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T04:18:32.753' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 25, 4, 27, 703, N'4', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:38:02\u202Fa.\u00A0m. | After=21/05/2025 10:41:56\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T10:41:56.347' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 7, 6, 1, 35, N'2', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"2"},{"key":"EventDate","value":"21/05/2025 4:18:32\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"27"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T04:18:51.020' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 26, 4, 1, 702, N'16', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"CompanyFk","value":"1"},{"key":"UserFk","value":"4"},{"key":"TraceId","value":"16"},{"key":"EventDate","value":"21/05/2025 10:41:56\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"406"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/SendActivationEmailAsync"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\\u003E SendActivationEmailAsync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T10:41:56.373' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 8, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 4:18:32\u202Fa.\u00A0m. | After=21/05/2025 4:24:45\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T04:24:45.950' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 27, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:41:09\u202Fa.\u00A0m. | After=21/05/2025 10:49:20\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T10:49:20.997' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 9, 6, 1, 35, N'3', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"3"},{"key":"EventDate","value":"21/05/2025 4:24:45\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"27"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T04:24:46.667' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 28, 6, 1, 702, N'17', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"17"},{"key":"EventDate","value":"21/05/2025 10:49:21\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T10:49:21.023' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 10, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 4:24:45\u202Fa.\u00A0m. | After=21/05/2025 6:22:55\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T06:22:55.583' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 29, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:49:20\u202Fa.\u00A0m. | After=21/05/2025 11:59:30\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T11:59:30.683' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 11, 6, 1, 35, N'4', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"4"},{"key":"EventDate","value":"21/05/2025 6:22:55\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"25"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T06:22:55.800' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 30, 6, 1, 702, N'18', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"18"},{"key":"EventDate","value":"21/05/2025 11:59:30\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T11:59:30.890' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 12, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 6:22:55\u202Fa.\u00A0m. | After=21/05/2025 6:23:58\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T06:23:58.153' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 31, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 11:59:30\u202Fa.\u00A0m. | After=21/05/2025 9:21:02\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T21:21:03.290' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 13, 6, 1, 35, N'5', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"5"},{"key":"EventDate","value":"21/05/2025 6:23:58\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"25"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T06:23:58.180' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 32, 6, 1, 702, N'19', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"19"},{"key":"EventDate","value":"21/05/2025 9:21:03\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T21:21:03.437' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 14, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 6:23:58\u202Fa.\u00A0m. | After=21/05/2025 6:24:41\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T06:24:41.560' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 33, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 9:21:02\u202Fp.\u00A0m. | After=21/05/2025 9:41:33\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T21:41:33.147' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 15, 6, 1, 35, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"6"},{"key":"EventDate","value":"21/05/2025 6:24:41\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"27"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T06:24:41.610' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 34, 6, 1, 702, N'20', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"20"},{"key":"EventDate","value":"21/05/2025 9:41:33\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T21:41:33.167' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 16, 6, 27, 37, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 6:24:41\u202Fa.\u00A0m. | After=21/05/2025 6:45:00\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T06:45:00.620' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 35, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 9:41:33\u202Fp.\u00A0m. | After=21/05/2025 10:11:09\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T22:11:09.743' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 17, 6, 1, 35, N'7', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"7"},{"key":"EventDate","value":"21/05/2025 6:45:00\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"27"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T06:45:00.960' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 36, 6, 1, 702, N'21', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"21"},{"key":"EventDate","value":"21/05/2025 10:11:09\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T22:11:09.763' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 18, 4, 27, 37, N'4', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"LastAccess","value":"Before= 21/05/2025 1:22:12\u202Fa.\u00A0m. | After=21/05/2025 6:51:13\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T06:51:13.603' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 37, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:11:09\u202Fp.\u00A0m. | After=21/05/2025 10:24:22\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T22:24:22.610' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 19, 4, 1, 35, N'8', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"CompanyFk","value":"1"},{"key":"UserFk","value":"4"},{"key":"TraceId","value":"8"},{"key":"EventDate","value":"21/05/2025 6:51:13\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"16"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/SendActivationEmailAsync"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\\u003E SendActivationEmailAsync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T06:51:13.623' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 38, 6, 1, 702, N'22', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"22"},{"key":"EventDate","value":"21/05/2025 10:24:22\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T22:24:22.837' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 20, 6, 1, 35, N'9', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/ClearCache', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"9"},{"key":"EventDate","value":"21/05/2025 7:46:05\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"11"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Cache/v1/ClearCache"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Cache/v{apiVersion:apiVersion}/ClearCache =\\u003E ClearCache\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T07:46:09.200' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 39, 4, 27, 703, N'4', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:41:56\u202Fa.\u00A0m. | After=21/05/2025 10:37:04\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T22:37:04.253' AS DateTime))
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [AuditEntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 21, 6, 1, 35, N'10', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/ClearCache', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"10"},{"key":"EventDate","value":"21/05/2025 7:52:56\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"38"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Cache/v1/ClearCache"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Cache/v{apiVersion:apiVersion}/ClearCache =\\u003E ClearCache\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.43.4\u0022}]"}]', CAST(N'2025-05-21T07:52:56.550' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 40, 4, 1, 702, N'25', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw', N'[{"key":"CompanyFk","value":"1"},{"key":"UserFk","value":"4"},{"key":"TraceId","value":"25"},{"key":"EventDate","value":"21/05/2025 10:37:04\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"406"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/SendActivationEmailAsync"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\\u003E SendActivationEmailAsync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T22:37:04.290' AS DateTime))
 GO
 SET IDENTITY_INSERT [dbo].[AuditRecords] OFF
 GO
@@ -922,53 +887,53 @@ INSERT [dbo].[Companies] ([Id], [NameTranslationKey], [DescriptionTranslationKey
 GO
 INSERT [dbo].[Companies] ([Id], [NameTranslationKey], [DescriptionTranslationKey], [CompanyClient], [CompanySecret], [CreationDate], [CreatedByUserFk], [Subdomain], [Email], [DefaultCultureFk], [CountryFk], [IsSystemCompany], [Avatar], [LastUpdateDate], [LastUpdateByUserFk], [IsActive]) VALUES (2, N'Company_ProyectosLasTorresSAS', N'Company_ProyectosLasTorresSAS_Dsc', N'c5bcea98-2974-4d43-8110-28d402cf5ce2', N'8010e5e4-5f3f-4cd9-9d4c-b9babbecc740', CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, N'proyectos-las-torres', N'proyectos-las-torres@hotmail.com', N'es-CO', N'CO', 0, NULL, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 1, 1, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 1, 1, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 2, 1, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 2, 1, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 3, 1, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 3, 1, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 4, 1, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 4, 1, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 5, 1, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 5, 1, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 6, 1, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 6, 1, 101, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 7, 2, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 7, 2, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 8, 2, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 8, 2, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 9, 2, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 9, 2, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 10, 5, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 10, 5, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 11, 5, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 11, 5, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 12, 5, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 12, 5, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 13, 27, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 13, 27, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 14, 27, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 14, 27, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 15, 27, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (1, 15, 27, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 16, 2, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 16, 2, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 17, 2, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 17, 2, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 18, 2, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 18, 2, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 19, 5, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 19, 5, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 20, 5, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 20, 5, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 21, 5, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 21, 5, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 22, 27, 35, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 22, 27, 702, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 23, 27, 36, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 23, 27, 703, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
-INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [AuditEntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 24, 27, 37, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
+INSERT [dbo].[CompanyEntityAudits] ([CompanyFk], [Id], [EntityFk], [AuditTypeFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [IsActive]) VALUES (2, 24, 27, 704, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, 1)
 GO
 INSERT [dbo].[CompanyMembershipPermissions] ([CompanyMembershipFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (1, 1, 1, 1, 1, 1, NULL, NULL)
 GO
@@ -1240,11 +1205,75 @@ INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [N
 GO
 INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 11, 113, 23, N'VitoTransverse_ApiOauth2_NotificationsListAsync', N'VitoTransverse_ApiOauth2_NotificationsListAsync_Dsc', N'/api/Oauth2/v1/NotificationsListAsync', N'GET', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 114, 1, N'VitoTransverse_ApiCache_ClearCache', N'VitoTransverse_ApiCache_ClearCache_Dsc', N'/api/Cache/v1/ClearCache', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 114, 1, N'VitoTransverse_ApiCache_ClearCache', N'VitoTransverse_ApiCache_ClearCache_Dsc', N'/api/Cache/v1/Cache', N'DELETE', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 115, 1, N'VitoTransverse_ApiCache_DeleteCacheDataByKey', N'VitoTransverse_ApiCache_DeleteCacheDataByKey_Dsc', N'/api/Cache/v1/DeleteCacheDataByKey', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 115, 2, N'VitoTransverse_ApiCache_DeleteCacheDataByKey', N'VitoTransverse_ApiCache_DeleteCacheDataByKey_Dsc', N'/api/Cache/v1/CacheByKey', N'DELETE', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 116, 1, N'VitoTransverse_ApiCache_GetCacheList', N'VitoTransverse_ApiCache_GetCacheList_Dsc', N'/api/Cache/v1/GetCacheList', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 116, 3, N'VitoTransverse_ApiCache_GetCacheList', N'VitoTransverse_ApiCache_GetCacheList_Dsc', N'/api/Cache/v1/CacheList', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 13, 117, 1, N'VitoTransverse_ApiMedia_PictureList', N'VitoTransverse_ApiMedia_PictureList_Dsc', N'/api/Media/v1/PictureList', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 13, 118, 1, N'VitoTransverse_ApiMedia_PictureByName', N'VitoTransverse_ApiMedia_PictureByName_Dsc', N'/api/Media/v1/PictureByName', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 13, 119, 1, N'VitoTransverse_ApiMedia_PictureByNameWildCard', N'VitoTransverse_ApiMedia_PictureByNameWildCard_Dsc', N'/api/Media/v1/PictureByNameWildCard', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 9, 120, 1, N'VitoTransverse_ApiHome_Ping', N'VitoTransverse_ApiHome_Ping_Dsc', N'/api/Home/v1/PingAsync', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 9, 121, 2, N'VitoTransverse_ApiHome_Detect', N'VitoTransverse_ApiHome_Detect_Dsc', N'/api/Home/v1/DetectAsync', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (1, N'dbo', N'ActivityLogs', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (2, N'dbo', N'Applications', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (3, N'dbo', N'AuditEntities', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (4, N'dbo', N'AuditRecords', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (5, N'dbo', N'Companies', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (6, N'dbo', N'CompanyEntityAudits', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (7, N'dbo', N'CompanyMembershipPermissions', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (8, N'dbo', N'CompanyMemberships', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (9, N'dbo', N'Components', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (10, N'dbo', N'Countries', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (11, N'dbo', N'Cultures', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (12, N'dbo', N'CultureTranslations', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (13, N'dbo', N'GeneralTypeGroups', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (14, N'dbo', N'GeneralTypeItems', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (15, N'dbo', N'Languages', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (16, N'dbo', N'MembershipTypes', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (17, N'dbo', N'MembersipPriceHistory', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (18, N'dbo', N'Modules', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (19, N'dbo', N'Notifications', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (20, N'dbo', N'NotificationTemplates', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (21, N'dbo', N'Pages', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (22, N'dbo', N'RolePermissions', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (23, N'dbo', N'Roles', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (24, N'dbo', N'Sequences', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (25, N'dbo', N'sysdiagrams', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (26, N'dbo', N'UserRoles', 1, 0)
+GO
+INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (27, N'dbo', N'Users', 1, 0)
 GO
 INSERT [dbo].[GeneralTypeGroups] ([Id], [NameTranslationKey], [IsSystemType]) VALUES (1, N'GeneralType_NotificationType', 1)
 GO
@@ -1260,81 +1289,107 @@ INSERT [dbo].[GeneralTypeGroups] ([Id], [NameTranslationKey], [IsSystemType]) VA
 GO
 INSERT [dbo].[GeneralTypeGroups] ([Id], [NameTranslationKey], [IsSystemType]) VALUES (7, N'GeneralType_EntityAuditType', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (1, 1, 1, N'NotificationType_Email', 1)
+INSERT [dbo].[GeneralTypeGroups] ([Id], [NameTranslationKey], [IsSystemType]) VALUES (8, N'GeneralType_FileType', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (1, 2, 2, N'NotificationType_SMS', 1)
+INSERT [dbo].[GeneralTypeGroups] ([Id], [NameTranslationKey], [IsSystemType]) VALUES (9, N'GeneralType_PictureCategoryType', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 1, 3, N'DocumentType_BornRegistry', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (1, 1, 101, N'NotificationType_Email', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 2, 4, N'DocumentType_DNI', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (1, 2, 102, N'NotificationType_SMS', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 3, 5, N'DocumentType_ForeingDNI', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 1, 201, N'DocumentType_BornRegistry', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 4, 6, N'DocumentType_CompanyId', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 2, 202, N'DocumentType_DNI', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 5, 7, N'DocumentType_Passport', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 3, 203, N'DocumentType_ForeingDNI', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (3, 1, 8, N'GenderList_Undefined', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 4, 204, N'DocumentType_CompanyId', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (3, 2, 9, N'GenderList_Female', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (2, 5, 205, N'DocumentType_Passport', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (3, 3, 10, N'GenderList_Male', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (3, 1, 301, N'GenderList_Undefined', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 1, 11, N'OAuthActionType_Undefined', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (3, 2, 302, N'GenderList_Female', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 2, 12, N'OAuthActionType_CreateNewApplication', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (3, 3, 303, N'GenderList_Male', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 3, 13, N'OAuthActionType_CreateNewCompany', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 1, 401, N'OAuthActionType_Undefined', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 4, 14, N'OAuthActionType_CreateNewPerson', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 2, 402, N'OAuthActionType_CreateNewApplication', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 5, 15, N'OAuthActionType_CreateNewUser', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 3, 403, N'OAuthActionType_CreateNewCompany', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 6, 16, N'OAuthActionType_SendActivationEmail', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 4, 404, N'OAuthActionType_CreateNewPerson', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 7, 17, N'OAuthActionType_ActivateUser', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 5, 405, N'OAuthActionType_CreateNewUser', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 8, 18, N'OAuthActionType_LoginFail_CompanyNotFound', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 6, 406, N'OAuthActionType_SendActivationEmail', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 9, 19, N'OAuthActionType_LoginFail_CompanySecretInvalid', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 7, 407, N'OAuthActionType_ActivateUser', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 14, 20, N'OAuthActionType_LoginFail_CompanyMembershipDoesNotExist', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 8, 408, N'OAuthActionType_LoginFail_CompanyNotFound', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 10, 21, N'OAuthActionType_LoginFail_ApplicationNoFound', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 9, 409, N'OAuthActionType_LoginFail_CompanySecretInvalid', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 11, 22, N'OAuthActionType_LoginFail_ApplicationSecretInvalid', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 14, 410, N'OAuthActionType_LoginFail_CompanyMembershipDoesNotExist', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 12, 23, N'OAuthActionType_LoginFail_UserNotFound', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 10, 411, N'OAuthActionType_LoginFail_ApplicationNoFound', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 13, 24, N'OAuthActionType_LoginFail_UserSecretInvalid', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 11, 412, N'OAuthActionType_LoginFail_ApplicationSecretInvalid', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 18, 25, N'OAuthActionType_LoginFail_UserUnauthorized', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 12, 413, N'OAuthActionType_LoginFail_UserNotFound', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 15, 26, N'OAuthActionType_LoginSuccessByAuthorizationCode', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 13, 414, N'OAuthActionType_LoginFail_UserSecretInvalid', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 16, 27, N'OAuthActionType_LoginSuccessByClientCredentials', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 18, 415, N'OAuthActionType_LoginFail_UserUnauthorized', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 17, 28, N'OAuthActionType_ChangeUserPassword', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 15, 416, N'OAuthActionType_LoginSuccessByAuthorizationCode', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 18, 29, N'OAuthActionType_Logoff', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 16, 417, N'OAuthActionType_LoginSuccessByClientCredentials', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 1, 30, N'LocationType_State', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 17, 418, N'OAuthActionType_ChangeUserPassword', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 2, 31, N'LocationType_City', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 19, 419, N'OAuthActionType_Logoff', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 3, 32, N'LocationType_Neighborhood', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 20, 420, N'OAuthActionType_ClearCache', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (6, 1, 33, N'SequenceType_RoleName', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 1, 501, N'LocationType_State', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 1, 34, N'EntityAuditType_Read', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 2, 502, N'LocationType_City', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 2, 35, N'EntityAuditType_AddRow', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 3, 503, N'LocationType_Neighborhood', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 3, 36, N'EntityAuditType_DeleteRow', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (6, 1, 601, N'SequenceType_RoleName', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 4, 37, N'EntityAuditType_UpdateRow', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 1, 701, N'EntityAuditType_Read', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 19, 38, N'OAuthActionType_ClearCache', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 2, 702, N'EntityAuditType_AddRow', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 3, 703, N'EntityAuditType_UpdateRow', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (7, 4, 704, N'EntityAuditType_DeleteRow', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (8, 1, 801, N'FileType_Png', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (8, 2, 802, N'FileType_Gif', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (8, 3, 803, N'FileType_Jpg', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 1, 901, N'PictureCategoryType_System', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 2, 902, N'PictureCategoryType_Project', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 3, 903, N'PictureCategoryType_Property', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 4, 904, N'PictureCategoryType_ProjectRoom', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 5, 905, N'PictureCategoryTypePropertyRoom', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 6, 906, N'PictureCategoryType_Company', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 7, 907, N'PictureCategoryType_Sponsor', 1)
+GO
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (9, 8, 908, N'PictureCategoryType_PageIcon', 1)
 GO
 INSERT [dbo].[Languages] ([Id], [NameTranslationKey]) VALUES (N'en', N'Language_English')
 GO
@@ -1374,25 +1429,25 @@ INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [Descriptio
 GO
 INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, N'VitoTransverse_ApiCache', N'VitoTransverse_ApiCache_Dsc', 5, 1, 0, 1)
 GO
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 13, N'VitoTransverse_ApiMedia', N'VitoTransverse_ApiMedia_Dsc', 5, 1, 0, 1)
+GO
 SET IDENTITY_INSERT [dbo].[Notifications] ON 
 GO
-INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 1, 40, CAST(N'2025-05-14T10:14:15.667' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
+INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 101, 44, CAST(N'2025-05-21T10:41:57.763' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
 GO
-INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 1, 41, CAST(N'2025-05-21T01:13:02.773' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
-GO
-INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 1, 42, CAST(N'2025-05-21T01:22:16.463' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
-GO
-INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 1, 43, CAST(N'2025-05-21T06:51:14.613' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
+INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 101, 45, CAST(N'2025-05-21T22:37:05.450' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
 GO
 SET IDENTITY_INSERT [dbo].[Notifications] OFF
 GO
 SET IDENTITY_INSERT [dbo].[NotificationTemplates] ON 
 GO
-INSERT [dbo].[NotificationTemplates] ([Id], [NotificationTemplateGroupId], [CultureFk], [Name], [SubjectTemplateText], [MessageTemplateText], [IsHtml]) VALUES (2, 1, N'en-US', N'EMAIL_USER_ACTIVATION', N'Activación Cuenta Vito.ePOS - email: {{EMAIL}}', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:{{EMAIL}}<br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token={{APPLICATION_CLIENTID}}@{{USER_ID}}@{{ACTIVATION_ID}}''> Activar Cuenta<a/>', 1)
+INSERT [dbo].[NotificationTemplates] ([Id], [NotificationTemplateGroupId], [CultureFk], [Name], [SubjectTemplateText], [MessageTemplateText], [IsHtml]) VALUES (2, 1, N'en-US', N'EMAIL_USER_ACTIVATION', N'Activación Cuenta Vito.ePOS - Usuario {{FULL_NAME}}', N'Hola <br/> Bienvenid@ {{FULL_NAME}} a e-POS <br/> Correo de activaciion para:{{EMAIL}}<br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token={{APPLICATION_CLIENTID}}@{{USER_ID}}@{{ACTIVATION_ID}}''> Activar Cuenta<a/>', 1)
 GO
-INSERT [dbo].[NotificationTemplates] ([Id], [NotificationTemplateGroupId], [CultureFk], [Name], [SubjectTemplateText], [MessageTemplateText], [IsHtml]) VALUES (1, 1, N'es-CO', N'EMAIL_USER_ACTIVATION', N'Activación Cuenta Vito.ePOS - email: {{EMAIL}}', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:{{EMAIL}}<br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token={{APPLICATION_CLIENTID}}@{{USER_ID}}@{{ACTIVATION_ID}}''> Activar Cuenta<a/>', 1)
+INSERT [dbo].[NotificationTemplates] ([Id], [NotificationTemplateGroupId], [CultureFk], [Name], [SubjectTemplateText], [MessageTemplateText], [IsHtml]) VALUES (1, 1, N'es-CO', N'EMAIL_USER_ACTIVATION', N'Activación Cuenta Vito.ePOS - Usuario {{FULL_NAME}}', N'Hola <br/> Bienvenid@ {{FULL_NAME}} a e-POS <br/> Correo de activaciion para:{{EMAIL}}<br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token={{APPLICATION_CLIENTID}}@{{USER_ID}}@{{ACTIVATION_ID}}''> Activar Cuenta<a/>', 1)
 GO
 SET IDENTITY_INSERT [dbo].[NotificationTemplates] OFF
+GO
+INSERT [dbo].[Pictures] ([CompanyFk], [Name], [Id], [EntityFk], [FileTypeFk], [PictureCategoryFk], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [LastUpdateByUserFk], [IsActive], [BinaryPicture], [PictureSize]) VALUES (1, N'LaPic', 2, 1, 803, 901, CAST(N'2025-05-21T12:21:48.293' AS DateTime), 1, NULL, NULL, 1, 0x89504E470D0A1A0A0000000D49484452000000B4000000B40802000000B2AF9165000000097048597300000B1300000B1301009A9C180000200049444154789CEC7D77BC5D55B1FFCC2ABB9E7A7B7A48808424845E2245401141BA4AF5218AF529F04004F4E90FDB532C581015B0E0531404A42320107A0BC550841408E9E5DEDC72CAAEABCCEF8F731302211A2088FAEEF7733E373BF7EEBDCEDA6BBE7BD6AC9959B3519C76278C6004AF05F17677E02D00AD3BC0B7B317FF06789BC8C1FF9EE41080010080D98CD61080110007E900A3975BD66FAA8FAF06ADEBB6DE72B433F9CB5C361BD0FA1F060B6037F9C74D92031138222220BE050FE0E69083AF3BF8BB40006E01007C014C8249872FDBB21D5F4F0EDC422D13BCBAA1969C5EA3717CD5BF5B04444400C6D2A638F9DAE4101CADA534D1A02C58DAF294DE1C72B4BAA636A33524901CB80B59023C056501DEB20711B75CB3026043B9AC3F6C3DCDAD2F32086000B2E1F1DA82BA10111882608ECB39436D68B80F1B2892579383083C8745F5BC52713F326BF43E93ABA34A8EC3D996EB54AB679B7DCE664A02119001122001E1EBB8F06D04C22B0662FD61EB61C475071B4A6CCBDD546EECAA7A7EFFA2C13FFC65CDD05016969C54D95789E515E4200257B2A896BD6787AEB30E9CB0F3D8427BE88CD875FFBEA0F74EADBE7F66D7F7EE5EF2E7A77A83929BBD921FAF2087E49834F28376ECBAE0E86DA78F2A0090B6C6BCE6AC82EBD83D827F597084F6D039704AFBE88AFB39803F3FD3E7FA72787E01800DC981009AA01CCA33DF3561FAA842A635207086E2B5184044C8903669CAFC2B0111896833EDEECDBCE5569BAD8337D5B9B7120490190304D3BB0B67EE3FE1D1C5434DF30A9BEA657270CED2667ED607A6EC39A1AC2D71C6F8A6C5DFBAE77FE63B7F5DD8FC1B792BCE7CBB80009C3363495BDA7342F9AC83267DE9BAF91E77B41D36715E260743805C1F3ABDA3E40B65493206FF0A7738823709C150592A79E2D0291D5F8AFFCACACE7AF3F795CB10C48158118DD812FFB780004430102930AF90FCABD7A8828D288BFF8B4004C15E2DF82DEDC018C1BF3468DD4F02F8F70CBC8DE00D836F10B8B023E418C17A300017C05917EC4C47C83182F5200005605E8EE08CD81C23D82446C831824D62841C23D824466C8E11AC0301E8751F0018D11C23F81B1821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C60931821C708368911728C6003D0069F7FD17D2B64C9D2FA7A99C8188E1415D90240000740AEAB03A8FFD5C84144C65821381FAE13300C630C3040C0E1EA6F802F97317D2DDAE048F1A28DD12287F857238725DB1239634C08BE766DEF3DF7DC658CC9F2ACA3A3F3E0830FE59C6B30D69A963E64C8C8AE2B10F85A25EF18BE3C9F8E10E5656800FB72BDF97F017218324460AC7185B378E9E2E79E7972CE13CF5D7DD33D699E1BA3274F1CB37CD9CA495B4DD867BF035CE92AAD90A125FBB745BE7E565AAF63462832BC1D728352F9AF9B1CB4D193F8268775E3065FFE1311222322C184607C7060ED253FFFF5EFAEFC63501EED774EA7DC940A0109FDCD1FFEC691F6CBE7F49F78ECB152480232C39A86885E5D10F155C53369B83C3C707CC53C051BF0E6EDC53FB413AFFCAAD74D8E0D2CC1750D22BEE11B20A25791838010D05A8B8800281004134B962D5EB470C1C38F3E76F39D73AA13F70D3C1135FB394132349402EBD97A56FFE0C0F77F723907337AD4E8DDF69C15FA0540D0560300916D316C53FD6CFDF2B5DE1DF077D4CF3F062D43EA6DE9C91698563616F09B6B6EFD782047BE7CC5D2452F2CB8F39E472FFBDFDF54474F6D1F3B63A0BF6F7020AB94CA8EC31A894ED39C477DA3DBCA1AB7FBEF6F5E2C293BEFCB678FEAACEE396BAF202818D22DA123221020C30DAD8DBFD711DAF849F8C7A3A5DB36566C6FD197AD5FC7C23F95CD414444C4180300C10400AC5AB5FC821FFDEC8FD7DFD4356ACAE8A987642A1958DB6F885C21559AA70AC990C740193E548F09A9346A874006DFFBF1FFF6AE59FAA5B34FFBE84927B99EDF5221C61857BA4B962D59BA74B123454B970022100D33679DE640406490667AFB9933CBC5D23F033F00C0D06BBF958821DB624A8500CCBA0F00FC9390637D9970222242C1D8AAD52B172D9877EB9DF7FEFEC687C76C7BB0C7534B2957164D16942A42B88DA15A9AAA52E87AAE1F6B4A9A4DCF11C55221AA0D2A77ECB8ED77FACE8F7F5B08FC6D266DB5FD4E3B847E298E6257BAB7DF7ADB77BEFF23C72F0BC98D329C33C698329A2C302104800124AB3917B5FEE5375C7FDD0EDBEF608CE1FC1FF2D4BE2158B25B921FAFC4DB4F8E9635D0521B824B045AB264F177BFFFA35B6E9BDD337646CF98EDB2E61A908EB596AC2164491C33960128217866591E27A07207411B53AB0F2159B0AA39B0B463DC2E17FFFA8655CB179EF6998F7EE2948F978A2500A856C2D1E3A735A88B49145A01302924D72AB7288590803910B31AB81CE571D779FB076773B0E1CA6BF327CDCDC1DB79FFC34622A2D24A30C1185BD3BB72E1F37FBDE9B6BB6FBC6741D736EF4AA3816AD9C91435A2CC222F79BE60AC16D5B452E562894BDE88D32C27DF7183C04F72D3AC0F564AC552B118E7A611D5252F4FDAF1C81F5C7C9D14CEAE3BCDD863CF7D859451A391B2B0D256E28C37922CC9F28E3008054551BDA6207045E0B819E3E6AD783FD5BF1ADE3672B498D162BDE40E676CE1C279E77FF7070F3EF654D7B8EDAB5D13D2669F201E45B102206068559A1AC605A06339452A67CA529E3BC88D657133D3405C08952A6340998C594B2218EC5B59EC9971CDAD73BEF5DD0BCFFBF23965CF78813B9498348E3830438C814AB3CC68D0C438586D31554A23A056FF16EF0B7953781BC8B15E61E4792698E0D259BD72E90B0BE7FFEE9A5BEE7D7C65CF56FBAD1D582D982A15CB96A05EAF018A62E02277A354E7795C080B8EE3D41BCD38D7C530F01C1EE72A49524F8A527B67D2683492C47565A51C68C228D68CEA992D774F7DCF4597DD58960D37E8E9082A7992AB2CF57CC72D94A2663D49300CDC62C893546589922E70CE47E235FF5072AC7FE74D96674208D7F119E233CF3EF5BDEFFDE0AF0B96CAEAE4A06D4C1EF50922B498A6092760C82C63D612E9941BCD38572A27AD98B55C706589726D2DB98C11509A26860C63CC026A6DB54A05010166792A184FA8B83A2B17B8CB2936CA5804B404CA680B9C8151B906610135470680C6FC7BBC6AE8CDE01F478ED632D51863AC0DDC00005E5A347FD5CAE53FBAF4F78FFFB5D63D6A469A35B4D2B1A652E06BE0B546DDE3AC522AE72ACEE2D4220B5C87BB61AD514F555A29960301511427065C215D3FCCAC69D40683A0D0560EB2344EE214182B780E09AF565B2B89B557ABDAAAA8112B60D2739870B33C4BEB03C5629B9498643A8E332EA81CF80A7C60FC9FC001F636E31F418EF50A234912291C4FBA0BE7FFB57760E06797FC7AE98ADEC1BCEC95BA046740486490490564C970C63460A61459D00C0151035A9D3340E22227C30C223289408899B5C618CE05B3649431C00C5ACE9822229D2330CB79A272469A181A444108D61059CE1823D2CA589519060C39294BDCFC4DB7FEFF15FC23C8D15218D6D8D00F01E08107EEBDE0873F69C66AC5905058E9EC68CFE3C6DABE5E2728948A8ED1A611A502A1542A584DB5468D4B2FF43C0ED4CCB589EB61A12845D86836726D0BA1EF7A90E54A652917A25CEDC89ACD8146D3F59C62C137DA2499021B15CB6DA475238A88B1A2EF71A4385359167BAEE755BBA2DA606A2070B01C7889B6499673C7322018B139DEBAA6898821D346E74A798EE73A72DEF373876ACDFFF9DEC5F35728219C62A15C90C2A8D4101097640D1112320719A2B5448024040724B0C600178C31C188882C09640689C81A62008C014322AB1532609C0101276B8009CE0018110110476611C81A831C39E3C4615D10877306D2050B08441C0111E9956F04DE8C9BFDF73360DF1272B4468A21D3569385821F02C05DB3FF7CD1CF7E89DC5DB8322F56467BAE4095244933CB8DE707E57298E7AAD6CC25D852E86AE0F57ADD15AC522E66B94E326D751EFA5C14CBF57A33B6CD42187AA1172559922A574ACF0B33950E0D0D14FCB0AD18265AD79B39A2097D87DC72AD36E808512C0406288E73ADF3D0E34E1836E23C19585329B7798C52458349EA3A3C70DD1C5D8BAF2FBBAC7532B55E81F636CD475B9C9D5B981CEB1DE1C668A58DE7B8DCE1F39F7F6AA8117DE3DB172FEF031940A5DA91258DCC084FBAC83D14B940E44044960121436DC1B4626F96814120CBC9328E6491742B588B888C01A1B5D07AB7BC25C6044ACF222300668D45E2C88DC1758E436488C61A0E96710042A35BCDB4468040A7880888ADD7EE126196E7C698F50EDCCDB9FD7F8628EE16C49624C77AD56AAD05C0D00B00E8E63FDD70C9A5BF2EB68D5A1D153B7A2A9156D6C4612148739D24117364A958D069DA3F9448294AA154C49B71CA18148B25527670A80E128B8E202EF354A974D00B0BC0451AC7466BCF939E2794B6491A3329CBA5629E46FD8DD46558085C4318A70AB37AA1586556D51A912128F842081165268922CF9741A51A371B99054FB052E8649A1A71EA4AE332130601E75C5B9366A9E492736EC96EEAE9B4D62243CE38D0DB96B5BDC5A9B965C8B1DEAF658C31D6B88EA7F37CD9E2858B972DFFDAB77EBA6200AB6D039D3D13FB572D56E814428F1001D0203032CC5A036401913B8C31AE3563C0C12210720066015CE292808881450B48C898216B00814BC600100C125AC5ACE6044844C2658C5B6D180290610096A1064226884B4D8464392324C388C00211A2909C215AC50D81B0E8846B7BD7788E6CEBE809FC401BA38D165CFCED350C02B6F251B6C8A8BEEDD832E440446BADB59633EE388E52D9CD37DF74F5357FCC201CCCABD3A64DEA1D5C33B06659A9D46E40A7994E53E538D2F503ADB25A33725CAFADE4A83C8F1A960B1E7A9E35A651AF3942568AA5DCE838CD014048E984A5348E00E3300811214955929294DCF103A3F25AA3E93B5E5BB19029D5881264A2201D2B45B33EC0B82C8621824DD2DC1005524A29A33C4DD3A8E8FB9E802CD7515321A742E0E5C86B51DB4F7F7985C3F489271CB7DDB6DB84C54A10165ABE3BC6D8C6E6672B1F6738B5E5ED5B036F59B3630B90A3A53010992365A3369467C9238F3DF68DEF5EB2AAC18B65E8E81A3538B05A196B2CD364050302D4C638C424E30AB9D6B92F2D673C23ADACB506A4E116B82152DA1A40C6C01259635DC124F76200D49A5B42C12C80364672904C58C6954AA4900E4A2083DA2007231930A18D9564258006044BCC5AEB58CBA505AE4D96A3EF225882DC58573A56306B4913BFFF2FAB8DCEE2FCEAD05587BCF790230E3F9C73C118B3D6B6924E5E732860A3C4C47F5DBC2972B4E2EC00C0186FD46A60CD4DB7FCE9EEBBEFEA1DC2BAE9DC76FAF8B4516B36060979E03A2CE0799A6A4229B9EF055A519EA45208BF5A35595A6B24DCF18A4566AC8D33CD19952B5532B619478CF1822B2D63569B2C6A0661C881A7499AA7C67565E0FAC6509EA44CB06AB5DDA459BD1973D729869E218A95468A4BD536A66D334E0D62E009C179AC4C16A7BE23C3204893A49E932358A9E86BAD9B492618B5552B64DA0DB2A7170FC4516DC9AAAB025FBE63D6DEC0B81F86D61A00DC1445FE6DF006C9B15EAF121010EA3CFBCD6F7EFDFCF3CF2EEA63CFCEEB2B954A5EA11C0DAC66D2B316C166243D648E52B9B63C909C01199DEB34971E493FD0D62449D3E725741C52CA5AC508903CB0A0B28C49CF958291893265545A741D26446E55A6AC701C0729337992E5AE158E2714C659D27459C97AAED639294D36C7A068D1645A1132728521637345796E050A16D83CCF09057339838C107263B8A6A0A4B2463D4EBC2018DD336949DFDA1F5C72D5EDB7DFB6E32EB34E3CEEB84C2BD771374C5DDBFC71837F9D97C0BF1172B4EED05A0B003A555CF04B2EFEE9E5D73FD0D4AE748251E3B666CC5AA34839265341E008E6459956CDA65728730465314A538743502DE5C6361B7529457B678731A03383D67ABE8F28D2241188ED6D154D98694BB92E381CC38E5CA5998ABCC00BB9349AF22C1340954A511B68368602DFE9EC68CF2DC64AA335455F020BA3A8291DD656296864796E29CD3C8789423956266E0E164A051F406BDD4C94E41894839C306A0C059EDBE957724371B35E2E8603B1BAE5E1D58FCFBB2574E0B0238F5159CE2467AD74C3BF376000B03EA5090880B7B65EBD098EBC465EFD96C71B210722E62A67C0A490E75FF09D81C1BE079E196CD8B6B054ACF7AFF454562C57B34C37B31CC916C031C2CB8CA62C0F3C9FC0A838B3DA2ADF258B79AEB3B8298B45C1DC2C6926A91652862ED3D6C471EA71E679BED5A98E730066A5900CD33433360F9C3207132751A6D1771D6999D62A8E231799083CA3B324CE84743CC908314923ABA45776D0A82C4E3471CE5D6651E52A8F9B81E333665596E81CD0772D5A429EC6918328029FB48AB28C195D08FC5275FCD2FED517FCEC0F8FCC7974F49849A79F7EBAB564AC1142586B37BD464180615F3C020C73E28D49769813D61A638133CE586B831FBC25BEFED7BF35C15AA554E00500F0B5AF7DE9BA3BFE0ADC115E39B00069B3DADE09DAC6CD841895439784AB32432A2F7B127D5729ADC87AAE90A1CCB4A12CF31C5E08BA4CAEA328629C55CA010152AE38B26A5B1535C4716619950A1E21D3DAAA342A940A1C98CE749AE5AEE7068C5B6BB5CEA4609D9D5D94A928C9116D7B39244B99B1A0D36A7B276A93A4DA8229863E633C573AC9B2C0750A851E9D65CA30C72F1643C8B4B664D0EAB6AE1E48559C28445B2EF91698CD15A0E9EC6CCF55E9C67B96B575F4AF5975FAA831934E3FFDCC4C658CFD8D444EB2161843952C7BF04F8F2E5EB5F5C99FDD0994B652BC6E9B6598528C89F593D95BA83F5E1F3908487229B9FCC2B96702C135B317A2D759F1BD5C29AD5324E37BBE261D4511F3022939A8344F3346A499E7B86E94D47292A5D0E56095B156251284905EA6E3469C044141226A6BF34C31329E5B2166A2B809AEEF0824A43C37366DBA9C31C78FB346A674A9587204A4CAC649EA49E6948384E26692BA6EE01028209D2AB2A9E3F916284A23CB0497828894B1364F187A9E17C4E9609CA942B12A5C5459428A88591914729B34935438AE231811A546A3CD3D5962D22319F6D6D975F72E2F7A2B93243EEBAC738737476D28A797ED0BA332450CD366DF92050BE7ADAC020018A3C9686D9071E9B882ADF7C4222258B2565B24A38D31205C4F82CE953216919817BAF37F7CE4D973261C7BFA79C7EDDAC6ADB1C8D95BC190D7418E56C7EBCDA12F7CE1CBF7CC5D238528B58D46A0DC6844EBFA810596E7090256DA2AAD9DF00CB85B28A1B18436CD92B05029A13116324D8E60E4942C519646BE94E5AED022580312C9F59C5C91CA3262586AABA0B5CA0258721C0E7E87D60AB3B4522858A29C30D65622560B0583984411E34EB5E2923568AC4082C00516AA3C05C072A94448A809C93852905301B269D4708252102843048A1CBF681C40062A8A50F28A5B446B53430CADE7BAC402638C3671A95A6164923C68A443CFCF7B6ED89A407AC5680D5BECD658E1FA0200BCCE1DA66DF3CCCA950000460BA7C01D070000B432C01983D60401000C19930C400CA7BDE719382E97ADFF58809EC3BF76DE3B9D31130A1C0090E1A6F68BBF49BC6EC596E7EA89279E88120228388E9BE569A3D1CC142002478A1BF53C4AA4F40CD946A35E8F12D4A990A0F2B4591B9452302EE2B8596F265A5B8E0CB55659425CD412B5E0C5254F3DBFF0E9854BFB076A0836899B592392DCB54051D488925C5B9282599DD56A432931721C9DC65923CE0D71C139D9466330CDB340BAA8D460B3D9CC0C00B89225513D8F222E1C04A8478D5A9A5B4B0E476BF2E6D00027604E9065E94023CED288312D04341B8336CBA570B55579D4C832438012214FE3A856978408A48DB549C6B868E98C0DA71522442063B445C6F9FC1B7E78E236DDE3A74E997ECC17AF79694A2700F042EFE3BFFBE44ED326EFFD896FDD6B3967CC6A4348DA0040FF73AB5E9A7DEFE2177E73F627F69DB8FB7157BEE8B8FDD77EFAA0495377FAE4A5B35F02804AF3E9E57DAB5724AD1D26AFD2586F066FB23E072208C7E9AC7431AB53A54227F05DD2D682B59C41A9DA4686D23C6628DB4AE50C9111813681EF7B6E68746E8057C2A24232D67A82845F58B8B4D9575FF31F471CB8CF1E1FCA6C16F885E79E7FE196D90F119524E3B9CA10657BB1A45A5BBF74E67B9EF40B0C3829EDF9A11F9035A495E20CABED5D4436CE522BBD92E35A6B1812E8AC546E036B33950BC0B662290722B264B5EB48D9D185D6641916FDC0F7D112314BCCE8527B173336CF73645EB1E412590306C80685D00F8B46670A5920004ABEEB3888F82AB7282290B68C0B932CBFEB7FAE7A604EC769BF38DF59F4DC634F348B8306207AF44797FCF0F2F4F88F9DD1FFC05DBFFCD025850B3FB44B4F01B4CA1597A25459F1A74BCFFDF1FCB1EF3CF6EC3327FFFAFB27EC7CE98E877EE0E4CFEFF8C035CF3EFDF8B3FB6E35B3EFBE394F6DAFC6EC3EB3C7E160B75034870178000E0C57B7C8DFD06AC5751DE6B903FDB524C90BC58AEF71AB4D9667DA52B55245C87B07EA8E17960397914D334559CAC3B05CF47AD7AC329697CA65973187F1F98B56F89EFCD80947CDDA79CAD6137A264F1AD76A7F876993E62F5E75F7437F1937AA73F9B2158E1B944A05664DAE54334D83B01004A23E389866AA502E49CE759EE5594A5CB455AB71B33114259E5F28FB22B34625792DCBDA3A3B9099A1B5FD8CBBE55291A1C95393A611F7BDB672796D7F5FAA1816425762AC08E234B5AAA3BB3B8EEAB5C1BA1B968BA1679551499E18E5174A0547ACAA0D20F7822060C25179D6E2C3864344640C63029AB5BF5C3327B3633FFBE5530FEB30C992B197DFFAF41280ECB1BB1E9A4B27FCF2EC33DAE1235B5F78EEE5573D7460CFA1C53112748600D2E6CCA96EBBCB01279D78E8A4D57AEE2D3FC531FB7DE4F803DCEDD77CF6C6BE796B61A6E331CED7A9AA2D38A170D8B0EEC91BD01CC8194FD3ACE007AE9416C9E68673293CAE554E3AB7C80AC55030D4563164D2710DE7C8186579392CE5563306DAE838D1EFDA67F783DEB9EB2107CEEAEA2803C0A34F3CFFA77BE71CB8F72EEFD86D467777671CE592B05A2A1A44A31502731D1F091990D1CAF55C2E2507026BB9E34926C82AA3325F38ACC82D82319A7181AE708463959608D5622107345631CEB9E3010ACB599CE5A117BA9E056AAD0E05F89EB09ECD729F4B5E2E1A40300A39E75E80C61862A9D69572C95A66C992D18CB70C87574CFB642C0A0E49BA78EE5277EA845D0FEB00AD539564B9B6024DB476D4813D35E7B1730EBEF0D9FA0BABFD5D8EE8F0020640962103504D2C57B7DD6FB719132445A673FA8E476EBBCB641F7422AA8A204B00B82BB8D8D2FBF05A2518CCCB6FA47E23E44084FEFEDE425BBB1396D246AD9E681104054700885AA3EE08B758AE647914359B4C069EE74A21F2345D5B4FCB6D9DA1845A7F5F96D3078F7EEF29C71C3879D2180058BAB2EFA6DB1FB9E6E6D996689F5DB727AB5D4E59D21C6A463228A14AE37AC30A2F0830F0DC246A0EC67158AAFA2E8B1A43B906C70F7D47DADCD487861CBF10140A495CCFE2149D903BA2E83ACDA1A11858B15A754DDE6C342C3AAEE7F9819326E9D040BDAB5AE592C78D5A9C90EB0752F210716870C0F5C3A0584EE346BD117137F05D292436A22453AABBBD9A1A556FE6942761D8F6EA754A6BA000004848743C6ED1A42ACE0998F0CA40E0C8DE079E7904B73978EA8CEDF5F403763FFAF8BDC7541980E59CB5A444A4D224CF0989D22C4FD33C2722CA14A2CB1980B5F0B2F9BA0561DFDC466AA34DA3D6F42B934D9611E4C01D2F144046594B4CB85E20C0A65946C4422F5480A033E05C08C7F5AC2595242633ECB8A3F6FFCC2947F6745600E0F9F92F5D7AE5ED37DCFA80C9D2CF9C7CF89EBB4C4B120D86B981CB39E659868CA4EF13A2B54673977BBE9767A09422CEA5EB7240D2D65814D2F17D02CA934C720E5E602DA1C9091DD7F794322ACB9081F47C00602637B9905286BE8C72E53060C2F53800193006B8F402DF5ACAB34C3011FABE45D22A432E0AAECC18446966010B41D830F1B2A54B375EAD20436D887961CFB4AEC5D70EC164BECF9E250FE6AF59F6DC6C6FBFCFFAA31A73EA2B476D7DEE659F6B9DDF5C5DCF4AA11B08B204800C9131002004C610B1E5FA42649C736400809CB3B7DE07FFBAC91106C58F9DF2D19FFCE66605151B45E887A19099CAB334E302C230D0593CD4ACBB4E500E03AE9324CE1417AE17942B9535BDAB8DE11F3EEED0CF7CE47D6D957296A93F5C7FE7EDF73CF1D4BC457996ECB3DB4E07ECBB5B21F45E5CBA7265DFDA42A1EC39EEDA810174FC4218804EB35CA74ABB41104A276A34E21CC2B0E0739BA5719EB76C80304FA2A8D9F00BA174A45699314A691316CB5264CD66D30AA7E0078C4C92652A49DC30F48B95DAD090B6CAF50ABEA466B3A93411A362B19C361B51B3E1FBA1EB794AE7699A59AD8B850277DCC1C14126035F259D5E7AEC7127B4F6ED6DB85A41E48CAC81A03AE3C8773E7EC58DDFFCF0A9133B94535BB0C8D96ED6EA26DBE1B86F9E0157DCF2A94FFF19C124E1D67BBFEF03C7EC5970C918E200A4B2B836D048520B403AAB0F34E2440100A9FADA21D3D400D9C060BD11E76FF1CE1ACEF63869DD11AA447F64DF7113DA3C4BB031315B36B99472A79D76CA1BCB1E79E271E1761380561A98C398B0C8B4329640080160B5D59608507024634D9C5BABF5D187EE7FE6278E6AAB968DB697FEEE4F5FFDC1AFD70E355DC9C9D2078F7CD7C1EF9E65ADBDF9EE47AEBDF96E4F7083CCB4225BC690250B0C481B6D2D32D65A3F12019928D583F524CF5287330B8C38B3168451C08465024CCE5ADBE75B25508CB61688734003DA00729D2743B524CB53C6B800669181519A18E3008C290B99B644DC119210328564019993AAA42AFA4FFFC4B11F3CF604630D63AC9536BB6EA09031B016A4DF31757A41AF79F4AEB9ABF371BBEEF7EEF77F6E271FC78C1F3F75DAB69D4BEEBCFBE995BD91EC98B1CF217B6CDBE1722040C63910911B766C356D6277874396F1CA56D3B71ADD138235C69F306DEB09633CA58BDB4E9E38A1A7C019BE692F694BDC4B07D3CBEE5B263D690CB5261714A7DDD93AC3112C1E48EEFBD23BF6995CD196C46BF9DC08485B0D06A49417FDF8FB97DFF458D46C308692492E796EC12459A91478E5AE5A23CF93260A5FBABE005B8F9A599A9D7CCCFB4EFFE451C542D0A8C7975F7BD70F7E7E0D43A3B5CD357DE0907D3E75D261DB4E1E37AAB7774D00002000494441546FE1F2AFFDE8B70F3C3A774C4729CE6CB15C4ED3E6DADE4142C95DB7E80BB2DA1A5B2E973867B57A4D6B98B4D5C49D676E531F1ABCEFE127B5E1E56A298E6A59A6B9908EEBAA2CAF0D0D58CBC362510A40AB8849265D47B03C8955AEA74FDB66E6B4892B56ADB9F3A167CBBE4F9C31D0B57A23088BA520405D6F34FAC9A0904203A854713020DD8E6AF09F27BDF7A8A34F68C64DDFF7890811388A614F27D070B8C31AC3362EE14046E13AA7D6DB8F96B8EF7F7168DF6F3C14B4F9B91EDEB6FFFAA69556AEAE6536CBF3CF9E7A669E7F2B6A469EE76BAB5BF146CED9A2450B9E5AB85CC9B1800856A77984C01D87EFB3DB0E9FF8C861C5424084F73E34F7EB3FFC4DB9E0ED307D9B2849B69D34FEB48F7D60C2D8EE5ABD79DBECC7E6CF7F694C5735C995CAB2152BD6747696F7DA6DFBA0540C3DD9DF3FF4F4BC4596284EB5EFB9719233C68F3A68CF8F9E70F0CA55834F3EB360D5AA01C70F8C06029666D960FFE0365B8FDF6EDBB155DF0FCA95854B57BC306F11630620635C24590E8C1D7FE401471CBCD78B8B973FF8C457EA695C7004712684C8B2BC414E85F5EDB7F3988ECED1C66A86C83933069224DA7EFB1D8E3AFA8446D4088380D645C45E1EA896DF03011863562BA5752B91923181C80463C21AA595B10004C8851482B502BC880864B5D6845C700E6474CB9526181A955B645C08528A9031C15B6E7778EDF52CBD5CD5E80DE175C7565A190C889464F1999FFBC2C6E7FCE29797DE76DF6F7A266F856E85818E9A49B3599F3A75AB2F9E794A575B19C0CE5FB0FCEA5BEEAF96FC2993C79F74ECE107EEB7B36400005AEB3B1F78E2EADBEE8F931C881377468F6D2F06CE41FBED79F231EFF1021700AEFDD37DCF2C5CE6BBA194303030289873D07EBBECBFCF4CA574FF607FF7A8516B6A4912D77DC747C8C78D1D57F6DD230ED9FB8883DF197802002EBBFACEEFBDB8DC733943A8D79B86F08883DEB9EFAC1999CAE314AAA5427DB0AEB4855CB57776E7717D284EE2E6E0373E78D6AC59FB6E7CA7699E8661D8DAF982ADF4D175E5E700D68B0B8171E170F92A092172E9BC4A79AC9722322E656B5B150113729D8F8B09C95A2749F9EA6B5E21A7575075386043AF7B9BD6EBD61CEBA343523A71160F2FEF09ACB508CC91328A1ACC11A956423581CB24B792CB3D76DE7EFCE84E4DBAAFAFF6E35F5DF3E0E34F6D3379E2A9A7BC7FFFBD774AF35491758537FBFEC72FBCE4EA35BD83ED95F28A55ABC78F1D75CCA1FB7EF8FDEF71433757F98AD5BD9DED6DABFA06B234F1A4D61A8686860EDAFF1DA77DEC835B8D1B45045D9D6D68F2AC59777CB96628DD7A7CF771EFDBF7C3C71F08C0E3385ABEBABFABBD7D6DFF601EC792879658A399EFBFDFAE677FEAE872A9840CC67657D324B61694253498440DA315474E444383834AA928899CE158484B7ECC91D25A0B88006409390E0BABF524B7923886C7AC95D201809B9B87F17209CC0D4FDE5C1D307CDEABD35C37EBDA0DF006F3395A3F5DC75DFFCB163904E7885808FC6A3118EA1BD28695CAC50F1E3CEB9C533F64AC4E33F5EBABEEBCFEB67BC68F197DD67F1EBFFF3B66A62AE38C3BCC9BFDE0935FFFFE6F96ADEA1B3B6ECC9A3503DB4D1E7FC6A78F3DE4DDB388EC8217972D5AB4BCABBB6D4C4F575BA1E070489462E41D71F0FEDF38EBC320F9B5B73FBCDF1EDB13D95CA516841396A78C0ABEFBDF9FDC71E63640F0DCC2254B972EEF19D53DB6A73B101CD15A6315E1A187BCF3DB5FFC48234AAFBEF5C163DFB7B7749821D0D26977A54218AA374AAED7D1568E9427A523A574ADBB21396083279200F946B5A1D62759BCEA60F344446400399AB46FE9BC97D6E8CAC4ED26F7849C5E73A5B0D1B5AD828C3A59BDE099654DD13365FB7165C9DE80E6D8B25990AD791653A533A573AD86A268EB093DC71FF51E6B0C43F1C863CFFDF457D796C2C2CC6DB7DA61CA0400E2888CF15B66CF39EF7BBF59BEBABFA7AB63ED406DEAE4D15F3CF3A443DE3DABD688FEF2D48273BF71C9B5B31F993071141165990280BEBE81695B8FFBD4478EA8B497CFBFF0F2F3CEBF746070089125511A721C37BAEB67DF397BC799DB0CD61A7F79FAC553CFFED1234F2F1C3FBECB5A4AB35C19EA1BAAED327DF2E73E76B410ECDB17FEFEBC6FFF1C00ACA528352A4D9B696C55C64DD6CC92469AA7796ECD6B156B7B99194C30CED5EAE7E63EF6D0BDF7CCBEFBEEBBEFBE67F65D77DDF3CC8AB50A4CEDC5B90FDD7EC7EC879F5DD49B0080D19BB5FC24A3B50580FA4B7F3CEFA03D66EDFF5F973FDF002032F6EF5F4D561B0050430B7FF5E13DF6DCE380EF3D3298B73ABCD9721CC65BB01D1291542E00AAE54AA0CD94C963C78FEDD256AF5CBDE68F37DC5B709D4913C67DECE4433BDA4B00A0B4BDF696BB7EF0D32BE2241D3BAA3B4DF38F1CFDAE533FF17EDFF316AF587DED9FEEBBECCADBDFB3CFCE5F3BFBC361507862EEF3F73EFC174079E0FE7B9DF5C90F4CE8E9F8C1CFAFBDEAA67B779E36695477FB8AD5FDB912279D78F8B9A71E4B44CF2F5A72C36D0FFEEFEF6F39F9D8433F75F2E1E56238FBFE271E7F767EA554DE71FBC9677EFCFDC5A2FFCD0BAFBCF9AE87779A311900FAFA6B8E10A9CA1040595969EF5671A4D28873E472E3516A855D09800163A6FFA907AFFEDA61FF756D1DDA3BAA8E0B364F6C78F4772FB9E0C37B2FF8FDF99FFDCA8DCB773AF1ACAF7EE9ECF78DCF33251967AD2A80040844D4F292205FF70B18AE7149404C16CADDEDFE4077D96D2D9281ACB51BD83588886CDD8EBC16592D594B00C064B1BBEC8763DB3DFE1A93CCE6E0ADD82B4B86602849555CDF6D87691F3CF45D0000161F9B3BFFDADBEFAEB4B7AF1E1CBCF5EEC7BCC04B2273FB5D8FDEF8E77B1A49D2DE565DB0646521F0B69E3C3EF0FDBF2E5CF2ADEFFFF6FADBEFFDE489879D76F251A11F2E59B5EAD77FB8F5CAEB67EFBADBCC533F7EF4AE3B6EFBE7BB1FFDFD1F6F77393FF6C8775BA03FDE7CB71B3A471D3A8B885E58B0FC8C2F5DF8E4730B3EFDA1C34F7AFFBBCBC570D14B4B2EFBC3AD57DF78EF21FBCF3AEB93274EDF6EDC3537CDBEE2FAD9A5C03FF688036B8DC6EFAEFEF3C49EB686AAACEDEB53490D10914C66D0A68ACCC6D52611892C32898C7AE75C7AFA7BCFB8AAD9B5EB81E75F76D989DB74F964091922E702D8EE5FBCFCD1732C20639C03A01F6E30330DCF332F97186D0999807121011050B0D0C13CCD7203ADBDB88CBDCAC5D0CA721E566244008C7381082059E8619EE5B97AC3B532B73C3988A010FAA5C0EFADF5767794A64F196BACA9379A4B5E583976F428DF9351145D79DD5DBFBFE17EC11154868CB7B5B54BC6BACAE1B8319DDD1D9534CB2FF9EDCD37DCF6F0B9A79DF49113DE177A0E20CCFDCB0B0B5E5C356DBBAD8E3B6CAF195B8FD1C6ECBFF72E5F3E23BD63F66393278E9E7DFF138F3F35FFBF3F7BDC94ADC6379AC9E7BFF9B3792F2D3DEBD3277CE6E423079B4D00B8FDDEBFAC5A5BDF7EBBAD8F78DF9ED3B71B972B75F87BF701C25BFEFCD0CCA95BDD78FB434F3E3BEFC26F9E7EE35D73AEB9767693B13889C230E82A149B79F01ACF1C5922C6198378D163177DF2CCAB06CB3BFCE8FAEB4ED97EB46335322E19D0F004A0A3B52B56AE8CDDB1E3C67515316FF6AF59B1BAE1758E1FD35DE01610F266DFF2656B4DD83366747B2000006D5E5BBDFCA5A56B62F459B4F8996535E29C813100C0A46DAE58BA64455F4369CB8474BC9EC9DB8CAAF89C8C26648859DABFECC5A54343997575EDA5F9030611DF7892D85B410EAB559EE5B9D2D6150E2203ABFB06EB0F3DF93C58C80D186D35A164E071908E97A6F98AD57DA347F57CEA94A30E3960F731A3BAD3341D37AA7ADAC78F38E7D4139E7D7ED1CA55FDEFDE67E73D779FDE56AE6C3F6DE24B2B57FEF5856533A74EF63D71C8BBF6D867D68ECFCC5BD4562C7CEF2BFFF9E8532FAE5CB9B65C2D7676B79DB5DF899FFA8FC3EE7EF869C978777BE5B0F7EC3573DA36D3A74E58B868E9834F3EFB8E9DA61B6B8F3864EFBD779F396FE1B2F1E346FDECBB9FBFF7C1277EF5DBEB88C0711D8A759CA48E088DD1D69A57DF220201676086563CFEF38BE626C5A9C79C77E2D4EE901B65091186B53FE78C56FCF9E2D33E75E193DB9F72D155DF3DB2B8FCCE9F9F7ECA058F6F77C2A5D75D786855A3E02B6EFFD65167FCB6778773AFF8C967F71BE7A39E77D3855F38E75BB7AF649DE3463971EFCA657D2A9CE8A2D200A8079FFFE369A77CF58145CDB0DA598896BDD8E839E8AC6F9F7FC611DB7A0092658FFCEF57CEF9C24F1FC3F6D15DD224FDAB56E45CBAFC0DDB955B9E1CC6DA2C53813261E8F9A5020000B2DE81A1479F5938AA236C36E34A50ACB8DC10983C4972DDC868DBADC69C7ACA9153B69D74C3AD0F85BE77D4A17B7DFAA4233DD759F8E2D273BFFEF3BDF69A79C0BE3B7777B47577B4BDB478F9777F72153279CE678E9BB9DD44DFE3BEE7EDBDDB8CFEDE815BEE9CF3FB9BEE1DE8EDFBE449877DE74B9FAA960ACF2D7CE9DCF32EFAE27F7D08918D1DDD397674E7FC17967FFBC77F08437FD2E851A37ADA01784F4F7BA55258B662CDF5B73DF89B3FDC9A839056A769DAD6D1A5D278B059E7441B05C71187E3F3599ABCB47010BCF13BEEB7678133459631C1101189B19679CE314D68B06E39470086A44DDEDF6F5F36029081E91FB051AAC0055C76DB8F3FFF5FDFB81976FEFC255FF9C8AEA370CDC2ABFEE7335FBD27D15C0AB0267E6A6D79A7F79DFB858376F48B05A61FFAE969675DF49DF3C78F1A73FE29BB9BA77E77DEE99FBFE099A9C77FF9EBFFEFE8AD205AF3C22F8E3FFAE2FEDCBCE100CC162507010070CE2D614660811B3BFC9E14D711BECB9ACDA6EF7B8643546F369A4D2212AEB7CB8CADCF3BE343E56278CEF9BFBAFD9E395B8DE94A8D3EEEB0031E7A7CDEAFAFBCF9BE479E7CF701BBF89E536FA48F3CF1CCCF7E7BC3C297562771F39B3F48FFF394F74F9E301A8D99FFC2E26F5DF4FB9796F456DA4A17FFF6FAEECEB659BBCD98F3F8DC4BAFB8E3E9854B2C272178A399DD79FFA3BFBCF2F6A54B5736E3F4EC6F5C7CCEA73F58285718C00B2F2E39F32B3FCE2CF72593D221ABB29C426B082C5932C6C04693F6FABC2F44C601093C89C490B5EAD7E32B8643722740C7F724022093D20B9913BA7CDD494C7A05870F70B7BDC8CC63D7FDF8DB37AF9AF4895FFEE4AB274CF701604269DA94627047AC0C6780E0EFB0D3BB76D9BD580C5AD74E3B66BF3F5E7EEF43CFAED08CF5FEF9CAEFFD644EE9C0AFFFE8279F7F475500C0D870C6F60266B7F617BD216C5172200080B5D6F79DA2EFAC1968526E10B1914453268D3FF5631FFCED957F1AA8D5F550DC56AD7674748E1FDD71D23107EDBDDBF4E52BD67CE1FC5FDCF7C8339DEDD52849AFF8E31D37DEFA40EFDABA31F9365B8F5FF8E2B21BFEFCE0C373FE7AC7BD730C8194C238CEC2C52BCFFBCEAFAC514898181AAC476EE8A74A018A1F5F76DD0F7F794D12450AE48489E31E9AF3BC23DDBBEF9BFBF0E37F8D552205F881FFD4738BCF3CEF9294AC4A73C9786A40A0069464C1F702EEC260AD51F09DF6B64294CB8DB72D21AC0FCF1332223B14478640028085E122C2C3CA855AFBBB54CBA8256BB5B2469B97DDA8649532290BFC3059F0D8ED4FF486338E3F62AFA9BE4D9254CABC1129D3728A1220CA6A593607973CFDEC92D583CA2DA48F2EECCBD0AB761593DEA71EB9F3A96CFCA1EF79DFACAAC8A29C7926A9A56CBD4FEE0D61CB4F2B0800C891330376796FDFE040AD582918634E38E20001F8FB9BEFA916FD43F7DF73E79953C78C69EFE9A8DEFBF0DC0B2EB9F2D9798B47B797AC0565459CA46BD70E19A5FCD00F8BA5279F59F0D4DC798D38D7603AAAD5244A381008D93B508F8606B541AF18F67456AC3283430341B134D8CC1A43839CA0502E570BDE23739E7BE0E127071BB1E3174A9E17471117AE147CD99AFE2C4FE366B3DCD639BAA7AB3E3410A5C6758DE50C905B939366449C5EA3741CD1BAC81A59A12D27BB60E92064E38CE0629D031C377056616B22020086C8399031C60082B5464589520442BAC0A3DEFEDE94553ABB2BD25A835C0A911B9D5B0200D200C0F2DEE77E7FC6C7BF7FFF2AD5D9D35E709AABE73D93D0C44AC1D4FAFB7AFBA0382AECACA021E33A2ECF20CF32785349846FC15296204D626DA1DADEF197A7E77FE767577CE9F493C242E0B639A79C78F0DEEF981906DEA471DD60ED33F3165F71ED5D37DFF1D0E2652B8B850232C75A45CC0AC48E8E0A439E65F1D0E0A0E0C21AE3046E49609C24C29502781227AEE3B48F1F6780549E46B51A70B75C2EA749669918DDD56D119224565996113796AAA530B7106726F40A867496E741E875B4571898A499AC5DDBCFA55B0921D3799A19606EB95CB1593A58AB83D6AF5E3DC270AE1680131627ED34C6DC5BAB3F3FB7E9EEDCA9B324D5C83863D668626EE0330222BB6E99495A6BA518771D075592685908C776974301799E9329B475748776FEC09ABEC42018152BCEBD72D927D3A70C73215F7AD3D73EF7952B1F32077DFEF3C7ECDC55708297AEF99F6F5CB1B0BF09E5F6CAE85194AD49D7F46A3ECED6F2B4C059677B01ACD59BE137DB04B6BCCD0188602C68ED4A1135E22B6EBA1F893EFEA1C32DA2EBC89E8E521CEBC7E7CEBFE3BE276FBDEBC1B5FD75CF0BDA4AA538CF9AC042DF01AD54AEF2BCE90521670E9804A56C2B9733A592243326E35238C2CD298BA208803863CA902504AB182F0AD4711CD5893C57322EB43540BAADBDDDA459B33104D2350E07E064288922A3B4EF07699E6B022E0119121368C9A884FB55CBB9D58AD98DF784B4B4BC35C00BA3773DF9B4FD2F3BE7FE3B2EB8F89EBDCE7BF794B0E0BEF25CC6A557E09EE74A04402E9810160DF73AA4CF2424CB162F5B9BB1A024B5CDBDAD264F1BE7DDF2D4DDF73FBBE6886D26846500D2699C0BBF5C92BE47E963D75C7FDB928EE37FFBABEF7CA80700C0DEF1D84F18776D02E58EEDB6DB6A74F6C8A30F3C32F7737BEC5A1600A0570D644EE0173CFE4695C796D51CC3FB415DDF9352346B036110700BD7DEF6D082979623F220F0D22C8F1A519AE8B5CD344EEAAEE09C21E7BCE0042AD759D464D2F3021F5496C6B1239D6AA59C6AD3181C04EE48D7F300B3344B321D848183A092D45A609EE748AEF3346A343CD7690FAA4996E938B68EEFFA3EA974B07FC011B2DA56CDB58E93845004BE1B3A90662A4A2219863E6296A58DDC0A37F03DAE74DE6C347C4FB6574B512A5EBD92050044403264993776C6C9DF3CF7E1132FBAF19B9F3C65E04B5F3C62EBB20BDA10100463A6CED8BACBC4D1E03253EFE86F2800D1B6F58C3D762BDC70CF75177CF79D7C8FFA9D3FFFE90DF7FFE5A9A1B863B0BFB75FCDD8E1B0930FBFF69CAB7EFEFFCEE9569FDCAF7B70EE1DBFB8E88FCF0FE51D8D7A3D86711D3377EABCF296A76FF9E5E56DEF189FDFFBBFBFB8F2FA3B86CC585ABBB29F6DBFC7E1A7EE73EB176EBFF0AC33DACF3B7E52BEF2A9EBCEFFE9FDB538E9AB0FAF57DEEAA8ECDFC170A9354B8C8370ACA12CCD0AC530704B0F3EF6D75CE972A180C8932CE588D5F6B6B13D5D499C0CD59B41E07B41A0356952561B2119E3C2925146B9C263840A1959C38C765C07D0289DBBE8702E7354C62AA134F3A4104E9A251284E08231A3408151D64A477A49DA345603F31997088A59C3B4462918B7499A7BAEEBB93C538C9496461117C2F1A3B86E2C0F98E49C016EAC980900395943643AF7FCDC0517CDD8FD07A75F74F50FBEFDECD8A2078620D7B4ED07CE3A77F2BB824A5BCFC4895327B4070C00C3C97B1DFAE18FDEBEE09A39BFFCCEB7EF1C7C6A41C3AB4C98E1A5C589ED0C3475EF7DD27F7FBDC6CEBFF8BE5F7E77604E7BBC70FE73BDFEA4A9D33B3BCB94A0B7FB473FFEF1FB96FFEA8ECBBED7FBD0F8ECF92796D9D2C449D5AD277489D4F249477CEC9B2FD6BE7AE9EFAEFEFEB75E1AA36B4B9F5F01DD93B7F37A3AFC37EA06DBB29A830080014BD2344B13D7778878143501F994ADC65BC1B238E588CCEB26ADB3285DDD3BE8095E2A96E22C4BFA079C20708290F23C8952C630087C65ECE0E0A0908EF403D04A2BDDC833D77184E335A2180864107A52EA346F361347F042A198E4593CD02FBDD00942CAF234CD95A5200894A5DAD010E352FABE302ACB7293832744A15088D3248D34775CDF0FC8E8669C11996231CC945A3B30002A7B2D1FE370D22F90E5D6C0A4830FFDFCB4F67D9F7969DEEAA636C018288BDD33C78700D55DDF7FD6A5339AA5993B54000864DBD4F79E7349C7412F0CAE5D35C03F3663BB896D982E5D6B3AA74CEB71D05230F398D37F38FD9D4F3CBB60652377DFDF35AAC3578485D153A784805EF7FB4EFFD1D8FD5E7871CDCA818638E5D363DA1DD3484BE3674EED04325EC75EA79FF78BBDF69BBB62D9EA26F3AA3D13DA646AA9B2F576450900F0FA4BCDBC15813700D268B5E34862A21929A56C238AC272258A63635481C011023891466BADE7B984D0CC134EC697AE46C86DAA8C0939735C4FA54DB4DA1501724C40A549EEBBE80781D1799E250E92236546364B336D74D12D0283284B3868CFF12C58A34C9EC705519082EB3C41AB5C1EA07014914E73234C31282BA55496BAAEE74837171C7464AD757D1F1936558C761305E086F35A1880556933931366ED3561D65E1B9FD7BEDDEEFB6D0700AD401A0096474F79D7E8291B9E3275DD81354693EC9EB9E72133F77C8DAFB40ABBB6DDF9C06D777EAD61B7DA18574ED8EFA009AF43567F1B6F85FB9C02D793AE5BFFFFED9D4B8F24C771C723225FF5EA9ED9593EBCB42CDB1045ACE0830109F68D067CB0EF0224CBF267100C50D0890701BCF044C89F4357838021C3020F8200F9E2076CC2F6852001C2F47277A6BBAAEB99AFF0A1BB7766965BCB59B257BB9CCDDFA9663AABBA2AF3DF99595591F1AF5B2383514A29E15DDFD475552DA2F3E3689D7482B0C8736FC7A65E65A6582C8EEC64FBB603452653D18BB66B336516D5F164EDD40D2058085554E568C7D878637249CA0FD60B8B429479E1FDB8AA575596178BE368A7BEEB88582A234559779B52EBA25C046BA761000142C8A22C821BD6EB3393E54A4876AEF7BD50688C418066BD52C61C2D6F0CA39A7B8CB47BDB85A44D1E5CB7190382B8BF821A4819A324053B391F4869AD240222783759B7F564C06D505D64104A6B2948088CDE8D83DBBD9BDF47ED486D942452E0A6D1857029FC8F84525A0A9202839BFA696FF7B0DF57994C8ADF4224D8E7B14D0405828491AA0E768A7151962854E3DCD075B93699329377769A0A9367991E00DA668D28B272813EBA7120A045B10802D7930D61582E33A1D4D4F731C68AA4CE8B33E7DA61ACA492463BEFACB5B93145A67AC4BA5F4B12BAA880E3D877528952026565DB8F7D188A8516DAD8BE8D3E669934C6F810576DAD95C9941E839BEC9893CAB22A043B0C0349A34A3D21F1236E0677CFA70065566AA487C4C7486DE4C5182194CAC8F9D86224A9B2D9CF4999EC11FB0A658AD98F9FF62BFBDDACB81FFAD1DA222FAC73ED38491894CEA8A8BAB691A654C6488A1C43DFD6A8755E2EACED7DB75126D3A49C8B6DDF49415951F869D8B4B5CA2B9D69E77D3F39E7D75A6504380E3D85A88D2662E763D3D652E9B25A3ADBB9AED5C6E446DB08DD30483B9545E5DDD0B61B9597DA18EFDC689D77562B9395CBB16F83CE49991CD83185611414F2C5B1F7B65E9F71F40F891E7FD8B56FB34C3ECB79481FF761E9E1F3E11189006843D442E63A0F314C818DE0AA348C304E3D00085D02E2142342AC72ADB576D3C0CE662A334A4D21D8104A456591730C7E1C94D48532916070C1101C958608FD381073613221688ACC1C17B9D446073B46673395674A3A00EB7DA1A9CC33E4E8A75E0A91EB4C20BB10917859182168B00370CC4C2109AC1D62E42C534C387AF6E1827FF73CDB6C5FDB40E36796C76DCAC3CF39620C46E852A9AEAB51148B72119DB3A3034D79B5C06063B0089A4C6E64E468A7C9653ACF94B4CE8FD69334C7A50EDEF6933342DDA8165370D6592459E5257B373917582D8BCA47E7BC1FA2543A37CAF8307593CD456696C2FA3038474A2D3313C3D04D9311EA78B1B0C15AE704299D57C2FBE0AD6361F285011BBD1B22489D2D4905B6FD640B9D55A519260D5758948A8808B8737F7D568D5A1ED7B9F8B03D07020011994C0261D74D5DB376B6234153E0FAF41423B2CA3B1B574D33761B45CC40EB7ADD743DCB0C98366D5B6FD6314C28653F0CA7F5DA9214A487615A378D1D5BA184F571B55AB7CE93CC838BEB66D37535620054CDBAAEBB3E0A2340345DD734B577ADD0A6EF87555D0F91046576B4ABA6B643AB2479A6F5D9BDD1792DF2C9C3B069FB6E1321A0CA9BBADEF47D4411F94ABED4B8774DE05D6CD6B3C8E336E7E1E71C21463B59462A16A564F4C091625655463047475E2EF3DC1BC3317060A9F472B9E018BDB342A9E572B94B9427685155C14DEC2D932CCA220706EF9DE7BC2CB424E4E8BDD3797E9C9918BD774C461D1D551C39784B421E2FABC00CDE07C6E5A20ADE11DB80322F0A030C21B08F2ACB8EC12384E0ADD459AE9567E6C0A8C4D1D122C610FC8478A564B4BCCFFE0EF04432303D150ED773E02EBCB9C873EB43B3AE331211C13ADF371B1CC7A22AEA76B36A5AEF1D11B808ED66E3BA2ECF4C8470B65AF793456444E8A7A96F6A01A8B4AAEBBA6E7B8048C036F266BDC6C9E69999A6E16CDD4CCE49048ED0F6DDD46C7293C7185775BD19C66D2A83C987CDD9A942924A349B76B5E92207027081DB4DE3BBBE2ACBD1F677EB8DF70E115C80C18E5D735A2803A4FA7AC3E14A13D22F30A23FFB1CACE760DECDD2EFDCB96341BD74EBD6D9C7FF45E5CD0C052AE150A0831B6565914048E0A0B5D6129931782884110B0D52020011964511830F8C1AC45155795248C080B9115A6224011EAA2C579910822244A99492140204CF85CC4421A2D41123095514E8B40C1114A8E3B274249198198D365A02B38C0E16A6B28651E8084E2A25091CF3E0215782CA85914B79DDD358CF71B0CB4644C6C8CC3FFCEBBFF9F33F7DF5BFFFF39FF31BAFB4773F8E14A4CE7CB739BDF7294BAD9498BABA5BAF83ED94D618C2E9DD4F7AE74D9E073776ABD3A96B508094AAABEFAE37B5CC32416168EAA93EF3C1EAACB05D7BEFF4D380A48DB4C3A65F9FF9A9974A11F0EAEE279D1D4D99831F87BAB6ED19131B9D6DEA7BEB6645C6088A63D30CF5598C83364570C3DD7B9F780493693B34FDBAF6438D522A45F5EA7F9BC67DFD45B1BAFBE1DDD3355C50FFF3C3C17A0E428A107DF4AFBDF6ADB7DEFCF19B3F7DFBD7FFF1FE1F7FE7F5B3BBFF274C7EF3C57CF011380814C7378A00CA074B84E55129ABE3102244AACA9BB17A21C488C0C64869CA29780632DAE42F1DF900818314E2F8855726EF9959002E6FFC0E33B9105140B52855B1F421C4288A52D3E2251B02036B49272FFFC1E47D0454D2642F2E8DF1C22C000004E9494441547DC4C081041D9DBC6C962F708C046279C32028EB1D121512E95675530F1FBEFFDEF7BFF7DDD75FFF331FBD949F63B672FD38E4B042480CECBC7BF59BB7DF7EEBCDB7DEFEBBF77EFDEE8B37ABB37130266324377408A48C8924BC77E0ADD49A84F2E31883575AA352DE87E8AC10249409C1FB6992428A4C8788C14E04419A8C01DD38C2364C9CA4731EE224A522A9BD1D830DD248A1B40F1CECD40A102A8FC1BB6914424AAD19D1598B1CA4D240D28F3D47509942219DF31CDC460869CA0FEA0F7FF857DFFDD18FDE38393971C17D66BDE3F5E7F0365E8CEC827BF5B5DB3F7DF38D6FBFFBF7AFFCDED7A671DCAD0BDECEDAB64E0B08C0977D8D709733E4FC1F00970DF5F6DB08BBFD2EDC9EEDF6C3071E335CDE651BF2B73D1386FDB7F3E5DD909905D1A6EBBEFFBD1F9C9C9C4C7E1242F075F47F7C348F2D0EC299690AEE4665121439C618BFF9DAED377E7CFBE185BF3A8418A490DB4EF1FA8BE342865AC02F904DF011E600FBBA132800E14BC4C43F2B20A220717FFBE99ECC1307011480DCF7DCFE499A0E135DC58BE499E6FA0BE222086000D4FE16F6898A039EB7CABD06788008B08F99FD6D78D927BE1AF05E1CFBE9C073FAEC2FF1702E77F4491C8959923812B3A4394762CF76CEE1CF5D1352CF9198258923314B12476296248EC42C491C8959923812B32471246649E248CC92C49198258923314B12476296248EC42C491C8959923812B32471246649E248CC92C49198258923314B12476296248EC42C491C8959923812B32471242EC097B230A4752B893D04900168806DD2099BC491B888D82B030052CF913867BBE22D9CAF784BE2485C205C48FB9426A4894BA4140C892B928695C405E2A5CC3E491C893DFCA038D2B09298258923314B12476296248EC42C491C8959923812B32471246649E248CC92C49198258923314B12476296248EC42C0F8AC3C7AFBABB52E28BC00C3E3ED8F0F440919342213E67F6A9CF3D0C800827A50271A9E5CF5FD94706D0F2DDF7EFFDE1495618E1631484A91BB9DE2062888C80CDE8DFFD9F7B50C88BAE8DE7E20821CA42BDF30F1FFCC9D7177F79FBE6E4436010F47097B69D85ECB590CEF642AE684777C54BBE5F39CFB2CB1D03841081C148F99B8FEA777EF181342AD87375C88B452542DDB99FFDF2A3DF3D327F74AB02601F836778C830830091AF89B5FBB6BD0F2BF4FB477B867F3F02C1080180EFDF697FF6DE47F5C6995CF90B052E4582B9C0F942FFE2DF3E65869FFCC5EF7FFB6BD5CD52CB6B2281C467E1D3CEFECBC7ED3BEF7DF48FFFFE69B134938B171B1BE5DFFED3A5E20C99A6AEB1C7C7E607DF79F9F56FDCB8B5D45A1CFA8EF72A7ADB96B9E20F0F11900019B60EE857DFF12972DFBFFD01EE7BB6EFFA6C3E0FDC3BDC45D9103F69ECAF3E58FDFC5FEFACD753B9D4A38BC8E7BEA1F059716C910263643B067011E243C7952F87F83C7DE0BE537357381A322801C2804610082E02EC97601C1C3CDC61E5E541E7FEE6368A73FB45010102C0B4AB2FFFD9A37C5110811024692388D007DE9DC34327A417F1811121CB25164F664A7515716CD7E55DA53A10404400803C075210C6C3572500F0FEB4FDD57ABEAB1CD08FE7A208FB86C1070A1140B1FBEBA04DC1CC1C2078F6337A9F8D3E6706BFD3F513F801F215C4B1ADA9F0C862E785B727E981DCF9910F2E8E7850710040E04BE298ADE9273646C6477DF89496265CA5C91F0F0488308D00176A32CDA4BF1CD771DD4AD2C481F87F7D51A0E6EBC8651F0000000049454E44AE426082, CAST(1026.00000 AS Decimal(18, 5)))
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 1, 1, 1, NULL, NULL)
 GO
@@ -1556,6 +1611,18 @@ INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [M
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 91, 12, 116, NULL, NULL)
 GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 92, 13, 117, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 93, 13, 118, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 94, 13, 119, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (9, 1, 1, 95, 13, NULL, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 96, 9, 120, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 97, 9, 121, NULL, NULL)
+GO
 INSERT [dbo].[Roles] ([CompanyFk], [ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [CreationDate], [CreatedByUserFk], [IsActive], [LastUpdateDate], [LastUpdateByUserFk]) VALUES (1, 1, 1, N'Vito-Transverse_Role_System', N'Vito-Transverse_Role_System_Dsc', CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, 1, NULL, NULL)
 GO
 INSERT [dbo].[Roles] ([CompanyFk], [ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [CreationDate], [CreatedByUserFk], [IsActive], [LastUpdateDate], [LastUpdateByUserFk]) VALUES (1, 1, 2, N'Vito-Transverse_Role_UnknownUser', N'Vito-Transverse_Role_UnknownUser_Dsc', CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, 1, NULL, NULL)
@@ -1612,30 +1679,39 @@ INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email]
 GO
 INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (1, N'api-user', 3, N'API', N'User', N'api.user@vito-torres-soft.com                                                                       ', N'api-user', 1, 0, 0, CAST(N'2025-05-06T23:53:01.237' AS DateTime), 0, N'6f8a48ad-0045-4c0b-8117-f65a60ba384c', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
-INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (1, N'ever.torresg', 4, N'Ever Alonso', N'Torres Galeano', N'eeatg844@hotmail.com                                                                  ', N'123', 0, 1, 0, CAST(N'2025-05-21T06:51:13.593' AS DateTime), 0, N'1356de0a-e0ca-4049-8c77-703fbee4126b', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 0)
+INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (1, N'ever.torresg', 4, N'Ever Alonso', N'Torres Galeano', N'eeatg844@hotmail.com                                                                  ', N'123', 0, 1, 0, CAST(N'2025-05-21T22:37:04.223' AS DateTime), 0, N'1356de0a-e0ca-4049-8c77-703fbee4126b', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 0)
 GO
 INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (2, N'api-user', 5, N'API', N'User', N'api.user@proyectos-las-torres.com                                                                   ', N'api-user', 1, 0, 0, CAST(N'2025-05-07T00:05:58.563' AS DateTime), 0, N'15ea4ef1-8fca-42f1-b25e-fc52be4e4712', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
-INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (2, N'edgar.torres', 6, N'Edgar', N'Torres Agudelo', N'edgar.torres.g@proyectos-las-torres.com                                                             ', N'456', 1, 1, 0, CAST(N'2025-05-21T06:45:00.007' AS DateTime), 0, N'414026c1-8bf2-41f2-97c2-c1a3b7f656b8', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
+INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (2, N'edgar.torres', 6, N'Edgar', N'Torres Agudelo', N'edgar.torres.g@proyectos-las-torres.com                                                             ', N'456', 1, 1, 0, CAST(N'2025-05-21T22:24:22.137' AS DateTime), 0, N'414026c1-8bf2-41f2-97c2-c1a3b7f656b8', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
 SET IDENTITY_INSERT [dbo].[Users] OFF
 GO
-/****** Object:  Index [IX_CompanyMembershipPermissions]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Index [IX_CompanyMembershipPermissions]    Script Date: 5/21/2025 6:02:21 PM ******/
 CREATE NONCLUSTERED INDEX [IX_CompanyMembershipPermissions] ON [dbo].[CompanyMembershipPermissions]
 (
 	[CompanyMembershipFk] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_CompanyMemberships]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Index [IX_CompanyMemberships]    Script Date: 5/21/2025 6:02:21 PM ******/
 ALTER TABLE [dbo].[CompanyMemberships] ADD  CONSTRAINT [IX_CompanyMemberships] UNIQUE NONCLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_CultureTranslations]    Script Date: 5/21/2025 4:09:14 AM ******/
+/****** Object:  Index [IX_CultureTranslations]    Script Date: 5/21/2025 6:02:21 PM ******/
 CREATE NONCLUSTERED INDEX [IX_CultureTranslations] ON [dbo].[CultureTranslations]
 (
 	[ApplicationFk] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_Pictures]    Script Date: 5/21/2025 6:02:21 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Pictures] ON [dbo].[Pictures]
+(
+	[CompanyFk] ASC,
+	[Name] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[ApplicationLicenseTypes] ADD  CONSTRAINT [DF_ApplicationLicenseTypes_IsActive]  DEFAULT ((0)) FOR [IsActive]
@@ -1645,10 +1721,6 @@ GO
 ALTER TABLE [dbo].[Applications] ADD  CONSTRAINT [DF_Applications_Identifier]  DEFAULT (newid()) FOR [ApplicationClient]
 GO
 ALTER TABLE [dbo].[Applications] ADD  CONSTRAINT [DF_Applications_Secret]  DEFAULT (newid()) FOR [ApplicationSecret]
-GO
-ALTER TABLE [dbo].[AuditEntities] ADD  CONSTRAINT [DF_AuditEntities_IsActive]  DEFAULT ((0)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[AuditEntities] ADD  CONSTRAINT [DF_AuditEntities_IsSystemEntity]  DEFAULT ((0)) FOR [IsSystemEntity]
 GO
 ALTER TABLE [dbo].[Companies] ADD  CONSTRAINT [DF_Companies_Identifier]  DEFAULT (newid()) FOR [CompanyClient]
 GO
@@ -1661,6 +1733,10 @@ GO
 ALTER TABLE [dbo].[Cultures] ADD  CONSTRAINT [DF_Cultures_IsEnabled]  DEFAULT ((0)) FOR [IsEnabled]
 GO
 ALTER TABLE [dbo].[Endpoints] ADD  CONSTRAINT [DF_PagesModules_IsEnabled]  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Entities] ADD  CONSTRAINT [DF_AuditEntities_IsActive]  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Entities] ADD  CONSTRAINT [DF_AuditEntities_IsSystemEntity]  DEFAULT ((0)) FOR [IsSystemEntity]
 GO
 ALTER TABLE [dbo].[GeneralTypeGroups] ADD  CONSTRAINT [DF_ListItemGroup_IsSystemType]  DEFAULT ((1)) FOR [IsSystemType]
 GO
@@ -1719,15 +1795,15 @@ REFERENCES [dbo].[Companies] ([Id])
 GO
 ALTER TABLE [dbo].[ApplicationOwners] CHECK CONSTRAINT [FK_ApplicationOwners_Companies]
 GO
-ALTER TABLE [dbo].[AuditRecords]  WITH CHECK ADD  CONSTRAINT [FK_AuditRecords_AuditEntities] FOREIGN KEY([AuditEntityFk])
-REFERENCES [dbo].[AuditEntities] ([Id])
-GO
-ALTER TABLE [dbo].[AuditRecords] CHECK CONSTRAINT [FK_AuditRecords_AuditEntities]
-GO
 ALTER TABLE [dbo].[AuditRecords]  WITH CHECK ADD  CONSTRAINT [FK_AuditRecords_Companies] FOREIGN KEY([CompanyFk])
 REFERENCES [dbo].[Companies] ([Id])
 GO
 ALTER TABLE [dbo].[AuditRecords] CHECK CONSTRAINT [FK_AuditRecords_Companies]
+GO
+ALTER TABLE [dbo].[AuditRecords]  WITH CHECK ADD  CONSTRAINT [FK_AuditRecords_Entities] FOREIGN KEY([EntityFk])
+REFERENCES [dbo].[Entities] ([Id])
+GO
+ALTER TABLE [dbo].[AuditRecords] CHECK CONSTRAINT [FK_AuditRecords_Entities]
 GO
 ALTER TABLE [dbo].[AuditRecords]  WITH CHECK ADD  CONSTRAINT [FK_AuditRecords_GeneralTypeItems] FOREIGN KEY([AuditTypeFk])
 REFERENCES [dbo].[GeneralTypeItems] ([Id])
@@ -1749,15 +1825,15 @@ REFERENCES [dbo].[Cultures] ([Id])
 GO
 ALTER TABLE [dbo].[Companies] CHECK CONSTRAINT [FK_Companies_Cultures]
 GO
-ALTER TABLE [dbo].[CompanyEntityAudits]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEntityAudits_AuditEntities] FOREIGN KEY([AuditEntityFk])
-REFERENCES [dbo].[AuditEntities] ([Id])
-GO
-ALTER TABLE [dbo].[CompanyEntityAudits] CHECK CONSTRAINT [FK_CompanyEntityAudits_AuditEntities]
-GO
 ALTER TABLE [dbo].[CompanyEntityAudits]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEntityAudits_Companies] FOREIGN KEY([CompanyFk])
 REFERENCES [dbo].[Companies] ([Id])
 GO
 ALTER TABLE [dbo].[CompanyEntityAudits] CHECK CONSTRAINT [FK_CompanyEntityAudits_Companies]
+GO
+ALTER TABLE [dbo].[CompanyEntityAudits]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEntityAudits_Entities] FOREIGN KEY([EntityFk])
+REFERENCES [dbo].[Entities] ([Id])
+GO
+ALTER TABLE [dbo].[CompanyEntityAudits] CHECK CONSTRAINT [FK_CompanyEntityAudits_Entities]
 GO
 ALTER TABLE [dbo].[CompanyEntityAudits]  WITH CHECK ADD  CONSTRAINT [FK_CompanyEntityAudits_GeneralTypeItems] FOREIGN KEY([AuditTypeFk])
 REFERENCES [dbo].[GeneralTypeItems] ([Id])
@@ -1863,6 +1939,26 @@ ALTER TABLE [dbo].[NotificationTemplates]  WITH CHECK ADD  CONSTRAINT [FK_Notifi
 REFERENCES [dbo].[Cultures] ([Id])
 GO
 ALTER TABLE [dbo].[NotificationTemplates] CHECK CONSTRAINT [FK_NotificationTemplates_Cultures]
+GO
+ALTER TABLE [dbo].[Pictures]  WITH CHECK ADD  CONSTRAINT [FK_Pictures_Companies] FOREIGN KEY([CompanyFk])
+REFERENCES [dbo].[Companies] ([Id])
+GO
+ALTER TABLE [dbo].[Pictures] CHECK CONSTRAINT [FK_Pictures_Companies]
+GO
+ALTER TABLE [dbo].[Pictures]  WITH CHECK ADD  CONSTRAINT [FK_Pictures_Entities] FOREIGN KEY([EntityFk])
+REFERENCES [dbo].[Entities] ([Id])
+GO
+ALTER TABLE [dbo].[Pictures] CHECK CONSTRAINT [FK_Pictures_Entities]
+GO
+ALTER TABLE [dbo].[Pictures]  WITH CHECK ADD  CONSTRAINT [FK_Pictures_GeneralTypeItems] FOREIGN KEY([FileTypeFk])
+REFERENCES [dbo].[GeneralTypeItems] ([Id])
+GO
+ALTER TABLE [dbo].[Pictures] CHECK CONSTRAINT [FK_Pictures_GeneralTypeItems]
+GO
+ALTER TABLE [dbo].[Pictures]  WITH CHECK ADD  CONSTRAINT [FK_Pictures_GeneralTypeItems1] FOREIGN KEY([PictureCategoryFk])
+REFERENCES [dbo].[GeneralTypeItems] ([Id])
+GO
+ALTER TABLE [dbo].[Pictures] CHECK CONSTRAINT [FK_Pictures_GeneralTypeItems1]
 GO
 ALTER TABLE [dbo].[RolePermissions]  WITH CHECK ADD  CONSTRAINT [FK_RolePermissions_Roles] FOREIGN KEY([RoleFk])
 REFERENCES [dbo].[Roles] ([Id])
@@ -2334,16 +2430,6 @@ Begin DesignProperties =
             DisplayFlags = 280
             TopColumn = 0
          End
-         Begin Table = "ae"
-            Begin Extent = 
-               Top = 7
-               Left = 300
-               Bottom = 170
-               Right = 494
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
          Begin Table = "c"
             Begin Extent = 
                Top = 7
@@ -2370,6 +2456,16 @@ Begin DesignProperties =
                Left = 1125
                Bottom = 170
                Right = 1357
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "ae"
+            Begin Extent = 
+               Top = 7
+               Left = 300
+               Bottom = 170
+               Right = 494
             End
             DisplayFlags = 280
             TopColumn = 0

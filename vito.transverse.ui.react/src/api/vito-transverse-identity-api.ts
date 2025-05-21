@@ -78,11 +78,17 @@ export interface IClient {
 
     getApiCultureV1ActiveCultureListItemDTOList(): Promise<ListItemDTO[]>;
 
-    getApiCacheV1ClearCache(): Promise<boolean>;
+    deleteApiCacheV1Cache(): Promise<boolean>;
 
-    getApiCacheV1DeleteCacheDataByKey(cacheName: string): Promise<boolean>;
+    deleteApiCacheV1CacheByKey(cacheName: string): Promise<boolean>;
 
-    getApiCacheV1GetCacheList(): Promise<CacheSummaryDTO[]>;
+    getApiCacheV1CacheList(): Promise<CacheSummaryDTO[]>;
+
+    getApiMediaV1PictureList(companyId: number): Promise<PictureDTO[]>;
+
+    getApiMediaV1PictureByName(companyId: number, name: string): Promise<void>;
+
+    getApiMediaV1PictureByNameWildCard(companyId: number, wildCard: string): Promise<PictureDTO[]>;
 
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO>;
 }
@@ -1649,23 +1655,23 @@ export class Client implements IClient {
         return Promise.resolve<ListItemDTO[]>(null as any);
     }
 
-    getApiCacheV1ClearCache(): Promise<boolean> {
-        let url_ = this.baseUrl + "/api/Cache/v1/ClearCache";
+    deleteApiCacheV1Cache(): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Cache/v1/Cache";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "GET",
+            method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiCacheV1ClearCache(_response);
+            return this.processDeleteApiCacheV1Cache(_response);
         });
     }
 
-    protected processGetApiCacheV1ClearCache(response: Response): Promise<boolean> {
+    protected processDeleteApiCacheV1Cache(response: Response): Promise<boolean> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1682,8 +1688,8 @@ export class Client implements IClient {
         return Promise.resolve<boolean>(null as any);
     }
 
-    getApiCacheV1DeleteCacheDataByKey(cacheName: string): Promise<boolean> {
-        let url_ = this.baseUrl + "/api/Cache/v1/DeleteCacheDataByKey?";
+    deleteApiCacheV1CacheByKey(cacheName: string): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Cache/v1/CacheByKey?";
         if (cacheName === undefined || cacheName === null)
             throw new Error("The parameter 'cacheName' must be defined and cannot be null.");
         else
@@ -1691,18 +1697,18 @@ export class Client implements IClient {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "GET",
+            method: "DELETE",
             headers: {
                 "Accept": "application/json"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiCacheV1DeleteCacheDataByKey(_response);
+            return this.processDeleteApiCacheV1CacheByKey(_response);
         });
     }
 
-    protected processGetApiCacheV1DeleteCacheDataByKey(response: Response): Promise<boolean> {
+    protected processDeleteApiCacheV1CacheByKey(response: Response): Promise<boolean> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1719,8 +1725,8 @@ export class Client implements IClient {
         return Promise.resolve<boolean>(null as any);
     }
 
-    getApiCacheV1GetCacheList(): Promise<CacheSummaryDTO[]> {
-        let url_ = this.baseUrl + "/api/Cache/v1/GetCacheList";
+    getApiCacheV1CacheList(): Promise<CacheSummaryDTO[]> {
+        let url_ = this.baseUrl + "/api/Cache/v1/CacheList";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -1731,11 +1737,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiCacheV1GetCacheList(_response);
+            return this.processGetApiCacheV1CacheList(_response);
         });
     }
 
-    protected processGetApiCacheV1GetCacheList(response: Response): Promise<CacheSummaryDTO[]> {
+    protected processGetApiCacheV1CacheList(response: Response): Promise<CacheSummaryDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1750,6 +1756,122 @@ export class Client implements IClient {
             });
         }
         return Promise.resolve<CacheSummaryDTO[]>(null as any);
+    }
+
+    getApiMediaV1PictureList(companyId: number): Promise<PictureDTO[]> {
+        let url_ = this.baseUrl + "/api/Media/v1/PictureList?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiMediaV1PictureList(_response);
+        });
+    }
+
+    protected processGetApiMediaV1PictureList(response: Response): Promise<PictureDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PictureDTO[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PictureDTO[]>(null as any);
+    }
+
+    getApiMediaV1PictureByName(companyId: number, name: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/Media/v1/PictureByName?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined and cannot be null.");
+        else
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiMediaV1PictureByName(_response);
+        });
+    }
+
+    protected processGetApiMediaV1PictureByName(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    getApiMediaV1PictureByNameWildCard(companyId: number, wildCard: string): Promise<PictureDTO[]> {
+        let url_ = this.baseUrl + "/api/Media/v1/PictureByNameWildCard?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        if (wildCard === undefined || wildCard === null)
+            throw new Error("The parameter 'wildCard' must be defined and cannot be null.");
+        else
+            url_ += "wildCard=" + encodeURIComponent("" + wildCard) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiMediaV1PictureByNameWildCard(_response);
+        });
+    }
+
+    protected processGetApiMediaV1PictureByNameWildCard(response: Response): Promise<PictureDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PictureDTO[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PictureDTO[]>(null as any);
     }
 
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO> {
@@ -2018,7 +2140,7 @@ export interface UserRoleDTO {
 export interface CompanyEntityAuditDTO {
     companyFk?: number;
     id?: number;
-    auditEntityFk?: number;
+    entityFk?: number;
     auditTypeFk?: number;
     creationDate?: Date;
     createdByUserFk?: number;
@@ -2027,8 +2149,8 @@ export interface CompanyEntityAuditDTO {
     isActive?: boolean;
     companyNameTranslationKey?: string;
     auditTypeNameTranslationKey?: string;
-    auditEntitySchemaName?: string;
-    auditEntityName?: string;
+    entitySchemaName?: string;
+    entityName?: string;
 }
 
 export interface AuditRecordDTO {
@@ -2138,6 +2260,28 @@ export interface CacheSummaryDTO {
     cacheCreation?: Date;
     cacheExpiration?: Date;
     serilizedContent?: string;
+}
+
+export interface PictureDTO {
+    companyFk?: number;
+    id?: number;
+    name?: string;
+    entityFk?: number;
+    fileTypeFk?: number;
+    pictureCategoryFk?: number;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    lastUpdateDate?: Date | undefined;
+    lastUpdateByUserFk?: number | undefined;
+    isActive?: boolean;
+    binaryPicture?: string;
+    pictureSize?: number;
+    pictureCategoryNameTranslationKey?: string;
+    fileTypeNameTranslationKey?: string;
+    companyNameTranslationKey?: string;
+    companyId?: number;
+    entityName?: string;
+    entitySchemaName?: string;
 }
 
 export class ApiException extends Error {

@@ -8,16 +8,20 @@ After Set up Data Context using EF
 Install Tool
 ===============
 
+
+Check Version
+>dotnet-ef --version
+
 Menu View /Other Windows/Package Manager Console
 Go to Package Manager Console
 >cd *domain
 >dotnet-ef tool restore
 
 
-Install 
+Install Lattest Tool Version
 >dotnet tool install --global dotnet-ef
 
-//Updating:
+//Updating to the new tool version
 //>dotnet tool update --global dotnet-ef
 
 Check if is installed

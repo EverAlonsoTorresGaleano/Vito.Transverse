@@ -11,11 +11,13 @@ using Vito.Transverse.Identity.BAL.IntegrationServices.Twilio;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
+using Vito.Transverse.Identity.BAL.TransverseServices.Media;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
+using Vito.Transverse.Identity.DAL.TransverseRepositories.Media;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.SocialNetworks;
 using Vito.Transverse.Identity.DAL.TransverseServices.Audit;
@@ -85,6 +87,7 @@ try
     builder.Services.AddTransient<IAuditRepository, AuditRepository>();
 
     builder.Services.AddTransient<ISecurityRepository, SecurityRepository>();
+    builder.Services.AddTransient<IMediaRepository, MediaRepository>();
 
     //Register REpositories
     builder.Services.AddTransient<ISocialNetworksRepository, SocialNetworksRepository>();
@@ -94,7 +97,7 @@ try
     builder.Services.AddTransient<ICultureService, CultureService>();
     builder.Services.AddTransient<ILocalizationService, LocalizationService>();
     builder.Services.AddTransient<ISecurityService, SecurityService>();
-
+    builder.Services.AddTransient<IMediaService, MediaService>();
 
     //Register Services
     builder.Services.AddTransient<ITwilioService, TwilioService>();
@@ -140,6 +143,7 @@ try
     app.MapLocalizationEndpoint(versionSet);
     app.MapCultureEndpoint(versionSet);
     app.MapCacheEndPoints(versionSet);
+    app.MapMediaEndPoints(versionSet);
     app.MapTwilioEndPoint(versionSet);
 
     if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Container"))

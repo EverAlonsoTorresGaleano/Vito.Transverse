@@ -19,7 +19,7 @@ public partial class VwGetAuditRecord
 
     public string Expr1 { get; set; } = null!;
 
-    public long AuditEntityFk { get; set; }
+    public long EntityFk { get; set; }
 
     public string SchemaName { get; set; } = null!;
 

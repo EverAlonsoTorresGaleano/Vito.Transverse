@@ -16,8 +16,6 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<ApplicationOwner> ApplicationOwners { get; set; }
 
-    DbSet<AuditEntity> AuditEntities { get; set; }
-
     DbSet<AuditRecord> AuditRecords { get; set; }
 
     DbSet<Company> Companies { get; set; }
@@ -38,6 +36,8 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<Endpoint> Endpoints { get; set; }
 
+    DbSet<Entity> Entities { get; set; }
+
     DbSet<GeneralTypeGroup> GeneralTypeGroups { get; set; }
 
     DbSet<GeneralTypeItem> GeneralTypeItems { get; set; }
@@ -53,6 +53,8 @@ public partial interface IDataBaseServiceContext : IDisposable
     DbSet<Notification> Notifications { get; set; }
 
     DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+
+    DbSet<Picture> Pictures { get; set; }
 
     DbSet<Role> Roles { get; set; }
 
