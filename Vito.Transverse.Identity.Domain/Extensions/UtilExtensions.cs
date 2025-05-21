@@ -16,7 +16,7 @@ public static class UtilExtensions
                 cadenaSalida = Convert.ToBase64String(bytes);
             }
         }
-        catch (Exception error)
+        catch
         {
 
         }
@@ -35,11 +35,16 @@ public static class UtilExtensions
                 cadenaSalida = System.Text.Encoding.Unicode.GetString(bytes, 0, bytes.ToArray().Length);
             }
         }
-        catch (Exception error)
+        catch
         {
 
         }
         return cadenaSalida;
     }
+
+
+
+
+
 
 }

@@ -6,6 +6,7 @@ using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Models.Security;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
@@ -33,6 +34,7 @@ public static class SecurityEndpoint
         endPointGroupVersioned.MapPost("TokenAsync", TokenAync)
              .MapToApiVersion(1.0)
             .WithSummary("Get Authentication Token")
+            .AllowAnonymous()
             .AddEndpointFilter<InfrastructureFilter>()
             .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
@@ -85,7 +87,7 @@ public static class SecurityEndpoint
         endPointGroupVersioned.MapGet("ActivateAccountAsync", ActivateAccountAsync)
            .MapToApiVersion(1.0)
            .WithSummary("ActivateAccountAsync")
-           .RequireAuthorization()
+           .AllowAnonymous()
            .AddEndpointFilter<InfrastructureFilter>()
            .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
@@ -142,9 +144,9 @@ public static class SecurityEndpoint
           .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
 
-        endPointGroupVersioned.MapGet("PageListAsync", GetPageListAsync)
+        endPointGroupVersioned.MapGet("EndpointsListAsync", GetEndpointsListAsync)
           .MapToApiVersion(1.0)
-          .WithSummary("GetPageListAsync")
+          .WithSummary("GetEndpointsListAsync")
           .RequireAuthorization()
           .AddEndpointFilter<InfrastructureFilter>()
           .AddEndpointFilter<SecurityFeatureFlagFilter>();
@@ -173,11 +175,11 @@ public static class SecurityEndpoint
 
 
         endPointGroupVersioned.MapGet("CompanyEntityAuditsListAsync", GetCompanyEntityAuditsListAsync)
-               .MapToApiVersion(1.0)
-               .WithSummary("GetCompanyEntityAuditsListAsync")
-               .RequireAuthorization()
-               .AddEndpointFilter<InfrastructureFilter>()
-               .AddEndpointFilter<SecurityFeatureFlagFilter>();
+            .MapToApiVersion(1.0)
+            .WithSummary("GetCompanyEntityAuditsListAsync")
+            .RequireAuthorization()
+            .AddEndpointFilter<InfrastructureFilter>()
+            .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
         endPointGroupVersioned.MapGet("AuditRecordsListAsync", GetAuditRecordsListAsync)
            .MapToApiVersion(1.0)
@@ -187,18 +189,18 @@ public static class SecurityEndpoint
            .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
         endPointGroupVersioned.MapGet("ActivityLogListAsync", GetActivityLogListAsync)
-         .MapToApiVersion(1.0)
-         .WithSummary("GetActivityLogListAsync")
-         .RequireAuthorization()
-         .AddEndpointFilter<InfrastructureFilter>()
-         .AddEndpointFilter<SecurityFeatureFlagFilter>();
+            .MapToApiVersion(1.0)
+            .WithSummary("GetActivityLogListAsync")
+            .RequireAuthorization()
+            .AddEndpointFilter<InfrastructureFilter>()
+            .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
         endPointGroupVersioned.MapGet("NotificationsListAsync", GetNotificationsListAsync)
-         .MapToApiVersion(1.0)
-         .WithSummary("GetNotificationsListAsync")
-         .RequireAuthorization()
-         .AddEndpointFilter<InfrastructureFilter>()
-         .AddEndpointFilter<SecurityFeatureFlagFilter>();
+             .MapToApiVersion(1.0)
+             .WithSummary("GetNotificationsListAsync")
+             .RequireAuthorization()
+             .AddEndpointFilter<InfrastructureFilter>()
+             .AddEndpointFilter<SecurityFeatureFlagFilter>();
 
     }
 
@@ -210,40 +212,43 @@ public static class SecurityEndpoint
     {
 
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
         var validationResult = await validator.ValidateAsync(requestBody);
         if (!validationResult.IsValid)
         {
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
         var returnObject = await securityService.CreateAuthenticationTokenAsync(requestBody, deviceInformation!);
-
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<ApplicationDTO>, NotFound, ValidationProblem>> CreateNewApplicationAsync(
+    public static async Task<Results<Ok<ApplicationDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewApplicationAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<ApplicationDTO> validator,
         [FromBody] ApplicationDTO applicationDTO,
         [FromQuery] long companyId,
         [FromQuery] long userId)
-
     {
 
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-        var validationResult = await validator.ValidateAsync(applicationDTO);
-        if (!validationResult.IsValid)
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
         {
-            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            return TypedResults.Unauthorized();
         }
-        var returnObject = await securityService.CreateNewApplicationAsync(applicationDTO, deviceInformation!, companyId, userId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        else
+        {
+            var validationResult = await validator.ValidateAsync(applicationDTO);
+            if (!validationResult.IsValid)
+            {
+                return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            }
+            var returnObject = await securityService.CreateNewApplicationAsync(applicationDTO, deviceInformation!, companyId, userId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<CompanyDTO>, NotFound, ValidationProblem>> CreateNewCompanyAsync(
+    public static async Task<Results<Ok<CompanyDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewCompanyAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<CompanyDTO> validator,
@@ -253,18 +258,24 @@ public static class SecurityEndpoint
     {
 
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-        var validationResult = await validator.ValidateAsync(companyDTO);
-        if (!validationResult.IsValid)
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
         {
-            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            return TypedResults.Unauthorized();
         }
-        var returnObject = await securityService.CreateNewCompanyAsync(companyDTO, deviceInformation!, userId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        else
+        {
+            var validationResult = await validator.ValidateAsync(companyDTO);
+            if (!validationResult.IsValid)
+            {
+                return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            }
+            var returnObject = await securityService.CreateNewCompanyAsync(companyDTO, deviceInformation!, userId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<UserDTO>, NotFound, ValidationProblem>> CreateNewUserAsync(
+    public static async Task<Results<Ok<UserDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewUserAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<UserDTO> validator,
@@ -273,19 +284,25 @@ public static class SecurityEndpoint
     {
 
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-        var validationResult = await validator.ValidateAsync(userInfo);
-        if (!validationResult.IsValid)
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
         {
-            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            return TypedResults.Unauthorized();
         }
-        var returnObject = await securityService.CreateNewUserAsync(userInfo, companyId, deviceInformation!);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        else
+        {
+            var validationResult = await validator.ValidateAsync(userInfo);
+            if (!validationResult.IsValid)
+            {
+                return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            }
+            var returnObject = await securityService.CreateNewUserAsync(userInfo, companyId, deviceInformation!);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
 
-    public static async Task<Results<Ok<bool>, NotFound, ValidationProblem>> ChangeUserPasswordAsync(
+    public static async Task<Results<Ok<bool>, UnauthorizedHttpResult, NotFound, ValidationProblem>> ChangeUserPasswordAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<UserDTO> validator,
@@ -294,18 +311,24 @@ public static class SecurityEndpoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-        var validationResult = await validator.ValidateAsync(userInfo);
-        if (!validationResult.IsValid)
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
         {
-            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            return TypedResults.Unauthorized();
         }
-        var returnObject = await securityService.ChangeUserPasswordAsync(userInfo, deviceInformation!);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        else
+        {
+            var validationResult = await validator.ValidateAsync(userInfo);
+            if (!validationResult.IsValid)
+            {
+                return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            }
+            var returnObject = await securityService.ChangeUserPasswordAsync(userInfo, deviceInformation!);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        }
     }
 
-    public static async Task<Results<Ok<bool>, NotFound, ValidationProblem>> UpdateCompanyApplicationsAsync(
+    public static async Task<Results<Ok<bool>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateCompanyApplicationsAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<CompanyApplicationDTO> validator,
@@ -314,19 +337,25 @@ public static class SecurityEndpoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-        var validationResult = await validator.ValidateAsync(companyApplicationInfo);
-        if (!validationResult.IsValid)
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
         {
-            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            return TypedResults.Unauthorized();
         }
-        var returnObject = await securityService.UpdateCompanyApplicationsAsync(companyApplicationInfo.companyInfo, companyApplicationInfo.applicationInfoList, userId, deviceInformation!);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        else
+        {
+            var validationResult = await validator.ValidateAsync(companyApplicationInfo);
+            if (!validationResult.IsValid)
+            {
+                return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+            }
+            var returnObject = await securityService.UpdateCompanyApplicationsAsync(companyApplicationInfo.companyInfo, companyApplicationInfo.applicationInfoList, userId, deviceInformation!);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        }
     }
 
 
-    public static async Task<Results<Ok<bool>, NotFound, ValidationProblem>> SendActivationEmailAsync(
+    public static async Task<Results<Ok<bool>, UnauthorizedHttpResult, NotFound, ValidationProblem>> SendActivationEmailAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromQuery] long companyId,
@@ -334,215 +363,322 @@ public static class SecurityEndpoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-        var returnObject = await securityService.SendActivationEmailAsync(companyId, userId, deviceInformation!);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.SendActivationEmailAsync(companyId, userId, deviceInformation!);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        }
     }
 
     public static async Task<Results<Ok<bool>, NotFound, ValidationProblem>> ActivateAccountAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
-        [FromQuery] long companyId,
-        [FromQuery] long userId,
-        [FromQuery] Guid activationId)
+        [FromServices] IValidator<string> validator,
+        [FromQuery] string activationToken)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.ActivateAccountAsync(companyId, userId, activationId, deviceInformation!);
-
+        var validationResult = await validator.ValidateAsync(activationToken);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+        }
+        var returnObject = await securityService.ActivateAccountAsync(activationToken, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+
     }
 
-    public static async Task<Results<Ok<List<ApplicationDTO>>, NotFound, ValidationProblem>> GetAllApplicationListAsync(
+
+
+
+
+    public static async Task<Results<Ok<List<ApplicationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllApplicationListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetAllApplicationListAsync();
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetAllApplicationListAsync();
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<ApplicationDTO>>, NotFound, ValidationProblem>> GetApplicationListAsync(
+    public static async Task<Results<Ok<List<ApplicationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetApplicationListAsync(
          HttpRequest request,
          [FromServices] ISecurityService securityService,
          [FromQuery] long? companyId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetApplicationListAsync(companyId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetApplicationListAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<CompanyMembershipsDTO>>, NotFound, ValidationProblem>> GetCompanyMemberhipAsync(
+    public static async Task<Results<Ok<List<CompanyMembershipsDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetCompanyMemberhipAsync(
        HttpRequest request,
        [FromServices] ISecurityService securityService,
        [FromQuery] long? companyId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetCompanyMemberhipAsync(companyId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetCompanyMemberhipAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
 
 
-    public static async Task<Results<Ok<List<CompanyDTO>>, NotFound, ValidationProblem>> GetAllCompanyListAsync(
+    public static async Task<Results<Ok<List<CompanyDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllCompanyListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetAllCompanyListAsync();
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetAllCompanyListAsync();
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<RoleDTO>>, NotFound, ValidationProblem>> GetRoleListAsync(
+    public static async Task<Results<Ok<List<RoleDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetRoleListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromQuery] long? companyId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetRoleListAsync(companyId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetRoleListAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<RoleDTO>, NotFound, ValidationProblem>> GetRolePermissionListAsync(
+    public static async Task<Results<Ok<RoleDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetRolePermissionListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromQuery] long roleId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetRolePermissionListAsync(roleId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetRolePermissionListAsync(roleId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
 
-    public static async Task<Results<Ok<List<ModuleDTO>>, NotFound, ValidationProblem>> GetModuleListAsync(
+    public static async Task<Results<Ok<List<ModuleDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetModuleListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromQuery] long? applicationId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetModuleListAsync(applicationId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetModuleListAsync(applicationId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<PageDTO>>, NotFound, ValidationProblem>> GetPageListAsync(
+    public static async Task<Results<Ok<List<EndpointDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetEndpointsListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromQuery] long moduleId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetPageListAsync(moduleId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetEndpointsListAsync(moduleId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<ComponentDTO>>, NotFound, ValidationProblem>> GetComponentListAsync(
+    public static async Task<Results<Ok<List<ComponentDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetComponentListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
-        [FromQuery] long pageId)
+        [FromQuery] long endpointId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetComponentListAsync(pageId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetComponentListAsync(endpointId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<UserRoleDTO>>, NotFound, ValidationProblem>> GetUserRolesListAsync(
+    public static async Task<Results<Ok<List<UserRoleDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetUserRolesListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromQuery] long userId)
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-
-
-        var returnObject = await securityService.GetUserRolesListAsync(userId);
-
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetUserRolesListAsync(userId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<UserDTO>, NotFound, ValidationProblem>> GetUserPermissionListAsync(
+    public static async Task<Results<Ok<UserDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetUserPermissionListAsync(
            HttpRequest request,
            [FromServices] ISecurityService securityService,
            [FromQuery] long userId)
     {
-        var returnObject = await securityService.GetUserPermissionListAsync(userId);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetUserPermissionListAsync(userId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
 
-    public static async Task<Results<Ok<List<CompanyEntityAuditDTO>>, NotFound, ValidationProblem>> GetCompanyEntityAuditsListAsync(
+    public static async Task<Results<Ok<List<CompanyEntityAuditDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetCompanyEntityAuditsListAsync(
        HttpRequest request,
        [FromServices] ISecurityService securityService,
        [FromQuery] long? companyId)
     {
-        var returnObject = await securityService.GetCompanyEntityAuditsListAsync(companyId);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetCompanyEntityAuditsListAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<AuditRecordDTO>>, NotFound, ValidationProblem>> GetAuditRecordsListAsync(
+    public static async Task<Results<Ok<List<AuditRecordDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAuditRecordsListAsync(
        HttpRequest request,
        [FromServices] ISecurityService securityService,
        [FromQuery] long? companyId)
     {
-        var returnObject = await securityService.GetAuditRecordsListAsync(companyId);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetAuditRecordsListAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
 
 
-    public static async Task<Results<Ok<List<ActivityLogDTO>>, NotFound, ValidationProblem>> GetActivityLogListAsync(
+    public static async Task<Results<Ok<List<ActivityLogDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetActivityLogListAsync(
      HttpRequest request,
      [FromServices] ISecurityService securityService,
      [FromQuery] long? companyId)
     {
-        var returnObject = await securityService.GetActivityLogListAsync(companyId);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetActivityLogListAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<NotificationDTO1>>, NotFound, ValidationProblem>> GetNotificationsListAsync(
+    public static async Task<Results<Ok<List<NotificationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetNotificationsListAsync(
     HttpRequest request,
     [FromServices] ISecurityService securityService,
     [FromQuery] long? companyId)
     {
-        var returnObject = await securityService.GetNotificationsListAsync(companyId);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await securityService.GetNotificationsListAsync(companyId);
+            return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+        }
     }
 
 }

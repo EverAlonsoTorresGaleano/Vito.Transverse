@@ -32,7 +32,7 @@ export interface IClient {
 
     getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean>;
 
-    getApiOauth2V1ActivateAccount(companyId: number, userId: number, activationId: string): Promise<boolean>;
+    getApiOauth2V1ActivateAccount(activationToken: string): Promise<boolean>;
 
     getApiOauth2V1AllApplicationList(): Promise<ApplicationDTO[]>;
 
@@ -48,9 +48,9 @@ export interface IClient {
 
     getApiOauth2V1ModuleList(applicationId: number | null | undefined): Promise<ModuleDTO[]>;
 
-    getApiOauth2V1PageList(moduleId: number): Promise<PageDTO[]>;
+    getApiOauth2V1EndpointsList(moduleId: number): Promise<EndpointDTO[]>;
 
-    getApiOauth2V1ComponentList(pageId: number): Promise<ComponentDTO[]>;
+    getApiOauth2V1ComponentList(endpointId: number): Promise<ComponentDTO[]>;
 
     getApiOauth2V1UserRolesList(userId: number): Promise<UserRoleDTO[]>;
 
@@ -62,7 +62,7 @@ export interface IClient {
 
     getApiOauth2V1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]>;
 
-    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO1[]>;
+    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]>;
 
     getApiLocalizationV1AllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
 
@@ -584,20 +584,12 @@ export class Client implements IClient {
         return Promise.resolve<boolean>(null as any);
     }
 
-    getApiOauth2V1ActivateAccount(companyId: number, userId: number, activationId: string): Promise<boolean> {
+    getApiOauth2V1ActivateAccount(activationToken: string): Promise<boolean> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/ActivateAccountAsync?";
-        if (companyId === undefined || companyId === null)
-            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        if (activationToken === undefined || activationToken === null)
+            throw new Error("The parameter 'activationToken' must be defined and cannot be null.");
         else
-            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
-        if (userId === undefined || userId === null)
-            throw new Error("The parameter 'userId' must be defined and cannot be null.");
-        else
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
-        if (activationId === undefined || activationId === null)
-            throw new Error("The parameter 'activationId' must be defined and cannot be null.");
-        else
-            url_ += "activationId=" + encodeURIComponent("" + activationId) + "&";
+            url_ += "activationToken=" + encodeURIComponent("" + activationToken) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -952,8 +944,8 @@ export class Client implements IClient {
         return Promise.resolve<ModuleDTO[]>(null as any);
     }
 
-    getApiOauth2V1PageList(moduleId: number): Promise<PageDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/PageListAsync?";
+    getApiOauth2V1EndpointsList(moduleId: number): Promise<EndpointDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/EndpointsListAsync?";
         if (moduleId === undefined || moduleId === null)
             throw new Error("The parameter 'moduleId' must be defined and cannot be null.");
         else
@@ -968,17 +960,17 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1PageList(_response);
+            return this.processGetApiOauth2V1EndpointsList(_response);
         });
     }
 
-    protected processGetApiOauth2V1PageList(response: Response): Promise<PageDTO[]> {
+    protected processGetApiOauth2V1EndpointsList(response: Response): Promise<EndpointDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PageDTO[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as EndpointDTO[];
             return result200;
             });
         } else if (status === 404) {
@@ -996,15 +988,15 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<PageDTO[]>(null as any);
+        return Promise.resolve<EndpointDTO[]>(null as any);
     }
 
-    getApiOauth2V1ComponentList(pageId: number): Promise<ComponentDTO[]> {
+    getApiOauth2V1ComponentList(endpointId: number): Promise<ComponentDTO[]> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/ComponentListAsync?";
-        if (pageId === undefined || pageId === null)
-            throw new Error("The parameter 'pageId' must be defined and cannot be null.");
+        if (endpointId === undefined || endpointId === null)
+            throw new Error("The parameter 'endpointId' must be defined and cannot be null.");
         else
-            url_ += "pageId=" + encodeURIComponent("" + pageId) + "&";
+            url_ += "endpointId=" + encodeURIComponent("" + endpointId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -1275,7 +1267,7 @@ export class Client implements IClient {
         return Promise.resolve<ActivityLogDTO[]>(null as any);
     }
 
-    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO1[]> {
+    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/NotificationsListAsync?";
         if (companyId !== undefined && companyId !== null)
             url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
@@ -1293,13 +1285,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processGetApiOauth2V1NotificationsList(response: Response): Promise<NotificationDTO1[]> {
+    protected processGetApiOauth2V1NotificationsList(response: Response): Promise<NotificationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as NotificationDTO1[];
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as NotificationDTO[];
             return result200;
             });
         } else if (status === 404) {
@@ -1317,7 +1309,7 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<NotificationDTO1[]>(null as any);
+        return Promise.resolve<NotificationDTO[]>(null as any);
     }
 
     getApiLocalizationV1AllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {
@@ -1742,6 +1734,7 @@ export interface TokenRequestDTO {
 export interface CompanyDTO {
     id?: number;
     nameTranslationKey?: string;
+    descriptionTranslationKey?: string;
     companyClient?: string;
     companySecret?: string;
     creationDate?: Date;
@@ -1772,6 +1765,10 @@ export interface ApplicationDTO {
     isActive?: boolean;
     companyId?: number;
     companyNameTranslationKey?: string;
+    descriptionTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
+    applicationOwnerDescriptionTranslationKey?: string;
 }
 
 export interface UserDTO {
@@ -1813,6 +1810,8 @@ export interface RoleDTO {
     modules?: ModuleDTO[];
     companyNameTranslationKey?: string;
     applicationNameTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
 }
 
 export interface ModuleDTO {
@@ -1823,27 +1822,34 @@ export interface ModuleDTO {
     isActive?: boolean;
     isVisible?: boolean;
     isApi?: boolean;
-    pages?: PageDTO[];
+    endpoints?: EndpointDTO[];
     applicationNameTranslationKey?: string;
+    descriptionTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
 }
 
-export interface PageDTO {
+export interface EndpointDTO {
     applicationFk?: number;
     moduleFk?: number;
     id?: number;
     positionIndex?: number | undefined;
     nameTranslationKey?: string;
-    pageUrl?: string;
+    endpointUrl?: string;
+    method?: string;
     isActive?: boolean;
     isVisible?: boolean;
     isApi?: boolean;
     components?: ComponentDTO[];
     applicationNameTranslationKey?: string;
+    descriptionTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
 }
 
 export interface ComponentDTO {
     applicationFk?: number;
-    pageFk?: number;
+    endpointFk?: number;
     id?: number;
     nameTranslationKey?: string;
     objectId?: string;
@@ -1852,6 +1858,9 @@ export interface ComponentDTO {
     defaultPropertyValue?: string;
     positionIndex?: number | undefined;
     applicationNameTranslationKey?: string;
+    descriptionTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
 }
 
 export interface CompanyApplicationDTO {
@@ -1874,6 +1883,9 @@ export interface CompanyMembershipsDTO {
     membershipTypeNameTranslationKey?: string;
     applicationNameTranslationKey?: string;
     companyNameTranslationKey?: string;
+    descriptionTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
 }
 
 export interface UserRoleDTO {
@@ -1887,6 +1899,11 @@ export interface UserRoleDTO {
     applicationNameTranslationKey?: string;
     roleNameTranslationKey?: string;
     companyNameTranslationKey?: string;
+    roleDescriptionTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
+    applicationDescriptionTranslationKey?: string;
+    applicationOwnerId?: number;
+    applicationOwnerNameTranslationKey?: string;
 }
 
 export interface CompanyEntityAuditDTO {
@@ -1919,6 +1936,9 @@ export interface AuditRecordDTO {
     platform?: string;
     engine?: string;
     cultureFk?: string;
+    endPointUrl?: string;
+    method?: string;
+    jwtToken?: string;
     auditInfoJson?: string;
     creationDate?: Date;
     auditEntitySchemaName?: string;
@@ -1926,6 +1946,7 @@ export interface AuditRecordDTO {
     auditTypeNameTranslationKey?: string;
     userName?: string;
     companyNameTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
 }
 
 export interface ActivityLogDTO {
@@ -1941,14 +1962,17 @@ export interface ActivityLogDTO {
     platform?: string;
     engine?: string;
     cultureId?: string;
-    requestEndpoint?: string;
+    endPointUrl?: string;
+    method?: string;
+    jwtToken?: string;
     addtionalInformation?: string;
     userName?: string;
     companyNameTranslationKey?: string;
     actionTypeNameTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
 }
 
-export interface NotificationDTO1 {
+export interface NotificationDTO {
     companyFk?: number;
     notificationTemplateGroupFk?: number;
     cultureFk?: string;
@@ -1956,15 +1980,16 @@ export interface NotificationDTO1 {
     id?: number;
     creationDate?: Date;
     sender?: string;
-    receiver?: string;
-    cc?: string | undefined;
-    bcc?: string | undefined;
+    receiver?: string[] | undefined;
+    cc?: string[] | undefined;
+    bcc?: string[] | undefined;
     subject?: string;
     message?: string;
     isSent?: boolean;
     sentDate?: Date | undefined;
     isHtml?: boolean;
     companyNameTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
     notificationTypeNameTranslationKey?: string;
     notificationTemplateName?: string;
     cultureNameTranslationKey?: string;

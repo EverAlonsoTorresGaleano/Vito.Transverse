@@ -11,6 +11,10 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
     public virtual DbSet<Application> Applications { get; set; }
 
+    public virtual DbSet<ApplicationLicenseType> ApplicationLicenseTypes { get; set; }
+
+    public virtual DbSet<ApplicationOwner> ApplicationOwners { get; set; }
+
     public virtual DbSet<AuditEntity> AuditEntities { get; set; }
 
     public virtual DbSet<AuditRecord> AuditRecords { get; set; }
@@ -31,6 +35,8 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
     public virtual DbSet<CultureTranslation> CultureTranslations { get; set; }
 
+    public virtual DbSet<Endpoint> Endpoints { get; set; }
+
     public virtual DbSet<GeneralTypeGroup> GeneralTypeGroups { get; set; }
 
     public virtual DbSet<GeneralTypeItem> GeneralTypeItems { get; set; }
@@ -46,8 +52,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
     public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<NotificationTemplate> NotificationTemplates { get; set; }
-
-    public virtual DbSet<Page> Pages { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -85,13 +89,17 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.CultureId).HasMaxLength(50);
             entity.Property(e => e.DeviceName).HasMaxLength(50);
             entity.Property(e => e.DeviceType).HasMaxLength(50);
+            entity.Property(e => e.EndPointUrl)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.Engine).HasMaxLength(50);
             entity.Property(e => e.EventDate).HasColumnType("datetime");
             entity.Property(e => e.IpAddress).HasMaxLength(50);
-            entity.Property(e => e.Platform).HasMaxLength(50);
-            entity.Property(e => e.RequestEndpoint)
-                .HasMaxLength(100)
+            entity.Property(e => e.JwtToken).HasColumnType("text");
+            entity.Property(e => e.Method)
+                .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.Platform).HasMaxLength(50);
 
             entity.HasOne(d => d.ActionTypeFkNavigation).WithMany(p => p.ActivityLogs)
                 .HasForeignKey(d => d.ActionTypeFk)
@@ -112,27 +120,66 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.ApplicationClient).HasDefaultValueSql("(newid())");
             entity.Property(e => e.ApplicationSecret).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
             entity.Property(e => e.NameTranslationKey)
-                .HasMaxLength(75)
+                .HasMaxLength(85)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<ApplicationLicenseType>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<ApplicationOwner>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.ApplicationOwners)
+                .HasForeignKey(d => d.ApplicationFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationOwners_Applications");
+
+            entity.HasOne(d => d.ApplicationLicenseTypeFkNavigation).WithMany(p => p.ApplicationOwners)
+                .HasForeignKey(d => d.ApplicationLicenseTypeFk)
+                .HasConstraintName("FK_ApplicationOwners_ApplicationLicenseTypes");
+
+            entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.ApplicationOwners)
+                .HasForeignKey(d => d.CompanyFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ApplicationOwners_Companies");
         });
 
         modelBuilder.Entity<AuditEntity>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.EntityName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.SchemaName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
         });
 
         modelBuilder.Entity<AuditRecord>(entity =>
         {
             entity.Property(e => e.AuditEntityIndex)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.AuditInfoJson).HasColumnType("text");
             entity.Property(e => e.Browser)
@@ -145,14 +192,21 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.DeviceType)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.EndPointUrl)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.Engine)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.HostName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.IpAddress)
                 .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.JwtToken).HasColumnType("text");
+            entity.Property(e => e.Method)
+                .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Platform)
                 .HasMaxLength(50)
@@ -184,15 +238,26 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CompanyClient).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CompanySecret).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.CountryFk).HasMaxLength(2);
+            entity.Property(e => e.CountryFk)
+                .HasMaxLength(2)
+                .IsUnicode(false);
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
-            entity.Property(e => e.DefaultCultureFk).HasMaxLength(5);
-            entity.Property(e => e.Email).HasMaxLength(150);
+            entity.Property(e => e.DefaultCultureFk)
+                .HasMaxLength(5)
+                .IsUnicode(false);
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .HasMaxLength(150)
+                .IsUnicode(false);
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
             entity.Property(e => e.NameTranslationKey)
-                .HasMaxLength(75)
+                .HasMaxLength(85)
                 .IsUnicode(false);
-            entity.Property(e => e.Subdomain).HasMaxLength(150);
+            entity.Property(e => e.Subdomain)
+                .HasMaxLength(150)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.CountryFkNavigation).WithMany(p => p.Companies)
                 .HasForeignKey(d => d.CountryFk)
@@ -262,7 +327,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.PropertyValue)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.CompanyMembershipFkNavigation).WithMany(p => p.CompanyMembershipPermissions)
@@ -274,19 +339,26 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
         modelBuilder.Entity<Component>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_PageComponents");
+            entity.HasKey(e => e.Id).HasName("PK_EndpointComponents");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.DefaultPropertyValue)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.NameTranslationKey)
                 .HasMaxLength(75)
                 .IsUnicode(false);
-            entity.Property(e => e.ObjectId).HasMaxLength(50);
-            entity.Property(e => e.ObjectName).HasMaxLength(50);
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.ObjectId)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.ObjectName)
+                .HasMaxLength(75)
+                .IsUnicode(false);
             entity.Property(e => e.ObjectPropertyName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Components)
@@ -294,24 +366,36 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Components_Applications");
 
-            entity.HasOne(d => d.PageFkNavigation).WithMany(p => p.Components)
-                .HasForeignKey(d => d.PageFk)
+            entity.HasOne(d => d.EndpointFkNavigation).WithMany(p => p.Components)
+                .HasForeignKey(d => d.EndpointFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PageComponents_ModulePages");
+                .HasConstraintName("FK_EndpointComponents_ModuleEndpoints");
         });
 
         modelBuilder.Entity<Country>(entity =>
         {
-            entity.Property(e => e.Id).HasMaxLength(2);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
+            entity.Property(e => e.Id)
+                .HasMaxLength(2)
+                .IsUnicode(false);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Culture>(entity =>
         {
-            entity.Property(e => e.Id).HasMaxLength(5);
-            entity.Property(e => e.CountryFk).HasMaxLength(2);
-            entity.Property(e => e.LanguageFk).HasMaxLength(2);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
+            entity.Property(e => e.Id)
+                .HasMaxLength(5)
+                .IsUnicode(false);
+            entity.Property(e => e.CountryFk)
+                .HasMaxLength(2)
+                .IsUnicode(false);
+            entity.Property(e => e.LanguageFk)
+                .HasMaxLength(2)
+                .IsUnicode(false);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.CountryFkNavigation).WithMany(p => p.Cultures)
                 .HasForeignKey(d => d.CountryFk)
@@ -330,9 +414,15 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.HasIndex(e => e.ApplicationFk, "IX_CultureTranslations");
 
-            entity.Property(e => e.CultureFk).HasMaxLength(5);
-            entity.Property(e => e.TranslationKey).HasMaxLength(50);
-            entity.Property(e => e.TranslationValue).HasMaxLength(250);
+            entity.Property(e => e.CultureFk)
+                .HasMaxLength(5)
+                .IsUnicode(false);
+            entity.Property(e => e.TranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.TranslationValue)
+                .HasMaxLength(250)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.CultureTranslations)
                 .HasForeignKey(d => d.ApplicationFk)
@@ -345,13 +435,45 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasConstraintName("FK_CultureTranslations_Cultures");
         });
 
+        modelBuilder.Entity<Endpoint>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_EndpointsModules");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.EndpointUrl)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Method)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Endpoints)
+                .HasForeignKey(d => d.ApplicationFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Endpoints_Applications");
+
+            entity.HasOne(d => d.ModuleFkNavigation).WithMany(p => p.Endpoints)
+                .HasForeignKey(d => d.ModuleFk)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ModuleEndpoint_Modules");
+        });
+
         modelBuilder.Entity<GeneralTypeGroup>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_ListItemGroup");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsSystemType).HasDefaultValue(true);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<GeneralTypeItem>(entity =>
@@ -360,7 +482,9 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsEnabled).HasDefaultValue(true);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.ListItemGroupFkNavigation).WithMany(p => p.GeneralTypeItems)
                 .HasForeignKey(d => d.ListItemGroupFk)
@@ -370,8 +494,12 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
         modelBuilder.Entity<Language>(entity =>
         {
-            entity.Property(e => e.Id).HasMaxLength(2);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
+            entity.Property(e => e.Id)
+                .HasMaxLength(2)
+                .IsUnicode(false);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<MembershipType>(entity =>
@@ -380,9 +508,14 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(50);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
         });
 
@@ -407,9 +540,12 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         modelBuilder.Entity<Module>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.NameTranslationKey)
-                .HasMaxLength(75)
+                .HasMaxLength(85)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Modules)
@@ -424,16 +560,27 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.Property(e => e.Bcc)
                 .HasMaxLength(500)
+                .IsUnicode(false)
                 .HasColumnName("BCC");
             entity.Property(e => e.Cc)
                 .HasMaxLength(500)
+                .IsUnicode(false)
                 .HasColumnName("CC");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
-            entity.Property(e => e.CultureFk).HasMaxLength(5);
-            entity.Property(e => e.Receiver).HasMaxLength(500);
-            entity.Property(e => e.Sender).HasMaxLength(50);
+            entity.Property(e => e.CultureFk)
+                .HasMaxLength(5)
+                .IsUnicode(false);
+            entity.Property(e => e.Message).IsUnicode(false);
+            entity.Property(e => e.Receiver)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.Sender)
+                .HasMaxLength(75)
+                .IsUnicode(false);
             entity.Property(e => e.SentDate).HasColumnType("datetime");
-            entity.Property(e => e.Subject).HasMaxLength(250);
+            entity.Property(e => e.Subject)
+                .HasMaxLength(250)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.CompanyFkNavigation).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.CompanyFk)
@@ -460,38 +607,18 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         {
             entity.HasKey(e => new { e.NotificationTemplateGroupId, e.CultureFk });
 
-            entity.Property(e => e.CultureFk).HasMaxLength(5);
+            entity.Property(e => e.CultureFk)
+                .HasMaxLength(5)
+                .IsUnicode(false);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.Name).HasMaxLength(25);
+            entity.Property(e => e.Name)
+                .HasMaxLength(75)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.CultureFkNavigation).WithMany(p => p.NotificationTemplates)
                 .HasForeignKey(d => d.CultureFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NotificationTemplates_Cultures");
-        });
-
-        modelBuilder.Entity<Page>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK_PagesModules");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.NameTranslationKey)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-            entity.Property(e => e.PageUrl)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Pages)
-                .HasForeignKey(d => d.ApplicationFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Pages_Applications");
-
-            entity.HasOne(d => d.ModuleFkNavigation).WithMany(p => p.Pages)
-                .HasForeignKey(d => d.ModuleFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ModulePages_Modules");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -500,9 +627,12 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.DescriptionTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
             entity.Property(e => e.NameTranslationKey)
-                .HasMaxLength(150)
+                .HasMaxLength(85)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Roles)
@@ -522,22 +652,21 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.PropertyValue)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.ComponentFkNavigation).WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.ComponentFk)
                 .HasConstraintName("FK_UserRolePermissions_Components");
 
+            entity.HasOne(d => d.EndpointFkNavigation).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.EndpointFk)
+                .HasConstraintName("FK_UserRolePermissions_Endpoints");
+
             entity.HasOne(d => d.ModuleFkNavigation).WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.ModuleFk)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UserRolePermissions_Modules");
-
-            entity.HasOne(d => d.PageFkNavigation).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.PageFk)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserRolePermissions_Pages");
 
             entity.HasOne(d => d.RoleFkNavigation).WithMany(p => p.RolePermissions)
                 .HasForeignKey(d => d.RoleFk)
@@ -615,9 +744,15 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasNoKey()
                 .ToView("Vw_CompanyUserRoles");
 
-            entity.Property(e => e.ApplicationName).HasMaxLength(50);
-            entity.Property(e => e.CompanyName).HasMaxLength(50);
-            entity.Property(e => e.RoleName).HasMaxLength(150);
+            entity.Property(e => e.ApplicationName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.UserName).HasMaxLength(130);
         });
 
@@ -627,16 +762,20 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasNoKey()
                 .ToView("Vw_GetAllCompanyPermissions");
 
-            entity.Property(e => e.ApplicationName).HasMaxLength(50);
-            entity.Property(e => e.CompanyName).HasMaxLength(50);
+            entity.Property(e => e.ApplicationName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.EndpointName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.EndpointUrl)
+                .HasMaxLength(75)
+                .IsUnicode(false);
             entity.Property(e => e.ModuleName)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-            entity.Property(e => e.PageName)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-            entity.Property(e => e.PageUrl)
-                .HasMaxLength(75)
+                .HasMaxLength(85)
                 .IsUnicode(false);
         });
 
@@ -661,18 +800,22 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.EntityName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
+                .IsUnicode(false);
+            entity.Property(e => e.Expr1)
+                .HasMaxLength(85)
                 .IsUnicode(false);
             entity.Property(e => e.HostName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
-            entity.Property(e => e.Name).HasMaxLength(50);
-            entity.Property(e => e.NameTranslationKey).HasMaxLength(100);
+            entity.Property(e => e.NameTranslationKey)
+                .HasMaxLength(85)
+                .IsUnicode(false);
             entity.Property(e => e.Platform)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.SchemaName)
-                .HasMaxLength(50)
+                .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.UserName).HasMaxLength(30);
         });
@@ -683,13 +826,27 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasNoKey()
                 .ToView("Vw_GetCompanyMemberships");
 
-            entity.Property(e => e.ApplicationName).HasMaxLength(50);
-            entity.Property(e => e.CompanyName).HasMaxLength(50);
-            entity.Property(e => e.CountryFk).HasMaxLength(2);
-            entity.Property(e => e.DefaultCultureFk).HasMaxLength(5);
-            entity.Property(e => e.Email).HasMaxLength(150);
-            entity.Property(e => e.MembershipTypeName).HasMaxLength(50);
-            entity.Property(e => e.Subdomain).HasMaxLength(150);
+            entity.Property(e => e.ApplicationName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.CountryFk)
+                .HasMaxLength(2)
+                .IsUnicode(false);
+            entity.Property(e => e.DefaultCultureFk)
+                .HasMaxLength(5)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .HasMaxLength(150)
+                .IsUnicode(false);
+            entity.Property(e => e.MembershipTypeName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.Subdomain)
+                .HasMaxLength(150)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<VwGetDatabaseTable>(entity =>
@@ -721,18 +878,24 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasNoKey()
                 .ToView("Vw_GetRolePermissions");
 
-            entity.Property(e => e.ApplicationName).HasMaxLength(50);
-            entity.Property(e => e.CompanyName).HasMaxLength(50);
+            entity.Property(e => e.ApplicationName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.EndpointName)
+                .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.EndpointUrl)
+                .HasMaxLength(75)
+                .IsUnicode(false);
             entity.Property(e => e.ModuleName)
-                .HasMaxLength(75)
+                .HasMaxLength(85)
                 .IsUnicode(false);
-            entity.Property(e => e.PageName)
-                .HasMaxLength(75)
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(85)
                 .IsUnicode(false);
-            entity.Property(e => e.PageUrl)
-                .HasMaxLength(75)
-                .IsUnicode(false);
-            entity.Property(e => e.RoleName).HasMaxLength(150);
         });
 
         OnModelCreatingPartial(modelBuilder);

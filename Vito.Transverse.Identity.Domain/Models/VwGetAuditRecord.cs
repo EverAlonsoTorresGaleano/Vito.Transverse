@@ -9,7 +9,7 @@ public partial class VwGetAuditRecord
 
     public long CompanyFk { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string NameTranslationKey { get; set; } = null!;
 
     public long UserFk { get; set; }
 
@@ -17,7 +17,7 @@ public partial class VwGetAuditRecord
 
     public long AuditTypeFk { get; set; }
 
-    public string NameTranslationKey { get; set; } = null!;
+    public string Expr1 { get; set; } = null!;
 
     public long AuditEntityFk { get; set; }
 
@@ -29,7 +29,7 @@ public partial class VwGetAuditRecord
 
     public string HostName { get; set; } = null!;
 
-    public string? DeviceType { get; set; }
+    public string DeviceType { get; set; } = null!;
 
     public string Browser { get; set; } = null!;
 

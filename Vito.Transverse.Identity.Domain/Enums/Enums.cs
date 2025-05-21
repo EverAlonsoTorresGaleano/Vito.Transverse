@@ -12,7 +12,23 @@ public enum CacheItemKeysEnum
 {
     CultureList,
     CultureTranslationsListByApplicationId,
-    CultureTranslationsListByApplicationIdCultureId
+    CultureTranslationsListByApplicationIdCultureId,
+
+
+    AllApplicationList,
+    ApplicationListByCompanyId,
+    CompanyMemberhipListByCompanyId,
+    AllCompanyList,
+    RoleListByCompanyId,
+    RolePermissionListByRoleId,
+    ModuleListByApplicationId,
+    EndpointListByModuleId,
+    EndpointListByRoleId,
+    ComponentListByEndpointId,
+    UserRoleListByUserId,
+    UserPermissionListByUserId,
+    CompanyEntityAuditListByCompanyId,
+
 }
 
 public enum NotificationTemplatesEnum
@@ -23,4 +39,20 @@ public enum NotificationTemplatesEnum
 public enum DataBaseNameEnum
 {
     TransverseDB
+}
+
+
+public enum TransverseExceptionEnum
+{
+    UserPermissionException_ModuleFromApplicationNotFound,
+    ActivateAccount_InvalidToken
+}
+
+
+public enum EmailTemplateParametersEnum
+{
+    EMAIL,
+    USER_ID,
+    APPLICATION_CLIENTID,
+    ACTIVATION_ID
 }

@@ -26,4 +26,6 @@ public record RoleDTO
 
     public string CompanyNameTranslationKey { get; set; } = null!;
     public string ApplicationNameTranslationKey { get; set; } = null!;
+    public long ApplicationOwnerId { get; set; }
+    public string ApplicationOwnerNameTranslationKey { get; set; } = null!;
 }

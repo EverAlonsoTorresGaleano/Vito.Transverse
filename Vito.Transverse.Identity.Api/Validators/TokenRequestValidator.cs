@@ -1,9 +1,6 @@
 ﻿using FluentValidation;
-using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.Security;
-using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
-using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 
 namespace Vito.Transverse.Identity.Api.Validators;
 

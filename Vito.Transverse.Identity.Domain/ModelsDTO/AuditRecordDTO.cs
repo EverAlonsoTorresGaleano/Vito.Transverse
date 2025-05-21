@@ -1,6 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public partial class AuditRecordDTO
+public record AuditRecordDTO
 {
 
 
@@ -29,6 +29,11 @@ public partial class AuditRecordDTO
     public string Engine { get; set; } = null!;
 
     public string CultureFk { get; set; } = null!;
+    public string EndPointUrl { get; set; } = null!;
+
+    public string Method { get; set; } = null!;
+
+    public string JwtToken { get; set; } = null!;
 
     public string AuditInfoJson { get; set; } = null!;
 
@@ -41,4 +46,5 @@ public partial class AuditRecordDTO
     public string AuditTypeNameTranslationKey { get; set; } = null!;
     public string UserName { get; set; } = null!;
     public string CompanyNameTranslationKey { get; set; } = null!;
+    public string CompanyDescriptionTranslationKey { get; set; } = null!;
 }

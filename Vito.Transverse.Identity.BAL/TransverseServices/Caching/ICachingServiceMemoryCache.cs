@@ -1,6 +1,4 @@
-﻿using Vito.Transverse.Identity.Domain.Enums;
-
-namespace Vito.Transverse.Identity.BAL.TransverseServices.Caching;
+﻿namespace Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 
 public interface ICachingServiceMemoryCache
 {
@@ -16,7 +14,7 @@ public interface ICachingServiceMemoryCache
     /// </summary>
     /// <param name="itemCacheName"></param>
     /// <returns>Serialized Cahe Data</returns>
-    T GetCacheDataByKey<T>(string itemCacheName);
+    T? GetCacheDataByKey<T>(string itemCacheName);
 
 
     /// <summary>

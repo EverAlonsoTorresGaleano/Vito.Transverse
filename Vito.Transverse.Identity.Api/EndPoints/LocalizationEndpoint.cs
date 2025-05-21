@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Api.Filters;
+using Vito.Framework.Common.Constants;
+using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
+using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Api.Endpoints;
@@ -62,46 +65,86 @@ public static class LocalizationEndpoint
     }
 
 
-    public static async Task<Results<Ok<List<CultureTranslationDTO>>, NotFound, ValidationProblem>> GetAllLocalizedMessagesByApplicationAsync(
+    public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllLocalizedMessagesByApplicationAsync(
         HttpRequest request,
+        [FromServices] ISecurityService securityService,
         [FromServices] ILocalizationService localizationService,
         [FromQuery] long applicationId)
     {
-        var returnObject = await localizationService.GetAllLocalizedMessagesByApplicationAsync(applicationId);
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await localizationService.GetAllLocalizedMessagesByApplicationAsync(applicationId);
+            return TypedResults.Ok(returnObject);
+        }
     }
 
 
-    public static async Task<Results<Ok<List<CultureTranslationDTO>>, NotFound, ValidationProblem>> GetAllLocalizedMessagesAsync(
+    public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllLocalizedMessagesAsync(
         HttpRequest request,
+        [FromServices] ISecurityService securityService,
         [FromServices] ILocalizationService localizationService,
         [FromQuery] long applicationId,
         [FromQuery] string? cultureId)
     {
-        var returnObject = await localizationService.GetAllLocalizedMessagesAsync(applicationId, cultureId!);
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await localizationService.GetAllLocalizedMessagesAsync(applicationId, cultureId!);
+            return TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<CultureTranslationDTO>>, NotFound, ValidationProblem>> GetLocalizedMessagesByKeyAsync(
+    public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetLocalizedMessagesByKeyAsync(
     HttpRequest request,
+    [FromServices] ISecurityService securityService,
     [FromServices] ILocalizationService localizationService,
     [FromQuery] long applicationId,
     [FromQuery] string localizationMessageKey)
     {
-        var returnObject = await localizationService.GetLocalizedMessagesByKeyAsync(applicationId, localizationMessageKey);
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await localizationService.GetLocalizedMessagesByKeyAsync(applicationId, localizationMessageKey);
+            return TypedResults.Ok(returnObject);
+        }
     }
 
-    public static Results<Ok<CultureTranslationDTO>, NotFound, ValidationProblem> GetLocalizedMessageByKeyAndParamsSync(
+    public static Results<Ok<CultureTranslationDTO>, NotFound, UnauthorizedHttpResult, ValidationProblem> GetLocalizedMessageByKeyAndParamsSync(
         HttpRequest request,
+        [FromServices] ISecurityService securityService,
         [FromServices] ILocalizationService localizationService,
         [FromQuery] long applicationId,
         [FromQuery] string? cultureId,
         [FromQuery] string localizationMessageKey,
         [FromQuery] params string[]? parameters)
     {
-        var returnObject = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId!, localizationMessageKey, parameters ?? []);
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = securityService.ValidateEndpointAuthorizationAsync(deviceInformation!).GetAwaiter().GetResult;
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId!, localizationMessageKey, parameters ?? []);
+            return TypedResults.Ok(returnObject);
+        }
     }
 
 

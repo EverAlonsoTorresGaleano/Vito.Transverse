@@ -1,6 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public class PageDTO
+public record EndpointDTO
 {
     public long ApplicationFk { get; set; }
 
@@ -12,7 +12,9 @@ public class PageDTO
 
     public string NameTranslationKey { get; set; } = null!;
 
-    public string PageUrl { get; set; } = null!;
+    public string EndpointUrl { get; set; } = null!;
+
+    public string Method { get; set; } = null!;
 
     public bool IsActive { get; set; }
 
@@ -23,4 +25,7 @@ public class PageDTO
     public List<ComponentDTO> Components { get; set; } = new();
 
     public string ApplicationNameTranslationKey { get; set; } = null!;
+    public string DescriptionTranslationKey { get; set; } = null!;
+    public long ApplicationOwnerId { get; set; }
+    public string ApplicationOwnerNameTranslationKey { get; set; } = null!;
 }

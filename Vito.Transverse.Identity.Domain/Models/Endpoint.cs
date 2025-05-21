@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Vito.Transverse.Identity.Domain.Models;
 
-public partial class Page
+public partial class Endpoint
 {
     public long ApplicationFk { get; set; }
 
@@ -15,7 +15,11 @@ public partial class Page
 
     public string NameTranslationKey { get; set; } = null!;
 
-    public string PageUrl { get; set; } = null!;
+    public string DescriptionTranslationKey { get; set; } = null!;
+
+    public string EndpointUrl { get; set; } = null!;
+
+    public string? Method { get; set; }
 
     public bool IsActive { get; set; }
 

@@ -6,6 +6,7 @@ using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
+using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 
 namespace Vito.Transverse.Identity.Api.Endpoints;
 
@@ -56,20 +57,9 @@ public static class HomeEndpoint
     }
 
 
-    public static async Task<Ok<PingResponseDTO>> DetectAync(HttpRequest request, [FromServices] ICultureService cultureService)
-    {
-        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        PingResponseDTO returnObject = new()
-        {
-            PingMessage = "Detect v1.0",
-            PingDate = cultureService.UtcNow().DateTime,
-            DeviceInformation = deviceInformation!
-        };
-        var returnObjectAsync = await Task.FromResult(returnObject);
-        return TypedResults.Ok(returnObjectAsync);
-    }
-
-    public static async Task<Ok<PingResponseDTO>> DetectV0_9Aync(HttpRequest request, [FromServices] ICultureService cultureService)
+    public static async Task<Ok<PingResponseDTO>> DetectV0_9Aync(
+    HttpRequest request,
+    [FromServices] ICultureService cultureService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
         PingResponseDTO returnObject = new()
@@ -82,18 +72,34 @@ public static class HomeEndpoint
         return TypedResults.Ok(returnObjectAsync);
     }
 
-    public static async Task<Ok<PingResponseDTO>> HomePingAync(HttpRequest request, [FromServices] ICultureService cultureService)
+
+    public static async Task<Results<Ok<PingResponseDTO>, UnauthorizedHttpResult>> DetectAync(
+        HttpRequest request,
+        [FromServices] ISecurityService securityService,
+        [FromServices] ICultureService cultureService)
     {
-        PingResponseDTO returnObject = new()
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
         {
-            PingMessage = "Pong v1.0",
-            PingDate = cultureService.UtcNow().DateTime,
-        };
-        var returnObjectAsync = await Task.FromResult(returnObject);
-        return TypedResults.Ok(returnObjectAsync);
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            PingResponseDTO returnObject = new()
+            {
+                PingMessage = "Detect v1.0",
+                PingDate = cultureService.UtcNow().DateTime,
+                DeviceInformation = deviceInformation!
+            };
+            var returnObjectAsync = await Task.FromResult(returnObject);
+            return TypedResults.Ok(returnObjectAsync);
+        }
     }
 
-    public static async Task<Ok<PingResponseDTO>> HomePingV0_9Aync(HttpRequest request, [FromServices] ICultureService cultureService)
+    public static async Task<Ok<PingResponseDTO>> HomePingV0_9Aync(
+     HttpRequest request,
+     [FromServices] ICultureService cultureService)
     {
         PingResponseDTO returnObject = new()
         {
@@ -103,5 +109,30 @@ public static class HomeEndpoint
         var returnObjectAsync = await Task.FromResult(returnObject);
         return TypedResults.Ok(returnObjectAsync);
     }
+
+    public static async Task<Results<Ok<PingResponseDTO>, UnauthorizedHttpResult>> HomePingAync(
+        HttpRequest request,
+        [FromServices] ISecurityService securityService,
+        [FromServices] ICultureService cultureService)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            PingResponseDTO returnObject = new()
+            {
+                PingMessage = "Pong v1.0",
+                PingDate = cultureService.UtcNow().DateTime,
+            };
+            var returnObjectAsync = await Task.FromResult(returnObject);
+            return TypedResults.Ok(returnObjectAsync);
+        }
+    }
+
+
 
 }

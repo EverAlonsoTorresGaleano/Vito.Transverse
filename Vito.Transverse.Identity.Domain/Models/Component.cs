@@ -7,11 +7,13 @@ public partial class Component
 {
     public long ApplicationFk { get; set; }
 
-    public long PageFk { get; set; }
+    public long EndpointFk { get; set; }
 
     public long Id { get; set; }
 
     public string NameTranslationKey { get; set; } = null!;
+
+    public string DescriptionTranslationKey { get; set; } = null!;
 
     public string ObjectId { get; set; } = null!;
 
@@ -25,7 +27,7 @@ public partial class Component
 
     public virtual Application ApplicationFkNavigation { get; set; } = null!;
 
-    public virtual Page PageFkNavigation { get; set; } = null!;
+    public virtual Endpoint EndpointFkNavigation { get; set; } = null!;
 
     public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

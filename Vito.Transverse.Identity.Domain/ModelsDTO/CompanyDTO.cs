@@ -6,6 +6,8 @@ public record CompanyDTO
 
     string NameTranslationKey,
 
+     string DescriptionTranslationKey,
+
     Guid CompanyClient,
 
     Guid CompanySecret,

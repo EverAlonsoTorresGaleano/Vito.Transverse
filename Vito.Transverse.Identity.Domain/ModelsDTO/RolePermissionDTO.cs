@@ -1,6 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public class RolePermissionDTO
+public record RolePermissionDTO
 {
     public long RoleFk { get; set; }
 
@@ -12,7 +12,7 @@ public class RolePermissionDTO
 
     public long ModuleFk { get; set; }
 
-    public long PageFk { get; set; }
+    public long? EndpointFk { get; set; }
 
     public long? ComponentFk { get; set; }
 

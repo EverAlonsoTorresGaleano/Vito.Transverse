@@ -13,6 +13,8 @@ public partial class Role
 
     public string NameTranslationKey { get; set; } = null!;
 
+    public string DescriptionTranslationKey { get; set; } = null!;
+
     public DateTime CreationDate { get; set; }
 
     public long CreatedByUserFk { get; set; }

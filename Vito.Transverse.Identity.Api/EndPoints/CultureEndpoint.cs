@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Api.Filters;
+using Vito.Framework.Common.Constants;
+using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.Api.Helpers;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
+using Vito.Transverse.Identity.BAL.TransverseServices.Security;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Api.Endpoints;
@@ -44,30 +47,60 @@ public static class CultureEndpoint
             .WithSummary("GetActiveCultureListItemDTOListAsync");
     }
 
-    public static async Task<Results<Ok<DateTimeOffset>, NotFound, ValidationProblem>> GetUtcNow(
+    public static async Task<Results<Ok<DateTimeOffset>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetUtcNow(
         HttpRequest request,
+        [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-        var returnObject = await Task.FromResult(cultureService.UtcNow());
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var returnObject = await Task.FromResult(cultureService.UtcNow());
+            return TypedResults.Ok(returnObject);
+        }
     }
 
 
-    public static async Task<Results<Ok<List<CultureDTO>>, NotFound, ValidationProblem>> GetActiveCultureListAsync(
+    public static async Task<Results<Ok<List<CultureDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetActiveCultureListAsync(
         HttpRequest request,
+        [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-        var applicationId = request.GetCompanyIdFromHeader();
-        var returnObject = await cultureService.GetActiveCultureListAsync(applicationId);
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var applicationId = request.GetCompanyIdFromHeader();
+            var returnObject = await cultureService.GetActiveCultureListAsync(applicationId);
+            return TypedResults.Ok(returnObject);
+        }
     }
 
-    public static async Task<Results<Ok<List<ListItemDTO>>, NotFound, ValidationProblem>> GetActiveCultureListItemDTOListAsync(
+    public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetActiveCultureListItemDTOListAsync(
         HttpRequest request,
+        [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-        var applicationId = request.GetCompanyIdFromHeader();
-        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(applicationId);
-        return TypedResults.Ok(returnObject);
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var hasPermissions = await securityService.ValidateEndpointAuthorizationAsync(deviceInformation!);
+        if (hasPermissions is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+        else
+        {
+            var applicationId = request.GetCompanyIdFromHeader();
+            var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(applicationId);
+            return TypedResults.Ok(returnObject);
+        }
     }
 }

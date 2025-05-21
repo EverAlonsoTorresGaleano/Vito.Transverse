@@ -5,6 +5,7 @@ using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Extensions;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
@@ -167,7 +168,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 EventDate = _cultureRepository.UtcNow().DateTime,
                 IpAddress = deviceInformation.IpAddress!,
                 Platform = deviceInformation.Platform!,
-                RequestEndpoint = deviceInformation.Scope!,
+                EndPointUrl = deviceInformation.EndPointUrl!,
+                Method = deviceInformation.Method!,
+                JwtToken = deviceInformation.JwtToken!,
+
                 AddtionalInformation = deviceInformation.AddtionalInfo!.Serialize(),
             };
             context.ActivityLogs.Add(userTrace);
@@ -392,7 +396,8 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
 
             context = _dataBaseContextFactory.GetDbContext(context);
             //TODO send email with teplate logic
-            var userInfo = await context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.CompanyFk.Equals(companyId));
+            var userInfo = await context.Users
+                .Include(x => x.CompanyFkNavigation).FirstOrDefaultAsync(u => u.Id == userId && u.CompanyFk.Equals(companyId));
             if (userInfo is not null)
             {
                 //var userInfoDTOBackup = (User)context.Entry(userInfo).OriginalValues.ToObject();
@@ -415,8 +420,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 //Send Activation Email
                 List<KeyValuePair<string, string>> emailTemplateParams = new()
                 {
-                     new KeyValuePair<string, string>("EMAIL",userInfo?.Email!),
-                     new KeyValuePair<string, string>("ACTIVATION_LINK",userInfo?.ActivationId.ToString()!),
+                     new (EmailTemplateParametersEnum.EMAIL.ToString(),userInfo?.Email!),
+                     new (EmailTemplateParametersEnum.USER_ID.ToString(),userInfo?.Id.ToString()!),
+                     new (EmailTemplateParametersEnum.APPLICATION_CLIENTID.ToString(),userInfo?.CompanyFkNavigation.CompanyClient.ToString()!),
+                     new (EmailTemplateParametersEnum.ACTIVATION_ID.ToString(),userInfo?.ActivationId.ToString()!),
                 };
                 emailSent = await _socialNetworksRepository.SendNotificationByTemplateAsync(companyId, NotificationTypeEnum.NotificationType_Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfo?.Email], null, null, _cultureRepository.GetCurrentCultureId(), context);
 
@@ -426,20 +433,19 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         {
             _logger.LogError(ex, message: nameof(SendActivationEmailAsync));
         }
-        finally
-        {
-            _dataBaseContextFactory.DisposeDbContext(context);
-        }
+
         return emailSent;
     }
 
-    public async Task<bool> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!)
+    public async Task<bool> ActivateAccountAsync(Guid companyClientId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!)
     {
         bool savedSuccesfuly = false;
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
-            var userInfo = await context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.CompanyFkNavigation.CompanyClient.Equals(companyId) && u.ActivationId.Equals(activationId));
+            var userInfo = await context.Users
+                .Include(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyFkNavigation.CompanyClient.Equals(companyClientId) && u.ActivationId.Equals(activationId));
             if (userInfo is not null)
             {
                 //var userInfoDTOBackup = (User)context.Entry(userInfo).OriginalValues.ToObject();
@@ -451,23 +457,24 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 userInfo.RetryCount = 0;
                 userInfo.LastAccess = _cultureRepository.UtcNow().DateTime;
                 await context.SaveChangesAsync();
-                await _auditRepository.UpdateRowAuditAsync(companyId, userInfo.Id, userInfoDTOBackup, userInfo, userInfo.Id.ToString(), deviceInformation, context);
+                await _auditRepository.UpdateRowAuditAsync(userInfo.CompanyFkNavigation.Id, userInfo.Id, userInfoDTOBackup, userInfo, userInfo.Id.ToString(), deviceInformation, context);
 
                 OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_ActivateUser;
 
-                savedSuccesfuly = await AddNewActivityLogAsync(companyId, null, userId, deviceInformation, actionStatus);
+                savedSuccesfuly = await AddNewActivityLogAsync(userInfo.CompanyFkNavigation.Id, null, userId, deviceInformation, actionStatus);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, message: nameof(ActivateAccountAsync));
         }
-        finally
-        {
-            _dataBaseContextFactory.DisposeDbContext(context);
-        }
         return savedSuccesfuly;
     }
+
+
+
+
+
 
 
     public async Task<List<ApplicationDTO>> GetAllApplicationListAsync(DataBaseServiceContext? context = null)
@@ -477,8 +484,11 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
-            var appicationList = await context.Applications.ToListAsync();
-            applicationDTOList = appicationList.ToApplicationDTOList();
+
+            var appicationList = await context.Applications
+                .Include(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation).ToListAsync();
+            applicationDTOList = appicationList.ToApplicationDTOList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.Id).ToList();
 
         }
         catch (Exception ex)
@@ -500,8 +510,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             var companyMembershipList = await context.CompanyMemberships
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            applicationDTOList = companyMembershipList.ToApplicationDTOList();
+            applicationDTOList = companyMembershipList.ToApplicationDTOList().OrderBy(x => x.CompanyId).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.Id).ToList();
         }
         catch (Exception ex)
         {
@@ -520,10 +532,12 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context = _dataBaseContextFactory.CreateDbContext();
             var companyMembershipsList = await context.CompanyMemberships
                 .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Include(x => x.MembershipTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            applicationDTOList = companyMembershipsList.ToCompanyMembershipsDTOList();
+            applicationDTOList = companyMembershipsList.ToCompanyMembershipsDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.Id).ToList();
         }
         catch (Exception ex)
         {
@@ -546,7 +560,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 .Include(x => x.DefaultCultureFkNavigation)
                 .ThenInclude(x => x.LanguageFkNavigation)
                 .ToListAsync();
-            companyDTOList = companyList.ToCompanyDTOList();
+            companyDTOList = companyList.ToCompanyDTOList().OrderBy(x => x.Id).ToList();
         }
         catch (Exception ex)
         {
@@ -565,8 +579,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             var bdList = await context.Roles
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            returnList = bdList.ToRoleDTOList();
+            returnList = bdList.ToRoleDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ToList();
         }
         catch (Exception ex)
         {
@@ -585,9 +601,11 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.Roles
                 .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Include(x => x.RolePermissions)
                 .ThenInclude(x => x.ModuleFkNavigation)
-                .ThenInclude(x => x.Pages)
+                .ThenInclude(x => x.Endpoints)
                 .ThenInclude(x => x.Components).FirstOrDefaultAsync(x => x.Id == roleId);
             returnList = bdList.ToRoleDTO();
         }
@@ -608,8 +626,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.Modules
                 .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Where(x => applicationId == null || x.ApplicationFk == applicationId).ToListAsync();
-            returnList = bdList.ToModuleDTOList();
+            returnList = bdList.ToModuleDTOList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ThenBy(x => x.PositionIndex).ToList();
         }
         catch (Exception ex)
         {
@@ -620,27 +640,76 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return returnList;
     }
 
-    public async Task<List<PageDTO>> GetPageListAsync(long moduleId, DataBaseServiceContext? context = null)
+    public async Task<List<EndpointDTO>> GetEndpointsListAsync(long moduleId, DataBaseServiceContext? context = null)
     {
-        var returnList = new List<PageDTO>();
+        var returnList = new List<EndpointDTO>();
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Pages
+            var bdList = await context.Endpoints
                 .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Where(x => x.ModuleFk == moduleId).ToListAsync();
-            returnList = bdList.ToPageDTOList();
+            returnList = bdList.ToEndpointDTOList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ThenBy(x => x.PositionIndex).ToList();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetPageListAsync));
+            _logger.LogError(ex, message: nameof(GetEndpointsListAsync));
             throw;
         }
 
         return returnList;
     }
 
-    public async Task<List<ComponentDTO>> GetComponentListAsync(long pageId, DataBaseServiceContext? context = null)
+    /// <summary>
+    ///  Get Role permissions If have vaue on EndPointFk  check enpoint  if use wildcard  EndPointFk=null is like * that means have permission on all module end points
+    /// </summary>
+    /// <param name="roleId"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public async Task<List<EndpointDTO>> GetEndpointsListByRoleIdAsync(long roleId, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<EndpointDTO>();
+        try
+        {
+            context = _dataBaseContextFactory.GetDbContext(context);
+            var endpointPermissionList = await context.RolePermissions
+               .Include(x => x.ModuleFkNavigation)
+               .ThenInclude(x => x.Endpoints)
+               .ThenInclude(x => x.Components)
+               .Where(r => r.RoleFk == roleId
+               && r.RoleFkNavigation.IsActive == true
+               && r.ModuleFkNavigation.IsActive == true
+               && r.EndpointFkNavigation!.IsActive == true).Select(x => x.EndpointFkNavigation).ToListAsync();
+
+            var endpointModulesWildCardPermissionList = await context.RolePermissions
+               .Include(x => x.ModuleFkNavigation)
+               .ThenInclude(x => x.Endpoints)
+               .ThenInclude(x => x.Components)
+               .Where(r => r.RoleFk == roleId
+               && r.RoleFkNavigation.IsActive == true
+               && r.ModuleFkNavigation.IsActive == true
+               && r.EndpointFk == null).Select(x => x.ModuleFkNavigation.Endpoints).ToListAsync();
+
+            endpointModulesWildCardPermissionList.ForEach(itemModule =>
+            {
+                endpointPermissionList.AddRange(itemModule.ToList());
+            });
+            endpointPermissionList = endpointPermissionList.Distinct().ToList();
+
+            returnList = endpointPermissionList!.ToEndpointDTOList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetEndpointsListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<ComponentDTO>> GetComponentListAsync(long endpointId, DataBaseServiceContext? context = null)
     {
         var returnList = new List<ComponentDTO>();
         try
@@ -648,8 +717,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.Components
                 .Include(x => x.ApplicationFkNavigation)
-                .Where(x => x.PageFk == pageId).ToListAsync();
-            returnList = bdList.ToComponentDTOList();
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Where(x => x.EndpointFk == endpointId).ToListAsync();
+            returnList = bdList.ToComponentDTOList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ThenBy(x => x.PositionIndex).ToList(); ;
         }
         catch (Exception ex)
         {
@@ -668,9 +739,11 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.UserRoles
                 .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
                 .Where(x => x.UserFk == userId).ToListAsync();
-            returnList = bdList.ToUserRoleDTOList();
+            returnList = bdList.ToUserRoleDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.RoleFk).ToList(); ;
         }
         catch (Exception ex)
         {
@@ -689,13 +762,16 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
             context = _dataBaseContextFactory.GetDbContext(context);
             var bdList = await context.Users
                 .Include(x => x.UserRoles)
-                .ThenInclude(x => x.RoleFkNavigation)
-                .ThenInclude(x => x.RolePermissions)
-                .ThenInclude(x => x.ModuleFkNavigation.ApplicationFkNavigation)
-                .ThenInclude(x => x.Pages)
-                .ThenInclude(x => x.Components)
-                .Include(x => x.CompanyFkNavigation)
-                //.Include.(x=>x.)
+                    .ThenInclude(x => x.RoleFkNavigation)
+                    .ThenInclude(x => x.ApplicationFkNavigation)
+                    .ThenInclude(x => x.ApplicationOwners)
+                    .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.RoleFkNavigation)
+                    .ThenInclude(x => x.RolePermissions)
+                    .ThenInclude(x => x.ModuleFkNavigation)
+                    .ThenInclude(x => x.Endpoints)
+                    .ThenInclude(x => x.Components)
                 .FirstOrDefaultAsync(x => x.Id == userId);
             returnValue = bdList!.ToUserDTO()!;
         }
@@ -720,7 +796,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 .Include(x => x.AuditTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            returnList = bdList.ToCompanyEntityAuditDTOList();
+            returnList = bdList.ToCompanyEntityAuditDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.AuditEntityName).ThenBy(x => x.AuditTypeFk).ToList();
         }
         catch (Exception ex)
         {
@@ -743,7 +819,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 .Include(x => x.UserFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            returnList = bdList.ToAuditRecordDTOList();
+            returnList = bdList.ToAuditRecordDTOList().OrderByDescending(x => x.CreationDate).ToList(); ;
         }
         catch (Exception ex)
         {
@@ -765,7 +841,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 .ThenInclude(x => x.CompanyFkNavigation)
                 .Include(x => x.ActionTypeFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            returnList = bdList.ToActivityLogDTOList();
+            returnList = bdList.ToActivityLogDTOList().OrderByDescending(x => x.EventDate).ToList();
         }
         catch (Exception ex)
         {
@@ -776,9 +852,9 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
         return returnList;
     }
 
-    public async Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null)
+    public async Task<List<NotificationDTO>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null)
     {
-        var returnList = new List<NotificationDTO1>();
+        var returnList = new List<NotificationDTO>();
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
@@ -788,7 +864,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.NotificationTypeFkNavigation)
                 .Where(x => companyId == null || x.CompanyFk == companyId).ToListAsync();
-            returnList = bdList.ToNotificationDTOList();
+            returnList = bdList.ToNotificationDTOList().OrderByDescending(x => x.CreationDate).ToList(); ;
         }
         catch (Exception ex)
         {
@@ -805,7 +881,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     private async Task<UserDTOToken?> TokenValidateCompany(Guid companyClient, Guid companySecret, Guid applicationClient, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         UserDTOToken? userInfoDTO = default;
-        var scopeRequest = !String.IsNullOrEmpty(scope) ? scope : deviceInformation.Scope;
+        var scopeRequest = !String.IsNullOrEmpty(scope) ? scope : deviceInformation.EndPointUrl;
         try
         {
             context = _dataBaseContextFactory.GetDbContext(context);
@@ -845,7 +921,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                         }
                         else
                         {
-                            userInfoDTO = await TokenValidateApplication(companyInfo.Id, companySecret, applicationInfo.Id, applicationSecret, userName, password, scopeRequest, deviceInformation, context);
+                            userInfoDTO = await TokenValidateApplication(companyInfo.Id, companySecret, applicationInfo.Id, applicationSecret, userName, password, scopeRequest, deviceInformation.Method, deviceInformation, context);
                         }
                     }
                 }
@@ -874,7 +950,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     }
 
 
-    private async Task<UserDTOToken?> TokenValidateApplication(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    private async Task<UserDTOToken?> TokenValidateApplication(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, string? method, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         UserDTOToken? userInfoDTO = default;
         OAuthActionTypeEnum actionStatus = default;
@@ -896,7 +972,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 }
                 else
                 {
-                    userInfoDTO = await TokenValidateUser(companyId, companySecret, applicationId, applicationSecret, !string.IsNullOrEmpty(userName) ? userName : FrameworkConstants.Username_UserApi, password, scope, deviceInformation, context);
+                    userInfoDTO = await TokenValidateUser(companyId, companySecret, applicationId, applicationSecret, !string.IsNullOrEmpty(userName) ? userName : FrameworkConstants.Username_UserApi, password, scope, method, deviceInformation, context);
                 }
             }
             var actionsListToTrace = new List<OAuthActionTypeEnum>
@@ -923,7 +999,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
     }
 
 
-    private async Task<UserDTOToken?> TokenValidateUser(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    private async Task<UserDTOToken?> TokenValidateUser(long companyId, Guid companySecret, long applicationId, Guid? applicationSecret, string? userName, string? password, string? scope, string? method, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         UserDTOToken? userInfoDTO = default;
         OAuthActionTypeEnum actionStatus = default;
@@ -935,6 +1011,8 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 .Include(x => x.RoleFkNavigation)
                 .Include(x => x.RoleFkNavigation.RolePermissions)
                 .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
                 .Include(x => x.UserFkNavigation).FirstOrDefaultAsync(u => u.CompanyFk.Equals(companyId) && u.ApplicationFk.Equals(applicationId)
                  && u.UserFkNavigation.UserName.Equals(userName)
                  && u.IsActive == true
@@ -956,10 +1034,10 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                 }
                 else
                 {
-                    var rolePermissions = context.RolePermissions.Include(x => x.PageFkNavigation).Where(x => x.RoleFk == userRoleInfo.RoleFk).ToList();
-                    var pageAccesInfo = rolePermissions.FirstOrDefault(x => x.PageFkNavigation.PageUrl.Equals(scope));
+                    var endpointList = await GetEndpointsListByRoleIdAsync(userRoleInfo.RoleFk);
+                    var endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(scope) && x.Method.Equals(method)) && x.IsActive);
 
-                    if (pageAccesInfo is null)
+                    if (endpointInfo is null)
                     {
                         //Do nos have Acces to resource
                         actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserUnauthorized;
@@ -969,7 +1047,7 @@ public class SecurityRepository(IDataBaseContextFactory _dataBaseContextFactory,
                         //user valid
                         actionStatus = userRoleInfo.UserFkNavigation.UserName.Equals(FrameworkConstants.Username_UserApi) ? OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode : OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials;
                         Application applicationInfo = userRoleInfo.RoleFkNavigation.ApplicationFkNavigation;
-                        userInfoDTO = userRoleInfo.UserFkNavigation.ToUserDTOToken(applicationId, applicationInfo.NameTranslationKey, actionStatus);
+                        userInfoDTO = userRoleInfo.UserFkNavigation.ToUserDTOToken(applicationInfo, actionStatus);
                     }
                 }
                 var userUpdatedSuccessfully = await UpdateLastUserAccessAsync(userRoleInfo.UserFkNavigation.Id, deviceInformation, actionStatus, context);

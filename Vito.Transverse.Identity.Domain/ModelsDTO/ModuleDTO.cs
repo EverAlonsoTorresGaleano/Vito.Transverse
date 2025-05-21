@@ -1,6 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public class ModuleDTO
+public record ModuleDTO
 {
     public long ApplicationFk { get; set; }
 
@@ -16,7 +16,10 @@ public class ModuleDTO
 
     public bool IsApi { get; set; }
 
-    public List<PageDTO> Pages { get; set; } = new();       
+    public List<EndpointDTO> Endpoints { get; set; } = new();
 
     public string ApplicationNameTranslationKey { get; set; } = null!;
+    public string DescriptionTranslationKey { get; set; } = null!;
+    public long ApplicationOwnerId { get; set; }
+    public string ApplicationOwnerNameTranslationKey { get; set; } = null!;
 }

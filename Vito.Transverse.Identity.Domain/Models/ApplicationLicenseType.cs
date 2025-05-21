@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Vito.Transverse.Identity.Domain.Models;
 
-public partial class MembershipType
+public partial class ApplicationLicenseType
 {
     public long Id { get; set; }
 
@@ -25,7 +25,7 @@ public partial class MembershipType
 
     public bool IsActive { get; set; }
 
-    public virtual ICollection<CompanyMembership> CompanyMemberships { get; set; } = new List<CompanyMembership>();
+    public byte[]? LicenseFile { get; set; }
 
-    public virtual ICollection<MembersipPriceHistory> MembersipPriceHistories { get; set; } = new List<MembersipPriceHistory>();
+    public virtual ICollection<ApplicationOwner> ApplicationOwners { get; set; } = new List<ApplicationOwner>();
 }

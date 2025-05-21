@@ -27,13 +27,13 @@ public partial class VwGetRolePermission
 
     public bool ModuleIsActive { get; set; }
 
-    public long PageId { get; set; }
+    public long EndpointId { get; set; }
 
-    public string PageName { get; set; } = null!;
+    public string EndpointName { get; set; } = null!;
 
-    public string PageUrl { get; set; } = null!;
+    public string EndpointUrl { get; set; } = null!;
 
-    public bool PageIsActive { get; set; }
+    public bool EndpointIsActive { get; set; }
 
     public long? ComponentFk { get; set; }
 }

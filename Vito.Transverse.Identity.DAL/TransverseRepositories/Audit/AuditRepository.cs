@@ -98,11 +98,14 @@ public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, IC
             CultureFk = cultureId,
             AuditInfoJson = auditInformation,
             Browser = devideInformation.Browser!,
-            DeviceType = devideInformation.DeviceType,
+            DeviceType = devideInformation.DeviceType!,
             Engine = devideInformation.Engine!,
             HostName = devideInformation.Name!,
             IpAddress = devideInformation.IpAddress!,
             Platform = devideInformation.Platform!,
+            EndPointUrl = devideInformation.EndPointUrl!,
+            Method = devideInformation.Method!,
+            JwtToken = devideInformation.JwtToken!,
         };
         return newRecord;
     }

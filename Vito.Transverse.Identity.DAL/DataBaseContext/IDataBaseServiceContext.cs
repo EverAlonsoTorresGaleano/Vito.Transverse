@@ -12,6 +12,10 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<Application> Applications { get; set; }
 
+    DbSet<ApplicationLicenseType> ApplicationLicenseTypes { get; set; }
+
+    DbSet<ApplicationOwner> ApplicationOwners { get; set; }
+
     DbSet<AuditEntity> AuditEntities { get; set; }
 
     DbSet<AuditRecord> AuditRecords { get; set; }
@@ -32,6 +36,8 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<CultureTranslation> CultureTranslations { get; set; }
 
+    DbSet<Endpoint> Endpoints { get; set; }
+
     DbSet<GeneralTypeGroup> GeneralTypeGroups { get; set; }
 
     DbSet<GeneralTypeItem> GeneralTypeItems { get; set; }
@@ -47,8 +53,6 @@ public partial interface IDataBaseServiceContext : IDisposable
     DbSet<Notification> Notifications { get; set; }
 
     DbSet<NotificationTemplate> NotificationTemplates { get; set; }
-
-    DbSet<Page> Pages { get; set; }
 
     DbSet<Role> Roles { get; set; }
 

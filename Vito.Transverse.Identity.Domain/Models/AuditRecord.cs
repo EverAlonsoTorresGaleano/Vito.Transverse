@@ -21,7 +21,7 @@ public partial class AuditRecord
 
     public string IpAddress { get; set; } = null!;
 
-    public string? DeviceType { get; set; }
+    public string DeviceType { get; set; } = null!;
 
     public string Browser { get; set; } = null!;
 
@@ -30,6 +30,12 @@ public partial class AuditRecord
     public string Engine { get; set; } = null!;
 
     public string CultureFk { get; set; } = null!;
+
+    public string EndPointUrl { get; set; } = null!;
+
+    public string Method { get; set; } = null!;
+
+    public string JwtToken { get; set; } = null!;
 
     public string AuditInfoJson { get; set; } = null!;
 

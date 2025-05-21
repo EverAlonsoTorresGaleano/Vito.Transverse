@@ -20,7 +20,6 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
     public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByApplicationAsync(long applicationId)
     {
         var applicationMessageList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
-        List<CultureTranslationDTO> returnList = new();
         if (applicationMessageList == null)
         {
             applicationMessageList = await _localizationRepository.GetAllLocalizedMessagesByApplicationAsync(applicationId);
@@ -33,7 +32,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
     //Fron end is suppoused to created json file on ther local files to render messages quickly
     public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync(long applicationId, string cultureId)
     {
-        List<CultureTranslationDTO> cultureMessageList = new();
+        List<CultureTranslationDTO>? cultureMessageList = new();
         try
         {
             cultureId = !string.IsNullOrEmpty(cultureId) ? cultureId : CultureInfo.CurrentCulture.Name;

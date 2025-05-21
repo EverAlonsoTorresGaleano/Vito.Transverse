@@ -9,6 +9,8 @@ public partial class Company
 
     public string NameTranslationKey { get; set; } = null!;
 
+    public string DescriptionTranslationKey { get; set; } = null!;
+
     public Guid CompanyClient { get; set; }
 
     public Guid CompanySecret { get; set; }
@@ -34,6 +36,8 @@ public partial class Company
     public long? LastUpdateByUserFk { get; set; }
 
     public bool IsActive { get; set; }
+
+    public virtual ICollection<ApplicationOwner> ApplicationOwners { get; set; } = new List<ApplicationOwner>();
 
     public virtual ICollection<AuditRecord> AuditRecords { get; set; } = new List<AuditRecord>();
 

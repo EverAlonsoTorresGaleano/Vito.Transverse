@@ -1,6 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public class ApplicationDTO
+public record ApplicationDTO
 {
     public long Id { get; set; }
 
@@ -26,6 +26,12 @@ public class ApplicationDTO
 
 
 
-    public long CompanyId { get;  set; }
+    public long CompanyId { get; set; }
     public string CompanyNameTranslationKey { get; set; } = null!;
+    public string DescriptionTranslationKey { get; set; } = null!;
+
+    public long ApplicationOwnerId { get; set; }
+    public string ApplicationOwnerNameTranslationKey { get; set; } = null!;
+    public string ApplicationOwnerDescriptionTranslationKey { get; set; } = null!;
+  
 }

@@ -1,6 +1,6 @@
 ﻿using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Models.Security;
-using Vito.Transverse.Identity.DAL.DataBaseContext;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
@@ -24,7 +24,11 @@ public interface ISecurityService
 
     Task<bool?> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation);
 
-    Task<bool?> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation);
+    Task<bool?> ActivateAccountAsync(string activationToken, DeviceInformationDTO deviceInformation);
+
+    Task<EndpointDTO?> ValidateEndpointAuthorizationAsync(DeviceInformationDTO deviceInformation);
+
+    Task<EndpointDTO?> ValidateAuthorizationEndpointByRoleIdAsync(long roleId, string endpointUrl, string method);
 
     Task<List<ApplicationDTO>> GetAllApplicationListAsync();
 
@@ -40,9 +44,11 @@ public interface ISecurityService
 
     Task<List<ModuleDTO>> GetModuleListAsync(long? applicationId);
 
-    Task<List<PageDTO>> GetPageListAsync(long moduleId);
+    Task<List<EndpointDTO>> GetEndpointsListAsync(long moduleId);
 
-    Task<List<ComponentDTO>> GetComponentListAsync(long pageId);
+    Task<List<EndpointDTO>> GetEndpointsListByRoleIdAsync(long roleId);
+
+    Task<List<ComponentDTO>> GetComponentListAsync(long endpointId);
 
     Task<List<UserRoleDTO>> GetUserRolesListAsync(long userId);
 
@@ -53,5 +59,5 @@ public interface ISecurityService
 
     Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId);
 
-    Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId);
+    Task<List<NotificationDTO>> GetNotificationsListAsync(long? companyId);
 }

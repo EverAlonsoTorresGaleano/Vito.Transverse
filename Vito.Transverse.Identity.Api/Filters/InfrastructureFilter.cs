@@ -46,7 +46,9 @@ public class InfrastructureFilter : IEndpointFilter
             Platform = $"{_userDeviceDetectionService.Platform.Name.ToString()} v{_userDeviceDetectionService.Platform.Version.ToString()} [{_userDeviceDetectionService.Platform.Processor.ToString()}]",
             Engine = $"{_userDeviceDetectionService.Engine.Name.ToString()}",
             CultureId = request.GetCurrectCulture().Name,
-            Scope = request.HttpContext.Request.Path,
+            EndPointUrl = request.HttpContext.Request.Path!,
+            Method = request.Method,
+            JwtToken = request.Headers.Authorization.ToString()
         };
 
         var additionalInfo = deviceInfo.AddtionalInfo;
@@ -58,7 +60,7 @@ public class InfrastructureFilter : IEndpointFilter
         //returList.Add(new( "CompanyId", request.GetRequestHeaderCompanyId().ToString() ));
         additionalInfo.Add(new("Referer", request.Headers.Referer.ToString()));
         additionalInfo.Add(new("UserAgent", request.Headers.UserAgent.ToString()));
-        additionalInfo.Add(new("Authorization", request.Headers.Authorization.ToString()));
+        //additionalInfo.Add(new("Authorization", request.Headers.Authorization.ToString()));
         deviceInfo.AddtionalInfo = additionalInfo;
         return deviceInfo;
     }

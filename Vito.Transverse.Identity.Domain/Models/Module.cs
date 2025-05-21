@@ -11,6 +11,8 @@ public partial class Module
 
     public string NameTranslationKey { get; set; } = null!;
 
+    public string DescriptionTranslationKey { get; set; } = null!;
+
     public long? PositionIndex { get; set; }
 
     public bool IsActive { get; set; }
@@ -21,7 +23,7 @@ public partial class Module
 
     public virtual Application ApplicationFkNavigation { get; set; } = null!;
 
-    public virtual ICollection<Page> Pages { get; set; } = new List<Page>();
+    public virtual ICollection<Endpoint> Endpoints { get; set; } = new List<Endpoint>();
 
     public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

@@ -1,6 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public class ActivityLogDTO
+public record ActivityLogDTO
 {
 
     public long CompanyFk { get; set; }
@@ -27,10 +27,15 @@ public class ActivityLogDTO
 
     public string CultureId { get; set; } = null!;
 
-    public string RequestEndpoint { get; set; } = null!;
+    public string EndPointUrl { get; set; } = null!;
+
+    public string Method { get; set; } = null!;
+
+    public string JwtToken { get; set; } = null!;
 
     public string AddtionalInformation { get; set; } = null!;
     public string UserName { get; set; } = null!;
     public string CompanyNameTranslationKey { get; set; } = null!;
     public string ActionTypeNameTranslationKey { get; set; } = null!;
+    public string CompanyDescriptionTranslationKey { get; set; } = null!;
 }

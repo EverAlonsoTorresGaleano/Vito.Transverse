@@ -1,10 +1,10 @@
 ﻿namespace Vito.Transverse.Identity.Domain.ModelsDTO;
 
-public class ComponentDTO
+public record ComponentDTO
 {
     public long ApplicationFk { get; set; }
 
-    public long PageFk { get; set; }
+    public long EndpointFk { get; set; }
 
     public long Id { get; set; }
 
@@ -21,5 +21,7 @@ public class ComponentDTO
     public long? PositionIndex { get; set; }
 
     public string ApplicationNameTranslationKey { get; set; } = null!;
-
+    public string DescriptionTranslationKey { get; set; } = null!;
+    public long ApplicationOwnerId { get; set; }
+    public string ApplicationOwnerNameTranslationKey { get; set; } = null!;
 }

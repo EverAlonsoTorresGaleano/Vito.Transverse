@@ -463,34 +463,13 @@
         "operationId": "GetApiOauth2V1ActivateAccountAsync",
         "parameters": [
           {
-            "name": "companyId",
+            "name": "activationToken",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             },
             "x-position": 1
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-position": 2
-          },
-          {
-            "name": "activationId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 3
           }
         ],
         "responses": {
@@ -808,9 +787,9 @@
         }
       }
     },
-    "/api/Oauth2/v1/PageListAsync": {
+    "/api/Oauth2/v1/EndpointsListAsync": {
       "get": {
-        "operationId": "GetApiOauth2V1PageListAsync",
+        "operationId": "GetApiOauth2V1EndpointsListAsync",
         "parameters": [
           {
             "name": "moduleId",
@@ -831,7 +810,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PageDTO"
+                    "$ref": "#/components/schemas/EndpointDTO"
                   }
                 }
               }
@@ -858,7 +837,7 @@
         "operationId": "GetApiOauth2V1ComponentListAsync",
         "parameters": [
           {
-            "name": "pageId",
+            "name": "endpointId",
             "in": "query",
             "required": true,
             "schema": {
@@ -1143,7 +1122,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/NotificationDTO1"
+                    "$ref": "#/components/schemas/NotificationDTO"
                   }
                 }
               }
@@ -1692,6 +1671,9 @@
           "nameTranslationKey": {
             "type": "string"
           },
+          "descriptionTranslationKey": {
+            "type": "string"
+          },
           "companyClient": {
             "type": "string",
             "format": "guid"
@@ -1799,6 +1781,19 @@
             "format": "int64"
           },
           "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "descriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerDescriptionTranslationKey": {
             "type": "string"
           }
         }
@@ -1950,6 +1945,13 @@
           },
           "applicationNameTranslationKey": {
             "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
+            "type": "string"
           }
         }
       },
@@ -1982,18 +1984,28 @@
           "isApi": {
             "type": "boolean"
           },
-          "pages": {
+          "endpoints": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PageDTO"
+              "$ref": "#/components/schemas/EndpointDTO"
             }
           },
           "applicationNameTranslationKey": {
             "type": "string"
+          },
+          "descriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
+            "type": "string"
           }
         }
       },
-      "PageDTO": {
+      "EndpointDTO": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -2017,7 +2029,10 @@
           "nameTranslationKey": {
             "type": "string"
           },
-          "pageUrl": {
+          "endpointUrl": {
+            "type": "string"
+          },
+          "method": {
             "type": "string"
           },
           "isActive": {
@@ -2037,6 +2052,16 @@
           },
           "applicationNameTranslationKey": {
             "type": "string"
+          },
+          "descriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
+            "type": "string"
           }
         }
       },
@@ -2048,7 +2073,7 @@
             "type": "integer",
             "format": "int64"
           },
-          "pageFk": {
+          "endpointFk": {
             "type": "integer",
             "format": "int64"
           },
@@ -2077,6 +2102,16 @@
             "nullable": true
           },
           "applicationNameTranslationKey": {
+            "type": "string"
+          },
+          "descriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
             "type": "string"
           }
         }
@@ -2154,6 +2189,16 @@
           },
           "companyNameTranslationKey": {
             "type": "string"
+          },
+          "descriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
+            "type": "string"
           }
         }
       },
@@ -2195,6 +2240,22 @@
             "type": "string"
           },
           "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "roleDescriptionTranslationKey": {
+            "type": "string"
+          },
+          "companyDescriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationDescriptionTranslationKey": {
+            "type": "string"
+          },
+          "applicationOwnerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicationOwnerNameTranslationKey": {
             "type": "string"
           }
         }
@@ -2303,6 +2364,15 @@
           "cultureFk": {
             "type": "string"
           },
+          "endPointUrl": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "jwtToken": {
+            "type": "string"
+          },
           "auditInfoJson": {
             "type": "string"
           },
@@ -2323,6 +2393,9 @@
             "type": "string"
           },
           "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "companyDescriptionTranslationKey": {
             "type": "string"
           }
         }
@@ -2372,7 +2445,13 @@
           "cultureId": {
             "type": "string"
           },
-          "requestEndpoint": {
+          "endPointUrl": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "jwtToken": {
             "type": "string"
           },
           "addtionalInformation": {
@@ -2386,10 +2465,13 @@
           },
           "actionTypeNameTranslationKey": {
             "type": "string"
+          },
+          "companyDescriptionTranslationKey": {
+            "type": "string"
           }
         }
       },
-      "NotificationDTO1": {
+      "NotificationDTO": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -2420,15 +2502,25 @@
             "type": "string"
           },
           "receiver": {
-            "type": "string"
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
           },
           "cc": {
-            "type": "string",
-            "nullable": true
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
           },
           "bcc": {
-            "type": "string",
-            "nullable": true
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
           },
           "subject": {
             "type": "string"
@@ -2448,6 +2540,9 @@
             "type": "boolean"
           },
           "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "companyDescriptionTranslationKey": {
             "type": "string"
           },
           "notificationTypeNameTranslationKey": {

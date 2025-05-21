@@ -97,6 +97,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
                     notificationIsSent = await SendEmailNotification(notificationInfoDTO);
                     break;
                 case NotificationTypeEnum.NotificationType_SMS:
+
                     break;
             }
             notificationInfo.CreationDate = _cultureRepository.UtcNow().DateTime;

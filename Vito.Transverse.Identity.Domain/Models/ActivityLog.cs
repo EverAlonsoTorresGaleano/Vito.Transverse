@@ -29,7 +29,11 @@ public partial class ActivityLog
 
     public string CultureId { get; set; } = null!;
 
-    public string RequestEndpoint { get; set; } = null!;
+    public string EndPointUrl { get; set; } = null!;
+
+    public string Method { get; set; } = null!;
+
+    public string JwtToken { get; set; } = null!;
 
     public string AddtionalInformation { get; set; } = null!;
 

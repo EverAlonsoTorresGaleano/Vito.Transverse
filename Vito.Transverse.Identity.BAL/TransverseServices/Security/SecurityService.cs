@@ -8,17 +8,19 @@ using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.Security;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Framework.Common.Options;
+using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
-using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
+using Vito.Transverse.Identity.Domain.Enums;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
 
 
 /// <see cref="ISecurityService"/>
-public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions, ILogger<ISecurityService> _logger) : ISecurityService
+public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, ICachingServiceMemoryCache _cachingService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions, ILogger<ISecurityService> _logger) : ISecurityService
 {
     private readonly IdentityServiceServerSettingsOptions _jwtIdentityServerOptionsValues = _jwtIdentityServerOptions.Value;
 
@@ -45,10 +47,10 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             }
 
             var logginSuccesStatusList = new List<OAuthActionTypeEnum>()
-        {
-            OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials,
-            OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode
-        };
+            {
+                OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials,
+                OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode
+            };
 
             if (userInfoDTO is not null && logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
             {
@@ -66,6 +68,29 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             _logger.LogError(ex, message: nameof(CreateAuthenticationTokenAsync));
             throw;
         }
+    }
+
+
+    private TokenDTO DecodeJwtSync(string tokenBearer)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(tokenBearer);
+        var keyId = token.Header.Kid;
+        var audience = token.Audiences.ToList();
+        var claims = token.Claims.Select(claim => (claim.Type, claim.Value)).ToList();
+        return new TokenDTO(
+            keyId,
+            token.Issuer,
+            audience,
+            claims,
+            token.ValidTo,
+            token.SignatureAlgorithm,
+            token.RawData,
+            token.Subject,
+            token.ValidFrom,
+            token.EncodedHeader,
+            token.EncodedPayload
+        );
     }
 
 
@@ -160,13 +185,21 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
 
     }
 
-    public async Task<bool?> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation)
+    public async Task<bool?> ActivateAccountAsync(string activationToken, DeviceInformationDTO deviceInformation)
     {
         bool? returnValue = null;
         try
         {
-            returnValue = await _securityRepository.ActivateAccountAsync(companyId, userId, activationId, deviceInformation);
+            var activationTokenList = ValidateActivationToken(activationToken);
+            Guid companyClientId = Guid.Parse(activationTokenList.First());
+            long userId = long.Parse(activationTokenList[1]);
+            Guid activationId = Guid.Parse(activationTokenList.Last());
 
+            returnValue = await _securityRepository.ActivateAccountAsync(companyClientId, userId, activationId, deviceInformation);
+            if (returnValue == false)
+            {
+                throw new Exception(TransverseExceptionEnum.ActivateAccount_InvalidToken.ToString());
+            }
         }
         catch (Exception ex)
         {
@@ -176,12 +209,69 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         return returnValue;
     }
 
+    private List<string> ValidateActivationToken(string activationToken)
+    {
+        try
+        {
+            var activationTokenList = activationToken.Split("@").ToList();
+            if (activationTokenList.Count != 3)
+            {
+                throw new Exception(TransverseExceptionEnum.ActivateAccount_InvalidToken.ToString());
+            }
+            Guid companyClientId = Guid.Parse(activationTokenList.First());
+            long userId = long.Parse(activationTokenList[1]);
+            Guid activationId = Guid.Parse(activationTokenList.Last());
+            return activationTokenList;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(ValidateActivationToken));
+            throw new Exception(TransverseExceptionEnum.UserPermissionException_ModuleFromApplicationNotFound.ToString());
+        }
+
+    }
+
+    public async Task<EndpointDTO?> ValidateEndpointAuthorizationAsync(DeviceInformationDTO deviceInformation)
+    {
+        EndpointDTO? endpointInfo = null!;
+        try
+        {
+            var jwtToken = deviceInformation.JwtToken!.Replace(FrameworkConstants.TokenBearerPrefix, string.Empty).Trim();
+            var tokenDTO = DecodeJwtSync(jwtToken!);
+
+            var roleIdString = tokenDTO.Claims.First(x => x.Type.Equals(CustomClaimTypes.RoleId.ToString())).Value;
+            if (long.TryParse(roleIdString, out var roleId))
+            {
+                endpointInfo = await ValidateAuthorizationEndpointByRoleIdAsync(roleId, deviceInformation.EndPointUrl!, deviceInformation.Method!);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(ValidateEndpointAuthorizationAsync));
+        }
+        return endpointInfo!;
+    }
+
+    public async Task<EndpointDTO?> ValidateAuthorizationEndpointByRoleIdAsync(long roleId, string endpointUrl, string method)
+    {
+        var endpointList = await GetEndpointsListByRoleIdAsync(roleId);
+        var endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(endpointUrl) && x.Method.Equals(method)) && x.IsActive);
+        return endpointInfo;
+
+    }
+
+
     public async Task<List<ApplicationDTO>> GetAllApplicationListAsync()
     {
         try
         {
-            var returnValue = await _securityRepository.GetAllApplicationListAsync();
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<ApplicationDTO>>(CacheItemKeysEnum.AllApplicationList.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetAllApplicationListAsync();
+                _cachingService.SetCacheData(CacheItemKeysEnum.AllApplicationList.ToString(), returnList);
+            }
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -194,8 +284,14 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetApplicationListAsync(companyId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<ApplicationDTO>>(CacheItemKeysEnum.ApplicationListByCompanyId + companyId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetApplicationListAsync(companyId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.ApplicationListByCompanyId + companyId.ToString(), returnList);
+            }
+            return returnList;
+
         }
         catch (Exception ex)
         {
@@ -209,8 +305,14 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetCompanyMemberhipAsync(companyId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<CompanyMembershipsDTO>>(CacheItemKeysEnum.CompanyMemberhipListByCompanyId + companyId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetCompanyMemberhipAsync(companyId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.CompanyMemberhipListByCompanyId + companyId.ToString(), returnList);
+            }
+            return returnList;
+
         }
         catch (Exception ex)
         {
@@ -224,8 +326,14 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetAllCompanyListAsync();
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<CompanyDTO>>(CacheItemKeysEnum.AllCompanyList.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetAllCompanyListAsync();
+                _cachingService.SetCacheData(CacheItemKeysEnum.AllCompanyList.ToString(), returnList);
+            }
+            return returnList;
+
         }
         catch (Exception ex)
         {
@@ -239,8 +347,14 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetRoleListAsync(companyId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<RoleDTO>>(CacheItemKeysEnum.RoleListByCompanyId + companyId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetRoleListAsync(companyId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.RoleListByCompanyId + companyId.ToString(), returnList);
+            }
+            return returnList;
+
         }
         catch (Exception ex)
         {
@@ -253,8 +367,13 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetRolePermissionListAsync(roleId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<RoleDTO>(CacheItemKeysEnum.RolePermissionListByRoleId + roleId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetRolePermissionListAsync(roleId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.RolePermissionListByRoleId + roleId.ToString(), returnList);
+            }
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -267,8 +386,13 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetModuleListAsync(applicationId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<ModuleDTO>>(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetModuleListAsync(applicationId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString(), returnList);
+            }
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -277,26 +401,60 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         }
     }
 
-    public async Task<List<PageDTO>> GetPageListAsync(long moduleId)
+    public async Task<List<EndpointDTO>> GetEndpointsListAsync(long moduleId)
     {
         try
         {
-            var returnValue = await _securityRepository.GetPageListAsync(moduleId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<EndpointDTO>>(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetEndpointsListAsync(moduleId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString(), returnList);
+            }
+            return returnList;
+
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetPageListAsync));
+            _logger.LogError(ex, message: nameof(GetEndpointsListAsync));
             throw;
         }
     }
 
-    public async Task<List<ComponentDTO>> GetComponentListAsync(long pageId)
+    public async Task<List<EndpointDTO>> GetEndpointsListByRoleIdAsync(long roleId)
     {
         try
         {
-            var returnValue = await _securityRepository.GetComponentListAsync(pageId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<EndpointDTO>>(CacheItemKeysEnum.EndpointListByRoleId + roleId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetEndpointsListByRoleIdAsync(roleId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.EndpointListByRoleId + roleId.ToString(), returnList);
+            }
+            return returnList;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, message: nameof(GetEndpointsListByRoleIdAsync));
+            throw;
+        }
+    }
+
+
+    public async Task<List<ComponentDTO>> GetComponentListAsync(long endpointId)
+    {
+        try
+        {
+            var returnList = _cachingService.GetCacheDataByKey<List<ComponentDTO>>(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetComponentListAsync(endpointId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString(), returnList);
+            }
+            return returnList;
+
+
         }
         catch (Exception ex)
         {
@@ -309,8 +467,13 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetUserRolesListAsync(userId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<UserRoleDTO>>(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetUserRolesListAsync(userId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString(), returnList);
+            }
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -323,8 +486,13 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetUserPermissionListAsync(userId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<UserDTO>(CacheItemKeysEnum.UserPermissionListByUserId + userId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetUserPermissionListAsync(userId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.UserPermissionListByUserId + userId.ToString(), returnList);
+            }
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -337,8 +505,13 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetCompanyEntityAuditsListAsync(companyId);
-            return returnValue;
+            var returnList = _cachingService.GetCacheDataByKey<List<CompanyEntityAuditDTO>>(CacheItemKeysEnum.CompanyEntityAuditListByCompanyId + companyId.ToString());
+            if (returnList == null)
+            {
+                returnList = await _securityRepository.GetCompanyEntityAuditsListAsync(companyId);
+                _cachingService.SetCacheData(CacheItemKeysEnum.CompanyEntityAuditListByCompanyId + companyId.ToString(), returnList);
+            }
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -366,8 +539,8 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnValue = await _securityRepository.GetActivityLogListAsync(companyId);
-            return returnValue;
+            var returnList = await _securityRepository.GetActivityLogListAsync(companyId);
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -376,12 +549,12 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         }
     }
 
-    public async Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId)
+    public async Task<List<NotificationDTO>> GetNotificationsListAsync(long? companyId)
     {
         try
         {
-            var returnValue = await _securityRepository.GetNotificationsListAsync(companyId);
-            return returnValue;
+            var returnList = await _securityRepository.GetNotificationsListAsync(companyId);
+            return returnList;
         }
         catch (Exception ex)
         {
@@ -426,12 +599,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         List<Claim> claimList =
         [
-            new (ClaimTypes.System, userInfo.ApplicationName!), //Application name
-            new (ClaimTypes.Webpage, userInfo.CompanyName!), //Company Name
-            new (ClaimTypes.Sid, userInfo.Id.ToString()), //USer Id
-            new (ClaimTypes.Name, $"{userInfo.Name} {userInfo.LastName}"),
+            new (CustomClaimTypes.ApplicationOwnerId.ToString(),userInfo.ApplicationOwnerId.ToString()!),
+            new (CustomClaimTypes.ApplicationOwnerName.ToString(),userInfo.ApplicationOwnerNameTranslationKey!.ToString()!),
+            new (CustomClaimTypes.ApplicationId.ToString(), userInfo.ApplicationId.ToString()!),
+            new (CustomClaimTypes.ApplicationName.ToString(), userInfo.ApplicationNameTranslationKey!.ToString()!),
+            new (CustomClaimTypes.CompanyId.ToString(), userInfo.CompanyFk.ToString()!),
+            new (CustomClaimTypes.CompanyName.ToString(), userInfo.CompanyNameTranslationKey!),
+            new (ClaimTypes.Sid, userInfo.Id.ToString()),
+            new (ClaimTypes.Name, userInfo.UserName),
+            new (ClaimTypes.GivenName, $"{userInfo.Name} {userInfo.LastName}"),
             new (ClaimTypes.Email, userInfo.Email!),
-            new (ClaimTypes.Role, userInfo.RoleName! ),
+            new (CustomClaimTypes.RoleId.ToString()    , userInfo.RoleId.ToString()! ),
+            new (CustomClaimTypes.RoleName.ToString(), userInfo.RoleName! ),
         ];
         return claimList;
     }
@@ -453,7 +632,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         {
             access_token = access_token,
             token_type = FrameworkConstants.TokenBearerPrefix,
-            issued_at = tokenDescriptor.Expires!.Value.AddMinutes(-(double)_jwtIdentityServerOptionsValues!.TokenLifeTimeMinutes).Ticks,
+            issued_at = tokenDescriptor.IssuedAt!.Value.Ticks,
             expires_in = _jwtIdentityServerOptionsValues.TokenLifeTimeMinutes * FrameworkConstants.MinuteOnSeconds,
             status = userInfoDTO.ActionStatus.ToString(),
 #if DEBUG
@@ -487,8 +666,10 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             Issuer = _jwtIdentityServerOptionsValues.Issuer,
             Audience = _jwtIdentityServerOptionsValues.Audience,
             Subject = new ClaimsIdentity(claimList.ToArray()),
+            IssuedAt = _cultureService.UtcNow().DateTime,
             Expires = _cultureService.UtcNow().DateTime.AddMinutes(_jwtIdentityServerOptionsValues.TokenLifeTimeMinutes),
-            SigningCredentials = securityKey
+            SigningCredentials = securityKey,
+
         };
         return tokenDescriptor;
     }

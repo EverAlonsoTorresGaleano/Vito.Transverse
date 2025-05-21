@@ -15,7 +15,7 @@ public partial class CompanyMembershipPermission
 
     public long ModuleFk { get; set; }
 
-    public long PageFk { get; set; }
+    public long EndpointFk { get; set; }
 
     public long? ComponentFk { get; set; }
 

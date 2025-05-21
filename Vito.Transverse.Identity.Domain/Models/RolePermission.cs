@@ -15,7 +15,7 @@ public partial class RolePermission
 
     public long ModuleFk { get; set; }
 
-    public long PageFk { get; set; }
+    public long? EndpointFk { get; set; }
 
     public long? ComponentFk { get; set; }
 
@@ -23,9 +23,9 @@ public partial class RolePermission
 
     public virtual Component? ComponentFkNavigation { get; set; }
 
-    public virtual Module ModuleFkNavigation { get; set; } = null!;
+    public virtual Endpoint? EndpointFkNavigation { get; set; }
 
-    public virtual Page PageFkNavigation { get; set; } = null!;
+    public virtual Module ModuleFkNavigation { get; set; } = null!;
 
     public virtual Role RoleFkNavigation { get; set; } = null!;
 }

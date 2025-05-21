@@ -1,5 +1,6 @@
 ﻿using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
@@ -33,7 +34,9 @@ public interface ISecurityRepository
 
     Task<bool> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> ActivateAccountAsync(long companyId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!);
+    Task<bool> ActivateAccountAsync(Guid companyClientId, long userId, Guid activationId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null!);
+
+
 
     Task<List<ApplicationDTO>> GetAllApplicationListAsync(DataBaseServiceContext? context = null);
 
@@ -51,9 +54,11 @@ public interface ISecurityRepository
 
     Task<List<ModuleDTO>> GetModuleListAsync(long? applicationId, DataBaseServiceContext? context = null);
 
-    Task<List<PageDTO>> GetPageListAsync(long moduleId, DataBaseServiceContext? context = null);
+    Task<List<EndpointDTO>> GetEndpointsListAsync(long moduleId, DataBaseServiceContext? context = null);
 
-    Task<List<ComponentDTO>> GetComponentListAsync(long pageId, DataBaseServiceContext? context = null);
+    Task<List<EndpointDTO>> GetEndpointsListByRoleIdAsync(long roleId, DataBaseServiceContext? context = null);
+
+    Task<List<ComponentDTO>> GetComponentListAsync(long endpointId, DataBaseServiceContext? context = null);
 
     Task<List<UserRoleDTO>> GetUserRolesListAsync(long userId, DataBaseServiceContext? context = null);
 
@@ -64,5 +69,5 @@ public interface ISecurityRepository
 
     Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId, DataBaseServiceContext? context = null);
 
-    Task<List<NotificationDTO1>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null);
+    Task<List<NotificationDTO>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null);
 }

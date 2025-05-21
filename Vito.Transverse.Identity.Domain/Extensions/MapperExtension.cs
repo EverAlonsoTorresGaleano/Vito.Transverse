@@ -1,6 +1,6 @@
-﻿using System.Security;
-using Vito.Framework.Common.Enums;
+﻿using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.SocialNetworks;
+using Vito.Transverse.Identity.Domain.Enums;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
@@ -8,6 +8,7 @@ namespace Vito.Transverse.Identity.Domain.Extensions;
 
 public static class MapperExtension
 {
+    private const string commaSeparator = ",";
     public static List<PersonDTO> ToPersonDTOList(this List<Person> modelObjectList)
     {
         List<PersonDTO> returnList = [];
@@ -227,29 +228,35 @@ public static class MapperExtension
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             Email = modelObject.Email,
-            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
 
         };
         returnObject.Roles = new();
         modelObject.UserRoles.ToList().ForEach(userRoleItem =>
         {
+            if (userRoleItem.RoleFkNavigation.ApplicationFkNavigation is null)
+            {
+                throw new Exception(TransverseExceptionEnum.UserPermissionException_ModuleFromApplicationNotFound.ToString());
+            }
+
             RoleDTO roleDTO = userRoleItem.RoleFkNavigation.ToRoleDTO()!;
+
             roleDTO.Modules = new();
             userRoleItem.RoleFkNavigation.RolePermissions.DistinctBy(x => x.ModuleFk).ToList().ForEach((permission) =>
             {
                 ModuleDTO moduleDTO = new ModuleDTO();
                 moduleDTO = permission.ModuleFkNavigation.ToModuleDTO();
-                moduleDTO.Pages = new();
-                permission.ModuleFkNavigation.Pages.ToList().ForEach((page) =>
+                moduleDTO.Endpoints = new();
+                permission.ModuleFkNavigation.Endpoints.ToList().ForEach((endpoint) =>
                 {
-                    PageDTO pageDTO = new PageDTO();
-                    pageDTO = page.ToPageDTO();
-                    pageDTO.Components = new();
-                    page.Components.ToList().ForEach((component) =>
+                    EndpointDTO endpointDTO = new EndpointDTO();
+                    endpointDTO = endpoint.ToEndpointDTO();
+                    endpointDTO.Components = new();
+                    endpoint.Components.ToList().ForEach((component) =>
                     {
-                        pageDTO.Components.Add(component.ToComponentDTO());
+                        endpointDTO.Components.Add(component.ToComponentDTO());
                     });
-                    moduleDTO.Pages.Add(pageDTO);
+                    moduleDTO.Endpoints.Add(endpointDTO);
                 });
 
                 roleDTO.Modules.Add(moduleDTO);
@@ -260,35 +267,38 @@ public static class MapperExtension
         return returnObject;
     }
 
-    public static UserDTOToken ToUserDTOToken(this User modelObject, long? applicationId = null, string? applicationName = null, OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_Undefined)
+    public static UserDTOToken ToUserDTOToken(this User modelEntity, Application? applicationEntity = null, OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_Undefined)
     {
-        //var person = modelObject.PersonFkNavigation is not null ? modelObject.PersonFkNavigation.ToPersonDTO() : (new Person()).ToPersonDTO();
-        var company = modelObject.CompanyFkNavigation is not null ? modelObject.CompanyFkNavigation.ToCompanyDTO() : (new Company()).ToCompanyDTO();
-        var role = modelObject.UserRoles is not null ? modelObject.UserRoles.FirstOrDefault()!.RoleFkNavigation.ToRoleDTO() : (new Role()).ToRoleDTO();
+        var company = modelEntity.CompanyFkNavigation is not null ? modelEntity.CompanyFkNavigation.ToCompanyDTO() : (new Company()).ToCompanyDTO();
+        var role = modelEntity.UserRoles is not null ? modelEntity.UserRoles.FirstOrDefault()!.RoleFkNavigation.ToRoleDTO() : (new Role()).ToRoleDTO();
         UserDTOToken returnObject = new()
         {
-            CompanyFk = modelObject.CompanyFk,
-            Id = modelObject.Id,
-            UserName = modelObject.UserName,
+
+            Id = modelEntity.Id,
+            UserName = modelEntity.UserName,
             Password = null!,
-            EmailValidated = modelObject.EmailValidated,
-            IsLocked = modelObject.IsLocked,
-            RequirePasswordChange = modelObject.RequirePasswordChange,
-            RetryCount = modelObject.RetryCount,
-            LastAccess = modelObject.LastAccess,
-            IsActive = modelObject.IsActive,
+            EmailValidated = modelEntity.EmailValidated,
+            IsLocked = modelEntity.IsLocked,
+            RequirePasswordChange = modelEntity.RequirePasswordChange,
+            RetryCount = modelEntity.RetryCount,
+            LastAccess = modelEntity.LastAccess,
+            IsActive = modelEntity.IsActive,
 
-            Name = modelObject.Name,
-            LastName = modelObject.LastName,
-            Email = modelObject.Email,
+            Name = modelEntity.Name,
+            LastName = modelEntity.LastName,
+            Email = modelEntity.Email,
 
+            ApplicationOwnerId = applicationEntity!.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = applicationEntity.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
 
+            ApplicationId = applicationEntity.Id,
+            ApplicationNameTranslationKey = applicationEntity.NameTranslationKey,
 
-            ApplicationId = applicationId,
-            ApplicationName = applicationName,
-            CompanyName = company.NameTranslationKey,
-            RoleName = role?.NameTranslationKey,
+            CompanyFk = modelEntity.CompanyFk,
+            CompanyNameTranslationKey = company.NameTranslationKey,
+
             RoleId = role?.Id,
+            RoleName = role?.NameTranslationKey,
             ActionStatus = actionStatus
         };
         return returnObject;
@@ -327,6 +337,7 @@ public static class MapperExtension
     {
         CompanyDTO returnObject = new(modelObject.Id,
             modelObject.NameTranslationKey,
+            modelObject.DescriptionTranslationKey,
             modelObject.CompanyClient,
             modelObject.CompanySecret,
             modelObject.CreationDate,
@@ -352,6 +363,7 @@ public static class MapperExtension
         {
             Id = modelObject.Id,
             NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             Subdomain = modelObject.Subdomain!,
             Email = modelObject.Email,
             CompanySecret = modelObject.CompanySecret,
@@ -380,6 +392,7 @@ public static class MapperExtension
         {
             Id = modelObject.Id,
             NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             Avatar = modelObject.Avatar,
             IsActive = modelObject.IsActive,
             ApplicationSecret = modelObject.ApplicationSecret,
@@ -388,6 +401,9 @@ public static class MapperExtension
             CreationDate = modelObject.CreationDate,
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
             LastUpdateDate = modelObject.LastUpdateDate,
+            ApplicationOwnerId = modelObject.ApplicationOwners.First().CompanyFk,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerDescriptionTranslationKey = modelObject.ApplicationOwners.First().CompanyFkNavigation.DescriptionTranslationKey,
         };
         return returnObject;
     }
@@ -417,9 +433,14 @@ public static class MapperExtension
             LastUpdateByUserFk = modelObject.ApplicationFkNavigation.LastUpdateByUserFk,
             LastUpdateDate = modelObject.ApplicationFkNavigation.LastUpdateDate,
             NameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.ApplicationFkNavigation.DescriptionTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerDescriptionTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.DescriptionTranslationKey,
 
             CompanyId = modelObject.CompanyFkNavigation.Id,
             CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+
         };
         return returnObject;
     }
@@ -451,8 +472,10 @@ public static class MapperExtension
             LastUpdateDate = modelObject.LastUpdateDate,
             MembershipTypeFk = modelObject.MembershipTypeFk,
             MembershipTypeNameTranslationKey = modelObject.MembershipTypeFkNavigation.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.MembershipTypeFkNavigation.DescriptionTranslationKey,
             StartDate = modelObject.StartDate,
-
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
         };
         return returnObject;
     }
@@ -464,6 +487,7 @@ public static class MapperExtension
         {
             Id = modelObject.Id,
             NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             Avatar = modelObject.Avatar,
             IsActive = modelObject.IsActive,
             ApplicationSecret = modelObject.ApplicationSecret,
@@ -501,7 +525,7 @@ public static class MapperExtension
             ComponentFk = modelObject.ComponentFk,
             Id = modelObject.Id,
             ModuleFk = modelObject.ModuleFk,
-            PageFk = modelObject.PageFk,
+            EndpointFk = modelObject.EndpointFk,
             PropertyValue = modelObject.PropertyValue
         };
         return returnObject;
@@ -526,25 +550,31 @@ public static class MapperExtension
             IsApi = modelObject.IsApi,
             IsVisible = modelObject.IsVisible,
             NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             PositionIndex = modelObject.PositionIndex,
-            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey
+            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
+
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? (long)Decimal.Zero :
+                                modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? string.Empty :
+                                modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
         };
         return returnObject;
     }
 
-    public static List<PageDTO> ToPageDTOList(this List<Page> modelObjectList)
+    public static List<EndpointDTO> ToEndpointDTOList(this List<Endpoint> modelObjectList)
     {
-        List<PageDTO> returnList = [];
+        List<EndpointDTO> returnList = [];
         modelObjectList.ForEach(modelObject =>
         {
-            returnList.Add(modelObject.ToPageDTO()!);
+            returnList.Add(modelObject.ToEndpointDTO()!);
         });
         return returnList;
     }
 
-    public static PageDTO ToPageDTO(this Page modelObject)
+    public static EndpointDTO ToEndpointDTO(this Endpoint modelObject)
     {
-        PageDTO returnObject = new()
+        EndpointDTO returnObject = new()
         {
             Id = modelObject.Id,
             ApplicationFk = modelObject.ApplicationFk,
@@ -552,10 +582,19 @@ public static class MapperExtension
             IsApi = modelObject.IsApi,
             IsVisible = modelObject.IsVisible,
             NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             PositionIndex = modelObject.PositionIndex,
             ModuleFk = modelObject.ModuleFk,
-            PageUrl = modelObject.PageUrl,
-            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey
+            EndpointUrl = modelObject.EndpointUrl,
+            Method = modelObject.Method!,
+            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation is null ? string.Empty : modelObject.ApplicationFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation is null || modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ?
+                                    (long)decimal.Zero :
+                                    modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation is null || modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ?
+                                    string.Empty :
+                                    modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+
 
         };
         return returnObject;
@@ -575,16 +614,20 @@ public static class MapperExtension
     {
         ComponentDTO returnObject = new()
         {
-            PageFk = modelObject.PageFk,
+            EndpointFk = modelObject.EndpointFk,
             DefaultPropertyValue = modelObject.DefaultPropertyValue,
             ApplicationFk = modelObject.ApplicationFk,
             PositionIndex = modelObject.PositionIndex,
             Id = modelObject.Id,
             NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             ObjectId = modelObject.ObjectId,
             ObjectName = modelObject.ObjectName,
             ObjectPropertyName = modelObject.ObjectPropertyName,
-            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey
+            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+
         };
         return returnObject;
     }
@@ -607,13 +650,23 @@ public static class MapperExtension
             UserFk = modelObject.UserFk,
             CompanyFk = modelObject.CompanyFk,
             CompanyNameTranslationKey = modelObject.RoleFkNavigation.CompanyFkNavigation.NameTranslationKey,
+            CompanyDescriptionTranslationKey = modelObject.RoleFkNavigation.CompanyFkNavigation.DescriptionTranslationKey,
+
             CreatedByUserFk = modelObject.CreatedByUserFk,
             CreatedDate = modelObject.CreatedDate,
             IsActive = modelObject.IsActive,
             RoleFk = modelObject.RoleFk,
             RoleNameTranslationKey = modelObject.RoleFkNavigation.NameTranslationKey,
+            RoleDescriptionTranslationKey = modelObject.RoleFkNavigation.DescriptionTranslationKey,
+
             ApplicationFk = modelObject.ApplicationFk,
             ApplicationNameTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.NameTranslationKey,
+            ApplicationDescriptionTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.DescriptionTranslationKey,
+
+
+            ApplicationOwnerId = modelObject.RoleFkNavigation.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+
         };
         return returnObject;
     }
@@ -655,7 +708,14 @@ public static class MapperExtension
             AuditEntityName = modelObject.AuditEntityFkNavigation.EntityName,
             AuditTypeNameTranslationKey = modelObject.AuditTypeFkNavigation.NameTranslationKey,
             UserName = modelObject.UserFkNavigation.UserName,
-            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey
+            EndPointUrl = modelObject.EndPointUrl,
+            Method = modelObject.Method,
+            JwtToken = modelObject.JwtToken,
+
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+            CompanyDescriptionTranslationKey = modelObject.CompanyFkNavigation.DescriptionTranslationKey,
+
+
         };
         return returnObject;
     }
@@ -688,35 +748,37 @@ public static class MapperExtension
             EventDate = modelObject.EventDate,
             IpAddress = modelObject.IpAddress,
             Platform = modelObject.Platform,
-            RequestEndpoint = modelObject.RequestEndpoint,
             TraceId = modelObject.TraceId,
             UserFk = modelObject.UserFk,
+            EndPointUrl = modelObject.EndPointUrl,
+            Method = modelObject.Method,
+            JwtToken = modelObject.JwtToken,
+
             UserName = modelObject.UserFkNavigation.UserName,
             CompanyNameTranslationKey = modelObject.UserFkNavigation.CompanyFkNavigation.NameTranslationKey,
-            ActionTypeNameTranslationKey = modelObject.ActionTypeFkNavigation.NameTranslationKey
-
+            CompanyDescriptionTranslationKey = modelObject.UserFkNavigation.CompanyFkNavigation.DescriptionTranslationKey,
+            ActionTypeNameTranslationKey = modelObject.ActionTypeFkNavigation.NameTranslationKey,
         };
         return returnObject;
     }
 
 
 
-    public static List<NotificationDTO1> ToNotificationDTOList(this List<Notification> modelObjectList)
+    public static List<NotificationDTO> ToNotificationDTOList(this List<Notification> modelObjectList)
     {
-        List<NotificationDTO1> returnList = [];
+        List<NotificationDTO> returnList = [];
         modelObjectList.ForEach(modelObject =>
         {
             returnList.Add(modelObject.ToNotificationDTO()!);
         });
         return returnList;
     }
-
-    public static NotificationDTO1 ToNotificationDTO(this Notification modelObject)
+    public static NotificationDTO ToNotificationDTO(this Notification modelObject)
     {
-        NotificationDTO1 returnObject = new()
+        NotificationDTO returnObject = new()
         {
-            Bcc = modelObject.Bcc,
-            Cc = modelObject.Cc,
+            Bcc = modelObject.Bcc?.Split(commaSeparator).ToList(),
+            Cc = modelObject.Cc?.Split(commaSeparator).ToList(),
             CompanyFk = modelObject.CompanyFk,
             CreationDate = modelObject.CreationDate,
             CultureFk = modelObject.CultureFk,
@@ -726,11 +788,12 @@ public static class MapperExtension
             Message = modelObject.Message,
             NotificationTemplateGroupFk = modelObject.NotificationTemplateGroupFk,
             NotificationTypeFk = modelObject.NotificationTypeFk,
-            Receiver = modelObject.Receiver,
+            Receiver = modelObject.Receiver.Split(commaSeparator).ToList(),
             Sender = modelObject.Sender,
             SentDate = modelObject.SentDate,
             Subject = modelObject.Subject,
             CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+            CompanyDescriptionTranslationKey = modelObject.CompanyFkNavigation.DescriptionTranslationKey,
             NotificationTypeNameTranslationKey = modelObject.NotificationTypeFkNavigation.NameTranslationKey,
             NotificationTemplateName = modelObject.NotificationTemplate.Name,
             CultureNameTranslationKey = modelObject.CultureFkNavigation.NameTranslationKey,
@@ -779,7 +842,12 @@ public static class MapperExtension
                 LastUpdateDate = modelObject!.LastUpdateDate,
                 Modules = new(),
                 CompanyNameTranslationKey = modelObject.CompanyFkNavigation is null ? string.Empty : modelObject.CompanyFkNavigation.NameTranslationKey,
-                ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey
+                ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
+
+                ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? (long)Decimal.Zero
+                                    : modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
+                ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? string.Empty :
+                modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
             };
 
         modelObject!.RolePermissions.DistinctBy(x => x.ModuleFk).ToList().ForEach((permission) =>
@@ -788,17 +856,17 @@ public static class MapperExtension
             if (permission.ModuleFkNavigation is not null)
             {
                 moduleDTO = permission.ModuleFkNavigation.ToModuleDTO();
-                moduleDTO.Pages = new();
-                permission.ModuleFkNavigation.Pages.ToList().ForEach((page) =>
+                moduleDTO.Endpoints = new();
+                permission.ModuleFkNavigation.Endpoints.ToList().ForEach((endpoint) =>
                 {
-                    PageDTO pageDTO = new PageDTO();
-                    pageDTO = page.ToPageDTO();
-                    pageDTO.Components = new();
-                    page.Components.ToList().ForEach((component) =>
+                    EndpointDTO endpointDTO = new EndpointDTO();
+                    endpointDTO = endpoint.ToEndpointDTO();
+                    endpointDTO.Components = new();
+                    endpoint.Components.ToList().ForEach((component) =>
                     {
-                        pageDTO.Components.Add(component.ToComponentDTO());
+                        endpointDTO.Components.Add(component.ToComponentDTO());
                     });
-                    moduleDTO.Pages.Add(pageDTO);
+                    moduleDTO.Endpoints.Add(endpointDTO);
                 });
 
                 returnObject!.Modules.Add(moduleDTO);
