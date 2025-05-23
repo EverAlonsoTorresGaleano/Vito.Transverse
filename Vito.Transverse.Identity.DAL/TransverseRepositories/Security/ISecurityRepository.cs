@@ -1,7 +1,9 @@
-﻿using Vito.Framework.Common.DTO;
+﻿using System.Linq.Expressions;
+using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
-using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
+using Vito.Transverse.Identity.Domain.DTO;
+using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
@@ -14,23 +16,25 @@ public interface ISecurityRepository
     Task<UserDTOToken?> TokenValidateClientCredentialsAsync(Guid companyClient, Guid companySecret, Guid applicationClient, Guid applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation);
 
 
-    Task<bool> AddNewActivityLogAsync(long companyId, long? applicationId, long? userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
 
-    Task<bool> UpdateLastUserAccessAsync(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+
+    Task<bool> AddNewActivityLogAsync(long companyId, long? applicationId, long? userId,long? roleId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+
+    
+    Task<ApplicationDTO?> CreateNewApplicationAsync(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId, DataBaseServiceContext? context = null);
 
 
-    Task<ApplicationDTO> CreateNewApplicationAsync(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId, DataBaseServiceContext? context = null);
+    Task<CompanyApplicationsDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<CompanyDTO> CreateNewCompanyAsync(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, long userId, DataBaseServiceContext? context = null);
+    Task<CompanyApplicationsDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    //Task<PersonDTO> CreateNewPerson(PersonDTO personInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
     Task<UserDTO> CreateNewUserAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
     Task<bool> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> UpdateCompanyApplicationsAsync(CompanyDTO companyInfo, List<ApplicationDTO> applicationInfoList, long userId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<bool> UpdateLastUserAccessAsync(long id, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
     Task<bool> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
@@ -38,36 +42,30 @@ public interface ISecurityRepository
 
 
 
-    Task<List<ApplicationDTO>> GetAllApplicationListAsync(DataBaseServiceContext? context = null);
-
-    Task<List<ApplicationDTO>> GetApplicationListAsync(long? companyId, DataBaseServiceContext? context = null);
-
-    Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipAsync(long? companyId, DataBaseServiceContext? context = null);
-
-
-
-    Task<List<CompanyDTO>> GetAllCompanyListAsync(DataBaseServiceContext? context = null);
-
-    Task<List<RoleDTO>> GetRoleListAsync(long? companyId, DataBaseServiceContext? context = null);
-
-    Task<RoleDTO> GetRolePermissionListAsync(long roleId, DataBaseServiceContext? context = null);
-
-    Task<List<ModuleDTO>> GetModuleListAsync(long? applicationId, DataBaseServiceContext? context = null);
-
-    Task<List<EndpointDTO>> GetEndpointsListAsync(long moduleId, DataBaseServiceContext? context = null);
-
+    //TODO
     Task<List<EndpointDTO>> GetEndpointsListByRoleIdAsync(long roleId, DataBaseServiceContext? context = null);
 
-    Task<List<ComponentDTO>> GetComponentListAsync(long endpointId, DataBaseServiceContext? context = null);
+    Task<List<ApplicationDTO>> GetAllApplicationListAsync(Expression<Func<Application, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<List<UserRoleDTO>> GetUserRolesListAsync(long userId, DataBaseServiceContext? context = null);
+    Task<List<ApplicationDTO>> GetApplicationListAsync(Expression<Func<CompanyMembership, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<UserDTO> GetUserPermissionListAsync(long userId, DataBaseServiceContext? context = null);
+    Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipListAsync(Expression<Func<CompanyMembership, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(long? companyId, DataBaseServiceContext? context = null);
-    Task<List<AuditRecordDTO>> GetAuditRecordsListAsync(long? companyId, DataBaseServiceContext? context = null);
+    Task<List<CompanyDTO>> GetAllCompanyListAsync(Expression<Func<Company, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId, DataBaseServiceContext? context = null);
+    Task<List<RoleDTO>> GetRoleListAsync(Expression<Func<Role, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<List<NotificationDTO>> GetNotificationsListAsync(long? companyId, DataBaseServiceContext? context = null);
+    Task<RoleDTO> GetRolePermissionListAsync(Expression<Func<Role, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<List<ModuleDTO>> GetModuleListAsync(Expression<Func<Module, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<List<EndpointDTO>> GetEndpointsListAsync(Expression<Func<Endpoint, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<List<ComponentDTO>> GetComponentListAsync(Expression<Func<Component, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<List<UserRoleDTO>> GetUserRolesListAsync(Expression<Func<UserRole, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<UserDTO> GetUserPermissionListAsync(Expression<Func<User, bool>> filters, DataBaseServiceContext? context = null);
+
+
 }

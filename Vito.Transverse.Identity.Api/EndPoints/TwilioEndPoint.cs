@@ -13,13 +13,6 @@ public static class TwilioEndPoint
 {
     public static void MapTwilioEndPoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        //var endPointGroupNoVersioned = app.MapGroup("api/Twilio/");
-
-        //endPointGroupNoVersioned.MapGet("SendSMS", SendSMSAync)
-        //    .WithSummary("Twilio SendSMS version 1.0")
-        //    .RequireAuthorization()
-        //    .AddEndpointFilter<HomeFeatureFlagFilter>();
-
         var endPointGroupVersioned = app.MapGroup("api/Twilio/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
                 .RequireAuthorization()
                 .AddEndpointFilter<HomeFeatureFlagFilter>()

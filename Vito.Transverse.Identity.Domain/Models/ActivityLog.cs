@@ -33,9 +33,15 @@ public partial class ActivityLog
 
     public string Method { get; set; } = null!;
 
-    public string JwtToken { get; set; } = null!;
+    public string QueryString { get; set; } = null!;
 
-    public string AddtionalInformation { get; set; } = null!;
+    public string UserAgent { get; set; } = null!;
+
+    public string Referer { get; set; } = null!;
+
+    public long ApplicationId { get; set; }
+
+    public long RoleId { get; set; }
 
     public virtual GeneralTypeItem ActionTypeFkNavigation { get; set; } = null!;
 

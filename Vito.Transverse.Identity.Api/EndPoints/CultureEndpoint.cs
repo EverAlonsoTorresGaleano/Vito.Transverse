@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Api.Filters;
-using Vito.Framework.Common.Constants;
-using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.Api.Helpers;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
@@ -18,10 +16,8 @@ namespace Vito.Transverse.Identity.Api.Endpoints;
 /// <example>https://developer.usps.com/api/81</example>
 public static class CultureEndpoint
 {
-
     public static void MapCultureEndpoint(this WebApplication app, ApiVersionSet versionSet)
     {
-
         var endPointGroupVersioned = app.MapGroup("api/Culture/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CultureFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>()
@@ -49,23 +45,19 @@ public static class CultureEndpoint
         [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-
         var returnObject = await Task.FromResult(cultureService.UtcNow());
         return TypedResults.Ok(returnObject);
 
     }
-
 
     public static async Task<Results<Ok<List<CultureDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetActiveCultureListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-
         var applicationId = request.GetCompanyIdFromHeader();
         var returnObject = await cultureService.GetActiveCultureListAsync(applicationId);
         return TypedResults.Ok(returnObject);
-
     }
 
     public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetActiveCultureListItemDTOListAsync(
@@ -73,10 +65,8 @@ public static class CultureEndpoint
         [FromServices] ISecurityService securityService,
         [FromServices] ICultureService cultureService)
     {
-
         var applicationId = request.GetCompanyIdFromHeader();
         var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(applicationId);
         return TypedResults.Ok(returnObject);
-
     }
 }

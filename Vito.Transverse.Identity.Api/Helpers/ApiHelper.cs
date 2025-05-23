@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using Twilio.Rest.Api.V2010.Account.Usage.Record;
 using Vito.Framework.Common.Constants;
+using Vito.Framework.Common.Models.Security;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
@@ -69,7 +71,7 @@ public static class ApilHelper
         long companyIdNumber = 0;
         if (long.TryParse(companyId, out long companyIdNumberTmp))
         {
-            companyIdNumber=companyIdNumberTmp;
+            companyIdNumber = companyIdNumberTmp;
         }
         request.SetValueOnHeader(FrameworkConstants.Header_CompanyId, companyId);
         return companyIdNumber;
@@ -99,5 +101,63 @@ public static class ApilHelper
         var cultureInfo = _cultureService.GetCurrectCulture();
         return cultureInfo;
     }
+
+    public static TokenDTO? DecodeJwtTokenSync(this string tokenBearer)
+    {
+        if (string.IsNullOrEmpty(tokenBearer))
+        {
+            return null;
+        }
+
+        var jwtToken = tokenBearer!.Replace(FrameworkConstants.TokenBearerPrefix, string.Empty).Trim();
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(jwtToken);
+        var keyId = token.Header.Kid;
+        var audience = token.Audiences.ToList();
+        var claims = token.Claims.Select(claim => (claim.Type, claim.Value)).ToList();
+        return new TokenDTO(
+            keyId,
+            token.Issuer,
+            audience,
+            claims,
+            token.ValidTo,
+            token.SignatureAlgorithm,
+            token.RawData,
+            token.Subject,
+            token.ValidFrom,
+            token.EncodedHeader,
+            token.EncodedPayload
+        );
+    }
+
+
+    public static string? GetJwtTokenClaim(this TokenDTO tokenDTO, string claimType)
+    {
+        if (tokenDTO is null)
+        {
+            return null;
+        }
+
+        var claimItem = tokenDTO.Claims.FirstOrDefault(x => x.Type.Equals(claimType, StringComparison.InvariantCultureIgnoreCase));
+        var claimValue = claimItem.Value;
+        return claimValue;
+    }
+
+    public static long? GetJwtTokenClaimLong(this TokenDTO tokenDTO, string claimType)
+    {
+        if (tokenDTO is null)
+        {
+            return null;
+        }
+        long? returnValue = null;
+        var claimValue = GetJwtTokenClaim(tokenDTO, claimType);
+        if (long.TryParse(claimValue, out long idParse))
+        {
+            returnValue = idParse;
+        }
+        return returnValue;
+
+    }
+
 
 }

@@ -35,9 +35,15 @@ public partial class AuditRecord
 
     public string Method { get; set; } = null!;
 
-    public string JwtToken { get; set; } = null!;
+    public string QueryString { get; set; } = null!;
 
-    public string AuditInfoJson { get; set; } = null!;
+    public string UserAgent { get; set; } = null!;
+
+    public string Referer { get; set; } = null!;
+
+    public long ApplicationId { get; set; }
+
+    public long RoleId { get; set; }
 
     public DateTime CreationDate { get; set; }
 

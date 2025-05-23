@@ -1,9 +1,11 @@
-﻿namespace Vito.Transverse.Identity.Domain.Extensions;
+﻿using System.Reflection;
+using Vito.Framework.Common.Extensions;
+using Vito.Transverse.Identity.Domain.Constants;
+
+namespace Vito.Transverse.Identity.Domain.Extensions;
 
 public static class UtilExtensions
 {
-
-
     public static string ToStringEncrypted(this string sentence, bool criptografyEnabled)
     {
         string cadenaSalida = sentence;
@@ -41,9 +43,6 @@ public static class UtilExtensions
         }
         return cadenaSalida;
     }
-
-
-
 
 
 

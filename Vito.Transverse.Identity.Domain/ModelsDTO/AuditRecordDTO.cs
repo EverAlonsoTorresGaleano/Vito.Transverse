@@ -3,14 +3,13 @@
 public record AuditRecordDTO
 {
 
-
     public long CompanyFk { get; set; }
 
     public long Id { get; set; }
 
     public long UserFk { get; set; }
 
-    public long AuditEntityFk { get; set; }
+    public long EntityFk { get; set; }
 
     public long AuditTypeFk { get; set; }
 
@@ -20,7 +19,7 @@ public record AuditRecordDTO
 
     public string IpAddress { get; set; } = null!;
 
-    public string? DeviceType { get; set; }
+    public string DeviceType { get; set; } = null!;
 
     public string Browser { get; set; } = null!;
 
@@ -29,13 +28,21 @@ public record AuditRecordDTO
     public string Engine { get; set; } = null!;
 
     public string CultureFk { get; set; } = null!;
+
     public string EndPointUrl { get; set; } = null!;
 
     public string Method { get; set; } = null!;
 
-    public string JwtToken { get; set; } = null!;
+    public string QueryString { get; set; } = null!;
 
-    public string AuditInfoJson { get; set; } = null!;
+    public string UserAgent { get; set; } = null!;
+
+    public string Referer { get; set; } = null!;
+
+
+    public long ApplicationId { get; set; }
+
+    public long RoleId { get; set; }
 
     public DateTime CreationDate { get; set; }
 

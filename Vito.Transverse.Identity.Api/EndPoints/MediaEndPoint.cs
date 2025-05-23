@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Api.Filters;
-using Vito.Framework.Common.Constants;
-using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Media;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
@@ -28,7 +26,6 @@ public static class MediaEndPoint
             .WithDescription("[Require Authorization]")
             .RequireAuthorization();
 
-
         endPointGroupVersioned.MapGet("PictureByName", GetPictureByName)
             .MapToApiVersion(1.0)
             .WithSummary("Get Picture By Name")
@@ -40,7 +37,6 @@ public static class MediaEndPoint
             .WithSummary("Get Picture By Name Wild Card")
             .WithDescription("[Require Authorization]")
             .RequireAuthorization();
-
     }
 
     public static async Task<Results<Ok<List<PictureDTO>>, UnauthorizedHttpResult>> GetPictureList(
@@ -51,10 +47,9 @@ public static class MediaEndPoint
     {
         var returnValue = await mediaService.GetPictureList(companyId);
         return TypedResults.Ok(returnValue);
-
     }
 
-    public static async Task<Results<FileContentHttpResult, UnauthorizedHttpResult>> GetPictureByName(
+    public static async Task<Results<FileContentHttpResult, NotFound, UnauthorizedHttpResult>> GetPictureByName(
       HttpRequest request,
       [FromServices] ISecurityService securityService,
       [FromServices] IMediaService mediaService,
@@ -62,7 +57,7 @@ public static class MediaEndPoint
       [FromQuery] string name)
     {
         var returnValue = await mediaService.GetPictureByName(companyId, name);
-        return TypedResults.File(returnValue.BinaryPicture, contentType: string.Empty, fileDownloadName: $"{returnValue.Name}.png");
+        return returnValue == null ? TypedResults.NotFound() : TypedResults.File(returnValue.BinaryPicture, contentType: string.Empty, fileDownloadName: $"{returnValue.Name}.png");
     }
 
     public static async Task<Results<Ok<List<PictureDTO>>, UnauthorizedHttpResult>> GetPictureByNameWildCard(
@@ -72,11 +67,7 @@ public static class MediaEndPoint
           [FromQuery] long companyId,
           [FromQuery] string wildCard)
     {
-
         var returnValue = await mediaService.GetPictureByNameWildCard(companyId, wildCard);
         return TypedResults.Ok(returnValue);
-
     }
-
-
 }

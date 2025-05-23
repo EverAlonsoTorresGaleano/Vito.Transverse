@@ -1,152 +1,146 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
-using System.Reflection;
-using Vito.Framework.Common.DTO;
-using Vito.Framework.Common.Enums;
-using Vito.Framework.Common.Extensions;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
-using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
+using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.Models;
+using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseServices.Audit;
 
-public class AuditRepository(IDataBaseContextFactory _dataBaseContextFactory, ICultureRepository cultureRepository) : IAuditRepository
+public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, ILogger<AuditRepository> logger) : IAuditRepository
 {
-    public async Task<AuditRecord> DeleteRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null)
+    public async Task<bool> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null)
     {
-        AuditRecord? auditInfo = null!;
-        context = _dataBaseContextFactory.GetDbContext();
-
-        var entityName = entity.GetType().Name;
-        var auditType = EntityAuditTypeEnum.EntityAuditType_DeleteRow;
-        var companyauditEntityInfo = await GetCompanyEntityAuditAsync(companyId, entityName, auditType, context);
-        if (companyauditEntityInfo is not null)
+        bool recordSaved = false;
+        try
         {
-            var auditInformation = GetChangesInformationSummary(entity);
-            auditInfo = CreateNewAuditRecord(companyId, userId, auditType, companyauditEntityInfo, entityIndex, auditInformation, devideInformation);
-            context.AuditRecords.Add(auditInfo!);
-            context.SaveChanges();
+            context = dataBaseContextFactory.GetDbContext(context);
+            var dbRecord = newRecord.ToAuditRecord();
+            context.AuditRecords.Add(dbRecord);
+            var recordAffected = await context.SaveChangesAsync();
+            recordSaved = recordAffected > 0;
         }
-        return auditInfo!;
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(AddNewAuditRecord));
+            throw;
+        }
+        return recordSaved;
     }
 
-    public async Task<AuditRecord> NewRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null)
-    {
-        AuditRecord? auditInfo = null;
-        context = _dataBaseContextFactory.GetDbContext();
 
-        var entityName = entity.GetType().Name;
-        var auditType = EntityAuditTypeEnum.EntityAuditType_AddRow;
-        var companyauditEntityInfo = await GetCompanyEntityAuditAsync(companyId, entityName, auditType, context);
-        if (companyauditEntityInfo is not null)
+
+    public async Task<List<EntityDTO>> GetEntitiesListAsync(Expression<Func<Entity, bool>> filters, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<EntityDTO>();
+        try
         {
-            var auditInformation = GetChangesInformationSummary(entity);
-            auditInfo = CreateNewAuditRecord(companyId, userId, auditType, companyauditEntityInfo, entityIndex, auditInformation, devideInformation);
-            context.AuditRecords.Add(auditInfo!);
-            context.SaveChanges();
+            context = dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Entities
+                .Where(filters).ToListAsync();
+            returnList = bdList.ToEntityDTOList().OrderBy(x => x.Id).ToList();
         }
-        return auditInfo!;
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetEntitiesListAsync));
+            throw;
+        }
+
+        return returnList;
     }
 
-    public async Task<AuditRecord> UpdateRowAuditAsync(long companyId, long userId, object oldEntity, object newEntity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null)
+    public async Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(Expression<Func<CompanyEntityAudit, bool>> filters, DataBaseServiceContext? context = null)
     {
-        AuditRecord? auditInfo = null;
-        context = _dataBaseContextFactory.GetDbContext();
-        var entityName = oldEntity.GetType().Name;
-        var auditType = EntityAuditTypeEnum.EntityAuditType_UpdateRow;
-        var companyauditEntityInfo = await GetCompanyEntityAuditAsync(companyId, entityName, auditType, context);
-        if (companyauditEntityInfo is not null)
+        var returnList = new List<CompanyEntityAuditDTO>();
+        try
         {
-            var auditInformation = GetChangesInformationSummary(oldEntity, newEntity);
-            auditInfo = CreateNewAuditRecord(companyId, userId, auditType, companyauditEntityInfo, entityIndex, auditInformation, devideInformation);
-            context.AuditRecords.Add(auditInfo!);
-            context.SaveChanges();
+            context = dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.CompanyEntityAudits
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Where(filters).ToListAsync();
+            returnList = bdList.ToCompanyEntityAuditDTOList().OrderBy(x => x.CompanyFk).ThenBy(x => x.EntityName).ThenBy(x => x.AuditTypeFk).ToList();
         }
-        return auditInfo!;
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            throw;
+        }
+
+        return returnList;
     }
 
-    public async Task<List<AuditRecord>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>>? filters, DataBaseServiceContext? context = null)
+    public async Task<List<AuditRecordDTO>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>> filters, DataBaseServiceContext? context = null)
     {
-        context = _dataBaseContextFactory.GetDbContext();
-        var returnList = await context.AuditRecords.Where(filters!).ToListAsync();
+        var returnList = new List<AuditRecordDTO>();
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.AuditRecords
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.UserFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Where(filters!).ToListAsync();
+            returnList = bdList.ToAuditRecordDTOList().OrderByDescending(x => x.CreationDate).ToList();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetAuditRecordListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<ActivityLogDTO>> GetActivityLogListAsync(Expression<Func<ActivityLog, bool>> filters, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<ActivityLogDTO>();
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.ActivityLogs
+                .Include(x => x.UserFkNavigation)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.ActionTypeFkNavigation)
+                .Where(filters).ToListAsync();
+            returnList = bdList.ToActivityLogDTOList().OrderByDescending(x => x.EventDate).ToList();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetActivityLogListAsync));
+            throw;
+        }
+
+        return returnList;
+    }
+
+    public async Task<List<NotificationDTO>> GetNotificationsListAsync(Expression<Func<Notification, bool>> filters, DataBaseServiceContext? context = null)
+    {
+        var returnList = new List<NotificationDTO>();
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Notifications
+                .Include(x => x.NotificationTemplate)
+                .ThenInclude(x => x.CultureFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.NotificationTypeFkNavigation)
+                .Where(filters).ToListAsync();
+            returnList = bdList.ToNotificationDTOList().OrderByDescending(x => x.CreationDate).ToList(); ;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetNotificationsListAsync));
+            throw;
+        }
+
         return returnList;
     }
 
 
-    public async Task<CompanyEntityAudit> GetCompanyEntityAuditAsync(long companyId, string entityName, EntityAuditTypeEnum auditType, DataBaseServiceContext? context = null)
-    {
-        context = _dataBaseContextFactory.GetDbContext();
-        var auditEntity = await context.CompanyEntityAudits.FirstOrDefaultAsync(x => x.CompanyFk == companyId
-                        && x.AuditTypeFk == (long)auditType
-                        && x.EntityFkNavigation.EntityName.Equals($"{entityName}{"s"}")
-                        && x.EntityFkNavigation.IsActive == true);
-        return auditEntity!;
-    }
-
-    private AuditRecord? CreateNewAuditRecord(long companyId, long userId, EntityAuditTypeEnum auditType, CompanyEntityAudit companyEntity, string entityIndex, string auditInformation, DeviceInformationDTO devideInformation)
-    {
-        var cultureId = cultureRepository.GetCurrentCultureId();
-        AuditRecord newRecord = new()
-        {
-            CreationDate = cultureRepository.UtcNow().DateTime,
-            CompanyFk = companyId,
-            UserFk = userId,
-            AuditTypeFk = (long)auditType,
-            EntityFk = companyEntity.EntityFk,
-            AuditEntityIndex = entityIndex,
-            CultureFk = cultureId,
-            AuditInfoJson = auditInformation,
-            Browser = devideInformation.Browser!,
-            DeviceType = devideInformation.DeviceType!,
-            Engine = devideInformation.Engine!,
-            HostName = devideInformation.Name!,
-            IpAddress = devideInformation.IpAddress!,
-            Platform = devideInformation.Platform!,
-            EndPointUrl = devideInformation.EndPointUrl!,
-            Method = devideInformation.Method!,
-            JwtToken = devideInformation.JwtToken!,
-        };
-        return newRecord;
-    }
-
-    private string GetChangesInformationSummary(object oldEntity, object? newEntity = null)
-    {
-        List<PropertyInfo> propertyList = oldEntity.GetType().GetProperties().ToList();
-        List<KeyValuePair<string, string>> changeList = new();
-
-        object? oldPropertyValue = null;
-        object? newPropertyValue = null;
-        propertyList.ForEach(itemProperty =>
-        {
-            if (!itemProperty.Name.Contains("Navigation") && itemProperty.PropertyType.FullName!.Contains("System"))
-            {
-                oldPropertyValue = GetPropertyValue(oldEntity, itemProperty.Name);
-                if (newEntity is not null)
-                {
-                    newPropertyValue = newEntity is null ? null : GetPropertyValue(newEntity, itemProperty.Name);
-                    if (!string.IsNullOrEmpty(oldPropertyValue?.ToString()) && !oldPropertyValue!.ToString()!.Equals(newPropertyValue!.ToString(), StringComparison.Ordinal))
-                    {
-                        changeList.Add(new(itemProperty.Name, $"Before= {oldPropertyValue} | After={newPropertyValue}"));
-                    }
-                }
-                else //Single Entity
-                {
-                    if (!string.IsNullOrEmpty(oldPropertyValue?.ToString()))
-                    {
-                        changeList.Add(new(itemProperty.Name, oldPropertyValue!.ToString()!));
-                    }
-                }
-            }
-        });
-
-        var returnJson = changeList.Serialize();
-        return returnJson;
-    }
-
-    public object GetPropertyValue(object Entidad, string PropertyName)
-    {
-        PropertyInfo infoColumna = Entidad.GetType().GetProperty(PropertyName)!;
-        return infoColumna.GetValue(Entidad, null)!;
-    }
 }

@@ -8,6 +8,7 @@ using Vito.Transverse.Identity.Api.Endpoints;
 using Vito.Transverse.Identity.Api.EndPoints;
 using Vito.Transverse.Identity.Api.Validators;
 using Vito.Transverse.Identity.BAL.IntegrationServices.Twilio;
+using Vito.Transverse.Identity.BAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
@@ -97,6 +98,7 @@ try
     builder.Services.AddTransient<ICultureService, CultureService>();
     builder.Services.AddTransient<ILocalizationService, LocalizationService>();
     builder.Services.AddTransient<ISecurityService, SecurityService>();
+    builder.Services.AddTransient<IAuditService, AuditService>();
     builder.Services.AddTransient<IMediaService, MediaService>();
 
     //Register Services
@@ -144,6 +146,7 @@ try
     app.MapCultureEndpoint(versionSet);
     app.MapCacheEndPoints(versionSet);
     app.MapMediaEndPoints(versionSet);
+    app.MapAuditEndPoints(versionSet);
     app.MapTwilioEndPoint(versionSet);
 
     if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Container"))

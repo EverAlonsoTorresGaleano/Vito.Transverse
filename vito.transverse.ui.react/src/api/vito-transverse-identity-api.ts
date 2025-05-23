@@ -20,7 +20,7 @@ export interface IClient {
 
     postApiOauth2V1Token(requestBody: TokenRequestDTO): Promise<TokenResponseDTO>;
 
-    postApiOauth2V1Company(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO>;
+    postApiOauth2V1Company(companyId: number, userId: number, companyApplications: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO>;
 
     postApiOauth2V1Application(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO>;
 
@@ -28,7 +28,7 @@ export interface IClient {
 
     putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<boolean>;
 
-    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean>;
+    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO>;
 
     getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean>;
 
@@ -56,21 +56,13 @@ export interface IClient {
 
     getApiOauth2V1UserPermissionList(userId: number): Promise<UserDTO>;
 
-    getApiOauth2V1CompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]>;
+    getApiLocalizationV1LocalizationMessagesListByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
 
-    getApiOauth2V1AuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]>;
+    getApiLocalizationV1LocalizationMessagesListByApplicationAndCulture(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]>;
 
-    getApiOauth2V1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]>;
+    getApiLocalizationV1LocalizationMessagesListByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]>;
 
-    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]>;
-
-    getApiLocalizationV1AllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
-
-    getApiLocalizationV1AllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]>;
-
-    getApiLocalizationV1LocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]>;
-
-    getApiLocalizationV1LocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
+    getApiLocalizationV1LocalizationMessageByKeySync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
 
     getApiCultureV1UtcNow(): Promise<Date>;
 
@@ -89,6 +81,14 @@ export interface IClient {
     getApiMediaV1PictureByName(companyId: number, name: string): Promise<void>;
 
     getApiMediaV1PictureByNameWildCard(companyId: number, wildCard: string): Promise<PictureDTO[]>;
+
+    getApiAuditV1CompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]>;
+
+    getApiAuditV1AuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]>;
+
+    getApiAuditV1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]>;
+
+    getApiAuditV1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]>;
 
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO>;
 }
@@ -282,7 +282,7 @@ export class Client implements IClient {
         return Promise.resolve<TokenResponseDTO>(null as any);
     }
 
-    postApiOauth2V1Company(companyId: number, userId: number, companyDTO: CompanyDTO): Promise<CompanyDTO> {
+    postApiOauth2V1Company(companyId: number, userId: number, companyApplications: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
@@ -294,7 +294,7 @@ export class Client implements IClient {
             url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(companyDTO);
+        const content_ = JSON.stringify(companyApplications);
 
         let options_: RequestInit = {
             body: content_,
@@ -310,13 +310,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processPostApiOauth2V1Company(response: Response): Promise<CompanyDTO> {
+    protected processPostApiOauth2V1Company(response: Response): Promise<CompanyApplicationsDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyDTO;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyApplicationsDTO;
             return result200;
             });
         } else if (status === 404) {
@@ -334,7 +334,7 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<CompanyDTO>(null as any);
+        return Promise.resolve<CompanyApplicationsDTO>(null as any);
     }
 
     postApiOauth2V1Application(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO> {
@@ -494,7 +494,7 @@ export class Client implements IClient {
         return Promise.resolve<boolean>(null as any);
     }
 
-    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationDTO): Promise<boolean> {
+    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyApplicationsAsync?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -518,13 +518,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processPutApiOauth2V1CompanyApplications(response: Response): Promise<boolean> {
+    protected processPutApiOauth2V1CompanyApplications(response: Response): Promise<CompanyApplicationsDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyApplicationsDTO;
             return result200;
             });
         } else if (status === 404) {
@@ -542,7 +542,7 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<boolean>(null as any);
+        return Promise.resolve<CompanyApplicationsDTO>(null as any);
     }
 
     getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean> {
@@ -1144,188 +1144,8 @@ export class Client implements IClient {
         return Promise.resolve<UserDTO>(null as any);
     }
 
-    getApiOauth2V1CompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyEntityAuditsListAsync?";
-        if (companyId !== undefined && companyId !== null)
-            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1CompanyEntityAuditsList(_response);
-        });
-    }
-
-    protected processGetApiOauth2V1CompanyEntityAuditsList(response: Response): Promise<CompanyEntityAuditDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyEntityAuditDTO[];
-            return result200;
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<CompanyEntityAuditDTO[]>(null as any);
-    }
-
-    getApiOauth2V1AuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/AuditRecordsListAsync?";
-        if (companyId !== undefined && companyId !== null)
-            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1AuditRecordsList(_response);
-        });
-    }
-
-    protected processGetApiOauth2V1AuditRecordsList(response: Response): Promise<AuditRecordDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuditRecordDTO[];
-            return result200;
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<AuditRecordDTO[]>(null as any);
-    }
-
-    getApiOauth2V1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/ActivityLogListAsync?";
-        if (companyId !== undefined && companyId !== null)
-            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1ActivityLogList(_response);
-        });
-    }
-
-    protected processGetApiOauth2V1ActivityLogList(response: Response): Promise<ActivityLogDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ActivityLogDTO[];
-            return result200;
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<ActivityLogDTO[]>(null as any);
-    }
-
-    getApiOauth2V1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]> {
-        let url_ = this.baseUrl + "/api/Oauth2/v1/NotificationsListAsync?";
-        if (companyId !== undefined && companyId !== null)
-            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiOauth2V1NotificationsList(_response);
-        });
-    }
-
-    protected processGetApiOauth2V1NotificationsList(response: Response): Promise<NotificationDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as NotificationDTO[];
-            return result200;
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<NotificationDTO[]>(null as any);
-    }
-
-    getApiLocalizationV1AllLocalizedMessagesByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/AllLocalizedMessagesByApplicationAsync?";
+    getApiLocalizationV1LocalizationMessagesListByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/LocalizationMessagesListByApplicationAsync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1340,11 +1160,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1AllLocalizedMessagesByApplication(_response);
+            return this.processGetApiLocalizationV1LocalizationMessagesListByApplication(_response);
         });
     }
 
-    protected processGetApiLocalizationV1AllLocalizedMessagesByApplication(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiLocalizationV1LocalizationMessagesListByApplication(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1371,8 +1191,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1AllLocalizedMessages(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/AllLocalizedMessagesAsync?";
+    getApiLocalizationV1LocalizationMessagesListByApplicationAndCulture(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/LocalizationMessagesListByApplicationAndCultureAsync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1389,11 +1209,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1AllLocalizedMessages(_response);
+            return this.processGetApiLocalizationV1LocalizationMessagesListByApplicationAndCulture(_response);
         });
     }
 
-    protected processGetApiLocalizationV1AllLocalizedMessages(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiLocalizationV1LocalizationMessagesListByApplicationAndCulture(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1420,8 +1240,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1LocalizedMessagesByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localization/v1/LocalizedMessagesByKeyAsync?";
+    getApiLocalizationV1LocalizationMessagesListByKey(applicationId: number, localizationMessageKey: string): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localization/v1/LocalizationMessagesListByKeyAsync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1440,11 +1260,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1LocalizedMessagesByKey(_response);
+            return this.processGetApiLocalizationV1LocalizationMessagesListByKey(_response);
         });
     }
 
-    protected processGetApiLocalizationV1LocalizedMessagesByKey(response: Response): Promise<CultureTranslationDTO[]> {
+    protected processGetApiLocalizationV1LocalizationMessagesListByKey(response: Response): Promise<CultureTranslationDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1471,8 +1291,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO[]>(null as any);
     }
 
-    getApiLocalizationV1LocalizedMessageByKeyAndParamsSync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
-        let url_ = this.baseUrl + "/api/Localization/v1/LocalizedMessageByKeyAndParamsSync?";
+    getApiLocalizationV1LocalizationMessageByKeySync(applicationId: number, cultureId: string | null | undefined, localizationMessageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
+        let url_ = this.baseUrl + "/api/Localization/v1/LocalizationMessageByKeySync?";
         if (applicationId === undefined || applicationId === null)
             throw new Error("The parameter 'applicationId' must be defined and cannot be null.");
         else
@@ -1495,11 +1315,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationV1LocalizedMessageByKeyAndParamsSync(_response);
+            return this.processGetApiLocalizationV1LocalizationMessageByKeySync(_response);
         });
     }
 
-    protected processGetApiLocalizationV1LocalizedMessageByKeyAndParamsSync(response: Response): Promise<CultureTranslationDTO> {
+    protected processGetApiLocalizationV1LocalizationMessageByKeySync(response: Response): Promise<CultureTranslationDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -1821,9 +1641,9 @@ export class Client implements IClient {
     protected processGetApiMediaV1PictureByName(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
+        if (status === 404) {
             return response.text().then((_responseText) => {
-            return;
+            return throwException("A server side error occurred.", status, _responseText, _headers);
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
@@ -1872,6 +1692,186 @@ export class Client implements IClient {
             });
         }
         return Promise.resolve<PictureDTO[]>(null as any);
+    }
+
+    getApiAuditV1CompanyEntityAuditsList(companyId: number | null | undefined): Promise<CompanyEntityAuditDTO[]> {
+        let url_ = this.baseUrl + "/api/Audit/v1/CompanyEntityAuditsListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiAuditV1CompanyEntityAuditsList(_response);
+        });
+    }
+
+    protected processGetApiAuditV1CompanyEntityAuditsList(response: Response): Promise<CompanyEntityAuditDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyEntityAuditDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CompanyEntityAuditDTO[]>(null as any);
+    }
+
+    getApiAuditV1AuditRecordsList(companyId: number | null | undefined): Promise<AuditRecordDTO[]> {
+        let url_ = this.baseUrl + "/api/Audit/v1/AuditRecordsListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiAuditV1AuditRecordsList(_response);
+        });
+    }
+
+    protected processGetApiAuditV1AuditRecordsList(response: Response): Promise<AuditRecordDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuditRecordDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AuditRecordDTO[]>(null as any);
+    }
+
+    getApiAuditV1ActivityLogList(companyId: number | null | undefined): Promise<ActivityLogDTO[]> {
+        let url_ = this.baseUrl + "/api/Audit/v1/ActivityLogListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiAuditV1ActivityLogList(_response);
+        });
+    }
+
+    protected processGetApiAuditV1ActivityLogList(response: Response): Promise<ActivityLogDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ActivityLogDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ActivityLogDTO[]>(null as any);
+    }
+
+    getApiAuditV1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]> {
+        let url_ = this.baseUrl + "/api/Audit/v1/NotificationsListAsync?";
+        if (companyId !== undefined && companyId !== null)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiAuditV1NotificationsList(_response);
+        });
+    }
+
+    protected processGetApiAuditV1NotificationsList(response: Response): Promise<NotificationDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as NotificationDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<NotificationDTO[]>(null as any);
     }
 
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO> {
@@ -1960,6 +1960,12 @@ export interface TokenRequestDTO {
     user_id?: string | undefined;
     user_secret?: string | undefined;
     refresh_token?: string | undefined;
+}
+
+export interface CompanyApplicationsDTO {
+    userId?: number;
+    company?: CompanyDTO;
+    applications?: ApplicationDTO[];
 }
 
 export interface CompanyDTO {
@@ -2094,11 +2100,6 @@ export interface ComponentDTO {
     applicationOwnerNameTranslationKey?: string;
 }
 
-export interface CompanyApplicationDTO {
-    companyInfo?: CompanyDTO;
-    applicationInfoList?: ApplicationDTO[];
-}
-
 export interface CompanyMembershipsDTO {
     id?: number;
     companyFk?: number;
@@ -2135,95 +2136,6 @@ export interface UserRoleDTO {
     applicationDescriptionTranslationKey?: string;
     applicationOwnerId?: number;
     applicationOwnerNameTranslationKey?: string;
-}
-
-export interface CompanyEntityAuditDTO {
-    companyFk?: number;
-    id?: number;
-    entityFk?: number;
-    auditTypeFk?: number;
-    creationDate?: Date;
-    createdByUserFk?: number;
-    lastUpdateDate?: Date | undefined;
-    updatedByUserFk?: number | undefined;
-    isActive?: boolean;
-    companyNameTranslationKey?: string;
-    auditTypeNameTranslationKey?: string;
-    entitySchemaName?: string;
-    entityName?: string;
-}
-
-export interface AuditRecordDTO {
-    companyFk?: number;
-    id?: number;
-    userFk?: number;
-    auditEntityFk?: number;
-    auditTypeFk?: number;
-    auditEntityIndex?: string;
-    hostName?: string;
-    ipAddress?: string;
-    deviceType?: string | undefined;
-    browser?: string;
-    platform?: string;
-    engine?: string;
-    cultureFk?: string;
-    endPointUrl?: string;
-    method?: string;
-    jwtToken?: string;
-    auditInfoJson?: string;
-    creationDate?: Date;
-    auditEntitySchemaName?: string;
-    auditEntityName?: string;
-    auditTypeNameTranslationKey?: string;
-    userName?: string;
-    companyNameTranslationKey?: string;
-    companyDescriptionTranslationKey?: string;
-}
-
-export interface ActivityLogDTO {
-    companyFk?: number;
-    userFk?: number;
-    traceId?: number;
-    eventDate?: Date;
-    deviceName?: string;
-    deviceType?: string;
-    actionTypeFk?: number;
-    ipAddress?: string;
-    browser?: string;
-    platform?: string;
-    engine?: string;
-    cultureId?: string;
-    endPointUrl?: string;
-    method?: string;
-    jwtToken?: string;
-    addtionalInformation?: string;
-    userName?: string;
-    companyNameTranslationKey?: string;
-    actionTypeNameTranslationKey?: string;
-    companyDescriptionTranslationKey?: string;
-}
-
-export interface NotificationDTO {
-    companyFk?: number;
-    notificationTemplateGroupFk?: number;
-    cultureFk?: string;
-    notificationTypeFk?: number;
-    id?: number;
-    creationDate?: Date;
-    sender?: string;
-    receiver?: string[] | undefined;
-    cc?: string[] | undefined;
-    bcc?: string[] | undefined;
-    subject?: string;
-    message?: string;
-    isSent?: boolean;
-    sentDate?: Date | undefined;
-    isHtml?: boolean;
-    companyNameTranslationKey?: string;
-    companyDescriptionTranslationKey?: string;
-    notificationTypeNameTranslationKey?: string;
-    notificationTemplateName?: string;
-    cultureNameTranslationKey?: string;
 }
 
 export interface CultureTranslationDTO {
@@ -2282,6 +2194,101 @@ export interface PictureDTO {
     companyId?: number;
     entityName?: string;
     entitySchemaName?: string;
+}
+
+export interface CompanyEntityAuditDTO {
+    companyFk?: number;
+    id?: number;
+    entityFk?: number;
+    auditTypeFk?: number;
+    creationDate?: Date;
+    createdByUserFk?: number;
+    lastUpdateDate?: Date | undefined;
+    updatedByUserFk?: number | undefined;
+    isActive?: boolean;
+    companyNameTranslationKey?: string;
+    auditTypeNameTranslationKey?: string;
+    entitySchemaName?: string;
+    entityName?: string;
+}
+
+export interface AuditRecordDTO {
+    companyFk?: number;
+    id?: number;
+    userFk?: number;
+    entityFk?: number;
+    auditTypeFk?: number;
+    auditEntityIndex?: string;
+    hostName?: string;
+    ipAddress?: string;
+    deviceType?: string;
+    browser?: string;
+    platform?: string;
+    engine?: string;
+    cultureFk?: string;
+    endPointUrl?: string;
+    method?: string;
+    queryString?: string;
+    userAgent?: string;
+    referer?: string;
+    applicationId?: number;
+    roleId?: number;
+    creationDate?: Date;
+    auditEntitySchemaName?: string;
+    auditEntityName?: string;
+    auditTypeNameTranslationKey?: string;
+    userName?: string;
+    companyNameTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
+}
+
+export interface ActivityLogDTO {
+    companyFk?: number;
+    userFk?: number;
+    traceId?: number;
+    eventDate?: Date;
+    deviceName?: string;
+    deviceType?: string;
+    actionTypeFk?: number;
+    ipAddress?: string;
+    browser?: string;
+    platform?: string;
+    engine?: string;
+    cultureId?: string;
+    endPointUrl?: string;
+    method?: string;
+    queryString?: string;
+    userAgent?: string;
+    referer?: string;
+    applicationId?: number;
+    roleId?: number;
+    userName?: string;
+    companyNameTranslationKey?: string;
+    actionTypeNameTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
+}
+
+export interface NotificationDTO {
+    companyFk?: number;
+    notificationTemplateGroupFk?: number;
+    cultureFk?: string;
+    notificationTypeFk?: number;
+    id?: number;
+    creationDate?: Date;
+    sender?: string;
+    receiver?: string[] | undefined;
+    cc?: string[] | undefined;
+    bcc?: string[] | undefined;
+    subject?: string;
+    message?: string;
+    isSent?: boolean;
+    sentDate?: Date | undefined;
+    isHtml?: boolean;
+    companyNameTranslationKey?: string;
+    companyDescriptionTranslationKey?: string;
+    notificationTypeNameTranslationKey?: string;
+    notificationTemplateName?: string;
+    cultureNameTranslationKey?: string;
 }
 
 export class ApiException extends Error {

@@ -1,21 +1,24 @@
 ﻿using System.Linq.Expressions;
-using Vito.Framework.Common.DTO;
-using Vito.Framework.Common.Enums;
+using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.Domain.Models;
+using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseServices.Audit;
 
 public interface IAuditRepository
 {
 
-    Task<AuditRecord> NewRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null);
+    Task<bool> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null);
 
-    Task<AuditRecord> UpdateRowAuditAsync(long companyId, long userId, object oldEntity, object newEntity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null);
+    Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(Expression<Func<CompanyEntityAudit, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<AuditRecord> DeleteRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, DataBaseServiceContext? context = null);
+    Task<List<EntityDTO>> GetEntitiesListAsync(Expression<Func<Entity, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<List<AuditRecord>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>> filters, DataBaseServiceContext? context = null);
+    Task<List<AuditRecordDTO>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<CompanyEntityAudit> GetCompanyEntityAuditAsync(long companyId, string entityName, EntityAuditTypeEnum auditType, DataBaseServiceContext? context = null);
+    Task<List<ActivityLogDTO>> GetActivityLogListAsync(Expression<Func<ActivityLog, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<List<NotificationDTO>> GetNotificationsListAsync(Expression<Func<Notification, bool>> filters, DataBaseServiceContext? context = null);
+
 }

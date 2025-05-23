@@ -86,7 +86,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         {
             entity.HasKey(e => e.TraceId).HasName("PK_UserTraces");
 
-            entity.Property(e => e.AddtionalInformation).HasColumnType("text");
             entity.Property(e => e.Browser).HasMaxLength(50);
             entity.Property(e => e.CultureId).HasMaxLength(50);
             entity.Property(e => e.DeviceName).HasMaxLength(50);
@@ -97,11 +96,19 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.Engine).HasMaxLength(50);
             entity.Property(e => e.EventDate).HasColumnType("datetime");
             entity.Property(e => e.IpAddress).HasMaxLength(50);
-            entity.Property(e => e.JwtToken).HasColumnType("text");
             entity.Property(e => e.Method)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Platform).HasMaxLength(50);
+            entity.Property(e => e.QueryString)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Referer)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.UserAgent)
+                .HasMaxLength(100)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.ActionTypeFkNavigation).WithMany(p => p.ActivityLogs)
                 .HasForeignKey(d => d.ActionTypeFk)
@@ -172,7 +179,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.AuditEntityIndex)
                 .HasMaxLength(75)
                 .IsUnicode(false);
-            entity.Property(e => e.AuditInfoJson).HasColumnType("text");
             entity.Property(e => e.Browser)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -195,12 +201,20 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.Property(e => e.IpAddress)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.JwtToken).HasColumnType("text");
             entity.Property(e => e.Method)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Platform)
                 .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.QueryString)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Referer)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.UserAgent)
+                .HasMaxLength(100)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.AuditTypeFkNavigation).WithMany(p => p.AuditRecords)

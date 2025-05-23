@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Data;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Text;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
@@ -17,21 +18,21 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 {
     CultureSettingsOptions _cultureSettingsOptionsValues => _cultureSettingsOptions.Value;
 
-    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByApplicationAsync(long applicationId)
+    public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesListAsync(Expression<Func<CultureTranslation, bool>> filters, DataBaseServiceContext? context = null)
     {
         List<CultureTranslation> returnList;
-        DataBaseServiceContext context = default!;
+
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
             returnList = await context.CultureTranslations
                 .Include(x => x.ApplicationFkNavigation)
                 .Include(x => x.CultureFkNavigation.LanguageFkNavigation)
-                .Where(x => x.ApplicationFk == applicationId).ToListAsync();
+                .Where(filters).ToListAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(GetAllLocalizedMessagesByApplicationAsync));
+            _logger.LogError(ex, nameof(GetLocalizedMessagesListAsync));
             throw;
         }
 
@@ -39,10 +40,10 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         return returnListDTO;
     }
 
-    public async Task<bool> AddAsync(CultureTranslationDTO newRecordDTO)
+    public async Task<bool> AddNewCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null)
     {
         var saveSuccessfuly = false;
-        DataBaseServiceContext context = default!;
+
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
@@ -53,17 +54,17 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(AddAsync));
+            _logger.LogError(ex, message: nameof(AddNewCultureTranslationAsync));
             throw;
         }
 
         return saveSuccessfuly;
     }
 
-    public async Task<bool> UpdateAsync(CultureTranslationDTO newRecordDTO)
+    public async Task<bool> UpdateCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null)
     {
         var saveSuccessfuly = false;
-        DataBaseServiceContext context = default!;
+
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
@@ -78,17 +79,17 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(UpdateAsync));
+            _logger.LogError(ex, message: nameof(UpdateCultureTranslationAsync));
             throw;
         }
 
         return saveSuccessfuly;
     }
 
-    public async Task<bool> DeleteAsync(string locationMessageKey)
+    public async Task<bool> DeleteCultureTranslationAsync(string locationMessageKey, DataBaseServiceContext? context = null)
     {
         var saveSuccessfuly = false;
-        DataBaseServiceContext context = default!;
+
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
@@ -102,7 +103,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(DeleteAsync));
+            _logger.LogError(ex, message: nameof(DeleteCultureTranslationAsync));
             throw;
         }
 

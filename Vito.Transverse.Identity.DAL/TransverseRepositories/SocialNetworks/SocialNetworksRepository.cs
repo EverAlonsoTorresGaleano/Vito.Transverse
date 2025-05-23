@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
 using Vito.Framework.Common.Enums;
@@ -11,6 +12,7 @@ using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.Domain.Extensions;
+using Vito.Transverse.Identity.Domain.Models;
 
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.SocialNetworks;
@@ -19,28 +21,24 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
 {
     EmailSettingsOptions _emailSettingsOptionsValues => _emailSettingsOptions.Value;
 
-    public async Task<NotificationTemplateDTO> GetNotificationTemplateByIdAsync(string id)
+    public async Task<List<NotificationTemplateDTO>> GetNotificationTemplateListAsync(Expression<Func<NotificationTemplate, bool>> filters, DataBaseServiceContext? context = null)
     {
-        DataBaseServiceContext context = default!;
-        NotificationTemplateDTO notificationTemplateInfoDTO = default!;
+       List< NotificationTemplateDTO> notificationTemplateInfoDTOList = default!;
         try
         {
             context = _dataBaseContextFactory.CreateDbContext();
-            var notificationTemplateInfo = await context.NotificationTemplates.FirstOrDefaultAsync(t => t.Id.Equals(id));
-            notificationTemplateInfoDTO = notificationTemplateInfo!.ToNotificationTemplateDTO();
+            var notificationTemplateInfo = await context.NotificationTemplates.Where(filters).ToListAsync();
+            notificationTemplateInfoDTOList = notificationTemplateInfo!.ToNotificationTemplateDTO();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetNotificationTemplateByIdAsync));
+            _logger.LogError(ex, message: nameof(GetNotificationTemplateListAsync));
         }
-        finally
-        {
-            context.Dispose();
-        }
-        return notificationTemplateInfoDTO;
+
+        return notificationTemplateInfoDTOList;
     }
 
-
+    //TODO MOve to service
     public async Task<bool> SendNotificationByTemplateAsync(long companyId, NotificationTypeEnum type, long templateId, List<KeyValuePair<string, string>> templateParameters, List<string> emailList, List<string>? emailListCC = null, List<string>? emailListBCC = null, string? cultureId = null, DataBaseServiceContext? context = null)
     {
         bool notificationSent = false;
@@ -79,6 +77,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
         return notificationSent;
     }
 
+    //TODO move to service
     public async Task<bool> SendNotificationAsync(NotificationDTO notificationInfoDTO, DataBaseServiceContext? context = null)
     {
 
@@ -117,6 +116,7 @@ public class SocialNetworksRepository(IDataBaseContextFactory _dataBaseContextFa
     }
 
 
+    //TODO  Move to service
     private async Task<bool> SendEmailNotification(NotificationDTO notificationInfoDTO)
     {
         bool emailSent = false;

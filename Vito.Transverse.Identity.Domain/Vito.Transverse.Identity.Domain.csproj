@@ -21,8 +21,4 @@
     <PackageReference Include="Vito.Framework.Common" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO\" />
-  </ItemGroup>
-
 </Project>

@@ -54,7 +54,7 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
             cacheList = await _cultureRepository.GetActiveCultureListAsync();
             //Localize
             cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
-            _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString(), cacheList);
+            _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() + applicationId, cacheList);
         }
         return cacheList;
     }

@@ -42,8 +42,6 @@ public static class HomeEndpoint
              .WithSummary("Ping version 0.9")
             .WithDescription("[Anonymous]")
             .AllowAnonymous();
-
-
     }
 
 
@@ -61,7 +59,6 @@ public static class HomeEndpoint
         var returnObjectAsync = await Task.FromResult(returnObject);
         return TypedResults.Ok(returnObjectAsync);
     }
-
 
     public static async Task<Results<Ok<PingResponseDTO>, UnauthorizedHttpResult>> DetectAync(
         HttpRequest request,
@@ -108,7 +105,4 @@ public static class HomeEndpoint
         return TypedResults.Ok(returnObjectAsync);
 
     }
-
-
-
 }

@@ -3,11 +3,13 @@ using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text;
 using Vito.Framework.Common.Constants;
+using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 using Vito.Transverse.Identity.Domain.Constants;
 using Vito.Transverse.Identity.Domain.Enums;
+using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Localization;
@@ -17,12 +19,12 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
     CultureSettingsOptions _cultureSettingsOptionsValues = _cultureSettingsOptions.Value;
 
 
-    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesByApplicationAsync(long applicationId)
+    public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesListByApplicationAsync(long applicationId)
     {
         var applicationMessageList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
         if (applicationMessageList == null)
         {
-            applicationMessageList = await _localizationRepository.GetAllLocalizedMessagesByApplicationAsync(applicationId);
+            applicationMessageList = await _localizationRepository.GetLocalizedMessagesListAsync(x => x.ApplicationFk == applicationId);
             _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString(), applicationMessageList);
         }
         return applicationMessageList;
@@ -30,7 +32,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
 
 
     //Fron end is suppoused to created json file on ther local files to render messages quickly
-    public async Task<List<CultureTranslationDTO>> GetAllLocalizedMessagesAsync(long applicationId, string cultureId)
+    public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesListByApplicationAndCultureAsync(long applicationId, string cultureId)
     {
         List<CultureTranslationDTO>? cultureMessageList = new();
         try
@@ -39,8 +41,11 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
             cultureMessageList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
             if (cultureMessageList == null)
             {
-                var applicationMessageList = await _localizationRepository.GetAllLocalizedMessagesByApplicationAsync(applicationId);
+                var applicationMessageList = await GetLocalizedMessagesListByApplicationAsync(applicationId);
                 cultureMessageList = applicationMessageList.Where(x => x.CultureFk.Equals(cultureId)).ToList();
+                _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId +
+                        applicationId.ToString() + cultureId, cultureMessageList);
+
 #if DEBUG
                 var fileName = string.Format(_cultureSettingsOptionsValues.LocalizationJsonFilePath!, cultureId);
                 var localizationFile = new StringBuilder("{");
@@ -54,30 +59,29 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
                 File.Delete(fileName);
                 File.WriteAllText(fileName, localizationFile.ToString());
 #endif
-                _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId, cultureMessageList);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAllLocalizedMessagesAsync));
+            _logger.LogError(ex, message: nameof(GetLocalizedMessagesListByApplicationAndCultureAsync));
             throw;
         }
         return cultureMessageList;
     }
 
 
-    public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesByKeyAsync(long applicationId, string localizationMessageKey)
+    public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesListByKeyAsync(long applicationId, string localizationMessageKey)
     {
         List<CultureTranslationDTO> returnList = new();
         try
         {
-            var applicationMessageList = await _localizationRepository.GetAllLocalizedMessagesByApplicationAsync(applicationId);
+            var applicationMessageList = await GetLocalizedMessagesListByApplicationAsync(applicationId);
             returnList = applicationMessageList.Where(x => x.TranslationKey.Equals(localizationMessageKey)).ToList();
         }
         catch (Exception ex)
         {
 
-            _logger.LogError(ex, message: nameof(GetLocalizedMessagesByKeyAsync));
+            _logger.LogError(ex, message: nameof(GetLocalizedMessagesListByKeyAsync));
             throw;
         }
         return returnList;
@@ -89,9 +93,9 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
         try
         {
             cultureId = !string.IsNullOrEmpty(cultureId) ? cultureId : CultureInfo.CurrentCulture.Name;
-            parameters = ValidateParamArray(parameters!)!;
+            parameters = CommonExtensions.ValidateParamArray(parameters!)!;
 
-            var returnList = GetAllLocalizedMessagesAsync(applicationId, cultureId).GetAwaiter().GetResult();
+            var returnList = GetLocalizedMessagesListByApplicationAndCultureAsync(applicationId, cultureId).GetAwaiter().GetResult();
 
             localizedMessage = returnList.FirstOrDefault(x => x.TranslationKey.Equals(localizationMessageKey));
 
@@ -117,7 +121,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
                 };
                 if (!string.IsNullOrEmpty(localizationMessageKey) && _cultureSettingsOptionsValues.AutoAddMissingTranslations)
                 {
-                    _localizationRepository.AddAsync(newRecord);
+                    _localizationRepository.AddNewCultureTranslationAsync(newRecord);
                 }
                 localizedMessage = newRecord;
             }
@@ -137,12 +141,5 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
     }
 
 
-    private static object[]? ValidateParamArray(object[]? parameters)
-    {
-        if (parameters?.Length == 1 && parameters.First().ToString()!.Contains(IdentityConstants.Separator_Comma))
-        {
-            parameters = parameters.First().ToString()!.Split(IdentityConstants.Separator_Comma);
-        }
-        return parameters;
-    }
+
 }

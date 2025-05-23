@@ -7,7 +7,7 @@ public interface IMediaService
 
     Task<List<PictureDTO>> GetPictureList(long companyId);
 
-    Task<PictureDTO> GetPictureByName(long companyId, string name);
+    Task<PictureDTO?> GetPictureByName(long companyId, string name);
 
     Task<List<PictureDTO>> GetPictureByNameWildCard(long companyId, string wildCard);
 

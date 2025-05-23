@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
+using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.Api.Helpers;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
@@ -18,7 +19,7 @@ public class InfrastructureFilter : IEndpointFilter
         _userDeviceDetectionService = userDeviceDetectionService;
     }
 
-    public ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var request = context.HttpContext.Request;
         var response = context.HttpContext.Response;
@@ -28,7 +29,7 @@ public class InfrastructureFilter : IEndpointFilter
         var detectRequestInfo = DetectRequestInfo(context.HttpContext);
 
         context.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] = detectRequestInfo;
-        return next(context);
+        return await next(context);
     }
 
 
@@ -37,9 +38,11 @@ public class InfrastructureFilter : IEndpointFilter
         var request = context.Request;
         var response = context.Response;
 
+        var jwtTokenBearer = request.Headers.Authorization.ToString();
+        var jwtToken = jwtTokenBearer.DecodeJwtTokenSync();
         DeviceInformationDTO deviceInfo = new()
         {
-            Name = request.Host.ToString(),
+            HostName = request.Host.ToString(),
             IpAddress = context.Connection.RemoteIpAddress?.ToString(),
             DeviceType = _userDeviceDetectionService.Device.Type.ToString(),
             Browser = $"{_userDeviceDetectionService.Browser.Name.ToString()} v{_userDeviceDetectionService.Browser.Version.ToString()}",
@@ -48,20 +51,15 @@ public class InfrastructureFilter : IEndpointFilter
             CultureId = request.GetCurrectCulture().Name,
             EndPointUrl = request.HttpContext.Request.Path!,
             Method = request.Method,
-            JwtToken = request.Headers.Authorization.ToString()
+            QueryString = request.QueryString.ToString(),
+            UserAgent = request.Headers.UserAgent.ToString(),
+            Referer = request.Headers.Referer.ToString(),
+            ApplicationId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.ApplicationId.ToString()),
+            CompanyId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.CompanyId.ToString()),
+            RoleId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.RoleId.ToString()),
+            UserId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.UserId.ToString()),
+
         };
-
-        var additionalInfo = deviceInfo.AddtionalInfo;
-        additionalInfo = [];
-
-        additionalInfo.Add(new("Endpoint", request.HttpContext.GetEndpoint()!.ToString()!));
-        //returList.Add(new( "ApiId", request.GetRequestHeaderApiId() ));
-        //returList.Add(new( "ApiScret", request.GetRequestHeaderApiScret() ));
-        //returList.Add(new( "CompanyId", request.GetRequestHeaderCompanyId().ToString() ));
-        additionalInfo.Add(new("Referer", request.Headers.Referer.ToString()));
-        additionalInfo.Add(new("UserAgent", request.Headers.UserAgent.ToString()));
-        //additionalInfo.Add(new("Authorization", request.Headers.Authorization.ToString()));
-        deviceInfo.AddtionalInfo = additionalInfo;
         return deviceInfo;
     }
 

@@ -1,14 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
+using Vito.Framework.Common.Enums;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
+using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Media;
 using Vito.Transverse.Identity.Domain.Enums;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Media;
 
-public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemoryCache cachingServiceMemoryCache, ILogger<MediaService> logger) : IMediaService
+public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemoryCache cachingServiceMemoryCache, ICultureRepository cultureRepository, ILogger<MediaService> logger) : IMediaService
 {
-    public async Task<PictureDTO> GetPictureByName(long companyId, string name)
+    public async Task<PictureDTO?> GetPictureByName(long companyId, string name)
     {
         try
         {
@@ -45,7 +47,7 @@ public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemor
             var returnList = cachingServiceMemoryCache.GetCacheDataByKey<List<PictureDTO>>(CacheItemKeysEnum.PictureListByCompanyId + companyId.ToString());
             if (returnList is null)
             {
-                returnList = await mediaRepository.GetPictureList(companyId);
+                returnList = await mediaRepository.GetPictureList(x => x.CompanyFk == companyId);
                 cachingServiceMemoryCache.SetCacheData(CacheItemKeysEnum.PictureListByCompanyId + companyId.ToString(), returnList);
             }
             return returnList;
@@ -56,4 +58,40 @@ public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemor
             throw;
         }
     }
+
+    public async Task<bool?> AddNewPictureAsync(PictureDTO picture)
+    {
+        bool? pictureSaved = null!;
+        try
+        {
+#if DEBUG
+            byte[] bytes = System.IO.File.ReadAllBytes(@"C:\ever.torresg\EATGSoft\Projects\Gestion Inmobiliaria Web\Codigo\EATG.GI.Web\Imagenes\Sistema\LogoFacebook.png");
+            string bytesStr = string.Join(",", bytes);
+
+            var newPicture = new PictureDTO()
+            {
+                EntityFk = 1,
+                FileTypeFk = (long)FileTypeEnum.FileType_Jpg,
+                PictureCategoryFk = (long)PictureCategoryTypeEnum.PictureCategoryType_System,
+                Id = 2,
+                CreatedByUserFk = 1,
+                IsActive = true,
+                Name = "LaPic",
+                PictureSize = 1026,
+                BinaryPicture = bytes
+            };
+#endif
+            newPicture.CreationDate = cultureRepository.UtcNow().DateTime;
+            pictureSaved = await mediaRepository.AddNewPictureAsync(newPicture);
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(GetPictureList));
+            throw;
+        }
+        return pictureSaved!;
+    }
+
+
 }
