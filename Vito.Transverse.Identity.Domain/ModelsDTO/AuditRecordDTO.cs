@@ -46,7 +46,7 @@ public record AuditRecordDTO
 
     public DateTime CreationDate { get; set; }
 
-
+    public string AuditChanges { get; set; } = null!;
 
     public string auditEntitySchemaName { get; set; } = null!;
     public string AuditEntityName { get; set; } = null!;

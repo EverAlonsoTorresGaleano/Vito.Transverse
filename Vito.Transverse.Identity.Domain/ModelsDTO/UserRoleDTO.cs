@@ -18,7 +18,7 @@ public record UserRoleDTO
 
 
 
-
+    public string UserName { get; set; } = null!;
     public string ApplicationNameTranslationKey { get; set; } = null!;
     public string RoleNameTranslationKey { get; set; } = null!;
     public string CompanyNameTranslationKey { get; set; } = null!;

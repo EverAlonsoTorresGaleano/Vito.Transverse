@@ -34,7 +34,9 @@ public enum CacheItemKeysEnum
     CompanyEntityAuditListByCompanyId,
 
     PictureListByCompanyId,
-    EntityList
+    EntityList,
+    UserListByCompanyId,
+    NotificationTemplates
 }
 
 public enum NotificationTemplatesEnum

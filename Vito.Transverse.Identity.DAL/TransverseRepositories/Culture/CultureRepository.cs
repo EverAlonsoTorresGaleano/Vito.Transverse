@@ -1,17 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Globalization;
-using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
-using Vito.Transverse.Identity.Domain.ModelsDTO;
 using Vito.Transverse.Identity.Domain.Extensions;
+using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 
-public class CultureRepository(IDataBaseContextFactory _dataBaseContextFactory, ILogger<LocalizationRepository> _logger) : ICultureRepository
+public class CultureRepository(IDataBaseContextFactory dataBaseContextFactory, ILogger<LocalizationRepository> logger) : ICultureRepository
 {
 
     public async Task<List<CultureDTO>> GetActiveCultureListAsync()
@@ -21,13 +19,13 @@ public class CultureRepository(IDataBaseContextFactory _dataBaseContextFactory, 
         DataBaseServiceContext context = default!;
         try
         {
-            context = _dataBaseContextFactory.CreateDbContext();
+            context = dataBaseContextFactory.CreateDbContext();
             var returnList = await context.Cultures.Where(x => x.IsEnabled).ToListAsync();
             returnListDTO = returnList.ToCultureDTOList();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetActiveCultureListAsync));
+            logger.LogError(ex, message: nameof(GetActiveCultureListAsync));
         }
         finally
         {

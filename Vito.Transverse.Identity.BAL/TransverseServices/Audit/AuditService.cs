@@ -4,15 +4,14 @@ using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
+using Vito.Transverse.Identity.DAL.TransverseRepositories.Audit;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
-using Vito.Transverse.Identity.DAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.Domain.Enums;
-using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Audit;
 
-public class AuditService(IAuditRepository auditRepository, ILogger<AuditService> _logger, ICultureRepository cultureRepository, ICachingServiceMemoryCache _cachingService) : IAuditService
+public class AuditService(IAuditRepository auditRepository, ILogger<AuditService> logger, ICultureRepository cultureRepository, ICachingServiceMemoryCache cachingService) : IAuditService
 {
     public async Task<AuditRecordDTO> DeleteRowAuditAsync(long companyId, long userId, object entity, string entityIndex, DeviceInformationDTO devideInformation, bool forceAudit = false)
     {
@@ -85,7 +84,7 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
     {
         try
         {
-            var entityName = entity.GetType().Name;
+            var entityName = entity.GetType().Name.Replace("DTO", string.Empty);
             var companyAuditList = await GetCompanyEntityAuditsListAsync(companyId);
             var auditEntity = companyAuditList.FirstOrDefault(x => x.CompanyFk == companyId
                             && x.AuditTypeFk == (long)auditType
@@ -95,7 +94,7 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(IsCompanyEntityEnableForAuditAsync));
+            logger.LogError(ex, nameof(IsCompanyEntityEnableForAuditAsync));
             throw;
         }
     }
@@ -104,17 +103,17 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<EntityDTO>>(CacheItemKeysEnum.EntityList.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<EntityDTO>>(CacheItemKeysEnum.EntityList.ToString());
             if (returnList == null)
             {
                 returnList = await auditRepository.GetEntitiesListAsync(x => x.Id > 0);
-                _cachingService.SetCacheData(CacheItemKeysEnum.EntityList.ToString(), returnList);
+                cachingService.SetCacheData(CacheItemKeysEnum.EntityList.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
             throw;
         }
 
@@ -124,18 +123,18 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<CompanyEntityAuditDTO>>(CacheItemKeysEnum.CompanyEntityAuditListByCompanyId + companyId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<CompanyEntityAuditDTO>>(CacheItemKeysEnum.CompanyEntityAuditListByCompanyId + companyId.ToString());
             if (returnList == null)
             {
                 returnList = await auditRepository.GetCompanyEntityAuditsListAsync(x =>
                     (x.CompanyFk == companyId || companyId == null));
-                _cachingService.SetCacheData(CacheItemKeysEnum.CompanyEntityAuditListByCompanyId + companyId.ToString(), returnList);
+                cachingService.SetCacheData(CacheItemKeysEnum.CompanyEntityAuditListByCompanyId + companyId.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
             throw;
         }
     }
@@ -150,7 +149,7 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAuditRecordsListAsync));
+            logger.LogError(ex, message: nameof(GetAuditRecordsListAsync));
             throw;
         }
     }
@@ -165,7 +164,7 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetActivityLogListAsync));
+            logger.LogError(ex, message: nameof(GetActivityLogListAsync));
             throw;
         }
     }
@@ -180,7 +179,7 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetNotificationsListAsync));
+            logger.LogError(ex, message: nameof(GetNotificationsListAsync));
             throw;
         }
     }
@@ -210,6 +209,7 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
             Referer = devideInformation.Referer!,
             ApplicationId = devideInformation.ApplicationId!.Value,
             RoleId = devideInformation.RoleId!.Value,
+            AuditChanges = auditInformation
         };
         return newRecord;
     }

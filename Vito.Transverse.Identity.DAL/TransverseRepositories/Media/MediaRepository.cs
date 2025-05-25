@@ -9,7 +9,7 @@ using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Media;
 
-public class MediaRepository(IDataBaseContextFactory _dataBaseContextFactory, ILogger<MediaRepository> Logger) : IMediaRepository
+public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILogger<MediaRepository> logger) : IMediaRepository
 {
 
     public async Task<List<PictureDTO>> GetPictureList(Expression<Func<Picture, bool>> filters, DataBaseServiceContext? context = null)
@@ -17,7 +17,7 @@ public class MediaRepository(IDataBaseContextFactory _dataBaseContextFactory, IL
         List<PictureDTO>? returnList = null!;
         try
         {
-            context = _dataBaseContextFactory.GetDbContext(context);
+            context = dataBaseContextFactory.GetDbContext(context);
             var databaseList = await context.Pictures
                     .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.EntityFkNavigation)
@@ -29,7 +29,7 @@ public class MediaRepository(IDataBaseContextFactory _dataBaseContextFactory, IL
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, nameof(GetPictureList));
+            logger.LogError(ex, nameof(GetPictureList));
             throw;
         }
         return returnList!;
@@ -40,7 +40,7 @@ public class MediaRepository(IDataBaseContextFactory _dataBaseContextFactory, IL
         bool recordSaved = false;
         try
         {
-            context = _dataBaseContextFactory.GetDbContext(context);
+            context = dataBaseContextFactory.GetDbContext(context);
             var dbRecord = newRecord.ToPicture();
             context.Pictures.Add(dbRecord);
             var recordAffected = await context.SaveChangesAsync();
@@ -48,7 +48,7 @@ public class MediaRepository(IDataBaseContextFactory _dataBaseContextFactory, IL
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, nameof(GetPictureList));
+            logger.LogError(ex, nameof(GetPictureList));
             throw;
         }
         return recordSaved;

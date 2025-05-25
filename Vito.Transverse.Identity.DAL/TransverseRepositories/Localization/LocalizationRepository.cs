@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using System.Data;
 using System.Globalization;
 using System.Linq.Expressions;
-using System.Text;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
@@ -14,9 +13,9 @@ using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 
-public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFactory, IOptions<CultureSettingsOptions> _cultureSettingsOptions, ILogger<LocalizationRepository> _logger) : ILocalizationRepository
+public class LocalizationRepository(IDataBaseContextFactory dataBaseContextFactory, IOptions<CultureSettingsOptions> cultureSettingsOptions, ILogger<LocalizationRepository> logger) : ILocalizationRepository
 {
-    CultureSettingsOptions _cultureSettingsOptionsValues => _cultureSettingsOptions.Value;
+    CultureSettingsOptions _cultureSettingsOptionsValues => cultureSettingsOptions.Value;
 
     public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesListAsync(Expression<Func<CultureTranslation, bool>> filters, DataBaseServiceContext? context = null)
     {
@@ -24,7 +23,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 
         try
         {
-            context = _dataBaseContextFactory.CreateDbContext();
+            context = dataBaseContextFactory.CreateDbContext();
             returnList = await context.CultureTranslations
                 .Include(x => x.ApplicationFkNavigation)
                 .Include(x => x.CultureFkNavigation.LanguageFkNavigation)
@@ -32,7 +31,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(GetLocalizedMessagesListAsync));
+            logger.LogError(ex, nameof(GetLocalizedMessagesListAsync));
             throw;
         }
 
@@ -46,7 +45,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 
         try
         {
-            context = _dataBaseContextFactory.CreateDbContext();
+            context = dataBaseContextFactory.CreateDbContext();
             var newRecord = newRecordDTO.ToCultureTranslation();
             await context.CultureTranslations.AddAsync(newRecord);
             var recordAffected = await context.SaveChangesAsync();
@@ -54,7 +53,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(AddNewCultureTranslationAsync));
+            logger.LogError(ex, message: nameof(AddNewCultureTranslationAsync));
             throw;
         }
 
@@ -67,7 +66,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 
         try
         {
-            context = _dataBaseContextFactory.CreateDbContext();
+            context = dataBaseContextFactory.CreateDbContext();
             //Get Culture fron Main Thread
             var cultureId = CultureInfo.CurrentCulture.Name;
             var newRecord = newRecordDTO.ToCultureTranslation();
@@ -79,7 +78,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(UpdateCultureTranslationAsync));
+            logger.LogError(ex, message: nameof(UpdateCultureTranslationAsync));
             throw;
         }
 
@@ -92,7 +91,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
 
         try
         {
-            context = _dataBaseContextFactory.CreateDbContext();
+            context = dataBaseContextFactory.CreateDbContext();
             //Get Culture fron Main Thread
             var cultureId = CultureInfo.CurrentCulture.Name;
             var recordToDelete = await context.CultureTranslations.FirstOrDefaultAsync(x => x.CultureFk.Equals(cultureId) && x.TranslationKey.Equals(locationMessageKey));
@@ -103,7 +102,7 @@ public class LocalizationRepository(IDataBaseContextFactory _dataBaseContextFact
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(DeleteCultureTranslationAsync));
+            logger.LogError(ex, message: nameof(DeleteCultureTranslationAsync));
             throw;
         }
 

@@ -64,7 +64,7 @@ public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemor
         bool? pictureSaved = null!;
         try
         {
-#if DEBUG
+//#if DEBUG
             byte[] bytes = System.IO.File.ReadAllBytes(@"C:\ever.torresg\EATGSoft\Projects\Gestion Inmobiliaria Web\Codigo\EATG.GI.Web\Imagenes\Sistema\LogoFacebook.png");
             string bytesStr = string.Join(",", bytes);
 
@@ -80,7 +80,7 @@ public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemor
                 PictureSize = 1026,
                 BinaryPicture = bytes
             };
-#endif
+//#endif
             newPicture.CreationDate = cultureRepository.UtcNow().DateTime;
             pictureSaved = await mediaRepository.AddNewPictureAsync(newPicture);
 

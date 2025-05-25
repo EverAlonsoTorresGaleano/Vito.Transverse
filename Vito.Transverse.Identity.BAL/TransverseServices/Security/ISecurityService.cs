@@ -1,6 +1,7 @@
 ﻿using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.Security;
+using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.Domain.DTO;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
@@ -11,24 +12,29 @@ public interface ISecurityService
 {
     Task<TokenResponseDTO> NewJwtTokenAsync(TokenRequestDTO requestBody, DeviceInformationDTO deviceInformation);
 
-    Task<ApplicationDTO> CreateNewApplicationAsync(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId);
+    Task<ActivityLogDTO?> AddNewActivityLogAsync(long? companyId, long? applicationId, long? userId, long? roleId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
-    Task<CompanyApplicationsDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation);
+    Task<ActivityLogDTO?> AddNewActivityLogAsync(DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
-    Task<CompanyApplicationsDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation);
+    Task<ApplicationDTO?> CreateNewApplicationAsync(ApplicationDTO newRecord, DeviceInformationDTO deviceInformation);
 
-    Task<UserDTO?> CreateNewUserAsync(long companyId, UserDTO userInfo, DeviceInformationDTO deviceInformation);
+    Task<CompanyDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO newRecord, DeviceInformationDTO deviceInformation);
 
-    Task<bool?> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation);
+    Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation);
 
+    Task<UserDTO?> CreateNewUserAsync(long companyId, UserDTO newRecord, DeviceInformationDTO deviceInformation);
 
-    Task<bool?> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation);
+    Task<UserDTO?> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation);
+
+    Task<UserDTO?> UpdateLastUserAccessAsync(long userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
+
+    Task<UserDTO?> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation);
 
     Task<bool?> ActivateAccountAsync(string activationToken, DeviceInformationDTO deviceInformation);
 
     Task<EndpointDTO?> ValidateEndpointAuthorizationAsync(DeviceInformationDTO deviceInformation);
 
-    Task<bool?> AddNewActivityLogAsync(DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus);
+
 
     Task<List<ApplicationDTO>> GetAllApplicationListAsync();
 

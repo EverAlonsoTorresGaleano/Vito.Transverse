@@ -176,6 +176,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
         modelBuilder.Entity<AuditRecord>(entity =>
         {
+            entity.Property(e => e.AuditChanges).HasColumnType("text");
             entity.Property(e => e.AuditEntityIndex)
                 .HasMaxLength(75)
                 .IsUnicode(false);

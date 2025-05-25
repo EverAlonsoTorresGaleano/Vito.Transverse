@@ -231,7 +231,8 @@ public static class MapperExtension
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             Email = modelObject.Email,
-            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation is null ? string.Empty : modelObject.CompanyFkNavigation.NameTranslationKey,
+            CompanyClient = modelObject.CompanyFkNavigation is null ? string.Empty : modelObject.CompanyFkNavigation.CompanyClient,
 
         };
         returnObject.Roles = new();
@@ -306,6 +307,43 @@ public static class MapperExtension
         };
         return returnObject;
     }
+
+
+    public static UserDTOToken ToUserDTOToken(this UserDTO modelEntity, ApplicationDTO? applicationEntity, UserRoleDTO? roleEntity, OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_Undefined)
+    {
+        UserDTOToken returnObject = new()
+        {
+
+            Id = modelEntity.Id,
+            UserName = modelEntity.UserName,
+            Password = null!,
+            EmailValidated = modelEntity.EmailValidated,
+            IsLocked = modelEntity.IsLocked,
+            RequirePasswordChange = modelEntity.RequirePasswordChange,
+            RetryCount = modelEntity.RetryCount,
+            LastAccess = modelEntity.LastAccess,
+            IsActive = modelEntity.IsActive,
+
+            Name = modelEntity.Name,
+            LastName = modelEntity.LastName,
+            Email = modelEntity.Email,
+
+            ApplicationOwnerId = applicationEntity!.ApplicationOwnerId,
+            ApplicationOwnerNameTranslationKey = applicationEntity.ApplicationOwnerNameTranslationKey,
+
+            ApplicationId = applicationEntity.Id,
+            ApplicationNameTranslationKey = applicationEntity.NameTranslationKey,
+
+            CompanyFk = modelEntity.CompanyFk,
+            CompanyNameTranslationKey = modelEntity.CompanyNameTranslationKey,
+
+            RoleId = roleEntity?.RoleFk,
+            RoleName = roleEntity?.RoleNameTranslationKey,
+            ActionStatus = actionStatus
+        };
+        return returnObject;
+    }
+
 
     public static User ToUser(this UserDTO modelObject)
     {
@@ -396,6 +434,7 @@ public static class MapperExtension
         };
         return returnObject;
     }
+
 
 
 
@@ -684,6 +723,8 @@ public static class MapperExtension
             RoleNameTranslationKey = modelObject.RoleFkNavigation.NameTranslationKey,
             RoleDescriptionTranslationKey = modelObject.RoleFkNavigation.DescriptionTranslationKey,
 
+            UserName = modelObject.UserFkNavigation.UserName,
+
             ApplicationFk = modelObject.ApplicationFk,
             ApplicationNameTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.NameTranslationKey,
             ApplicationDescriptionTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.DescriptionTranslationKey,
@@ -735,7 +776,7 @@ public static class MapperExtension
             UserAgent = modelObject.UserAgent,
             ApplicationId = modelObject.ApplicationId,
             RoleId = modelObject.RoleId,
-
+            AuditChanges = modelObject.AuditChanges,
 
 
 
@@ -758,7 +799,7 @@ public static class MapperExtension
             AuditEntityIndex = modelObject.AuditEntityIndex,
             AuditTypeFk = modelObject.AuditTypeFk,
             Browser = modelObject.Browser,
-            CreationDate = modelObject.CreationDate.ToLocalTime(),
+            CreationDate = modelObject.CreationDate.ToUniversalTime(),
             CultureFk = modelObject.CultureFk,
             DeviceType = modelObject.DeviceType!,
             Engine = modelObject.Engine,
@@ -774,6 +815,7 @@ public static class MapperExtension
             UserAgent = modelObject.UserAgent,
             ApplicationId = modelObject.ApplicationId,
             RoleId = modelObject.RoleId,
+            AuditChanges = modelObject.AuditChanges,
 
         };
         return returnObject;
@@ -816,14 +858,52 @@ public static class MapperExtension
             RoleId = modelObject.RoleId,
 
 
-            UserName = modelObject.UserFkNavigation.UserName,
-            CompanyNameTranslationKey = modelObject.UserFkNavigation.CompanyFkNavigation.NameTranslationKey,
-            CompanyDescriptionTranslationKey = modelObject.UserFkNavigation.CompanyFkNavigation.DescriptionTranslationKey,
-            ActionTypeNameTranslationKey = modelObject.ActionTypeFkNavigation.NameTranslationKey,
+            UserName = modelObject.UserFkNavigation is null ? string.Empty: modelObject.UserFkNavigation.UserName,
+            CompanyNameTranslationKey = modelObject.UserFkNavigation is null ? string.Empty : modelObject.UserFkNavigation.CompanyFkNavigation.NameTranslationKey,
+            CompanyDescriptionTranslationKey = modelObject.UserFkNavigation is null ? string.Empty : modelObject.UserFkNavigation.CompanyFkNavigation.DescriptionTranslationKey,
+            ActionTypeNameTranslationKey = modelObject.ActionTypeFkNavigation is null ? string.Empty : modelObject.ActionTypeFkNavigation is null ? string.Empty : modelObject.ActionTypeFkNavigation.NameTranslationKey,
         };
         return returnObject;
     }
 
+
+    public static List<ActivityLog> ToActivityLogList(this List<ActivityLogDTO> modelObjectList)
+    {
+        List<ActivityLog> returnList = [];
+        modelObjectList.ForEach(modelObject =>
+        {
+            returnList.Add(modelObject.ToActivityLog()!);
+        });
+        return returnList;
+    }
+
+    public static ActivityLog ToActivityLog(this ActivityLogDTO modelObject)
+    {
+        ActivityLog returnObject = new()
+        {
+            ActionTypeFk = modelObject.ActionTypeFk,
+            Browser = modelObject.Browser,
+            CompanyFk = modelObject.CompanyFk,
+            CultureId = modelObject.CultureId,
+            DeviceName = modelObject.DeviceName,
+            DeviceType = modelObject.DeviceType,
+            Engine = modelObject.Engine,
+            EventDate = modelObject.EventDate.ToLocalTime(),
+            IpAddress = modelObject.IpAddress,
+            Platform = modelObject.Platform,
+            TraceId = modelObject.TraceId,
+            UserFk = modelObject.UserFk,
+            EndPointUrl = modelObject.EndPointUrl,
+            Method = modelObject.Method,
+            QueryString = modelObject.QueryString,
+            Referer = modelObject.Referer,
+            UserAgent = modelObject.UserAgent,
+            ApplicationId = modelObject.ApplicationId,
+            RoleId = modelObject.RoleId,
+
+        };
+        return returnObject;
+    }
 
 
     public static List<NotificationDTO> ToNotificationDTOList(this List<Notification> modelObjectList)

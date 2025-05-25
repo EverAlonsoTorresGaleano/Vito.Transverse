@@ -190,7 +190,7 @@ public static class SecurityEndpoint
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<bool>, UnauthorizedHttpResult, NotFound, ValidationProblem>> ChangeUserPasswordAsync(
+    public static async Task<Results<Ok<UserDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> ChangeUserPasswordAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<UserDTO> validator,
@@ -205,10 +205,10 @@ public static class SecurityEndpoint
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
         var returnObject = await securityService.ChangeUserPasswordAsync(userInfo, deviceInformation!);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<bool>, UnauthorizedHttpResult, NotFound, ValidationProblem>> SendActivationEmailAsync(
+    public static async Task<Results<Ok<UserDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> SendActivationEmailAsync(
      HttpRequest request,
      [FromServices] ISecurityService securityService,
      [FromQuery] long companyId,
@@ -217,10 +217,10 @@ public static class SecurityEndpoint
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
         var returnObject = await securityService.SendActivationEmailAsync(companyId, userId, deviceInformation!);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<bool>, NotFound, ValidationProblem>> ActivateAccountAsync(
+    public static async Task<Results<Ok<bool?>, NotFound, ValidationProblem>> ActivateAccountAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<string> validator,
@@ -234,7 +234,7 @@ public static class SecurityEndpoint
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
         var returnObject = await securityService.ActivateAccountAsync(activationToken, deviceInformation!);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject.Value);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
 
@@ -253,11 +253,11 @@ public static class SecurityEndpoint
         {
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
-        var returnObject = await securityService.CreateNewApplicationAsync(applicationDTO, deviceInformation!, companyId, userId);
+        var returnObject = await securityService.CreateNewApplicationAsync(applicationDTO, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<CompanyApplicationsDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewCompanyAsync(
+    public static async Task<Results<Ok<CompanyDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewCompanyAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<CompanyApplicationsDTO> validator,
@@ -276,7 +276,7 @@ public static class SecurityEndpoint
     }
 
 
-    public static async Task<Results<Ok<CompanyApplicationsDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateCompanyApplicationsAsync(
+    public static async Task<Results<Ok<CompanyDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateCompanyApplicationsAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] IValidator<CompanyApplicationsDTO> validator,
@@ -294,7 +294,7 @@ public static class SecurityEndpoint
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
- 
+
 
 
 

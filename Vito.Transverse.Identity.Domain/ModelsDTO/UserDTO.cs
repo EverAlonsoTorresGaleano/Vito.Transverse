@@ -51,4 +51,9 @@ public class UserDTO
     public List<RoleDTO> Roles { get; set; } = new();
 
     public string CompanyNameTranslationKey { get; set; } = null!;
+    public object CompanyClient { get;  set; }=null!;
+
+    public string NewPassword1 { get; set; } = null!;
+
+    public string NewPassword2 { get; set; } = null!;
 }

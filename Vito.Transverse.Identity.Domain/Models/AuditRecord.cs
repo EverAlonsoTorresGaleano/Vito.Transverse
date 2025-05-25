@@ -47,6 +47,8 @@ public partial class AuditRecord
 
     public DateTime CreationDate { get; set; }
 
+    public string AuditChanges { get; set; } = null!;
+
     public virtual GeneralTypeItem AuditTypeFkNavigation { get; set; } = null!;
 
     public virtual Company CompanyFkNavigation { get; set; } = null!;

@@ -11,25 +11,25 @@ namespace Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 
 
 /// <see cref="ICultureService"/>
-public class CultureService(ICultureRepository _cultureRepository, ILocalizationService localizationService, ICachingServiceMemoryCache _cachingService, IOptions<CultureSettingsOptions> _cultureSettingsOptions) : ICultureService
+public class CultureService(ICultureRepository cultureRepository, ILocalizationService localizationService, ICachingServiceMemoryCache cachingService, IOptions<CultureSettingsOptions> cultureSettingsOptions) : ICultureService
 {
 
-    CultureSettingsOptions _cultureSettingsOptionsValues = _cultureSettingsOptions.Value;
+    CultureSettingsOptions _cultureSettingsOptionsValues = cultureSettingsOptions.Value;
 
     #region Date/Time
     public CultureInfo GetCurrectCulture()
     {
-        return _cultureRepository.GetCurrentCulture();
+        return cultureRepository.GetCurrentCulture();
     }
 
     public string SetCurrectCulture(string cultureId)
     {
-        return _cultureRepository.SetCurrentCulture(cultureId);
+        return cultureRepository.SetCurrentCulture(cultureId);
     }
 
     public DateTimeOffset UtcNow()
     {
-        return _cultureRepository.UtcNow();
+        return cultureRepository.UtcNow();
     }
     #endregion 
 
@@ -37,7 +37,7 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
 
     public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync(long applicationId)
     {
-        string cultureId = _cultureRepository.GetCurrentCultureId();
+        string cultureId = cultureRepository.GetCurrentCultureId();
         var returnList = await GetActiveCultureListAsync(applicationId);
         var returnListDTO = returnList.ToListItemDTOList();
         returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
@@ -46,15 +46,15 @@ public class CultureService(ICultureRepository _cultureRepository, ILocalization
 
     public async Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId)
     {
-        string cultureId = _cultureRepository.GetCurrentCultureId();
-        var cacheList = _cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
+        string cultureId = cultureRepository.GetCurrentCultureId();
+        var cacheList = cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
         List<CultureDTO> returnList = new();
         if (cacheList == null)
         {
-            cacheList = await _cultureRepository.GetActiveCultureListAsync();
+            cacheList = await cultureRepository.GetActiveCultureListAsync();
             //Localize
             cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
-            _cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() + applicationId, cacheList);
+            cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() + applicationId, cacheList);
         }
         return cacheList;
     }

@@ -8,20 +8,20 @@ using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
-namespace Vito.Transverse.Identity.DAL.TransverseServices.Audit;
+namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Audit;
 
 public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, ILogger<AuditRepository> logger) : IAuditRepository
 {
-    public async Task<bool> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null)
+    public async Task<AuditRecordDTO?> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null)
     {
-        bool recordSaved = false;
+        AuditRecordDTO? recordSaved = null;
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
             var dbRecord = newRecord.ToAuditRecord();
             context.AuditRecords.Add(dbRecord);
             var recordAffected = await context.SaveChangesAsync();
-            recordSaved = recordAffected > 0;
+            recordSaved = dbRecord.ToAuditRecordDTO();
         }
         catch (Exception ex)
         {

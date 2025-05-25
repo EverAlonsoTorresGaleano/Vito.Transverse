@@ -4,12 +4,12 @@ using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
-namespace Vito.Transverse.Identity.DAL.TransverseServices.Audit;
+namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Audit;
 
 public interface IAuditRepository
 {
 
-    Task<bool> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null);
+    Task<AuditRecordDTO?> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null);
 
     Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(Expression<Func<CompanyEntityAudit, bool>> filters, DataBaseServiceContext? context = null);
 

@@ -14,14 +14,15 @@ using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 using Vito.Transverse.Identity.BAL.TransverseServices.Media;
 using Vito.Transverse.Identity.BAL.TransverseServices.Security;
+using Vito.Transverse.Identity.BAL.TransverseServices.SocialNetworks;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
+using Vito.Transverse.Identity.DAL.TransverseRepositories.Audit;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Media;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.SocialNetworks;
-using Vito.Transverse.Identity.DAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.Domain.Constants;
 using Vito.Transverse.Identity.Domain.Options;
 
@@ -100,6 +101,7 @@ try
     builder.Services.AddTransient<ISecurityService, SecurityService>();
     builder.Services.AddTransient<IAuditService, AuditService>();
     builder.Services.AddTransient<IMediaService, MediaService>();
+    builder.Services.AddTransient<ISocialNetworkService, SocialNetworkService>();
 
     //Register Services
     builder.Services.AddTransient<ITwilioService, TwilioService>();

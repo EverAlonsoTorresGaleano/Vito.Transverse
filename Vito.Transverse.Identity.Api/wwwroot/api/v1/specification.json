@@ -159,7 +159,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyApplicationsDTO"
+                  "$ref": "#/components/schemas/CompanyDTO"
                 }
               }
             }
@@ -331,7 +331,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/UserDTO"
                 }
               }
             }
@@ -385,7 +385,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyApplicationsDTO"
+                  "$ref": "#/components/schemas/CompanyDTO"
                 }
               }
             }
@@ -437,7 +437,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/UserDTO"
                 }
               }
             }
@@ -478,7 +478,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "nullable": true
                 }
               }
             }
@@ -1829,25 +1830,6 @@
           }
         }
       },
-      "CompanyApplicationsDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "company": {
-            "$ref": "#/components/schemas/CompanyDTO"
-          },
-          "applications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationDTO"
-            }
-          }
-        }
-      },
       "CompanyDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -1916,6 +1898,25 @@
           },
           "languageNameTranslationKey": {
             "type": "string"
+          }
+        }
+      },
+      "CompanyApplicationsDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "company": {
+            "$ref": "#/components/schemas/CompanyDTO"
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationDTO"
+            }
           }
         }
       },
@@ -2078,6 +2079,13 @@
             }
           },
           "companyNameTranslationKey": {
+            "type": "string"
+          },
+          "companyClient": {},
+          "newPassword1": {
+            "type": "string"
+          },
+          "newPassword2": {
             "type": "string"
           }
         }
@@ -2405,6 +2413,9 @@
           },
           "isActive": {
             "type": "boolean"
+          },
+          "userName": {
+            "type": "string"
           },
           "applicationNameTranslationKey": {
             "type": "string"
@@ -2744,6 +2755,9 @@
           "creationDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "auditChanges": {
+            "type": "string"
           },
           "auditEntitySchemaName": {
             "type": "string"

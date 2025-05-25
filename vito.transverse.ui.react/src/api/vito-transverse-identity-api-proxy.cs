@@ -474,14 +474,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CompanyApplicationsDTO> PostApiOauth2V1CompanyAsync(long companyId, long userId, CompanyApplicationsDTO companyApplications)
+        public virtual System.Threading.Tasks.Task<CompanyDTO> PostApiOauth2V1CompanyAsync(long companyId, long userId, CompanyApplicationsDTO companyApplications)
         {
             return PostApiOauth2V1CompanyAsync(companyId, userId, companyApplications, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CompanyApplicationsDTO> PostApiOauth2V1CompanyAsync(long companyId, long userId, CompanyApplicationsDTO companyApplications, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CompanyDTO> PostApiOauth2V1CompanyAsync(long companyId, long userId, CompanyApplicationsDTO companyApplications, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -539,7 +539,7 @@ namespace Vito.Transverse.Identity.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CompanyApplicationsDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CompanyDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -797,14 +797,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> PutApiOauth2V1UserPasswordAsync(long companyId, UserDTO userInfo)
+        public virtual System.Threading.Tasks.Task<UserDTO> PutApiOauth2V1UserPasswordAsync(long companyId, UserDTO userInfo)
         {
             return PutApiOauth2V1UserPasswordAsync(companyId, userInfo, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> PutApiOauth2V1UserPasswordAsync(long companyId, UserDTO userInfo, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDTO> PutApiOauth2V1UserPasswordAsync(long companyId, UserDTO userInfo, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -858,7 +858,7 @@ namespace Vito.Transverse.Identity.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -902,14 +902,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CompanyApplicationsDTO> PutApiOauth2V1CompanyApplicationsAsync(long userId, CompanyApplicationsDTO companyApplicationInfo)
+        public virtual System.Threading.Tasks.Task<CompanyDTO> PutApiOauth2V1CompanyApplicationsAsync(long userId, CompanyApplicationsDTO companyApplicationInfo)
         {
             return PutApiOauth2V1CompanyApplicationsAsync(userId, companyApplicationInfo, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CompanyApplicationsDTO> PutApiOauth2V1CompanyApplicationsAsync(long userId, CompanyApplicationsDTO companyApplicationInfo, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CompanyDTO> PutApiOauth2V1CompanyApplicationsAsync(long userId, CompanyApplicationsDTO companyApplicationInfo, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -963,7 +963,7 @@ namespace Vito.Transverse.Identity.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CompanyApplicationsDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CompanyDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1007,14 +1007,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> GetApiOauth2V1SendActivationEmailAsync(long companyId, long userId)
+        public virtual System.Threading.Tasks.Task<UserDTO> GetApiOauth2V1SendActivationEmailAsync(long companyId, long userId)
         {
             return GetApiOauth2V1SendActivationEmailAsync(companyId, userId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> GetApiOauth2V1SendActivationEmailAsync(long companyId, long userId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDTO> GetApiOauth2V1SendActivationEmailAsync(long companyId, long userId, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -1065,7 +1065,7 @@ namespace Vito.Transverse.Identity.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1109,14 +1109,14 @@ namespace Vito.Transverse.Identity.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> GetApiOauth2V1ActivateAccountAsync(string activationToken)
+        public virtual System.Threading.Tasks.Task<bool?> GetApiOauth2V1ActivateAccountAsync(string activationToken)
         {
             return GetApiOauth2V1ActivateAccountAsync(activationToken, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> GetApiOauth2V1ActivateAccountAsync(string activationToken, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool?> GetApiOauth2V1ActivateAccountAsync(string activationToken, System.Threading.CancellationToken cancellationToken)
         {
             if (activationToken == null)
                 throw new System.ArgumentNullException("activationToken");
@@ -1163,11 +1163,7 @@ namespace Vito.Transverse.Identity.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
+                            var objectResponse_ = await ReadObjectResponseAsync<bool?>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             return objectResponse_.Object;
                         }
                         else
@@ -4648,81 +4644,6 @@ namespace Vito.Transverse.Identity.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CompanyApplicationsDTO : System.ComponentModel.INotifyPropertyChanged
-    {
-        private long _userId;
-        private CompanyDTO _company;
-        private System.Collections.ObjectModel.ObservableCollection<ApplicationDTO> _applications;
-
-        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long UserId
-        {
-            get { return _userId; }
-
-            set
-            {
-                if (_userId != value)
-                {
-                    _userId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("company", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public CompanyDTO Company
-        {
-            get { return _company; }
-
-            set
-            {
-                if (_company != value)
-                {
-                    _company = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("applications", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<ApplicationDTO> Applications
-        {
-            get { return _applications; }
-
-            set
-            {
-                if (_applications != value)
-                {
-                    _applications = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public string ToJson()
-        {
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
-
-        }
-        public static CompanyApplicationsDTO FromJson(string data)
-        {
-
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<CompanyApplicationsDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
-
-        }
-
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CompanyDTO : System.ComponentModel.INotifyPropertyChanged
     {
         private long _id;
@@ -5024,6 +4945,81 @@ namespace Vito.Transverse.Identity.Api
         {
 
             return Newtonsoft.Json.JsonConvert.DeserializeObject<CompanyDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CompanyApplicationsDTO : System.ComponentModel.INotifyPropertyChanged
+    {
+        private long _userId;
+        private CompanyDTO _company;
+        private System.Collections.ObjectModel.ObservableCollection<ApplicationDTO> _applications;
+
+        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long UserId
+        {
+            get { return _userId; }
+
+            set
+            {
+                if (_userId != value)
+                {
+                    _userId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("company", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CompanyDTO Company
+        {
+            get { return _company; }
+
+            set
+            {
+                if (_company != value)
+                {
+                    _company = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("applications", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<ApplicationDTO> Applications
+        {
+            get { return _applications; }
+
+            set
+            {
+                if (_applications != value)
+                {
+                    _applications = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+        public static CompanyApplicationsDTO FromJson(string data)
+        {
+
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<CompanyApplicationsDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
 
@@ -5346,6 +5342,9 @@ namespace Vito.Transverse.Identity.Api
         private bool _isActive;
         private System.Collections.ObjectModel.ObservableCollection<RoleDTO> _roles;
         private string _companyNameTranslationKey;
+        private object _companyClient;
+        private string _newPassword1;
+        private string _newPassword2;
 
         [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public long CompanyFk
@@ -5687,6 +5686,51 @@ namespace Vito.Transverse.Identity.Api
                 if (_companyNameTranslationKey != value)
                 {
                     _companyNameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("companyClient", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public object CompanyClient
+        {
+            get { return _companyClient; }
+
+            set
+            {
+                if (_companyClient != value)
+                {
+                    _companyClient = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("newPassword1", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NewPassword1
+        {
+            get { return _newPassword1; }
+
+            set
+            {
+                if (_newPassword1 != value)
+                {
+                    _newPassword1 = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("newPassword2", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NewPassword2
+        {
+            get { return _newPassword2; }
+
+            set
+            {
+                if (_newPassword2 != value)
+                {
+                    _newPassword2 = value;
                     RaisePropertyChanged();
                 }
             }
@@ -6996,6 +7040,7 @@ namespace Vito.Transverse.Identity.Api
         private System.DateTime _createdDate;
         private long _createdByUserFk;
         private bool _isActive;
+        private string _userName;
         private string _applicationNameTranslationKey;
         private string _roleNameTranslationKey;
         private string _companyNameTranslationKey;
@@ -7105,6 +7150,21 @@ namespace Vito.Transverse.Identity.Api
                 if (_isActive != value)
                 {
                     _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string UserName
+        {
+            get { return _userName; }
+
+            set
+            {
+                if (_userName != value)
+                {
+                    _userName = value;
                     RaisePropertyChanged();
                 }
             }
@@ -8335,6 +8395,7 @@ namespace Vito.Transverse.Identity.Api
         private long _applicationId;
         private long _roleId;
         private System.DateTime _creationDate;
+        private string _auditChanges;
         private string _auditEntitySchemaName;
         private string _auditEntityName;
         private string _auditTypeNameTranslationKey;
@@ -8652,6 +8713,21 @@ namespace Vito.Transverse.Identity.Api
                 if (_creationDate != value)
                 {
                     _creationDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("auditChanges", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AuditChanges
+        {
+            get { return _auditChanges; }
+
+            set
+            {
+                if (_auditChanges != value)
+                {
+                    _auditChanges = value;
                     RaisePropertyChanged();
                 }
             }

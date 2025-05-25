@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Reflection;
-using System.Security.AccessControl;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Culture;
@@ -10,9 +8,9 @@ using Vito.Transverse.Identity.Domain.Enums;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 
-public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureRepository _cultureRepository, IOptions<MemoryCacheSettingsOptions> _memoryCacheSettingsOptions, ILogger<CachingServiceMemoryCache> _logger) : ICachingServiceMemoryCache
+public class CachingServiceMemoryCache(IMemoryCache memoryCache, ICultureRepository cultureRepository, IOptions<MemoryCacheSettingsOptions> memoryCacheSettingsOptions, ILogger<CachingServiceMemoryCache> logger) : ICachingServiceMemoryCache
 {
-    MemoryCacheSettingsOptions _memoryCacheSettingsOptionsValues = _memoryCacheSettingsOptions.Value;
+    MemoryCacheSettingsOptions _memoryCacheSettingsOptionsValues = memoryCacheSettingsOptions.Value;
 
     public bool CacheDataExistsByKey(string itemCacheName)
     {
@@ -21,13 +19,13 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         {
             if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
             {
-                var dataExist = _memoryCache.TryGetValue(itemCacheName, out object? variable);
+                var dataExist = memoryCache.TryGetValue(itemCacheName, out object? variable);
                 returValue = dataExist;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(CacheDataExistsByKey));
+            logger.LogError(ex, message: nameof(CacheDataExistsByKey));
         }
         return returValue;
     }
@@ -39,10 +37,10 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         {
             if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
             {
-                _memoryCache.TryGetValue(itemCacheKey, out object? cacheInfo);
+                memoryCache.TryGetValue(itemCacheKey, out object? cacheInfo);
                 if (cacheInfo is not null)
                 {
-                    _memoryCache.Remove(itemCacheKey);
+                    memoryCache.Remove(itemCacheKey);
                     returValue = true;
                     if (removeFromSummary)
                     {
@@ -53,7 +51,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(DeleteCacheDataByKey));
+            logger.LogError(ex, message: nameof(DeleteCacheDataByKey));
         }
         return returValue;
     }
@@ -65,7 +63,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         {
             if (_memoryCacheSettingsOptionsValues.IsCacheEnabled)
             {
-                if (_memoryCache is MemoryCache concreteMemoryCache)
+                if (memoryCache is MemoryCache concreteMemoryCache)
                 {
                     concreteMemoryCache.Clear();
                     returValue = true;
@@ -74,7 +72,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(DeleteCacheDataByKey));
+            logger.LogError(ex, message: nameof(DeleteCacheDataByKey));
         }
         return returValue;
     }
@@ -87,7 +85,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
         {
             try
             {
-                var returnValueByte = _memoryCache.Get(itemCacheName);
+                var returnValueByte = memoryCache.Get(itemCacheName);
                 var returnValue = returnValueByte?.ToString();
                 if (returnValue != null)
                 {
@@ -100,7 +98,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: nameof(GetCacheDataByKey));
+                logger.LogError(ex, message: nameof(GetCacheDataByKey));
                 returnEntity = default;
             }
         }
@@ -124,8 +122,8 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
             try
             {
                 var serializedObject = CommonExtensions.Serialize(itemCacheValue);
-                var cacheExpiration = _cultureRepository.UtcNow().ToLocalTime().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
-                _memoryCache.Set(itemCacheName, serializedObject, cacheExpiration);
+                var cacheExpiration = cultureRepository.UtcNow().ToLocalTime().AddMinutes(_memoryCacheSettingsOptionsValues.CacheExpirationInMinutes);
+                memoryCache.Set(itemCacheName, serializedObject, cacheExpiration);
                 returnValue = true;
                 if (addToSummary)
                 {
@@ -134,7 +132,7 @@ public class CachingServiceMemoryCache(IMemoryCache _memoryCache, ICultureReposi
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, message: nameof(SetCacheData));
+                logger.LogError(ex, message: nameof(SetCacheData));
             }
         }
         return returnValue;

@@ -20,19 +20,19 @@ export interface IClient {
 
     postApiOauth2V1Token(requestBody: TokenRequestDTO): Promise<TokenResponseDTO>;
 
-    postApiOauth2V1Company(companyId: number, userId: number, companyApplications: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO>;
+    postApiOauth2V1Company(companyId: number, userId: number, companyApplications: CompanyApplicationsDTO): Promise<CompanyDTO>;
 
     postApiOauth2V1Application(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO>;
 
     postApiOauth2V1User(companyId: number, userInfo: UserDTO): Promise<UserDTO>;
 
-    putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<boolean>;
+    putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<UserDTO>;
 
-    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO>;
+    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationsDTO): Promise<CompanyDTO>;
 
-    getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean>;
+    getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<UserDTO>;
 
-    getApiOauth2V1ActivateAccount(activationToken: string): Promise<boolean>;
+    getApiOauth2V1ActivateAccount(activationToken: string): Promise<boolean | null>;
 
     getApiOauth2V1AllApplicationList(): Promise<ApplicationDTO[]>;
 
@@ -282,7 +282,7 @@ export class Client implements IClient {
         return Promise.resolve<TokenResponseDTO>(null as any);
     }
 
-    postApiOauth2V1Company(companyId: number, userId: number, companyApplications: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO> {
+    postApiOauth2V1Company(companyId: number, userId: number, companyApplications: CompanyApplicationsDTO): Promise<CompanyDTO> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
@@ -310,13 +310,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processPostApiOauth2V1Company(response: Response): Promise<CompanyApplicationsDTO> {
+    protected processPostApiOauth2V1Company(response: Response): Promise<CompanyDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyApplicationsDTO;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyDTO;
             return result200;
             });
         } else if (status === 404) {
@@ -334,7 +334,7 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<CompanyApplicationsDTO>(null as any);
+        return Promise.resolve<CompanyDTO>(null as any);
     }
 
     postApiOauth2V1Application(companyId: number, userId: number, applicationDTO: ApplicationDTO): Promise<ApplicationDTO> {
@@ -443,7 +443,7 @@ export class Client implements IClient {
         return Promise.resolve<UserDTO>(null as any);
     }
 
-    putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<boolean> {
+    putApiOauth2V1UserPassword(companyId: number, userInfo: UserDTO): Promise<UserDTO> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/UserPasswordAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
@@ -467,13 +467,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processPutApiOauth2V1UserPassword(response: Response): Promise<boolean> {
+    protected processPutApiOauth2V1UserPassword(response: Response): Promise<UserDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDTO;
             return result200;
             });
         } else if (status === 404) {
@@ -491,10 +491,10 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<boolean>(null as any);
+        return Promise.resolve<UserDTO>(null as any);
     }
 
-    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationsDTO): Promise<CompanyApplicationsDTO> {
+    putApiOauth2V1CompanyApplications(userId: number, companyApplicationInfo: CompanyApplicationsDTO): Promise<CompanyDTO> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/CompanyApplicationsAsync?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -518,13 +518,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processPutApiOauth2V1CompanyApplications(response: Response): Promise<CompanyApplicationsDTO> {
+    protected processPutApiOauth2V1CompanyApplications(response: Response): Promise<CompanyDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyApplicationsDTO;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CompanyDTO;
             return result200;
             });
         } else if (status === 404) {
@@ -542,10 +542,10 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<CompanyApplicationsDTO>(null as any);
+        return Promise.resolve<CompanyDTO>(null as any);
     }
 
-    getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<boolean> {
+    getApiOauth2V1SendActivationEmail(companyId: number, userId: number): Promise<UserDTO> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/SendActivationEmailAsync?";
         if (companyId === undefined || companyId === null)
             throw new Error("The parameter 'companyId' must be defined and cannot be null.");
@@ -569,13 +569,13 @@ export class Client implements IClient {
         });
     }
 
-    protected processGetApiOauth2V1SendActivationEmail(response: Response): Promise<boolean> {
+    protected processGetApiOauth2V1SendActivationEmail(response: Response): Promise<UserDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as boolean;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDTO;
             return result200;
             });
         } else if (status === 404) {
@@ -593,10 +593,10 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<boolean>(null as any);
+        return Promise.resolve<UserDTO>(null as any);
     }
 
-    getApiOauth2V1ActivateAccount(activationToken: string): Promise<boolean> {
+    getApiOauth2V1ActivateAccount(activationToken: string): Promise<boolean | null> {
         let url_ = this.baseUrl + "/api/Oauth2/v1/ActivateAccountAsync?";
         if (activationToken === undefined || activationToken === null)
             throw new Error("The parameter 'activationToken' must be defined and cannot be null.");
@@ -616,7 +616,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processGetApiOauth2V1ActivateAccount(response: Response): Promise<boolean> {
+    protected processGetApiOauth2V1ActivateAccount(response: Response): Promise<boolean | null> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -640,7 +640,7 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<boolean>(null as any);
+        return Promise.resolve<boolean | null>(null as any);
     }
 
     getApiOauth2V1AllApplicationList(): Promise<ApplicationDTO[]> {
@@ -1962,12 +1962,6 @@ export interface TokenRequestDTO {
     refresh_token?: string | undefined;
 }
 
-export interface CompanyApplicationsDTO {
-    userId?: number;
-    company?: CompanyDTO;
-    applications?: ApplicationDTO[];
-}
-
 export interface CompanyDTO {
     id?: number;
     nameTranslationKey?: string;
@@ -1987,6 +1981,12 @@ export interface CompanyDTO {
     isActive?: boolean;
     countryNameTranslationKey?: string;
     languageNameTranslationKey?: string;
+}
+
+export interface CompanyApplicationsDTO {
+    userId?: number;
+    company?: CompanyDTO;
+    applications?: ApplicationDTO[];
 }
 
 export interface ApplicationDTO {
@@ -2032,6 +2032,9 @@ export interface UserDTO {
     isActive?: boolean;
     roles?: RoleDTO[];
     companyNameTranslationKey?: string;
+    companyClient?: any;
+    newPassword1?: string;
+    newPassword2?: string;
 }
 
 export interface RoleDTO {
@@ -2128,6 +2131,7 @@ export interface UserRoleDTO {
     createdDate?: Date;
     createdByUserFk?: number;
     isActive?: boolean;
+    userName?: string;
     applicationNameTranslationKey?: string;
     roleNameTranslationKey?: string;
     companyNameTranslationKey?: string;
@@ -2234,6 +2238,7 @@ export interface AuditRecordDTO {
     applicationId?: number;
     roleId?: number;
     creationDate?: Date;
+    auditChanges?: string;
     auditEntitySchemaName?: string;
     auditEntityName?: string;
     auditTypeNameTranslationKey?: string;

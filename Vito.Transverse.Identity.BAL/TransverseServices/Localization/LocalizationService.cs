@@ -7,25 +7,23 @@ using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Localization;
-using Vito.Transverse.Identity.Domain.Constants;
 using Vito.Transverse.Identity.Domain.Enums;
-using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Localization;
 
-public class LocalizationService(ILocalizationRepository _localizationRepository, ICachingServiceMemoryCache _cachingService, ILogger<LocalizationService> _logger, IOptions<CultureSettingsOptions> _cultureSettingsOptions) : ILocalizationService
+public class LocalizationService(ILocalizationRepository localizationRepository, ICachingServiceMemoryCache cachingService, ILogger<LocalizationService> logger, IOptions<CultureSettingsOptions> cultureSettingsOptions) : ILocalizationService
 {
-    CultureSettingsOptions _cultureSettingsOptionsValues = _cultureSettingsOptions.Value;
+    CultureSettingsOptions _cultureSettingsOptionsValues = cultureSettingsOptions.Value;
 
 
     public async Task<List<CultureTranslationDTO>> GetLocalizedMessagesListByApplicationAsync(long applicationId)
     {
-        var applicationMessageList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
+        var applicationMessageList = cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
         if (applicationMessageList == null)
         {
-            applicationMessageList = await _localizationRepository.GetLocalizedMessagesListAsync(x => x.ApplicationFk == applicationId);
-            _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString(), applicationMessageList);
+            applicationMessageList = await localizationRepository.GetLocalizedMessagesListAsync(x => x.ApplicationFk == applicationId);
+            cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString(), applicationMessageList);
         }
         return applicationMessageList;
     }
@@ -38,12 +36,12 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
         try
         {
             cultureId = !string.IsNullOrEmpty(cultureId) ? cultureId : CultureInfo.CurrentCulture.Name;
-            cultureMessageList = _cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
+            cultureMessageList = cachingService.GetCacheDataByKey<List<CultureTranslationDTO>>(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
             if (cultureMessageList == null)
             {
                 var applicationMessageList = await GetLocalizedMessagesListByApplicationAsync(applicationId);
                 cultureMessageList = applicationMessageList.Where(x => x.CultureFk.Equals(cultureId)).ToList();
-                _cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId +
+                cachingService.SetCacheData(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId +
                         applicationId.ToString() + cultureId, cultureMessageList);
 
 #if DEBUG
@@ -63,7 +61,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetLocalizedMessagesListByApplicationAndCultureAsync));
+            logger.LogError(ex, message: nameof(GetLocalizedMessagesListByApplicationAndCultureAsync));
             throw;
         }
         return cultureMessageList;
@@ -81,7 +79,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
         catch (Exception ex)
         {
 
-            _logger.LogError(ex, message: nameof(GetLocalizedMessagesListByKeyAsync));
+            logger.LogError(ex, message: nameof(GetLocalizedMessagesListByKeyAsync));
             throw;
         }
         return returnList;
@@ -121,7 +119,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
                 };
                 if (!string.IsNullOrEmpty(localizationMessageKey) && _cultureSettingsOptionsValues.AutoAddMissingTranslations)
                 {
-                    _localizationRepository.AddNewCultureTranslationAsync(newRecord);
+                    localizationRepository.AddNewCultureTranslationAsync(newRecord);
                 }
                 localizedMessage = newRecord;
             }
@@ -134,7 +132,7 @@ public class LocalizationService(ILocalizationRepository _localizationRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetLocalizedMessageByKeyAndParamsSync));
+            logger.LogError(ex, message: nameof(GetLocalizedMessageByKeyAndParamsSync));
             throw;
         }
         return localizedMessage;

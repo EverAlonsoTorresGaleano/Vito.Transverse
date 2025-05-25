@@ -1,26 +1,32 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
+using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.Security;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.BAL.Helpers;
 using Vito.Transverse.Identity.BAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
 using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
+using Vito.Transverse.Identity.BAL.TransverseServices.SocialNetworks;
+using Vito.Transverse.Identity.DAL.DataBaseContext;
+using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.DAL.TransverseRepositories.Security;
 using Vito.Transverse.Identity.Domain.DTO;
 using Vito.Transverse.Identity.Domain.Enums;
+using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
 
 namespace Vito.Transverse.Identity.BAL.TransverseServices.Security;
 
 
-/// <see cref="ISecurityService"/>
-public class SecurityService(ISecurityRepository _securityRepository, ICultureService _cultureService, IAuditService auditService, ICachingServiceMemoryCache _cachingService, IOptions<IdentityServiceServerSettingsOptions> _jwtIdentityServerOptions, ILogger<ISecurityService> _logger) : ISecurityService
+
+public class SecurityService(ISecurityRepository securityRepository, ICultureService cultureService, IAuditService auditService, ICachingServiceMemoryCache cachingService, ISocialNetworkService socialNetworkService, IDataBaseContextFactory dataBaseContextFactory, IOptions<IdentityServiceServerSettingsOptions> identityServerOptions, ILogger<ISecurityService> logger) : ISecurityService
 {
-    private readonly IdentityServiceServerSettingsOptions _jwtIdentityServerOptionsValues = _jwtIdentityServerOptions.Value;
+    private readonly IdentityServiceServerSettingsOptions identityServerOptionsValues = identityServerOptions.Value;
 
     #region Public Methods
     public async Task<TokenResponseDTO> NewJwtTokenAsync(TokenRequestDTO requestBody, DeviceInformationDTO deviceInformation)
@@ -30,17 +36,9 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             UserDTOToken? userInfoDTO = default;
             var grantType = Enum.Parse<TokenGrantTypeEnum>(requestBody.grant_type, true);
             TokenResponseDTO tokenResponse = default!;
-            switch (grantType)
-            {
-                case TokenGrantTypeEnum.AuthorizationCode:
-                    userInfoDTO = await _securityRepository.TokenValidateAuthorizationCodeAsync(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.scope, deviceInformation);
-                    break;
-                case TokenGrantTypeEnum.ClientCredentials:
-                    userInfoDTO = await _securityRepository.TokenValidateClientCredentialsAsync(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id, requestBody.user_secret, requestBody.scope, deviceInformation);
-                    break;
-                case TokenGrantTypeEnum.RefreshToken:
-                    break;
-            }
+
+            userInfoDTO = await NewJwtTokenAsync_ValidateCompanyApplicationInformation(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id ?? null, requestBody.user_secret ?? null, requestBody.scope, deviceInformation);
+
 
             var logginSuccesStatusList = new List<OAuthActionTypeEnum>()
             {
@@ -51,7 +49,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             if (userInfoDTO is not null && logginSuccesStatusList.Contains(userInfoDTO!.ActionStatus!.Value))
             {
                 List<Claim> claimList = JwtTokenHelper.ToClaimsList(userInfoDTO);
-                tokenResponse = await JwtTokenHelper.CreateJwtTokenAsync(requestBody, claimList, userInfoDTO, _jwtIdentityServerOptionsValues, _cultureService);
+                tokenResponse = await JwtTokenHelper.CreateJwtTokenAsync(requestBody, claimList, userInfoDTO, identityServerOptionsValues, cultureService);
             }
             else
             {
@@ -61,54 +59,322 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(NewJwtTokenAsync));
+            logger.LogError(ex, message: nameof(NewJwtTokenAsync));
             throw;
         }
     }
 
 
 
+    private async Task<UserDTOToken?> NewJwtTokenAsync_ValidateCompanyApplicationInformation(Guid companyClient, Guid companySecret, Guid applicationClient, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        UserDTOToken? userInfo = default;
+        var scopeRequest = !String.IsNullOrEmpty(scope) ? scope : deviceInformation.EndPointUrl;
+        try
+        {
+            var contextTx = dataBaseContextFactory.GetDbContext(context);
+            OAuthActionTypeEnum actionStatus = default;
+
+            var companyInfoList = await securityRepository.GetAllCompanyListAsync(x => (
+                        x.CompanyClient.Equals(companyClient)
+                        && x.CompanySecret.Equals(companySecret)
+                        && x.IsActive == true),
+                        contextTx);
+            var companyInfo = companyInfoList.FirstOrDefault();
+            if (companyInfo is null)
+            {
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyNotFound; //OAuthActionType_LoginFail_Company_ClientOrSecretNotFound
+            }
+            else
+            {
+                var applicationInfoList = await securityRepository.GetAllApplicationListAsync(x => (
+                        x.ApplicationClient.Equals(applicationClient)
+                        && x.ApplicationSecret.Equals(applicationSecret)
+                        && x.IsActive == true),
+                        contextTx);
+                var applicationInfo = applicationInfoList.FirstOrDefault();
+                if (applicationInfo is null)
+                {
+                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound;//OAuthActionType_LoginFail_Application_ClientOrSecretNoFound
+                }
+                else
+                {
+                    var companyMembershipList = await securityRepository.GetCompanyMemberhipListAsync(x => (
+                                x.ApplicationFk == applicationInfo.Id
+                                && x.CompanyFk == companyInfo.Id
+                                && x.IsActive == true),
+                                contextTx);
+
+                    var companyMembershipInfo = companyMembershipList.FirstOrDefault();
+                    if (companyMembershipInfo is null)
+                    {
+                        actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipDoesNotExist;//OAuthActionType_LoginFail_CompanyMembershipDoesNotExistOrInactive
+                    }
+                    else
+                    {
+                        userInfo = await NewJwtTokenAsync_ValidateUserInformation(companyInfo.Id, applicationInfo.Id, !string.IsNullOrEmpty(userName) ? userName : FrameworkConstants.Username_UserApi, password, scopeRequest, deviceInformation.Method, deviceInformation, contextTx);
+
+                    }
+                }
+            }
+            var actionsListToTrace = new List<OAuthActionTypeEnum>
+            {
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipDoesNotExist,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyNotFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanySecretInvalid,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound
+            };
+            if (actionsListToTrace.Contains(actionStatus))
+            {
+                var userTraceAddedSuccessfully = AddNewActivityLogAsync(companyInfo?.Id, companyInfo!.Id, userInfo!.Id, userInfo.RoleId, deviceInformation, actionStatus, contextTx);
+                userInfo = new() { ActionStatus = actionStatus };
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(NewJwtTokenAsync_ValidateCompanyApplicationInformation));
+            throw;
+        }
+
+        return userInfo;
+    }
+
+    private async Task<UserDTOToken?> NewJwtTokenAsync_ValidateUserInformation(long companyId, long applicationId, string? userName, string? password, string? scope, string? method, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        UserDTOToken? userInfoDTO = default;
+        OAuthActionTypeEnum actionStatus = default;
+
+        try
+        {
+            var contextTx = dataBaseContextFactory.GetDbContext(context);
+            var userRoleInfoList = await securityRepository.GetUserRolesListAsync(x => (
+                     x.CompanyFk == companyId
+                     && x.ApplicationFk == applicationId
+                     && (
+                        (x.UserFkNavigation.UserName.Equals(userName)
+                        && x.UserFkNavigation.Password.Equals(password))
+                        || (x.UserFkNavigation.UserName.Equals(FrameworkConstants.Username_UserApi)
+                            && password == null)
+                        )
+
+                     && x.IsActive == true
+                     && x.UserFkNavigation.IsActive == true
+                     && x.UserFkNavigation.IsLocked == false)
+                     , contextTx);
+            var userRoleInfo = userRoleInfoList.FirstOrDefault();
+            deviceInformation.RoleId = userRoleInfo!.RoleFk;
+            deviceInformation.ApplicationId = userRoleInfo.ApplicationFk;
+            //UserRole? userRoleInfo = await context.UserRoles
+            //    .Include(x => x.RoleFkNavigation)
+            //    .Include(x => x.RoleFkNavigation.RolePermissions)
+            //    .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+            //    .ThenInclude(x => x.ApplicationOwners)
+            //    .ThenInclude(x => x.CompanyFkNavigation)
+            //    .Include(x => x.UserFkNavigation).FirstOrDefaultAsync(u => u.CompanyFk.Equals(companyId) && u.ApplicationFk.Equals(applicationId)
+            //     && u.UserFkNavigation.UserName.Equals(userName)
+            //     && u.IsActive == true
+            //     && u.UserFkNavigation.IsActive == true
+            //     && u.UserFkNavigation.IsLocked == false);
+
+            if (userRoleInfo is null)
+            {
+                //User do no exist
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserNotFound; //OAuthActionType_LoginFail_User_LoginOrPasswordInvalid
+            }
+            else
+            {
+                var endpointList = await GetEndpointsListByRoleIdAsync(userRoleInfo.RoleFk);
+                var endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(scope) && x.Method.Equals(method)) && x.IsActive);
+
+                if (endpointInfo is null)
+                {
+                    //Do nos have Acces to resource
+                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserUnauthorized;
+                }
+                else
+                {
+                    //user valid
+                    actionStatus = userRoleInfo.UserName.Equals(FrameworkConstants.Username_UserApi) ? OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode : OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials;
+
+                    var userInfoList = await securityRepository.GetUserListAsync(x => x.UserName.Equals(userName));
+                    var userInfo = userInfoList.FirstOrDefault();
+
+                    var applicationInfoList = await GetAllApplicationListAsync();
+                    var applicationInfo = applicationInfoList.FirstOrDefault(x => x.Id == applicationId);
+                    userInfoDTO = userInfo!.ToUserDTOToken(applicationInfo, userRoleInfo, actionStatus);
+                }
+
+                var userUpdatedSuccessfully = await UpdateLastUserAccessAsync(userRoleInfo.UserFk, deviceInformation, actionStatus, context);
+            }
+            var userInfoId = userRoleInfo?.UserFk is not null ? userRoleInfo?.UserFk : FrameworkConstants.UserId_UserUnknown;
+            var userInfoRoleId = userRoleInfo?.RoleFk is not null ? userRoleInfo?.RoleFk : FrameworkConstants.UserId_UserUnknown;// RoleId_UserUnknown;
+
+            var userTraceAddedSuccessfully = await AddNewActivityLogAsync(companyId, applicationId, userInfoId, userInfoRoleId, deviceInformation, actionStatus, context);
+            var actionsListToTrace = new List<OAuthActionTypeEnum>
+            {
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserNotFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserUnauthorized
+            };
+
+            if (actionsListToTrace.Contains(actionStatus))
+            {
+                userInfoDTO = new() { ActionStatus = actionStatus };
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(NewJwtTokenAsync_ValidateUserInformation));
+            throw;
+        }
+        return userInfoDTO;
+    }
+
+    public async Task<UserDTO?> UpdateLastUserAccessAsync(long userId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
+    {
+        UserDTO? savedSuccesfuly = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+
+            var userList = await GetUserListAsync(deviceInformation.CompanyId);
+            var userInfo = userList.FirstOrDefault(x => x.Id == userId);
+
+            var userInfoBackup = userInfo!.CloneEntity();
+
+            userInfo!.LastAccess = cultureService.UtcNow().DateTime;
+            if (actionStatus == OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid)
+            {
+                var retryCount = userInfo.RetryCount;
+                userInfo.RetryCount++;
+                if (retryCount >= identityServerOptionsValues.MaxUserFailRetrys)
+                {
+                    userInfo.IsLocked = true;
+                    userInfo.LockedDate = cultureService.UtcNow().DateTime;
+                }
+            }
+            else
+            {
+                userInfo.RetryCount = 0;
+            }
+            savedSuccesfuly = await securityRepository.UpdateUserAsync(userInfo, context);
+
+            await auditService.UpdateRowAuditAsync(userInfo.CompanyFk, userInfo.Id, userInfoBackup!, userInfo, userInfo.Id.ToString(), deviceInformation);
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateLastUserAccessAsync));
+            throw;
+        }
+
+        return savedSuccesfuly;
+    }
+
+    public async Task<ActivityLogDTO?> AddNewActivityLogAsync(long? companyId, long? applicationId, long? userId, long? roleId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
+    {
+        ActivityLogDTO? savedRecord = null;
+        try
+        {
+            var contextTx = dataBaseContextFactory.GetDbContext(context);
+            ActivityLogDTO activityLogDb = new()
+            {
+                CompanyFk = companyId!.Value,
+                UserFk = userId!.Value,
+                ActionTypeFk = (int)actionStatus,
+                Browser = deviceInformation.Browser!,
+                CultureId = deviceInformation.CultureId!,
+                DeviceName = deviceInformation.HostName!,
+                DeviceType = deviceInformation.DeviceType!,
+                Engine = deviceInformation.Engine!,
+                EventDate = cultureService.UtcNow().DateTime,
+                IpAddress = deviceInformation.IpAddress!,
+                Platform = deviceInformation.Platform!,
+                EndPointUrl = deviceInformation.EndPointUrl!,
+                Method = deviceInformation.Method!,
+                QueryString = deviceInformation.QueryString!,
+                Referer = deviceInformation.Referer!,
+                UserAgent = deviceInformation.UserAgent!,
+                ApplicationId = applicationId ?? deviceInformation.ApplicationId!.Value,
+                RoleId = roleId ?? deviceInformation.RoleId!.Value,
+
+            };
+            savedRecord = await securityRepository.AddNewActivityLogAsync(activityLogDb, contextTx);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(AddNewActivityLogAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<ActivityLogDTO?> AddNewActivityLogAsync(DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null)
+    {
+        ActivityLogDTO? returnValue = null!;
+        try
+        {
+            var companyId = deviceInformation.CompanyId;
+            var applicationId = deviceInformation.ApplicationId;
+            var userId = deviceInformation.UserId;
+            var roleId = deviceInformation.RoleId;
+            returnValue = await AddNewActivityLogAsync(companyId!.Value, applicationId, userId, roleId, deviceInformation, actionStatus, context);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(AddNewActivityLogAsync));
+        }
+        return returnValue!;
+    }
 
 
-    public async Task<ApplicationDTO> CreateNewApplicationAsync(ApplicationDTO applicationInfoDTO, DeviceInformationDTO deviceInformation, long companyId, long userId)
+
+    public async Task<ApplicationDTO?> CreateNewApplicationAsync(ApplicationDTO newRecord, DeviceInformationDTO deviceInformation)
+    {
+        ApplicationDTO? savedRecord = null;
+        try
+        {
+            newRecord.ApplicationClient = Guid.NewGuid();
+            newRecord.ApplicationSecret = Guid.NewGuid();
+            savedRecord = await securityRepository.CreateNewApplicationAsync(newRecord, deviceInformation); ;
+            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!.Value, deviceInformation.UserId!.Value, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
+            OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewApplication;
+            var savedActivityLog = await AddNewActivityLogAsync(deviceInformation, actionStatus);
+            return savedRecord;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewApplicationAsync));
+            throw;
+        }
+    }
+
+    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO newRecord, DeviceInformationDTO deviceInformation)
     {
         try
         {
-            var returnValue = await _securityRepository.CreateNewApplicationAsync(applicationInfoDTO, deviceInformation, companyId, userId);
+            var returnValue = await securityRepository.CreateNewCompanyAsync(newRecord, deviceInformation);
             return returnValue;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(CreateNewApplicationAsync));
+            logger.LogError(ex, message: nameof(CreateNewCompanyAsync));
             throw;
         }
     }
 
-    public async Task<CompanyApplicationsDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO companyApplicationInfo, DeviceInformationDTO deviceInformation)
+    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationInfo, DeviceInformationDTO deviceInformation)
     {
+        CompanyDTO? returnValue = null;
         try
         {
-            var returnValue = await _securityRepository.CreateNewCompanyAsync(companyApplicationInfo, deviceInformation);
-            return returnValue;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, message: nameof(CreateNewCompanyAsync));
-            throw;
-        }
-    }
-
-    public async Task<CompanyApplicationsDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationInfo, DeviceInformationDTO deviceInformation)
-    {
-        CompanyApplicationsDTO? returnValue = null;
-        try
-        {
-            returnValue = await _securityRepository.UpdateCompanyApplicationsAsync(companyApplicationInfo, deviceInformation);
+            returnValue = await securityRepository.UpdateCompanyApplicationsAsync(companyApplicationInfo, deviceInformation);
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(UpdateCompanyApplicationsAsync));
+            logger.LogError(ex, message: nameof(UpdateCompanyApplicationsAsync));
             throw;
         }
         return returnValue;
@@ -119,53 +385,103 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         UserDTO? returnValue = null;
         try
         {
-            returnValue = await _securityRepository.CreateNewUserAsync(userInfo, deviceInformation);
+            returnValue = await securityRepository.CreateNewUserAsync(userInfo, deviceInformation);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(CreateNewUserAsync));
+            logger.LogError(ex, message: nameof(CreateNewUserAsync));
             throw;
         }
         return returnValue;
     }
 
-    public async Task<bool?> ChangeUserPasswordAsync(UserDTO userInfo, DeviceInformationDTO deviceInformation)
+    public async Task<UserDTO?> ChangeUserPasswordAsync(UserDTO recordToUpdate, DeviceInformationDTO deviceInformation)
     {
-        bool? returnValue = null;
+        UserDTO? savedRecord = null;
         try
         {
-            returnValue = await _securityRepository.ChangeUserPasswordAsync(userInfo, deviceInformation);
+            var userInfoList = await securityRepository.GetUserListAsync(x => (
+                          x.Id == recordToUpdate.Id
+                          && x.CompanyFk.Equals(recordToUpdate.CompanyFk)
+                          && x.Password.Equals(recordToUpdate.Password)));
+            var userInfo = userInfoList.FirstOrDefault();
+            var userInfoBackup = userInfo.CloneEntity();
+            if (userInfo is not null)
+            {
+                userInfo.IsActive = true;
+                userInfo.EmailValidated = true;
+                userInfo.IsLocked = false;
+                userInfo.RequirePasswordChange = true;
+                userInfo.RetryCount = 0;
+                userInfo.LastAccess = cultureService.UtcNow().DateTime;
+                userInfo.Password = recordToUpdate.NewPassword1;
+                savedRecord = await securityRepository.UpdateUserAsync(userInfo);
 
+                var savedAuditRecord = await auditService.UpdateRowAuditAsync(userInfo.CompanyFk, userInfo.Id, userInfoBackup!, userInfo, userInfo.Id.ToString(), deviceInformation);
+                OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_ChangeUserPassword;
+                var savedActivityLog = await AddNewActivityLogAsync(deviceInformation, actionStatus);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(ChangeUserPasswordAsync));
-            throw;
+            logger.LogError(ex, message: nameof(ChangeUserPasswordAsync));
         }
-        return returnValue;
+        return savedRecord;
     }
 
 
 
-    public async Task<bool?> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation)
+
+
+    public async Task<UserDTO?> SendActivationEmailAsync(long companyId, long userId, DeviceInformationDTO deviceInformation)
     {
-        bool? returnValue = null;
+        UserDTO? savedRecord = null;
+
         try
         {
-            returnValue = await _securityRepository.SendActivationEmailAsync(companyId, userId, deviceInformation);
+            var userList = await GetUserListAsync(companyId);
+            var userInfo = userList.FirstOrDefault(u => u.Id == userId);
+            if (userInfo is not null)
+            {
+                var userInfoDTOBackup = userInfo.CloneEntity();
+
+                userInfo.IsActive = false;
+                userInfo.EmailValidated = false;
+                userInfo.IsLocked = false;
+                userInfo.RequirePasswordChange = true;
+                userInfo.RetryCount = 0;
+                userInfo.LastAccess = cultureService.UtcNow().DateTime;
+                savedRecord = await securityRepository.UpdateUserAsync(userInfo);
+                var savedAuditRecord = await auditService.UpdateRowAuditAsync(userInfo.CompanyFk, userInfo.Id, userInfoDTOBackup!, userInfo, userInfo.Id.ToString(), deviceInformation);
+
+                OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_SendActivationEmail;
+
+                var savedActivityLog = await AddNewActivityLogAsync(companyId, null, userInfo.Id, null, deviceInformation, actionStatus);
+
+                //Send Activation Email
+                List<KeyValuePair<string, string>> emailTemplateParams = new()
+                {
+                     new (EmailTemplateParametersEnum.EMAIL.ToString(),userInfo?.Email!),
+                     new (EmailTemplateParametersEnum.FULL_NAME.ToString(),$"{userInfo?.Name!} {userInfo?.LastName!}"),
+                     new (EmailTemplateParametersEnum.USER_ID.ToString(),userInfo?.Id.ToString()!),
+                     new (EmailTemplateParametersEnum.APPLICATION_CLIENTID.ToString(),userInfo?.CompanyClient.ToString()!),
+                     new (EmailTemplateParametersEnum.ACTIVATION_ID.ToString(),userInfo?.ActivationId.ToString()!),
+                };
+                var savedNOtification = await socialNetworkService.SendNotificationByTemplateAsync(companyId, NotificationTypeEnum.NotificationType_Email, (int)NotificationTemplatesEnum.ActivationEmail, emailTemplateParams, [userInfo?.Email], null, null, cultureService.GetCurrectCulture().Name);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(SendActivationEmailAsync));
-            throw;
+            logger.LogError(ex, message: nameof(SendActivationEmailAsync));
         }
-        return returnValue;
+
+        return savedRecord;
 
     }
 
     public async Task<bool?> ActivateAccountAsync(string activationToken, DeviceInformationDTO deviceInformation)
     {
-        bool? returnValue = null;
+        UserDTO? savedRecord = null;
         try
         {
             var activationTokenList = ValidateEmailActivationToken(activationToken);
@@ -173,18 +489,33 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
             long userId = long.Parse(activationTokenList[1]);
             Guid activationId = Guid.Parse(activationTokenList.Last());
 
-            returnValue = await _securityRepository.ActivateAccountAsync(companyClientId, userId, activationId, deviceInformation);
-            if (returnValue == false)
+
+            var userInfoList = await securityRepository.GetUserListAsync(x => (
+                        x.Id == userId
+                        && x.CompanyFkNavigation.CompanyClient.Equals(companyClientId)
+                        && x.ActivationId.Equals(activationId)));
+            var userInfo = userInfoList.FirstOrDefault();
+            var userInfoDTOBackup = userInfo.CloneEntity();
+            if (userInfo is not null)
             {
-                throw new Exception(TransverseExceptionEnum.ActivateAccount_InvalidToken.ToString());
+                userInfo.IsActive = true;
+                userInfo.EmailValidated = true;
+                userInfo.IsLocked = false;
+                userInfo.RequirePasswordChange = true;
+                userInfo.RetryCount = 0;
+                userInfo.LastAccess = cultureService.UtcNow().DateTime;
+                savedRecord = await securityRepository.UpdateUserAsync(userInfo);
+
+                var savedAuditRecord = await auditService.UpdateRowAuditAsync(userInfo.CompanyFk, userInfo.Id, userInfoDTOBackup!, userInfo, userInfo.Id.ToString(), deviceInformation);
+                OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_ActivateUser;
+                var savedActivityLog = await AddNewActivityLogAsync(userInfo.CompanyFk, null, userId, null, deviceInformation, actionStatus);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(ActivateAccountAsync));
-            throw;
+            logger.LogError(ex, message: nameof(ActivateAccountAsync));
         }
-        return returnValue;
+        return savedRecord != null;
     }
 
 
@@ -200,69 +531,38 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
                 var endpointList = await GetEndpointsListByRoleIdAsync(roleId.Value);
                 endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(deviceInformation.EndPointUrl, StringComparison.InvariantCultureIgnoreCase) && x.Method.Equals(deviceInformation.Method, StringComparison.InvariantCultureIgnoreCase)) && x.IsActive);
                 var actionType = endpointInfo is null ? OAuthActionTypeEnum.OAuthActionType_ApiRequestUnauthorized : OAuthActionTypeEnum.OAuthActionType_ApiRequestSuccessfully;
-                await AddNewActivityLogAsync(deviceInformation, actionType);
+                // await AddNewActivityLogAsync(deviceInformation, actionType);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(ValidateEndpointAuthorizationAsync));
+            logger.LogError(ex, message: nameof(ValidateEndpointAuthorizationAsync));
         }
         return endpointInfo!;
     }
 
 
 
-    //public async Task<AuditRecordDTO?> NewRowAuditAsync(object entity, string entityIndex, DeviceInformationDTO deviceInformation)
-    //{
-    //    AuditRecordDTO? returnValue = null!;
-    //    try
-    //    {
-    //        var tokenDTO = deviceInformation.JwtToken!.DecodeJwtTokenSync();
-    //        var companyId = tokenDTO!.GetJwtTokenClaimLong(CustomClaimTypes.CompanyId.ToString());
-    //        var userId = tokenDTO!.GetJwtTokenClaimLong(CustomClaimTypes.UserId.ToString());
-    //        returnValue = await auditService.NewRowAuditAsync(companyId!.Value!, userId!.Value!, entity, entityIndex, deviceInformation, true);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, message: nameof(AddNewActivityLogAsync));
-    //    }
-    //    return returnValue!;
-    //}
 
-    public async Task<bool?> AddNewActivityLogAsync(DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus)
-    {
-        bool? returnValue = null!;
-        try
-        {
-            var companyId = deviceInformation.CompanyId;
-            var applicationId = deviceInformation.ApplicationId;
-            var userId = deviceInformation.UserId;
-            var roleId = deviceInformation.RoleId;
-            returnValue = await _securityRepository.AddNewActivityLogAsync(companyId!.Value, applicationId, userId, roleId, deviceInformation, actionStatus);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, message: nameof(AddNewActivityLogAsync));
-        }
-        return returnValue!;
-    }
+
+
 
 
     public async Task<List<ApplicationDTO>> GetAllApplicationListAsync()
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<ApplicationDTO>>(CacheItemKeysEnum.AllApplicationList.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<ApplicationDTO>>(CacheItemKeysEnum.AllApplicationList.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetAllApplicationListAsync(x => x.Id > 0);
-                _cachingService.SetCacheData(CacheItemKeysEnum.AllApplicationList.ToString(), returnList);
+                returnList = await securityRepository.GetAllApplicationListAsync(x => x.Id > 0);
+                cachingService.SetCacheData(CacheItemKeysEnum.AllApplicationList.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+            logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
             throw;
         }
     }
@@ -271,18 +571,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<ApplicationDTO>>(CacheItemKeysEnum.ApplicationListByCompanyId + companyId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<ApplicationDTO>>(CacheItemKeysEnum.ApplicationListByCompanyId + companyId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetApplicationListAsync(x => companyId == null || x.CompanyFk == companyId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.ApplicationListByCompanyId + companyId.ToString(), returnList);
+                returnList = await securityRepository.GetApplicationListAsync(x => companyId == null || x.CompanyFk == companyId && x.IsActive == true);
+                cachingService.SetCacheData(CacheItemKeysEnum.ApplicationListByCompanyId + companyId.ToString(), returnList);
             }
             return returnList;
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+            logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
             throw;
         }
     }
@@ -292,18 +592,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<CompanyMembershipsDTO>>(CacheItemKeysEnum.CompanyMemberhipListByCompanyId + companyId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<CompanyMembershipsDTO>>(CacheItemKeysEnum.CompanyMemberhipListByCompanyId + companyId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetCompanyMemberhipListAsync(x => companyId == null || x.CompanyFk == companyId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.CompanyMemberhipListByCompanyId + companyId.ToString(), returnList);
+                returnList = await securityRepository.GetCompanyMemberhipListAsync(x => companyId == null || x.CompanyFk == companyId);
+                cachingService.SetCacheData(CacheItemKeysEnum.CompanyMemberhipListByCompanyId + companyId.ToString(), returnList);
             }
             return returnList;
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
+            logger.LogError(ex, message: nameof(GetAllApplicationListAsync));
             throw;
         }
     }
@@ -313,18 +613,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<CompanyDTO>>(CacheItemKeysEnum.AllCompanyList.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<CompanyDTO>>(CacheItemKeysEnum.AllCompanyList.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetAllCompanyListAsync(x => x.Id > 0);
-                _cachingService.SetCacheData(CacheItemKeysEnum.AllCompanyList.ToString(), returnList);
+                returnList = await securityRepository.GetAllCompanyListAsync(x => x.Id > 0);
+                cachingService.SetCacheData(CacheItemKeysEnum.AllCompanyList.ToString(), returnList);
             }
             return returnList;
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetAllCompanyListAsync));
+            logger.LogError(ex, message: nameof(GetAllCompanyListAsync));
             throw;
         }
 
@@ -334,18 +634,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<RoleDTO>>(CacheItemKeysEnum.RoleListByCompanyId + companyId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<RoleDTO>>(CacheItemKeysEnum.RoleListByCompanyId + companyId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetRoleListAsync(x => companyId == null || x.CompanyFk == companyId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.RoleListByCompanyId + companyId.ToString(), returnList);
+                returnList = await securityRepository.GetRoleListAsync(x => companyId == null || x.CompanyFk == companyId);
+                cachingService.SetCacheData(CacheItemKeysEnum.RoleListByCompanyId + companyId.ToString(), returnList);
             }
             return returnList;
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetRoleListAsync));
+            logger.LogError(ex, message: nameof(GetRoleListAsync));
             throw;
         }
     }
@@ -354,17 +654,17 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<RoleDTO>(CacheItemKeysEnum.RolePermissionListByRoleId + roleId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<RoleDTO>(CacheItemKeysEnum.RolePermissionListByRoleId + roleId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetRolePermissionListAsync(x => x.Id == roleId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.RolePermissionListByRoleId + roleId.ToString(), returnList);
+                returnList = await securityRepository.GetRolePermissionListAsync(x => x.Id == roleId);
+                cachingService.SetCacheData(CacheItemKeysEnum.RolePermissionListByRoleId + roleId.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetRolePermissionListAsync));
+            logger.LogError(ex, message: nameof(GetRolePermissionListAsync));
             throw;
         }
     }
@@ -373,17 +673,17 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<ModuleDTO>>(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<ModuleDTO>>(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetModuleListAsync(x => applicationId == null || x.ApplicationFk == applicationId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString(), returnList);
+                returnList = await securityRepository.GetModuleListAsync(x => applicationId == null || x.ApplicationFk == applicationId);
+                cachingService.SetCacheData(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetModuleListAsync));
+            logger.LogError(ex, message: nameof(GetModuleListAsync));
             throw;
         }
     }
@@ -392,18 +692,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<EndpointDTO>>(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<EndpointDTO>>(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetEndpointsListAsync(x => x.ModuleFk == moduleId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString(), returnList);
+                returnList = await securityRepository.GetEndpointsListAsync(x => x.ModuleFk == moduleId);
+                cachingService.SetCacheData(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString(), returnList);
             }
             return returnList;
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetEndpointsListAsync));
+            logger.LogError(ex, message: nameof(GetEndpointsListAsync));
             throw;
         }
     }
@@ -412,18 +712,18 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<EndpointDTO>>(CacheItemKeysEnum.EndpointListByRoleId + roleId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<EndpointDTO>>(CacheItemKeysEnum.EndpointListByRoleId + roleId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetEndpointsListByRoleIdAsync(roleId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.EndpointListByRoleId + roleId.ToString(), returnList);
+                returnList = await securityRepository.GetEndpointsListByRoleIdAsync(roleId);
+                cachingService.SetCacheData(CacheItemKeysEnum.EndpointListByRoleId + roleId.ToString(), returnList);
             }
             return returnList;
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetEndpointsListByRoleIdAsync));
+            logger.LogError(ex, message: nameof(GetEndpointsListByRoleIdAsync));
             throw;
         }
     }
@@ -433,11 +733,11 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<ComponentDTO>>(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<ComponentDTO>>(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetComponentListAsync(x => x.EndpointFk == endpointId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString(), returnList);
+                returnList = await securityRepository.GetComponentListAsync(x => x.EndpointFk == endpointId);
+                cachingService.SetCacheData(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString(), returnList);
             }
             return returnList;
 
@@ -445,7 +745,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetComponentListAsync));
+            logger.LogError(ex, message: nameof(GetComponentListAsync));
             throw;
         }
     }
@@ -454,17 +754,17 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<List<UserRoleDTO>>(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<List<UserRoleDTO>>(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetUserRolesListAsync(x => x.UserFk == userId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString(), returnList);
+                returnList = await securityRepository.GetUserRolesListAsync(x => x.UserFk == userId);
+                cachingService.SetCacheData(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetUserRolesListAsync));
+            logger.LogError(ex, message: nameof(GetUserRolesListAsync));
             throw;
         }
     }
@@ -473,17 +773,36 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
     {
         try
         {
-            var returnList = _cachingService.GetCacheDataByKey<UserDTO>(CacheItemKeysEnum.UserPermissionListByUserId + userId.ToString());
+            var returnList = cachingService.GetCacheDataByKey<UserDTO>(CacheItemKeysEnum.UserPermissionListByUserId + userId.ToString());
             if (returnList == null)
             {
-                returnList = await _securityRepository.GetUserPermissionListAsync(x => x.Id == userId);
-                _cachingService.SetCacheData(CacheItemKeysEnum.UserPermissionListByUserId + userId.ToString(), returnList);
+                returnList = await securityRepository.GetUserPermissionListAsync(x => x.Id == userId);
+                cachingService.SetCacheData(CacheItemKeysEnum.UserPermissionListByUserId + userId.ToString(), returnList);
             }
             return returnList;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
+            logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
+            throw;
+        }
+    }
+
+    public async Task<List<UserDTO>> GetUserListAsync(long? companyId)
+    {
+        try
+        {
+            var returnList = cachingService.GetCacheDataByKey<List<UserDTO>>(CacheItemKeysEnum.UserListByCompanyId + companyId.ToString());
+            if (returnList == null)
+            {
+                returnList = await securityRepository.GetUserListAsync(x => companyId == null || x.CompanyFk == companyId);
+                cachingService.SetCacheData(CacheItemKeysEnum.UserListByCompanyId + companyId.ToString(), returnList);
+            }
+            return returnList;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
             throw;
         }
     }
@@ -511,7 +830,7 @@ public class SecurityService(ISecurityRepository _securityRepository, ICultureSe
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, message: nameof(ValidateEmailActivationToken));
+            logger.LogError(ex, message: nameof(ValidateEmailActivationToken));
             throw new Exception(TransverseExceptionEnum.UserPermissionException_ModuleFromApplicationNotFound.ToString());
         }
 
