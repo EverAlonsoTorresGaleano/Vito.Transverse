@@ -10,7 +10,7 @@ namespace Vito.Transverse.Identity.Api.Filters;
 /// In Addition Authentication Bearrer Token Check Authorization PErmission for endpoints
 /// </summary>
 /// <param name="securityService"></param>
-public class AuthorizationFilter(ISecurityService securityService) : IEndpointFilter
+public class RoleAuthorizationFilter(ISecurityService securityService) : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {

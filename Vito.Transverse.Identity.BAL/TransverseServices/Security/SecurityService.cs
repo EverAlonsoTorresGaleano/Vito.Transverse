@@ -83,7 +83,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
             var companyInfo = companyInfoList.FirstOrDefault();
             if (companyInfo is null)
             {
-                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyNotFound; //OAuthActionType_LoginFail_Company_ClientOrSecretNotFound
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_Company_ClientOrSecretNotFound;
             }
             else
             {
@@ -95,7 +95,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
                 var applicationInfo = applicationInfoList.FirstOrDefault();
                 if (applicationInfo is null)
                 {
-                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound;//OAuthActionType_LoginFail_Application_ClientOrSecretNoFound
+                    actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_Application_ClientOrSecretNoFound;
                 }
                 else
                 {
@@ -108,7 +108,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
                     var companyMembershipInfo = companyMembershipList.FirstOrDefault();
                     if (companyMembershipInfo is null)
                     {
-                        actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipDoesNotExist;//OAuthActionType_LoginFail_CompanyMembershipDoesNotExistOrInactive
+                        actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipNotFound;
                     }
                     else
                     {
@@ -119,10 +119,9 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
             }
             var actionsListToTrace = new List<OAuthActionTypeEnum>
             {
-                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipDoesNotExist,
-                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyNotFound,
-                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanySecretInvalid,
-                OAuthActionTypeEnum.OAuthActionType_LoginFail_ApplicationNoFound
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_CompanyMembershipNotFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_Company_ClientOrSecretNotFound,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_Application_ClientOrSecretNoFound
             };
             if (actionsListToTrace.Contains(actionStatus))
             {
@@ -164,22 +163,11 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
             var userRoleInfo = userRoleInfoList.FirstOrDefault();
             deviceInformation.RoleId = userRoleInfo!.RoleFk;
             deviceInformation.ApplicationId = userRoleInfo.ApplicationFk;
-            //UserRole? userRoleInfo = await context.UserRoles
-            //    .Include(x => x.RoleFkNavigation)
-            //    .Include(x => x.RoleFkNavigation.RolePermissions)
-            //    .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
-            //    .ThenInclude(x => x.ApplicationOwners)
-            //    .ThenInclude(x => x.CompanyFkNavigation)
-            //    .Include(x => x.UserFkNavigation).FirstOrDefaultAsync(u => u.CompanyFk.Equals(companyId) && u.ApplicationFk.Equals(applicationId)
-            //     && u.UserFkNavigation.UserName.Equals(userName)
-            //     && u.IsActive == true
-            //     && u.UserFkNavigation.IsActive == true
-            //     && u.UserFkNavigation.IsLocked == false);
 
             if (userRoleInfo is null)
             {
                 //User do no exist
-                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_UserNotFound; //OAuthActionType_LoginFail_User_LoginOrPasswordInvalid
+                actionStatus = OAuthActionTypeEnum.OAuthActionType_LoginFail_User_LoginOrPasswordInvalid;
             }
             else
             {
@@ -196,7 +184,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
                     //user valid
                     actionStatus = userRoleInfo.UserName.Equals(FrameworkConstants.Username_UserApi) ? OAuthActionTypeEnum.OAuthActionType_LoginSuccessByAuthorizationCode : OAuthActionTypeEnum.OAuthActionType_LoginSuccessByClientCredentials;
 
-                    var userInfoList = await securityRepository.GetUserListAsync(x => x.UserName.Equals(userName));
+                    var userInfoList = await securityRepository.GetUserListAsync(x => x.UserName.Equals(userName), contextTx);
                     var userInfo = userInfoList.FirstOrDefault();
 
                     var applicationInfoList = await GetAllApplicationListAsync();
@@ -204,16 +192,15 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
                     userInfoDTO = userInfo!.ToUserDTOToken(applicationInfo, userRoleInfo, actionStatus);
                 }
 
-                var userUpdatedSuccessfully = await UpdateLastUserAccessAsync(userRoleInfo.UserFk, deviceInformation, actionStatus, context);
+                var userUpdatedSuccessfully = await UpdateLastUserAccessAsync(userRoleInfo.UserFk, deviceInformation, actionStatus, contextTx);
             }
             var userInfoId = userRoleInfo?.UserFk is not null ? userRoleInfo?.UserFk : FrameworkConstants.UserId_UserUnknown;
-            var userInfoRoleId = userRoleInfo?.RoleFk is not null ? userRoleInfo?.RoleFk : FrameworkConstants.UserId_UserUnknown;// RoleId_UserUnknown;
+            var userInfoRoleId = userRoleInfo?.RoleFk is not null ? userRoleInfo?.RoleFk : FrameworkConstants.RoleId_UserUnknown;
 
-            var userTraceAddedSuccessfully = await AddNewActivityLogAsync(companyId, applicationId, userInfoId, userInfoRoleId, deviceInformation, actionStatus, context);
+            var userTraceAddedSuccessfully = await AddNewActivityLogAsync(companyId, applicationId, userInfoId, userInfoRoleId, deviceInformation, actionStatus, contextTx);
             var actionsListToTrace = new List<OAuthActionTypeEnum>
             {
-                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserNotFound,
-                OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid,
+                OAuthActionTypeEnum.OAuthActionType_LoginFail_User_LoginOrPasswordInvalid,
                 OAuthActionTypeEnum.OAuthActionType_LoginFail_UserUnauthorized
             };
 
@@ -243,7 +230,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
             var userInfoBackup = userInfo!.CloneEntity();
 
             userInfo!.LastAccess = cultureService.UtcNow().DateTime;
-            if (actionStatus == OAuthActionTypeEnum.OAuthActionType_LoginFail_UserSecretInvalid)
+            if (actionStatus == OAuthActionTypeEnum.OAuthActionType_LoginFail_User_LoginOrPasswordInvalid)
             {
                 var retryCount = userInfo.RetryCount;
                 userInfo.RetryCount++;
@@ -531,7 +518,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
                 var endpointList = await GetEndpointsListByRoleIdAsync(roleId.Value);
                 endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(deviceInformation.EndPointUrl, StringComparison.InvariantCultureIgnoreCase) && x.Method.Equals(deviceInformation.Method, StringComparison.InvariantCultureIgnoreCase)) && x.IsActive);
                 var actionType = endpointInfo is null ? OAuthActionTypeEnum.OAuthActionType_ApiRequestUnauthorized : OAuthActionTypeEnum.OAuthActionType_ApiRequestSuccessfully;
-                // await AddNewActivityLogAsync(deviceInformation, actionType);
+                var savedActivityLog = await AddNewActivityLogAsync(deviceInformation, actionType);
             }
         }
         catch (Exception ex)

@@ -9,6 +9,7 @@ public enum FeatureFlagsNamesEnum
     CacheFeature,
     MediaFeature,
     AuditFeature,
+    HealthFeature
 }
 
 public enum CacheItemKeysEnum
@@ -36,7 +37,8 @@ public enum CacheItemKeysEnum
     PictureListByCompanyId,
     EntityList,
     UserListByCompanyId,
-    NotificationTemplates
+    NotificationTemplates,
+    HealthCheck
 }
 
 public enum NotificationTemplatesEnum

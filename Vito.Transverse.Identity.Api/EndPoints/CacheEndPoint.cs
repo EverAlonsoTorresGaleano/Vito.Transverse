@@ -20,7 +20,7 @@ public static class CacheEndpoint
         var endPointGroupVersioned = app.MapGroup("api/Cache/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CacheFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>()
-            .AddEndpointFilter<AuthorizationFilter>();
+            .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapDelete("Cache", ClearCache)
             .MapToApiVersion(1.0)

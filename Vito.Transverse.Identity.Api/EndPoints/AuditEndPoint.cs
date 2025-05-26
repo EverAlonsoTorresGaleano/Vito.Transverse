@@ -23,28 +23,35 @@ public static class AuditEndPoint
             .WithSummary("Get Company Entity Audits List Async")
             .WithDescription("[Require Authorization]")
             .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("AuditRecordsListAsync", GetAuditRecordsListAsync)
            .MapToApiVersion(1.0)
            .WithSummary("Get Audit Records List Async")
             .WithDescription("[Require Authorization]")
            .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("ActivityLogListAsync", GetActivityLogListAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Get Activity Log List Async")
             .WithDescription("[Require Authorization]")
             .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("NotificationsListAsync", GetNotificationsListAsync)
              .MapToApiVersion(1.0)
              .WithSummary("Get Notifications List Async")
             .WithDescription("[Require Authorization]")
              .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapGet("EntityListAsync", GetEntityListAsync)
+          .MapToApiVersion(1.0)
+          .WithSummary("Get Entity List Async")
+         .WithDescription("[Require Authorization]")
+         .RequireAuthorization()
+       .AddEndpointFilter<RoleAuthorizationFilter>();
     }
 
     public static async Task<Results<Ok<List<CompanyEntityAuditDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetCompanyEntityAuditsListAsync(
@@ -80,6 +87,14 @@ public static class AuditEndPoint
     [FromQuery] long? companyId)
     {
         var returnObject = await auditService.GetNotificationsListAsync(companyId);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<List<EntityDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetEntityListAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService)
+    {
+        var returnObject = await auditService.GetEntityListAsync();
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 }

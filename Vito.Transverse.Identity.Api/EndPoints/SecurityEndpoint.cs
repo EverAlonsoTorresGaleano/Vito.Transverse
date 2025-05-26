@@ -34,42 +34,42 @@ public static class SecurityEndpoint
            .WithSummary("Create New Company Async")
             .WithDescription("[Require Authorization]")
            .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapPost("ApplicationAsync", CreateNewApplicationAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Create New Application Async")
             .WithDescription("[Require Authorization]")
             .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapPost("UserAsync", CreateNewUserAsync)
              .MapToApiVersion(1.0)
              .WithSummary("Create New User Async")
             .WithDescription("[Require Authorization]")
              .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapPut("UserPasswordAsync", ChangeUserPasswordAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Change User Password Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapPut("CompanyApplicationsAsync", UpdateCompanyApplicationsAsync)
            .MapToApiVersion(1.0)
            .WithSummary("Update Company Applications Async")
             .WithDescription("[Require Authorization]")
            .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("SendActivationEmailAsync", SendActivationEmailAsync)
            .MapToApiVersion(1.0)
            .WithSummary("Send Activation Email Async")
             .WithDescription("[Require Authorization]")
            .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("ActivateAccountAsync", ActivateAccountAsync)
            .MapToApiVersion(1.0)
@@ -84,77 +84,77 @@ public static class SecurityEndpoint
           .WithSummary("Get All Application List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("ApplicationListAsync", GetApplicationListAsync)
          .MapToApiVersion(1.0)
          .WithSummary("Get Application List Async")
           .WithDescription("[Require Authorization]")
          .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("CompanyMemberhipAsync", GetCompanyMemberhipAsync)
          .MapToApiVersion(1.0)
          .WithSummary("Get Company Memberhip By Company Async")
          .WithDescription("[Require Authorization]")
          .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("AllCompanyListAsync", GetAllCompanyListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get All Company List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("RoleListAsync", GetRoleListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get Role List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("RolePermissionListAsync", GetRolePermissionListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get Role Permission List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("ModuleListAsync", GetModuleListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get Module List Async")
           .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("EndpointsListAsync", GetEndpointsListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get Endpoints List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("ComponentListAsync", GetComponentListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get Component List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("UserRolesListAsync", GetUserRolesListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get User Roles List Async")
             .WithDescription("[Require Authorization]")
           .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("UserPermissionListAsync", GetUserPermissionListAsync)
            .MapToApiVersion(1.0)
            .WithSummary("Get User Permission List Async")
             .WithDescription("[Require Authorization]")
            .RequireAuthorization()
-          .AddEndpointFilter<AuthorizationFilter>();
+          .AddEndpointFilter<RoleAuthorizationFilter>();
     }
 
     public static async Task<Results<Ok<TokenResponseDTO>, NotFound, ValidationProblem>> TokenAync(

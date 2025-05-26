@@ -125,6 +125,12 @@ try
 
     //Nswag
     builder.Services.AddOpenApiDocument();
+   
+    //Health Check
+
+    //builder.Services.AddHealthChecks()
+    //  .AddCheck<HealthCheckCache>("cache", tags: ["cache"])
+    // .AddCheck<HealthCheckDatabase>("database", tags: ["database"]);
 
     Console.WriteLine(IdentityConstants.Program_PreBuildMessage);
     var app = builder.Build();
@@ -141,6 +147,21 @@ try
 
     app.MapDefaultEndpoints();
 
+    //Health check
+    //app.MapHealthChecks("/health");
+    //app.MapHealthChecks("/health/cache",new HealthCheckOptions 
+    //{ 
+    //    Predicate =x=>x.Tags.Contains("cache")
+    //});
+    //app.MapHealthChecks("/health/database", new HealthCheckOptions
+    //{
+    //    Predicate = x => x.Tags.Contains("database")
+    //});
+    //app.MapHealthChecks("/health/ui", new HealthCheckOptions
+    //{
+    //    ResponseWriter=  UIResponseWriter.WriteHealthCheckUIResponse
+    //});
+
     //Applciation EndPOints
     app.MapHomeEndPoints(versionSet);
     app.MapSecurityEndpoint(versionSet);
@@ -150,6 +171,7 @@ try
     app.MapMediaEndPoints(versionSet);
     app.MapAuditEndPoints(versionSet);
     app.MapTwilioEndPoint(versionSet);
+    app.MapHealthEndPoints(versionSet);
 
     if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Container"))
     {

@@ -90,7 +90,15 @@ export interface IClient {
 
     getApiAuditV1NotificationsList(companyId: number | null | undefined): Promise<NotificationDTO[]>;
 
+    getApiAuditV1EntityList(): Promise<EntityDTO[]>;
+
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO>;
+
+    getApiHealthV1All(): Promise<HealthCheckResult[]>;
+
+    getApiHealthV1Cache(): Promise<HealthCheckResult>;
+
+    getApiHealthV1Database(): Promise<HealthCheckResult>;
 }
 
 export class Client implements IClient {
@@ -1874,6 +1882,49 @@ export class Client implements IClient {
         return Promise.resolve<NotificationDTO[]>(null as any);
     }
 
+    getApiAuditV1EntityList(): Promise<EntityDTO[]> {
+        let url_ = this.baseUrl + "/api/Audit/v1/EntityListAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiAuditV1EntityList(_response);
+        });
+    }
+
+    protected processGetApiAuditV1EntityList(response: Response): Promise<EntityDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as EntityDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<EntityDTO[]>(null as any);
+    }
+
     getApiTwilioV1SendSMS(message: string): Promise<PingResponseDTO> {
         let url_ = this.baseUrl + "/api/Twilio/v1/SendSMS?";
         if (message === undefined || message === null)
@@ -1909,6 +1960,135 @@ export class Client implements IClient {
             });
         }
         return Promise.resolve<PingResponseDTO>(null as any);
+    }
+
+    getApiHealthV1All(): Promise<HealthCheckResult[]> {
+        let url_ = this.baseUrl + "/api/Health/v1/AllAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiHealthV1All(_response);
+        });
+    }
+
+    protected processGetApiHealthV1All(response: Response): Promise<HealthCheckResult[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HealthCheckResult[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<HealthCheckResult[]>(null as any);
+    }
+
+    getApiHealthV1Cache(): Promise<HealthCheckResult> {
+        let url_ = this.baseUrl + "/api/Health/v1/CacheAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiHealthV1Cache(_response);
+        });
+    }
+
+    protected processGetApiHealthV1Cache(response: Response): Promise<HealthCheckResult> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HealthCheckResult;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<HealthCheckResult>(null as any);
+    }
+
+    getApiHealthV1Database(): Promise<HealthCheckResult> {
+        let url_ = this.baseUrl + "/api/Health/v1/DatabaseAsync";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiHealthV1Database(_response);
+        });
+    }
+
+    protected processGetApiHealthV1Database(response: Response): Promise<HealthCheckResult> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HealthCheckResult;
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<HealthCheckResult>(null as any);
     }
 }
 
@@ -2294,6 +2474,365 @@ export interface NotificationDTO {
     notificationTypeNameTranslationKey?: string;
     notificationTemplateName?: string;
     cultureNameTranslationKey?: string;
+}
+
+export interface EntityDTO {
+    id?: number;
+    schemaName?: string;
+    entityName?: string;
+    isActive?: boolean;
+    isSystemEntity?: boolean;
+}
+
+export interface HealthCheckResult {
+    data?: { [key: string]: any; };
+    description?: string | undefined;
+    exception?: Exception | undefined;
+    status?: HealthStatus;
+}
+
+export interface Exception {
+    targetSite?: MethodBase | undefined;
+    message?: string;
+    data?: any[];
+    innerException?: Exception | undefined;
+    helpLink?: string | undefined;
+    source?: string | undefined;
+    hResult?: number;
+    stackTrace?: string | undefined;
+}
+
+export interface MemberInfo {
+    memberType?: MemberTypes;
+    name?: string;
+    declaringType?: string | undefined;
+    reflectedType?: string | undefined;
+    module?: Module;
+    customAttributes?: CustomAttributeData[];
+    isCollectible?: boolean;
+    metadataToken?: number;
+}
+
+export interface MethodBase extends MemberInfo {
+    attributes?: MethodAttributes;
+    methodImplementationFlags?: MethodImplAttributes;
+    callingConvention?: CallingConventions;
+    isAbstract?: boolean;
+    isConstructor?: boolean;
+    isFinal?: boolean;
+    isHideBySig?: boolean;
+    isSpecialName?: boolean;
+    isStatic?: boolean;
+    isVirtual?: boolean;
+    isAssembly?: boolean;
+    isFamily?: boolean;
+    isFamilyAndAssembly?: boolean;
+    isFamilyOrAssembly?: boolean;
+    isPrivate?: boolean;
+    isPublic?: boolean;
+    isConstructedGenericMethod?: boolean;
+    isGenericMethod?: boolean;
+    isGenericMethodDefinition?: boolean;
+    containsGenericParameters?: boolean;
+    methodHandle?: RuntimeMethodHandle;
+    isSecurityCritical?: boolean;
+    isSecuritySafeCritical?: boolean;
+    isSecurityTransparent?: boolean;
+}
+
+export enum MethodAttributes {
+    PrivateScope = 0,
+    ReuseSlot = 0,
+    Private = 1,
+    FamANDAssem = 2,
+    Assembly = 3,
+    Family = 4,
+    FamORAssem = 5,
+    Public = 6,
+    MemberAccessMask = 7,
+    UnmanagedExport = 8,
+    Static = 16,
+    Final = 32,
+    Virtual = 64,
+    HideBySig = 128,
+    NewSlot = 256,
+    VtableLayoutMask = 256,
+    CheckAccessOnOverride = 512,
+    Abstract = 1024,
+    SpecialName = 2048,
+    RTSpecialName = 4096,
+    PinvokeImpl = 8192,
+    HasSecurity = 16384,
+    RequireSecObject = 32768,
+    ReservedMask = 53248,
+}
+
+export enum MethodImplAttributes {
+    IL = 0,
+    Managed = 0,
+    Native = 1,
+    OPTIL = 2,
+    CodeTypeMask = 3,
+    Runtime = 3,
+    ManagedMask = 4,
+    Unmanaged = 4,
+    NoInlining = 8,
+    ForwardRef = 16,
+    Synchronized = 32,
+    NoOptimization = 64,
+    PreserveSig = 128,
+    AggressiveInlining = 256,
+    AggressiveOptimization = 512,
+    InternalCall = 4096,
+    MaxMethodImplVal = 65535,
+}
+
+export enum CallingConventions {
+    Standard = 1,
+    VarArgs = 2,
+    Any = 3,
+    HasThis = 32,
+    ExplicitThis = 64,
+}
+
+export interface RuntimeMethodHandle {
+    value?: IntPtr;
+}
+
+export interface IntPtr {
+}
+
+export enum MemberTypes {
+    Constructor = 1,
+    Event = 2,
+    Field = 4,
+    Method = 8,
+    Property = 16,
+    TypeInfo = 32,
+    Custom = 64,
+    NestedType = 128,
+    All = 191,
+}
+
+export interface Module {
+    assembly?: Assembly;
+    fullyQualifiedName?: string;
+    name?: string;
+    mdStreamVersion?: number;
+    moduleVersionId?: string;
+    scopeName?: string;
+    moduleHandle?: ModuleHandle;
+    customAttributes?: CustomAttributeData[];
+    metadataToken?: number;
+}
+
+export interface Assembly {
+    definedTypes?: TypeInfo[];
+    exportedTypes?: string[];
+    codeBase?: string | undefined;
+    entryPoint?: MethodInfo | undefined;
+    fullName?: string | undefined;
+    imageRuntimeVersion?: string;
+    isDynamic?: boolean;
+    location?: string;
+    reflectionOnly?: boolean;
+    isCollectible?: boolean;
+    isFullyTrusted?: boolean;
+    customAttributes?: CustomAttributeData[];
+    escapedCodeBase?: string;
+    manifestModule?: Module;
+    modules?: Module[];
+    globalAssemblyCache?: boolean;
+    hostContext?: number;
+    securityRuleSet?: SecurityRuleSet;
+}
+
+export interface Anonymous {
+    genericTypeParameters?: string[];
+    declaredConstructors?: ConstructorInfo[];
+    declaredEvents?: EventInfo[];
+    declaredFields?: FieldInfo[];
+    declaredMembers?: MemberInfo[];
+    declaredMethods?: MethodInfo[];
+    declaredNestedTypes?: TypeInfo[];
+    declaredProperties?: PropertyInfo[];
+    implementedInterfaces?: string[];
+}
+
+export interface TypeInfo extends Anonymous {
+
+    [key: string]: any;
+}
+
+export interface ConstructorInfo extends MethodBase {
+    memberType?: MemberTypes;
+}
+
+export interface EventInfo extends MemberInfo {
+    memberType?: MemberTypes;
+    attributes?: EventAttributes;
+    isSpecialName?: boolean;
+    addMethod?: MethodInfo | undefined;
+    removeMethod?: MethodInfo | undefined;
+    raiseMethod?: MethodInfo | undefined;
+    isMulticast?: boolean;
+    eventHandlerType?: string | undefined;
+}
+
+export enum EventAttributes {
+    None = 0,
+    SpecialName = 512,
+    RTSpecialName = 1024,
+    ReservedMask = 1024,
+}
+
+export interface MethodInfo extends MethodBase {
+    memberType?: MemberTypes;
+    returnParameter?: ParameterInfo;
+    returnType?: string;
+    returnTypeCustomAttributes?: ICustomAttributeProvider;
+    genericParameterCount?: number;
+}
+
+export interface ParameterInfo {
+    attributes?: ParameterAttributes;
+    member?: MemberInfo;
+    name?: string | undefined;
+    parameterType?: string;
+    position?: number;
+    isIn?: boolean;
+    isLcid?: boolean;
+    isOptional?: boolean;
+    isOut?: boolean;
+    isRetval?: boolean;
+    defaultValue?: any | undefined;
+    rawDefaultValue?: any | undefined;
+    hasDefaultValue?: boolean;
+    customAttributes?: CustomAttributeData[];
+    metadataToken?: number;
+}
+
+export enum ParameterAttributes {
+    None = 0,
+    In = 1,
+    Out = 2,
+    Lcid = 4,
+    Retval = 8,
+    Optional = 16,
+    HasDefault = 4096,
+    HasFieldMarshal = 8192,
+    Reserved3 = 16384,
+    Reserved4 = 32768,
+    ReservedMask = 61440,
+}
+
+export interface CustomAttributeData {
+    attributeType?: string;
+    constructor?: ConstructorInfo;
+    constructorArguments?: CustomAttributeTypedArgument[];
+    namedArguments?: CustomAttributeNamedArgument[];
+}
+
+export interface CustomAttributeTypedArgument {
+    argumentType?: string;
+    value?: any | undefined;
+}
+
+export interface CustomAttributeNamedArgument {
+    argumentType?: string;
+    memberInfo?: MemberInfo;
+    typedValue?: CustomAttributeTypedArgument;
+    memberName?: string;
+    isField?: boolean;
+}
+
+export interface ICustomAttributeProvider {
+}
+
+export interface FieldInfo extends MemberInfo {
+    memberType?: MemberTypes;
+    attributes?: FieldAttributes;
+    fieldType?: string;
+    isInitOnly?: boolean;
+    isLiteral?: boolean;
+    isNotSerialized?: boolean;
+    isPinvokeImpl?: boolean;
+    isSpecialName?: boolean;
+    isStatic?: boolean;
+    isAssembly?: boolean;
+    isFamily?: boolean;
+    isFamilyAndAssembly?: boolean;
+    isFamilyOrAssembly?: boolean;
+    isPrivate?: boolean;
+    isPublic?: boolean;
+    isSecurityCritical?: boolean;
+    isSecuritySafeCritical?: boolean;
+    isSecurityTransparent?: boolean;
+    fieldHandle?: RuntimeFieldHandle;
+}
+
+export enum FieldAttributes {
+    PrivateScope = 0,
+    Private = 1,
+    FamANDAssem = 2,
+    Assembly = 3,
+    Family = 4,
+    FamORAssem = 5,
+    Public = 6,
+    FieldAccessMask = 7,
+    Static = 16,
+    InitOnly = 32,
+    Literal = 64,
+    NotSerialized = 128,
+    HasFieldRVA = 256,
+    SpecialName = 512,
+    RTSpecialName = 1024,
+    HasFieldMarshal = 4096,
+    PinvokeImpl = 8192,
+    HasDefault = 32768,
+    ReservedMask = 38144,
+}
+
+export interface RuntimeFieldHandle {
+    value?: IntPtr;
+}
+
+export interface PropertyInfo extends MemberInfo {
+    memberType?: MemberTypes;
+    propertyType?: string;
+    attributes?: PropertyAttributes;
+    isSpecialName?: boolean;
+    canRead?: boolean;
+    canWrite?: boolean;
+    getMethod?: MethodInfo | undefined;
+    setMethod?: MethodInfo | undefined;
+}
+
+export enum PropertyAttributes {
+    None = 0,
+    SpecialName = 512,
+    RTSpecialName = 1024,
+    HasDefault = 4096,
+    Reserved2 = 8192,
+    Reserved3 = 16384,
+    Reserved4 = 32768,
+    ReservedMask = 62464,
+}
+
+export enum SecurityRuleSet {
+    None = 0,
+    Level1 = 1,
+    Level2 = 2,
+}
+
+export interface ModuleHandle {
+    mdStreamVersion?: number;
+}
+
+export enum HealthStatus {
+    Unhealthy = 0,
+    Degraded = 1,
+    Healthy = 2,
 }
 
 export class ApiException extends Error {

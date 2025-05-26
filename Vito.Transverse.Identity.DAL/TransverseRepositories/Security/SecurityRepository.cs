@@ -90,10 +90,7 @@ public class SecurityRepository(IDataBaseContextFactory dataBaseContextFactory, 
         {
             context = dataBaseContextFactory.GetDbContext(context);
             var recordToUpdateDb = await context.Companies.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Company.Id);
-            //TODO Set Values Masive 
-            var recordToUpdateDbNewValues = recordToUpdate.Company.ToCompany();
-            //recordToUpdateDb <==recordToUpdate
-            recordToUpdateDb = recordToUpdateDbNewValues;
+            recordToUpdateDb = recordToUpdate.Company.ToCompany(); ;
             await context.SaveChangesAsync();
             savedRecord = recordToUpdateDb!.ToCompanyDTO();
         }
@@ -134,8 +131,7 @@ public class SecurityRepository(IDataBaseContextFactory dataBaseContextFactory, 
         {
             context = dataBaseContextFactory.GetDbContext(context);
             var recordToUpdateDb = await context.Users.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
-            var recordToUpdateDbNewData = recordToUpdate.ToUser();
-            recordToUpdateDb = recordToUpdateDbNewData;
+            recordToUpdateDb = recordToUpdate.ToUser();
             await context.SaveChangesAsync();
             savedRecord = recordToUpdateDb!.ToUserDTO();
         }
