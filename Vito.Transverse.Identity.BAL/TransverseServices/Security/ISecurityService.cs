@@ -60,5 +60,5 @@ public interface ISecurityService
 
     Task<UserDTO> GetUserPermissionListAsync(long userId);
 
-
+    Task<List<UserDTO>> GetUserListAsync(long? companyId);
 }

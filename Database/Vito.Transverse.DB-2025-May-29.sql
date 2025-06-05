@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Vito.Transverse.DB]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Database [Vito.Transverse.DB]    Script Date: 5/30/2025 10:26:05 PM ******/
 CREATE DATABASE [Vito.Transverse.DB]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -84,7 +84,7 @@ ALTER DATABASE [Vito.Transverse.DB] SET QUERY_STORE (OPERATION_MODE = READ_WRITE
 GO
 USE [Vito.Transverse.DB]
 GO
-/****** Object:  Table [dbo].[Entities]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Entities]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[Entities](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -134,7 +134,41 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Companies]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[AuditRecords]    Script Date: 5/30/2025 10:26:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AuditRecords](
+	[CompanyFk] [bigint] NOT NULL,
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[UserFk] [bigint] NOT NULL,
+	[EntityFk] [bigint] NOT NULL,
+	[AuditTypeFk] [bigint] NOT NULL,
+	[AuditEntityIndex] [varchar](75) NOT NULL,
+	[HostName] [varchar](75) NOT NULL,
+	[IpAddress] [varchar](50) NOT NULL,
+	[DeviceType] [varchar](50) NOT NULL,
+	[Browser] [varchar](50) NOT NULL,
+	[Platform] [varchar](50) NOT NULL,
+	[Engine] [varchar](50) NOT NULL,
+	[CultureFk] [varchar](50) NOT NULL,
+	[EndPointUrl] [varchar](100) NOT NULL,
+	[Method] [varchar](10) NOT NULL,
+	[QueryString] [varchar](100) NOT NULL,
+	[UserAgent] [varchar](200) NOT NULL,
+	[Referer] [varchar](100) NOT NULL,
+	[ApplicationId] [bigint] NOT NULL,
+	[RoleId] [bigint] NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[AuditChanges] [text] NOT NULL,
+ CONSTRAINT [PK_AuditRecords] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Companies]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -162,37 +196,7 @@ CREATE TABLE [dbo].[Companies](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AuditRecords]    Script Date: 5/21/2025 6:02:20 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[AuditRecords](
-	[CompanyFk] [bigint] NOT NULL,
-	[Id] [bigint] IDENTITY(1,1) NOT NULL,
-	[UserFk] [bigint] NOT NULL,
-	[EntityFk] [bigint] NOT NULL,
-	[AuditTypeFk] [bigint] NOT NULL,
-	[AuditEntityIndex] [varchar](75) NOT NULL,
-	[HostName] [varchar](75) NOT NULL,
-	[IpAddress] [varchar](50) NOT NULL,
-	[DeviceType] [varchar](50) NOT NULL,
-	[Browser] [varchar](50) NOT NULL,
-	[Platform] [varchar](50) NOT NULL,
-	[Engine] [varchar](50) NOT NULL,
-	[CultureFk] [varchar](50) NOT NULL,
-	[EndPointUrl] [varchar](100) NOT NULL,
-	[Method] [varchar](10) NOT NULL,
-	[JwtToken] [text] NOT NULL,
-	[AuditInfoJson] [text] NOT NULL,
-	[CreationDate] [datetime] NOT NULL,
- CONSTRAINT [PK_AuditRecords] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[GeneralTypeItems]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[GeneralTypeItems]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -209,7 +213,7 @@ CREATE TABLE [dbo].[GeneralTypeItems](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetAuditRecords]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_GetAuditRecords]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,14 +221,14 @@ GO
 CREATE VIEW [dbo].[Vw_GetAuditRecords]
 AS
 SELECT ar.CreationDate, ar.CompanyFk, c.NameTranslationKey, ar.UserFk, u.UserName, ar.AuditTypeFk, t.NameTranslationKey AS Expr1, ar.EntityFk, ae.SchemaName, ae.EntityName, ae.IsSystemEntity, ar.HostName, ar.DeviceType, ar.Browser, 
-                  ar.Platform, ar.Engine, ar.CultureFk, ar.AuditInfoJson
+                  ar.Platform, ar.Engine, ar.CultureFk, ar.AuditChanges
 FROM     dbo.AuditRecords AS ar INNER JOIN
                   dbo.Entities AS ae ON ar.EntityFk = ae.Id INNER JOIN
                   dbo.Companies AS c ON ar.CompanyFk = c.Id INNER JOIN
                   dbo.Users AS u ON ar.UserFk = u.Id INNER JOIN
                   dbo.GeneralTypeItems AS t ON ar.AuditTypeFk = t.Id
 GO
-/****** Object:  Table [dbo].[GeneralTypeGroups]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[GeneralTypeGroups]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -239,7 +243,7 @@ CREATE TABLE [dbo].[GeneralTypeGroups](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetGeneralTypeItemWithGroups]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_GetGeneralTypeItemWithGroups]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -252,7 +256,7 @@ FROM     dbo.GeneralTypeGroups AS lig INNER JOIN
                   dbo.GeneralTypeItems AS li ON lig.Id = li.ListItemGroupFk
 ORDER BY GeneralTypeGroupId, GeneralTypeItemId, GeneralTypeItemIndex
 GO
-/****** Object:  Table [dbo].[Roles]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Roles]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -274,7 +278,7 @@ CREATE TABLE [dbo].[Roles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserRoles]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[UserRoles]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -294,7 +298,7 @@ CREATE TABLE [dbo].[UserRoles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Applications]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Applications]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -317,7 +321,7 @@ CREATE TABLE [dbo].[Applications](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_CompanyUserRoles]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_CompanyUserRoles]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -332,7 +336,7 @@ FROM     dbo.Roles AS r INNER JOIN
                   dbo.Applications AS a ON ur.ApplicationFk = a.Id INNER JOIN
                   dbo.Companies AS c ON ur.CompanyFk = c.Id
 GO
-/****** Object:  Table [dbo].[CompanyMemberships]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[CompanyMemberships]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -356,7 +360,7 @@ CREATE TABLE [dbo].[CompanyMemberships](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MembershipTypes]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[MembershipTypes]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -378,7 +382,7 @@ CREATE TABLE [dbo].[MembershipTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetCompanyMemberships]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_GetCompanyMemberships]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -393,7 +397,7 @@ FROM     dbo.Companies AS c INNER JOIN
                   dbo.Applications AS a ON cm.ApplicationFk = a.Id AND cm.ApplicationFk = a.Id INNER JOIN
                   dbo.MembershipTypes AS t ON cm.MembershipTypeFk = t.Id
 GO
-/****** Object:  Table [dbo].[Modules]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Modules]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -413,7 +417,7 @@ CREATE TABLE [dbo].[Modules](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Endpoints]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Endpoints]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -436,7 +440,7 @@ CREATE TABLE [dbo].[Endpoints](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CompanyMembershipPermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[CompanyMembershipPermissions]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -456,7 +460,7 @@ CREATE TABLE [dbo].[CompanyMembershipPermissions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetAllCompanyPermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_GetAllCompanyPermissions]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -474,7 +478,7 @@ FROM     dbo.CompanyMembershipPermissions AS cmp INNER JOIN
                   dbo.Modules AS m ON cmp.ModuleFk = m.Id INNER JOIN
                   dbo.Endpoints AS p ON cmp.EndpointFk = p.Id
 GO
-/****** Object:  Table [dbo].[RolePermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[RolePermissions]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -494,7 +498,7 @@ CREATE TABLE [dbo].[RolePermissions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[Vw_GetRolePermissions]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_GetRolePermissions]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -511,7 +515,7 @@ FROM     dbo.RolePermissions AS rp INNER JOIN
                   dbo.Endpoints AS p ON rp.EndpointFk = p.Id INNER JOIN
                   dbo.Roles AS r ON rp.RoleFk = r.Id
 GO
-/****** Object:  View [dbo].[Vw_GetDatabaseTables]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  View [dbo].[Vw_GetDatabaseTables]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -522,7 +526,7 @@ SELECT ROW_NUMBER() OVER (ORDER BY o.name ASC) AS name_row_number, s.name, o.nam
                   sys.schemas AS s ON s.schema_id = o.schema_id
 WHERE  (o.type = 'U') AND (o.schema_id = 1)
 GO
-/****** Object:  Table [dbo].[ActivityLogs]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[ActivityLogs]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -542,15 +546,18 @@ CREATE TABLE [dbo].[ActivityLogs](
 	[CultureId] [nvarchar](50) NOT NULL,
 	[EndPointUrl] [varchar](100) NOT NULL,
 	[Method] [varchar](10) NOT NULL,
-	[JwtToken] [text] NOT NULL,
-	[AddtionalInformation] [text] NOT NULL,
+	[QueryString] [varchar](100) NOT NULL,
+	[UserAgent] [varchar](200) NOT NULL,
+	[Referer] [varchar](100) NOT NULL,
+	[ApplicationId] [bigint] NOT NULL,
+	[RoleId] [bigint] NOT NULL,
  CONSTRAINT [PK_UserTraces] PRIMARY KEY CLUSTERED 
 (
 	[TraceId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ApplicationLicenseTypes]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[ApplicationLicenseTypes]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -573,7 +580,7 @@ CREATE TABLE [dbo].[ApplicationLicenseTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ApplicationOwners]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[ApplicationOwners]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -594,7 +601,7 @@ CREATE TABLE [dbo].[ApplicationOwners](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CompanyEntityAudits]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[CompanyEntityAudits]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -615,7 +622,7 @@ CREATE TABLE [dbo].[CompanyEntityAudits](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Components]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Components]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -637,7 +644,7 @@ CREATE TABLE [dbo].[Components](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Countries]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Countries]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -652,7 +659,7 @@ CREATE TABLE [dbo].[Countries](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Cultures]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Cultures]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -669,7 +676,7 @@ CREATE TABLE [dbo].[Cultures](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CultureTranslations]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[CultureTranslations]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -687,7 +694,7 @@ CREATE TABLE [dbo].[CultureTranslations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Languages]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Languages]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -701,7 +708,7 @@ CREATE TABLE [dbo].[Languages](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MembersipPriceHistory]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[MembersipPriceHistory]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -724,7 +731,7 @@ CREATE TABLE [dbo].[MembersipPriceHistory](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Notifications]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Notifications]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -751,7 +758,7 @@ CREATE TABLE [dbo].[Notifications](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[NotificationTemplates]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[NotificationTemplates]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -771,7 +778,7 @@ CREATE TABLE [dbo].[NotificationTemplates](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Pictures]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Pictures]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -796,7 +803,7 @@ CREATE TABLE [dbo].[Pictures](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Sequences]    Script Date: 5/21/2025 6:02:20 PM ******/
+/****** Object:  Table [dbo].[Sequences]    Script Date: 5/30/2025 10:26:05 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -817,19 +824,81 @@ CREATE TABLE [dbo].[Sequences](
 GO
 SET IDENTITY_INSERT [dbo].[ActivityLogs] ON 
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 17, CAST(N'2025-05-21T10:49:21.010' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 112, CAST(N'2025-05-26T06:04:13.740' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 18, CAST(N'2025-05-21T11:59:30.817' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (1, 2, 113, CAST(N'2025-05-26T06:04:19.333' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 2)
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 19, CAST(N'2025-05-21T21:21:03.373' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 114, CAST(N'2025-05-26T06:04:19.500' AS DateTime), N'localhost:5237', N'Desktop', 413, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 20, CAST(N'2025-05-21T21:41:33.157' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 115, CAST(N'2025-05-26T06:04:24.410' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 21, CAST(N'2025-05-21T22:11:09.753' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (1, 2, 116, CAST(N'2025-05-26T06:12:29.387' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 2)
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (2, 6, 22, CAST(N'2025-05-21T22:24:22.747' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"Endpoint","value":"HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\u003E TokenAync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 117, CAST(N'2025-05-26T06:12:31.757' AS DateTime), N'localhost:5237', N'Desktop', 413, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
 GO
-INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [JwtToken], [AddtionalInformation]) VALUES (1, 4, 25, CAST(N'2025-05-21T22:37:04.270' AS DateTime), N'localhost:5237', N'Desktop', 406, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw', N'[{"key":"Endpoint","value":"HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\u003E SendActivationEmailAsync"},{"key":"Referer","value":""},{"key":"UserAgent","value":"PostmanRuntime/7.44.0"}]')
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (1, 2, 118, CAST(N'2025-05-26T06:14:21.173' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/ActivateAccountAsync', N'GET', N'?activationToken=C5BCEA98-2974-4D43-8110-28D402CF5CE2@1@414026C1-8BF2-41F2-97C2-C1A3B7F656B8', N'PostmanRuntime/7.44.0', N'', 1, 2)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 119, CAST(N'2025-05-26T06:14:41.630' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 120, CAST(N'2025-05-26T06:15:23.223' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/NotificationsListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 121, CAST(N'2025-05-26T06:15:33.610' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 122, CAST(N'2025-05-26T06:26:37.530' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/NotificationsListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 123, CAST(N'2025-05-26T06:26:41.093' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 124, CAST(N'2025-05-26T06:26:43.777' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/AuditRecordsListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 125, CAST(N'2025-05-26T06:26:46.480' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/CompanyEntityAuditsListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 126, CAST(N'2025-05-26T06:26:49.717' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Audit/v1/EntityListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 127, CAST(N'2025-05-26T06:26:52.213' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 128, CAST(N'2025-05-26T06:27:13.643' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/CacheList', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 129, CAST(N'2025-05-26T06:27:20.460' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 130, CAST(N'2025-05-26T06:27:57.417' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/AllApplicationListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 131, CAST(N'2025-05-26T06:27:59.727' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/ApplicationListAsync', N'GET', N'?Companyid=1', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 132, CAST(N'2025-05-26T06:28:02.127' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/CompanyMemberhipAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 133, CAST(N'2025-05-26T06:28:04.697' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/AllCompanyListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 134, CAST(N'2025-05-26T06:28:07.403' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/RoleListAsync', N'GET', N'?CompanyId=2', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 135, CAST(N'2025-05-26T06:28:10.260' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/RolePermissionListAsync', N'GET', N'?roleId=4', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 136, CAST(N'2025-05-26T06:28:12.870' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/ModuleListAsync', N'GET', N'?ApplicationId=1', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 137, CAST(N'2025-05-26T06:28:15.630' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/EndpointsListAsync', N'GET', N'?moduleId=10', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 138, CAST(N'2025-05-26T06:28:18.537' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/ComponentListAsync', N'GET', N'?EndpointId=21', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 139, CAST(N'2025-05-26T06:28:22.607' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/UserRolesListAsync', N'GET', N'?userId=4', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 140, CAST(N'2025-05-26T06:28:25.613' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/UserPermissionListAsync', N'GET', N'?userId=4', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 141, CAST(N'2025-05-26T06:28:36.927' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 142, CAST(N'2025-05-26T06:28:48.577' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/CacheList', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 143, CAST(N'2025-05-26T06:29:10.967' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/Cache', N'DELETE', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 144, CAST(N'2025-05-26T06:29:10.997' AS DateTime), N'localhost:5237', N'Desktop', 416, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Cache/v1/Cache', N'DELETE', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 145, CAST(N'2025-05-26T06:29:16.620' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/audit/v1/ActivityLogListAsync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (1, 2, 146, CAST(N'2025-05-26T06:29:43.417' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/health/v1/allasync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 2)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 147, CAST(N'2025-05-26T06:29:56.227' AS DateTime), N'localhost:5237', N'Desktop', 417, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/health/v1/allasync', N'GET', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (1, 2, 148, CAST(N'2025-05-30T21:52:03.273' AS DateTime), N'localhost:5237', N'Desktop', 418, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 2)
+GO
+INSERT [dbo].[ActivityLogs] ([CompanyFk], [UserFk], [TraceId], [EventDate], [DeviceName], [DeviceType], [ActionTypeFk], [IpAddress], [Browser], [Platform], [Engine], [CultureId], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId]) VALUES (2, 6, 149, CAST(N'2025-05-30T21:52:05.590' AS DateTime), N'localhost:5237', N'Desktop', 413, N'::1', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 9)
 GO
 SET IDENTITY_INSERT [dbo].[ActivityLogs] OFF
 GO
@@ -845,41 +914,11 @@ INSERT [dbo].[Applications] ([Id], [NameTranslationKey], [DescriptionTranslation
 GO
 SET IDENTITY_INSERT [dbo].[AuditRecords] ON 
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 23, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:38:52\u202Fa.\u00A0m. | After=21/05/2025 10:41:09\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T10:41:09.883' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId], [CreationDate], [AuditChanges]) VALUES (2, 10, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 9, CAST(N'2025-05-26T16:04:19.487' AS DateTime), N'[{"key":"LastAccess","value":"Before= 23/05/2025 2:16:31\u202Fp.\u00A0m. | After=26/05/2025 11:04:19\u202Fa.\u00A0m."}]')
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 24, 6, 1, 702, N'15', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"15"},{"key":"EventDate","value":"21/05/2025 10:41:10\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T10:41:10.107' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId], [CreationDate], [AuditChanges]) VALUES (2, 11, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 9, CAST(N'2025-05-26T16:12:31.683' AS DateTime), N'[{"key":"LastAccess","value":"Before= 23/05/2025 2:16:31\u202Fp.\u00A0m. | After=26/05/2025 11:12:31\u202Fa.\u00A0m."}]')
 GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 25, 4, 27, 703, N'4', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:38:02\u202Fa.\u00A0m. | After=21/05/2025 10:41:56\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T10:41:56.347' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 26, 4, 1, 702, N'16', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg', N'[{"key":"CompanyFk","value":"1"},{"key":"UserFk","value":"4"},{"key":"TraceId","value":"16"},{"key":"EventDate","value":"21/05/2025 10:41:56\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"406"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/SendActivationEmailAsync"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0NzgwOTkwMCwiZXhwIjoxNzQ3ODI4NTAwLCJpYXQiOjE3NDc4Mjc5MDAsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.he53vFeR6dVDv8UHFuWjUtChB88JYPVxVL9eFIKLdOg"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\\u003E SendActivationEmailAsync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T10:41:56.373' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 27, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:41:09\u202Fa.\u00A0m. | After=21/05/2025 10:49:20\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T10:49:20.997' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 28, 6, 1, 702, N'17', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"17"},{"key":"EventDate","value":"21/05/2025 10:49:21\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T10:49:21.023' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 29, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:49:20\u202Fa.\u00A0m. | After=21/05/2025 11:59:30\u202Fa.\u00A0m."}]', CAST(N'2025-05-21T11:59:30.683' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 30, 6, 1, 702, N'18', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"18"},{"key":"EventDate","value":"21/05/2025 11:59:30\u202Fa.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T11:59:30.890' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 31, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 11:59:30\u202Fa.\u00A0m. | After=21/05/2025 9:21:02\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T21:21:03.290' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 32, 6, 1, 702, N'19', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"19"},{"key":"EventDate","value":"21/05/2025 9:21:03\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T21:21:03.437' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 33, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 9:21:02\u202Fp.\u00A0m. | After=21/05/2025 9:41:33\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T21:41:33.147' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 34, 6, 1, 702, N'20', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"20"},{"key":"EventDate","value":"21/05/2025 9:41:33\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T21:41:33.167' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 35, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 9:41:33\u202Fp.\u00A0m. | After=21/05/2025 10:11:09\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T22:11:09.743' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 36, 6, 1, 702, N'21', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"21"},{"key":"EventDate","value":"21/05/2025 10:11:09\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T22:11:09.763' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 37, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:11:09\u202Fp.\u00A0m. | After=21/05/2025 10:24:22\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T22:24:22.610' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (2, 38, 6, 1, 702, N'22', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'[{"key":"CompanyFk","value":"2"},{"key":"UserFk","value":"6"},{"key":"TraceId","value":"22"},{"key":"EventDate","value":"21/05/2025 10:24:22\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"417"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/TokenAsync"},{"key":"Method","value":"POST"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: POST api/Oauth2/v{apiVersion:apiVersion}/TokenAsync =\\u003E TokenAync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T22:24:22.837' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 39, 4, 27, 703, N'4', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw', N'[{"key":"LastAccess","value":"Before= 21/05/2025 10:41:56\u202Fa.\u00A0m. | After=21/05/2025 10:37:04\u202Fp.\u00A0m."}]', CAST(N'2025-05-21T22:37:04.253' AS DateTime))
-GO
-INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [JwtToken], [AuditInfoJson], [CreationDate]) VALUES (1, 40, 4, 1, 702, N'25', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/SendActivationEmailAsync', N'GET', N'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw', N'[{"key":"CompanyFk","value":"1"},{"key":"UserFk","value":"4"},{"key":"TraceId","value":"25"},{"key":"EventDate","value":"21/05/2025 10:37:04\u202Fp.\u00A0m."},{"key":"DeviceName","value":"localhost:5237"},{"key":"DeviceType","value":"Desktop"},{"key":"ActionTypeFk","value":"406"},{"key":"IpAddress","value":"::1"},{"key":"Browser","value":"Others v0.0"},{"key":"Platform","value":"Others v0.0 [Others]"},{"key":"Engine","value":"Others"},{"key":"CultureId","value":"es-CO"},{"key":"EndPointUrl","value":"/api/Oauth2/v1/SendActivationEmailAsync"},{"key":"Method","value":"GET"},{"key":"JwtToken","value":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBcHBsaWNhdGlvbk93bmVySWQiOiIxIiwiQXBwbGljYXRpb25Pd25lck5hbWUiOiJDb21wYW55X1ZpdG9Ub3JyZXNTb2Z0IiwiQXBwbGljYXRpb25JZCI6IjEiLCJBcHBsaWNhdGlvbk5hbWUiOiJBcHBsaWNhdGlvbl9WaXRvVG9ycmVzU29mdF9UcmFuc3ZlcnNlIiwiQ29tcGFueUlkIjoiMiIsIkNvbXBhbnlOYW1lIjoiQ29tcGFueV9Qcm95ZWN0b3NMYXNUb3JyZXNTQVMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2IiwidW5pcXVlX25hbWUiOiJlZGdhci50b3JyZXMiLCJnaXZlbl9uYW1lIjoiRWRnYXIgVG9ycmVzIEFndWRlbG8iLCJlbWFpbCI6ImVkZ2FyLnRvcnJlcy5nQHByb3llY3Rvcy1sYXMtdG9ycmVzLmNvbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiLCJSb2xlSWQiOiI5IiwiUm9sZU5hbWUiOiJMYVRvcnJlcy1UcmFuc3ZlcnNlX1JvbGVfMDAwMDAwMDAwMSIsIm5iZiI6MTc0Nzg2NjI2MiwiZXhwIjoxNzQ3ODg0ODYyLCJpYXQiOjE3NDc4ODQyNjIsImlzcyI6InZpdG8uaWRlbnRpdHkuaXNzdWVyLmNvbSIsImF1ZCI6Ii8vYXVkaWVuY2Uudml0by5pZGVudGl0eS5jb20vYXV0aGVudGljYWQtdXNlcnMifQ.xpOjaO15N6rxHyXso1ljSktJGusaGcptpPB1J6KTfEw"},{"key":"AddtionalInformation","value":"[{\u0022key\u0022:\u0022Endpoint\u0022,\u0022value\u0022:\u0022HTTP: GET api/Oauth2/v{apiVersion:apiVersion}/SendActivationEmailAsync =\\u003E SendActivationEmailAsync\u0022},{\u0022key\u0022:\u0022Referer\u0022,\u0022value\u0022:\u0022\u0022},{\u0022key\u0022:\u0022UserAgent\u0022,\u0022value\u0022:\u0022PostmanRuntime/7.44.0\u0022}]"}]', CAST(N'2025-05-21T22:37:04.290' AS DateTime))
+INSERT [dbo].[AuditRecords] ([CompanyFk], [Id], [UserFk], [EntityFk], [AuditTypeFk], [AuditEntityIndex], [HostName], [IpAddress], [DeviceType], [Browser], [Platform], [Engine], [CultureFk], [EndPointUrl], [Method], [QueryString], [UserAgent], [Referer], [ApplicationId], [RoleId], [CreationDate], [AuditChanges]) VALUES (2, 12, 6, 27, 703, N'6', N'localhost:5237', N'::1', N'Desktop', N'Others v0.0', N'Others v0.0 [Others]', N'Others', N'es-CO', N'/api/Oauth2/v1/TokenAsync', N'POST', N'', N'PostmanRuntime/7.44.0', N'', 1, 9, CAST(N'2025-05-31T07:52:05.513' AS DateTime), N'[{"key":"LastAccess","value":"Before= 23/05/2025 2:16:31\u202Fp.\u00A0m. | After=31/05/2025 2:52:05\u202Fa.\u00A0m."}]')
 GO
 SET IDENTITY_INSERT [dbo].[AuditRecords] OFF
 GO
@@ -1197,13 +1236,13 @@ INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [N
 GO
 INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 11, 109, 19, N'VitoTransverse_ApiOauth2_UserPermissionListAsync', N'VitoTransverse_ApiOauth2_UserPermissionListAsync_Dsc', N'/api/Oauth2/v1/UserPermissionListAsync', N'GET', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 11, 110, 20, N'VitoTransverse_ApiOauth2_CompanyEntityAuditsListAsync', N'VitoTransverse_ApiOauth2_CompanyEntityAuditsListAsync_Dsc', N'/api/Oauth2/v1/CompanyEntityAuditsListAsync', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 14, 110, 20, N'VitoTransverse_ApiAudit_CompanyEntityAuditsListAsync', N'VitoTransverse_ApiAudit_CompanyEntityAuditsListAsync_Dsc', N'/api/Audit/v1/CompanyEntityAuditsListAsync', N'GET', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 11, 111, 21, N'VitoTransverse_ApiOauth2_AuditRecordsListAsync', N'VitoTransverse_ApiOauth2_AuditRecordsListAsync_Dsc', N'/api/Oauth2/v1/AuditRecordsListAsync', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 14, 111, 21, N'VitoTransverse_ApiAudit_AuditRecordsListAsync', N'VitoTransverse_ApiAudit_AuditRecordsListAsync_Dsc', N'/api/Audit/v1/AuditRecordsListAsync', N'GET', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 11, 112, 22, N'VitoTransverse_ApiOauth2_ActivityLogListAsync', N'VitoTransverse_ApiOauth2_ActivityLogListAsync_Dsc', N'/api/Oauth2/v1/ActivityLogListAsync', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 14, 112, 22, N'VitoTransverse_ApiAudit_ActivityLogListAsync', N'VitoTransverse_ApiAudit_ActivityLogListAsync_Dsc', N'/api/Audit/v1/ActivityLogListAsync', N'GET', 1, 0, 1)
 GO
-INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 11, 113, 23, N'VitoTransverse_ApiOauth2_NotificationsListAsync', N'VitoTransverse_ApiOauth2_NotificationsListAsync_Dsc', N'/api/Oauth2/v1/NotificationsListAsync', N'GET', 1, 0, 1)
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 14, 113, 23, N'VitoTransverse_ApiAudit_NotificationsListAsync', N'VitoTransverse_ApiAudit_NotificationsListAsync_Dsc', N'/api/Audit/v1/NotificationsListAsync', N'GET', 1, 0, 1)
 GO
 INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, 114, 1, N'VitoTransverse_ApiCache_ClearCache', N'VitoTransverse_ApiCache_ClearCache_Dsc', N'/api/Cache/v1/Cache', N'DELETE', 1, 0, 1)
 GO
@@ -1220,6 +1259,8 @@ GO
 INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 9, 120, 1, N'VitoTransverse_ApiHome_Ping', N'VitoTransverse_ApiHome_Ping_Dsc', N'/api/Home/v1/PingAsync', N'GET', 1, 0, 1)
 GO
 INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 9, 121, 2, N'VitoTransverse_ApiHome_Detect', N'VitoTransverse_ApiHome_Detect_Dsc', N'/api/Home/v1/DetectAsync', N'GET', 1, 0, 1)
+GO
+INSERT [dbo].[Endpoints] ([ApplicationFk], [ModuleFk], [Id], [PositionIndex], [NameTranslationKey], [DescriptionTranslationKey], [EndpointUrl], [Method], [IsActive], [IsVisible], [IsApi]) VALUES (1, 14, 122, 24, N'VitoTransverse_ApiAudit_EntityListAsync', N'VitoTransverse_ApiAudit_NotificationsListAsync_Dsc', N'/api/Audit/v1/EntityListAsync', N'GET', 1, 0, 1)
 GO
 INSERT [dbo].[Entities] ([Id], [SchemaName], [EntityName], [IsActive], [IsSystemEntity]) VALUES (1, N'dbo', N'ActivityLogs', 1, 0)
 GO
@@ -1319,39 +1360,35 @@ INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTra
 GO
 INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 3, 403, N'OAuthActionType_CreateNewCompany', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 4, 404, N'OAuthActionType_CreateNewPerson', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 5, 404, N'OAuthActionType_CreateNewUser', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 5, 405, N'OAuthActionType_CreateNewUser', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 6, 405, N'OAuthActionType_SendActivationEmail', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 6, 406, N'OAuthActionType_SendActivationEmail', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 7, 406, N'OAuthActionType_ActivateUser', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 7, 407, N'OAuthActionType_ActivateUser', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 8, 407, N'OAuthActionType_LoginFail_Company_ClientOrSecretNotFound', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 8, 408, N'OAuthActionType_LoginFail_CompanyNotFound', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 14, 408, N'OAuthActionType_LoginFail_CompanyMembershipNotFound ', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 9, 409, N'OAuthActionType_LoginFail_CompanySecretInvalid', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 10, 409, N'OAuthActionType_LoginFail_Application_ClientOrSecretNoFound', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 14, 410, N'OAuthActionType_LoginFail_CompanyMembershipDoesNotExist', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 12, 410, N'OAuthActionType_LoginFail_User_LoginOrPasswordInvalid', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 10, 411, N'OAuthActionType_LoginFail_ApplicationNoFound', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 18, 411, N'OAuthActionType_LoginFail_UserUnauthorized', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 11, 412, N'OAuthActionType_LoginFail_ApplicationSecretInvalid', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 15, 412, N'OAuthActionType_LoginSuccessByAuthorizationCode', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 12, 413, N'OAuthActionType_LoginFail_UserNotFound', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 16, 413, N'OAuthActionType_LoginSuccessByClientCredentials', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 13, 414, N'OAuthActionType_LoginFail_UserSecretInvalid', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 17, 414, N'OAuthActionType_ChangeUserPassword', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 18, 415, N'OAuthActionType_LoginFail_UserUnauthorized', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 19, 415, N'OAuthActionType_Logoff', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 15, 416, N'OAuthActionType_LoginSuccessByAuthorizationCode', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 20, 416, N'OAuthActionType_ClearCache', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 16, 417, N'OAuthActionType_LoginSuccessByClientCredentials', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 21, 417, N'OAuthActionType_ApiRequestUnauthorized', 1)
 GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 17, 418, N'OAuthActionType_ChangeUserPassword', 1)
-GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 19, 419, N'OAuthActionType_Logoff', 1)
-GO
-INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 20, 420, N'OAuthActionType_ClearCache', 1)
+INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (4, 22, 418, N'OAuthActionType_ApiRequestSuccessfully', 1)
 GO
 INSERT [dbo].[GeneralTypeItems] ([ListItemGroupFk], [OrderIndex], [Id], [NameTranslationKey], [IsEnabled]) VALUES (5, 1, 501, N'LocationType_State', 1)
 GO
@@ -1407,13 +1444,13 @@ INSERT [dbo].[MembershipTypes] ([Id], [NameTranslationKey], [DescriptionTranslat
 GO
 INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 1, N'VitoTransverse_ApiCulture', N'VitoTransverse_ApiCulture_Dsc', 1, 1, 0, 1)
 GO
-INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 2, N'VitoTransverse_ModuleMembership', N'VitoTransverse_ModuleMembership_Dsc', 5, 1, 1, 0)
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 2, N'VitoTransverse_ModuleMembership', N'VitoTransverse_ModuleMembership_Dsc', 1, 1, 1, 0)
 GO
-INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 3, N'VitoTransverse_ModuleSecurity', N'VitoTransverse_ModuleSecurity_Dsc', 6, 1, 1, 0)
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 3, N'VitoTransverse_ModuleSecurity', N'VitoTransverse_ModuleSecurity_Dsc', 2, 1, 1, 0)
 GO
-INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 4, N'VitoTransverse_ModuleLogging', N'VitoTransverse_ModuleLogging_Dsc', 7, 1, 1, 0)
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 4, N'VitoTransverse_ModuleLogging', N'VitoTransverse_ModuleLogging_Dsc', 3, 1, 1, 0)
 GO
-INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 5, N'VitoTransverse_ModuleSettings', N'VitoTransverse_ModuleSettings_Dsc', 8, 1, 1, 0)
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 5, N'VitoTransverse_ModuleSettings', N'VitoTransverse_ModuleSettings_Dsc', 4, 1, 1, 0)
 GO
 INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (2, 6, N'VitoRealState_ApiProjects', N'VitoRealState_ModuleApi_Dsc', 1, 1, 0, 1)
 GO
@@ -1429,13 +1466,17 @@ INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [Descriptio
 GO
 INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 12, N'VitoTransverse_ApiCache', N'VitoTransverse_ApiCache_Dsc', 5, 1, 0, 1)
 GO
-INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 13, N'VitoTransverse_ApiMedia', N'VitoTransverse_ApiMedia_Dsc', 5, 1, 0, 1)
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 13, N'VitoTransverse_ApiMedia', N'VitoTransverse_ApiMedia_Dsc', 6, 1, 0, 1)
+GO
+INSERT [dbo].[Modules] ([ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [PositionIndex], [IsActive], [IsVisible], [IsApi]) VALUES (1, 14, N'VitoTransverse_ApiAudit', N'VitoTransverse_ApiAudit_Dsc', 7, 1, 0, 1)
 GO
 SET IDENTITY_INSERT [dbo].[Notifications] ON 
 GO
 INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 101, 44, CAST(N'2025-05-21T10:41:57.763' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
 GO
 INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 101, 45, CAST(N'2025-05-21T22:37:05.450' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - email: eeatg844@hotmail.com                                                                  ', N'Hola <br/> Bienvenid@ a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
+GO
+INSERT [dbo].[Notifications] ([CompanyFk], [NotificationTemplateGroupFk], [CultureFk], [NotificationTypeFk], [Id], [CreationDate], [Sender], [Receiver], [CC], [BCC], [Subject], [Message], [IsSent], [SentDate], [IsHtml]) VALUES (1, 1, N'es-CO', 101, 46, CAST(N'2025-05-23T06:54:52.203' AS DateTime), N'eeatg844@gmail.com', N'eeatg844@hotmail.com                                                                  ', NULL, NULL, N'Activación Cuenta Vito.ePOS - Usuario Ever Alonso Torres Galeano', N'Hola <br/> Bienvenid@ Ever Alonso Torres Galeano a e-POS <br/> Correo de activaciion para:eeatg844@hotmail.com                                                                  <br/><br/> Presion Click en el enlace Para Activar la cuenta <br/><br/> <a href=''http://casasdemiciudad.somee.com/api/Oauth2/v1/ActivateAccountAsync?token=55c26aaf-79b0-42e9-9adc-1f3fcba6d6d8@4@1356de0a-e0ca-4049-8c77-703fbee4126b''> Activar Cuenta<a/>', 0, NULL, 1)
 GO
 SET IDENTITY_INSERT [dbo].[Notifications] OFF
 GO
@@ -1505,7 +1546,7 @@ INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [M
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (1, 1, 1, 28, 1, 1, NULL, NULL)
 GO
-INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (2, 1, 1, 29, 1, 1, NULL, NULL)
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (2, 1, 1, 29, 11, 90, NULL, NULL)
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (3, 1, 1, 30, 1, 1, NULL, NULL)
 GO
@@ -1521,7 +1562,7 @@ INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [M
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (1, 1, 1, 36, 1, 82, NULL, NULL)
 GO
-INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (2, 1, 1, 37, 1, 82, NULL, NULL)
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (2, 1, 1, 37, 11, 97, NULL, NULL)
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (3, 1, 1, 38, 1, 82, NULL, NULL)
 GO
@@ -1583,13 +1624,13 @@ INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [M
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 77, 11, 109, NULL, NULL)
 GO
-INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 78, 11, 110, NULL, NULL)
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 78, 14, 110, NULL, NULL)
 GO
-INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 79, 11, 111, NULL, NULL)
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 79, 14, 111, NULL, NULL)
 GO
-INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 80, 11, 112, NULL, NULL)
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 80, 14, 112, NULL, NULL)
 GO
-INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 81, 11, 113, NULL, NULL)
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 81, 14, 113, NULL, NULL)
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (9, 1, 1, 82, 3, NULL, NULL, NULL)
 GO
@@ -1622,6 +1663,10 @@ GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 96, 9, 120, NULL, NULL)
 GO
 INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 97, 9, 121, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (9, 1, 1, 98, 14, NULL, NULL, NULL)
+GO
+INSERT [dbo].[RolePermissions] ([RoleFk], [CompanyFk], [ApplicationFk], [Id], [ModuleFk], [EndpointFk], [ComponentFk], [PropertyValue]) VALUES (4, 1, 1, 99, 9, 122, NULL, NULL)
 GO
 INSERT [dbo].[Roles] ([CompanyFk], [ApplicationFk], [Id], [NameTranslationKey], [DescriptionTranslationKey], [CreationDate], [CreatedByUserFk], [IsActive], [LastUpdateDate], [LastUpdateByUserFk]) VALUES (1, 1, 1, N'Vito-Transverse_Role_System', N'Vito-Transverse_Role_System_Dsc', CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, 1, NULL, NULL)
 GO
@@ -1679,27 +1724,27 @@ INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email]
 GO
 INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (1, N'api-user', 3, N'API', N'User', N'api.user@vito-torres-soft.com                                                                       ', N'api-user', 1, 0, 0, CAST(N'2025-05-06T23:53:01.237' AS DateTime), 0, N'6f8a48ad-0045-4c0b-8117-f65a60ba384c', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
-INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (1, N'ever.torresg', 4, N'Ever Alonso', N'Torres Galeano', N'eeatg844@hotmail.com                                                                  ', N'123', 0, 1, 0, CAST(N'2025-05-21T22:37:04.223' AS DateTime), 0, N'1356de0a-e0ca-4049-8c77-703fbee4126b', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 0)
+INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (1, N'ever.torresg', 4, N'Ever Alonso', N'Torres Galeano', N'eeatg844@hotmail.com                                                                  ', N'123', 0, 1, 0, CAST(N'2025-05-23T06:54:51.083' AS DateTime), 0, N'1356de0a-e0ca-4049-8c77-703fbee4126b', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 0)
 GO
 INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (2, N'api-user', 5, N'API', N'User', N'api.user@proyectos-las-torres.com                                                                   ', N'api-user', 1, 0, 0, CAST(N'2025-05-07T00:05:58.563' AS DateTime), 0, N'15ea4ef1-8fca-42f1-b25e-fc52be4e4712', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
-INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (2, N'edgar.torres', 6, N'Edgar', N'Torres Agudelo', N'edgar.torres.g@proyectos-las-torres.com                                                             ', N'456', 1, 1, 0, CAST(N'2025-05-21T22:24:22.137' AS DateTime), 0, N'414026c1-8bf2-41f2-97c2-c1a3b7f656b8', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
+INSERT [dbo].[Users] ([CompanyFk], [UserName], [Id], [Name], [LastName], [Email], [Password], [EmailValidated], [RequirePasswordChange], [RetryCount], [LastAccess], [ActivationEmailSent], [ActivationId], [IsLocked], [LockedDate], [CreationDate], [CreatedByUserFk], [LastUpdateDate], [UpdatedByUserFk], [Avatar], [IsActive]) VALUES (2, N'edgar.torres', 6, N'Edgar', N'Torres Agudelo', N'edgar.torres.g@proyectos-las-torres.com                                                             ', N'456', 1, 1, 0, CAST(N'2025-05-23T19:16:31.960' AS DateTime), 0, N'414026c1-8bf2-41f2-97c2-c1a3b7f656b8', 0, NULL, CAST(N'2025-01-01T00:00:00.000' AS DateTime), 1, NULL, NULL, NULL, 1)
 GO
 SET IDENTITY_INSERT [dbo].[Users] OFF
 GO
-/****** Object:  Index [IX_CompanyMembershipPermissions]    Script Date: 5/21/2025 6:02:21 PM ******/
+/****** Object:  Index [IX_CompanyMembershipPermissions]    Script Date: 5/30/2025 10:26:05 PM ******/
 CREATE NONCLUSTERED INDEX [IX_CompanyMembershipPermissions] ON [dbo].[CompanyMembershipPermissions]
 (
 	[CompanyMembershipFk] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_CompanyMemberships]    Script Date: 5/21/2025 6:02:21 PM ******/
+/****** Object:  Index [IX_CompanyMemberships]    Script Date: 5/30/2025 10:26:05 PM ******/
 ALTER TABLE [dbo].[CompanyMemberships] ADD  CONSTRAINT [IX_CompanyMemberships] UNIQUE NONCLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_CultureTranslations]    Script Date: 5/21/2025 6:02:21 PM ******/
+/****** Object:  Index [IX_CultureTranslations]    Script Date: 5/30/2025 10:26:05 PM ******/
 CREATE NONCLUSTERED INDEX [IX_CultureTranslations] ON [dbo].[CultureTranslations]
 (
 	[ApplicationFk] ASC
@@ -1707,7 +1752,7 @@ CREATE NONCLUSTERED INDEX [IX_CultureTranslations] ON [dbo].[CultureTranslations
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_Pictures]    Script Date: 5/21/2025 6:02:21 PM ******/
+/****** Object:  Index [IX_Pictures]    Script Date: 5/30/2025 10:26:05 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Pictures] ON [dbo].[Pictures]
 (
 	[CompanyFk] ASC,
@@ -2430,6 +2475,16 @@ Begin DesignProperties =
             DisplayFlags = 280
             TopColumn = 0
          End
+         Begin Table = "ae"
+            Begin Extent = 
+               Top = 7
+               Left = 300
+               Bottom = 170
+               Right = 494
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
          Begin Table = "c"
             Begin Extent = 
                Top = 7
@@ -2456,16 +2511,6 @@ Begin DesignProperties =
                Left = 1125
                Bottom = 170
                Right = 1357
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
-         Begin Table = "ae"
-            Begin Extent = 
-               Top = 7
-               Left = 300
-               Bottom = 170
-               Right = 494
             End
             DisplayFlags = 280
             TopColumn = 0

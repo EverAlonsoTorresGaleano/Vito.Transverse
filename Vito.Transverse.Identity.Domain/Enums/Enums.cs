@@ -5,7 +5,7 @@ public enum FeatureFlagsNamesEnum
     HomeFeature,
     CultureFeature,
     LocalizationFeature,
-    SecurityFeature,
+    OAuth2Feature,
     CacheFeature,
     MediaFeature,
     AuditFeature,

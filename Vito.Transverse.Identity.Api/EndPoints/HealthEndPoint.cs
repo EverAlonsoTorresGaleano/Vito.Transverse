@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Extensions;
+using Vito.Transverse.Identity.Api.Filters;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
@@ -22,22 +23,24 @@ public static class HealthEndPoint
         endPointGroupVersioned.MapGet("AllAsync", HealthCheckAllAsync)
             .MapToApiVersion(1.0)
             .WithSummary("HealthCheck Async")
-            .WithDescription("[AllowAnonymous]")
-            .AllowAnonymous();
-        //.AddEndpointFilter<RoleAuthorizationFilter>();
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
 
 
         endPointGroupVersioned.MapGet("CacheAsync", HealthCheckCacheAsync)
-      .MapToApiVersion(1.0)
-      .WithSummary("HealthCheck Async")
-            .WithDescription("[AllowAnonymous]")
-            .AllowAnonymous();
+        .MapToApiVersion(1.0)
+        .WithSummary("HealthCheck Async")
+        .WithDescription("[Require Authorization]")
+        .RequireAuthorization()
+        .AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("DatabaseAsync", HealthCheckDatabaseAsync)
-      .MapToApiVersion(1.0)
-      .WithSummary("HealthCheck Async")
-            .WithDescription("[AllowAnonymous]")
-            .AllowAnonymous();
+        .MapToApiVersion(1.0)
+        .WithSummary("HealthCheck Async")
+        .WithDescription("[Require Authorization]")
+        .RequireAuthorization()
+        .AddEndpointFilter<RoleAuthorizationFilter>();
 
     }
 
@@ -90,7 +93,7 @@ public static class HealthEndPoint
 
             if (returnList.Count == 0)
             {
-                healthCheck = new(HealthStatus.Healthy, "HealthCheckDatabaseAsync - Service Unavailable");
+                healthCheck = new(HealthStatus.Degraded, "HealthCheckDatabaseAsync - Service Unavailable");
             }
         }
         catch (Exception ex)

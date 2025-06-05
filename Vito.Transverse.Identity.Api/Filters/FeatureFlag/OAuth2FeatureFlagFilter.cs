@@ -8,7 +8,7 @@ namespace Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 /// Feature Flag for OAuth2 Api
 /// </summary>
 /// <param name="featureManager"></param>
-public class SecurityFeatureFlagFilter(IFeatureManager featureManager) : FeatureFlagFilter(featureManager)
+public class OAuth2FeatureFlagFilter(IFeatureManager featureManager) : FeatureFlagFilter(featureManager)
 {
-    protected override string FeatureFlag => FeatureFlagsNamesEnum.SecurityFeature.ToString();
+    protected override string FeatureFlag => FeatureFlagsNamesEnum.OAuth2Feature.ToString();
 }

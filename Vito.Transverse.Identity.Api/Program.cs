@@ -164,7 +164,7 @@ try
 
     //Applciation EndPOints
     app.MapHomeEndPoints(versionSet);
-    app.MapSecurityEndpoint(versionSet);
+    app.MapOAuth2Endpoint(versionSet);
     app.MapLocalizationEndpoint(versionSet);
     app.MapCultureEndpoint(versionSet);
     app.MapCacheEndPoints(versionSet);

@@ -190,6 +190,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
                     var applicationInfoList = await GetAllApplicationListAsync();
                     var applicationInfo = applicationInfoList.FirstOrDefault(x => x.Id == applicationId);
                     userInfoDTO = userInfo!.ToUserDTOToken(applicationInfo, userRoleInfo, actionStatus);
+                    //deviceInformation.CompanyId = userInfo!.CompanyFk;
                 }
 
                 var userUpdatedSuccessfully = await UpdateLastUserAccessAsync(userRoleInfo.UserFk, deviceInformation, actionStatus, contextTx);
@@ -224,7 +225,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
         {
             context = dataBaseContextFactory.GetDbContext(context);
 
-            var userList = await GetUserListAsync(deviceInformation.CompanyId);
+            var userList = await GetUserListAsync(null);
             var userInfo = userList.FirstOrDefault(x => x.Id == userId);
 
             var userInfoBackup = userInfo!.CloneEntity();
@@ -524,6 +525,7 @@ public class SecurityService(ISecurityRepository securityRepository, ICultureSer
         catch (Exception ex)
         {
             logger.LogError(ex, message: nameof(ValidateEndpointAuthorizationAsync));
+            throw;
         }
         return endpointInfo!;
     }

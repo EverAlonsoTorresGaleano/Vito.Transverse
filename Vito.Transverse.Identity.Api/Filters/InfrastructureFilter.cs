@@ -54,10 +54,10 @@ public class InfrastructureFilter : IEndpointFilter
             QueryString = request.QueryString.ToString(),
             UserAgent = request.Headers.UserAgent.ToString(),
             Referer = request.Headers.Referer.ToString(),
-            ApplicationId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.ApplicationId.ToString()),
-            CompanyId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.CompanyId.ToString()),
-            RoleId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.RoleId.ToString()),
-            UserId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.UserId.ToString()),
+            ApplicationId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.ApplicationId.ToString()) ?? FrameworkConstants.Application_DefaultId,
+            CompanyId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.CompanyId.ToString()) ?? FrameworkConstants.Company_DefaultId,
+            RoleId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.RoleId.ToString()) ?? FrameworkConstants.RoleId_UserUnknown,
+            UserId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.UserId.ToString()) ?? FrameworkConstants.UserId_UserUnknown,
 
         };
         return deviceInfo;

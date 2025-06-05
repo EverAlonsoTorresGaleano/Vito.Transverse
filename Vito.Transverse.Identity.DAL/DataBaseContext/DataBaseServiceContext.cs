@@ -107,7 +107,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.UserAgent)
-                .HasMaxLength(100)
+                .HasMaxLength(200)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.ActionTypeFkNavigation).WithMany(p => p.ActivityLogs)
@@ -215,7 +215,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.UserAgent)
-                .HasMaxLength(100)
+                .HasMaxLength(200)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.AuditTypeFkNavigation).WithMany(p => p.AuditRecords)
@@ -837,7 +837,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasNoKey()
                 .ToView("Vw_GetAuditRecords");
 
-            entity.Property(e => e.AuditInfoJson).HasColumnType("text");
+            entity.Property(e => e.AuditChanges).HasColumnType("text");
             entity.Property(e => e.Browser)
                 .HasMaxLength(50)
                 .IsUnicode(false);

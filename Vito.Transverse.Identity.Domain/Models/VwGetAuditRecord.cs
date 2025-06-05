@@ -39,5 +39,5 @@ public partial class VwGetAuditRecord
 
     public string CultureFk { get; set; } = null!;
 
-    public string AuditInfoJson { get; set; } = null!;
+    public string AuditChanges { get; set; } = null!;
 }

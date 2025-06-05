@@ -965,6 +965,51 @@
         }
       }
     },
+    "/api/Oauth2/v1/UserListAsync": {
+      "get": {
+        "operationId": "GetApiOauth2V1UserListAsync",
+        "parameters": [
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Localization/v1/LocalizationMessagesListByApplicationAsync": {
       "get": {
         "operationId": "GetApiLocalizationV1LocalizationMessagesListByApplicationAsync",

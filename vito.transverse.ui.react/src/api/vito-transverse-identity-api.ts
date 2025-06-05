@@ -56,6 +56,8 @@ export interface IClient {
 
     getApiOauth2V1UserPermissionList(userId: number): Promise<UserDTO>;
 
+    getApiOauth2V1UserList(companyId: number): Promise<UserDTO[]>;
+
     getApiLocalizationV1LocalizationMessagesListByApplication(applicationId: number): Promise<CultureTranslationDTO[]>;
 
     getApiLocalizationV1LocalizationMessagesListByApplicationAndCulture(applicationId: number, cultureId: string | null | undefined): Promise<CultureTranslationDTO[]>;
@@ -1150,6 +1152,53 @@ export class Client implements IClient {
             });
         }
         return Promise.resolve<UserDTO>(null as any);
+    }
+
+    getApiOauth2V1UserList(companyId: number): Promise<UserDTO[]> {
+        let url_ = this.baseUrl + "/api/Oauth2/v1/UserListAsync?";
+        if (companyId === undefined || companyId === null)
+            throw new Error("The parameter 'companyId' must be defined and cannot be null.");
+        else
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiOauth2V1UserList(_response);
+        });
+    }
+
+    protected processGetApiOauth2V1UserList(response: Response): Promise<UserDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserDTO[];
+            return result200;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UserDTO[]>(null as any);
     }
 
     getApiLocalizationV1LocalizationMessagesListByApplication(applicationId: number): Promise<CultureTranslationDTO[]> {

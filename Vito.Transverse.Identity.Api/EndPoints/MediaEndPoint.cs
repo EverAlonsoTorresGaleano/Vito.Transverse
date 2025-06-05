@@ -29,8 +29,8 @@ public static class MediaEndPoint
         endPointGroupVersioned.MapGet("PictureByName", GetPictureByName)
             .MapToApiVersion(1.0)
             .WithSummary("Get Picture By Name")
-            .WithDescription("[Require Authorization]")
-            .RequireAuthorization();
+            .WithDescription("[AllowAnonymous]")
+            .AllowAnonymous();
 
         endPointGroupVersioned.MapGet("PictureByNameWildCard", GetPictureByNameWildCard)
             .MapToApiVersion(1.0)

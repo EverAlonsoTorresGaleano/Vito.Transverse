@@ -357,14 +357,14 @@ public static class MapperExtension
             IsLocked = modelObject.IsLocked,
             RequirePasswordChange = modelObject.RequirePasswordChange,
             RetryCount = modelObject.RetryCount,
-            LastAccess = modelObject.LastAccess.ToLocalTimeNullable(),
+            LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
             ActivationId = modelObject.ActivationId,
-            CreationDate = modelObject.CreationDate.ToLocalTimeNullable(),
+            CreationDate = modelObject.CreationDate,
             Email = modelObject.Email,
             Avatar = modelObject.Avatar,
-            LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
-            LockedDate = modelObject.LockedDate.ToLocalTimeNullable(),
+            LastUpdateDate = modelObject.LastUpdateDate,
+            LockedDate = modelObject.LockedDate,
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             CreatedByUserFk = modelObject.CreatedByUserFk,
@@ -425,11 +425,14 @@ public static class MapperExtension
             IsActive = modelObject.IsActive,
             Avatar = modelObject.Avatar,
             CountryFk = modelObject.CountryFk!,
-            CreationDate = modelObject.CreationDate.ToLocalTime(),
+            CreationDate = modelObject.CreationDate,
             CreatedByUserFk = modelObject.CreatedByUserFk,
-            LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
+            LastUpdateDate = modelObject.LastUpdateDate,
             IsSystemCompany = modelObject.IsSystemCompany,
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
+
+            CompanyClient = modelObject.CompanyClient,
+            DefaultCultureFk = modelObject.DefaultCultureFk!,
 
         };
         return returnObject;
@@ -554,6 +557,12 @@ public static class MapperExtension
             Avatar = modelObject.Avatar,
             IsActive = modelObject.IsActive,
             ApplicationSecret = modelObject.ApplicationSecret,
+            ApplicationClient = modelObject.ApplicationClient,
+            CreatedByUserFk = modelObject.CreatedByUserFk,
+            CreationDate = modelObject.CreationDate,
+            LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
+            LastUpdateDate = modelObject.LastUpdateDate,
+
         };
         return returnObject;
     }
@@ -799,7 +808,7 @@ public static class MapperExtension
             AuditEntityIndex = modelObject.AuditEntityIndex,
             AuditTypeFk = modelObject.AuditTypeFk,
             Browser = modelObject.Browser,
-            CreationDate = modelObject.CreationDate.ToUniversalTime(),
+            CreationDate = modelObject.CreationDate,
             CultureFk = modelObject.CultureFk,
             DeviceType = modelObject.DeviceType!,
             Engine = modelObject.Engine,
@@ -816,6 +825,7 @@ public static class MapperExtension
             ApplicationId = modelObject.ApplicationId,
             RoleId = modelObject.RoleId,
             AuditChanges = modelObject.AuditChanges,
+
 
         };
         return returnObject;
@@ -858,7 +868,7 @@ public static class MapperExtension
             RoleId = modelObject.RoleId,
 
 
-            UserName = modelObject.UserFkNavigation is null ? string.Empty: modelObject.UserFkNavigation.UserName,
+            UserName = modelObject.UserFkNavigation is null ? string.Empty : modelObject.UserFkNavigation.UserName,
             CompanyNameTranslationKey = modelObject.UserFkNavigation is null ? string.Empty : modelObject.UserFkNavigation.CompanyFkNavigation.NameTranslationKey,
             CompanyDescriptionTranslationKey = modelObject.UserFkNavigation is null ? string.Empty : modelObject.UserFkNavigation.CompanyFkNavigation.DescriptionTranslationKey,
             ActionTypeNameTranslationKey = modelObject.ActionTypeFkNavigation is null ? string.Empty : modelObject.ActionTypeFkNavigation is null ? string.Empty : modelObject.ActionTypeFkNavigation.NameTranslationKey,
@@ -888,7 +898,7 @@ public static class MapperExtension
             DeviceName = modelObject.DeviceName,
             DeviceType = modelObject.DeviceType,
             Engine = modelObject.Engine,
-            EventDate = modelObject.EventDate.ToLocalTime(),
+            EventDate = modelObject.EventDate,
             IpAddress = modelObject.IpAddress,
             Platform = modelObject.Platform,
             TraceId = modelObject.TraceId,
@@ -1091,13 +1101,13 @@ public static class MapperExtension
             CompanyFk = modelObject.CompanyFk,
             BinaryPicture = modelObject.BinaryPicture,
             CreatedByUserFk = modelObject.CreatedByUserFk,
-            CreationDate = modelObject.CreationDate.ToLocalTime(),
+            CreationDate = modelObject.CreationDate,
             EntityFk = modelObject.EntityFk,
             FileTypeFk = modelObject.FileTypeFk,
             Id = modelObject.Id,
             IsActive = modelObject.IsActive,
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
-            LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
+            LastUpdateDate = modelObject.LastUpdateDate,
             Name = modelObject.Name,
             PictureCategoryFk = modelObject.PictureCategoryFk,
             PictureSize = modelObject.PictureSize,
