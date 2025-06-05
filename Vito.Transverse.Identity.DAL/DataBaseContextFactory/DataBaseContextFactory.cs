@@ -11,10 +11,14 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
 {
     DataBaseSettingsOptions _dataBaseSettingsOptionsValue => _dataBaseSettingsOptions.Value;
 
+    public DataBaseNameEnum DefaultDatabaseId()
+    {
+        return DataBaseNameEnum.TransverseDB;
+    }
 
     public DataBaseServiceContext CreateDbContext()
     {
-        return CreateDbContext(DataBaseNameEnum.TransverseDB);
+        return CreateDbContext(DefaultDatabaseId());
     }
 
     public DataBaseServiceContext CreateDbContext(DataBaseNameEnum dataBaseEnum)
@@ -26,7 +30,7 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
         {
             case Framework.Common.Enums.ConnectionStringTypeEnum.SQLServer:
                 var builder = new DbContextOptionsBuilder<DataBaseServiceContext>();
-                builder.UseSqlServer(transverseDBConnectionString.ConnectionString, delegate (SqlServerDbContextOptionsBuilder sqlOptions)
+                builder.UseSqlServer(transverseDBConnectionString.FullConnectionString, delegate (SqlServerDbContextOptionsBuilder sqlOptions)
                 {
                     sqlOptions.EnableRetryOnFailure(transverseDBConnectionString.RetryCount, TimeSpan.FromSeconds(transverseDBConnectionString.MaxRetryDelay), null);
                     sqlOptions.CommandTimeout(transverseDBConnectionString.TimeOut);

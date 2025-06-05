@@ -184,6 +184,20 @@ public class AuditService(IAuditRepository auditRepository, ILogger<AuditService
         }
     }
 
+    public async Task<Dictionary<string,object>> GetDatabaseHealth()
+    {
+        try
+        {
+            Dictionary<string, object> returnList = await auditRepository.GetDatabaseHealth();
+            return returnList;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetDatabaseHealth));
+            throw;
+        }
+    }
+
     private AuditRecordDTO? CreateNewAuditRecordDTO(long companyId, long userId, EntityAuditTypeEnum auditType, CompanyEntityAuditDTO companyEntity, string entityIndex, string auditInformation, DeviceInformationDTO devideInformation)
     {
         var cultureId = cultureRepository.GetCurrentCultureId();

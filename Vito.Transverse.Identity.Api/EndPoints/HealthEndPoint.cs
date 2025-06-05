@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Vito.Framework.Api.Filters;
-using Vito.Framework.Common.Extensions;
 using Vito.Transverse.Identity.Api.Filters;
 using Vito.Transverse.Identity.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.BAL.TransverseServices.Audit;
 using Vito.Transverse.Identity.BAL.TransverseServices.Caching;
+using Vito.Transverse.Identity.BAL.TransverseServices.Culture;
 using Vito.Transverse.Identity.Domain.Enums;
 
 namespace Vito.Transverse.Identity.Api.Endpoints;
@@ -17,27 +17,27 @@ public static class HealthEndPoint
     public static void MapHealthEndPoints(this WebApplication app, ApiVersionSet versionSet)
     {
         var endPointGroupVersioned = app.MapGroup("api/Health/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
-            .AddEndpointFilter<AuditFeatureFlagFilter>()
+        .AddEndpointFilter<AuditFeatureFlagFilter>()
         .AddEndpointFilter<InfrastructureFilter>();
 
         endPointGroupVersioned.MapGet("AllAsync", HealthCheckAllAsync)
-            .MapToApiVersion(1.0)
-            .WithSummary("HealthCheck Async")
-            .WithDescription("[Require Authorization]")
-            .RequireAuthorization()
-          .AddEndpointFilter<RoleAuthorizationFilter>();
-
-
-        endPointGroupVersioned.MapGet("CacheAsync", HealthCheckCacheAsync)
         .MapToApiVersion(1.0)
         .WithSummary("HealthCheck Async")
         .WithDescription("[Require Authorization]")
         .RequireAuthorization()
         .AddEndpointFilter<RoleAuthorizationFilter>();
 
+
+        endPointGroupVersioned.MapGet("CacheAsync", HealthCheckCacheAsync)
+        .MapToApiVersion(1.0)
+        .WithSummary("CacheAsync Async")
+        .WithDescription("[Require Authorization]")
+        .RequireAuthorization()
+        .AddEndpointFilter<RoleAuthorizationFilter>();
+
         endPointGroupVersioned.MapGet("DatabaseAsync", HealthCheckDatabaseAsync)
         .MapToApiVersion(1.0)
-        .WithSummary("HealthCheck Async")
+        .WithSummary("DatabaseAsync Async")
         .WithDescription("[Require Authorization]")
         .RequireAuthorization()
         .AddEndpointFilter<RoleAuthorizationFilter>();
@@ -46,13 +46,14 @@ public static class HealthEndPoint
 
     public static async Task<Results<Ok<List<HealthCheckResult>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> HealthCheckAllAsync(
        HttpRequest request,
-       [FromServices] IAuditService auditService,
-        [FromServices] ICachingServiceMemoryCache cacheService)
+        [FromServices] IAuditService auditService,
+        [FromServices] ICachingServiceMemoryCache cacheService,
+        [FromServices] ICultureService cultureService)
     {
-        var cacheCheck = HealthCheckCacheAsync(request, cacheService);
+        var cacheCheck = HealthCheckCacheAsync(request, cacheService, cultureService);
         var cacheCheckResult = cacheCheck.Result as Ok<HealthCheckResult>;
 
-        var databaseCheck = await HealthCheckDatabaseAsync(request, auditService);
+        var databaseCheck = await HealthCheckDatabaseAsync(request, auditService, cultureService);
         var databaseCheckResult = databaseCheck.Result as Ok<HealthCheckResult>;
 
         List<HealthCheckResult> healthCheckList = [cacheCheckResult!.Value, databaseCheckResult!.Value];
@@ -62,46 +63,67 @@ public static class HealthEndPoint
 
     public static Results<Ok<HealthCheckResult>, UnauthorizedHttpResult, NotFound, ValidationProblem> HealthCheckCacheAsync(
    HttpRequest request,
-   [FromServices] ICachingServiceMemoryCache cacheService)
+       [FromServices] ICachingServiceMemoryCache cacheService,
+       [FromServices] ICultureService cultureService)
     {
-        HealthCheckResult healthCheck = new(HealthStatus.Healthy, "HealthCheckCacheAsync - Service Available"); ;
+        HealthStatus healthCheckStatus = HealthStatus.Healthy;
+        Dictionary<string, object> healthData = [];
+        var startDate = cultureService.UtcNow().ToLocalTime();
+        healthData.Add(nameof(startDate), startDate);
         try
         {
-            cacheService.SetCacheData(CacheItemKeysEnum.HealthCheck.ToString(), CacheItemKeysEnum.HealthCheck.ToString());
+            var returnValue = cacheService.SetCacheData(CacheItemKeysEnum.HealthCheck.ToString(), CacheItemKeysEnum.HealthCheck.ToString());
+            healthData.Add(nameof(cacheService.SetCacheData), returnValue);
             var cacheData = cacheService.GetCacheDataByKey<object>(CacheItemKeysEnum.HealthCheck.ToString());
             if (!cacheData!.ToString()!.Equals(CacheItemKeysEnum.HealthCheck.ToString()))
             {
-                healthCheck = new(HealthStatus.Degraded, "HealthCheckCacheAsync - Service Unavailable");
+                healthCheckStatus = HealthStatus.Degraded;
+                healthData.Add(nameof(cacheService.GetCacheDataByKey), false);
             }
-            cacheService.DeleteCacheDataByKey(CacheItemKeysEnum.HealthCheck.ToString());
+            else
+            {
+                healthData.Add(nameof(cacheService.GetCacheDataByKey), true);
+            }
+            returnValue = cacheService.DeleteCacheDataByKey(CacheItemKeysEnum.HealthCheck.ToString());
+            healthData.Add(nameof(cacheService.DeleteCacheDataByKey), true);
         }
         catch (Exception ex)
         {
-            healthCheck = new(HealthStatus.Unhealthy, $"HealthCheckCacheAsync {ex.Message}");
+            healthCheckStatus = HealthStatus.Unhealthy;
+            healthData.Add(nameof(Exception), ex.Message);
         }
+        var endDate = cultureService.UtcNow().ToLocalTime();
+        healthData.Add(nameof(endDate), endDate);
+        var totalTime = endDate - startDate;
+        healthData.Add(nameof(totalTime), totalTime);
+        HealthCheckResult healthCheck = new(healthCheckStatus, nameof(HealthCheckCacheAsync), null, healthData);
         return TypedResults.Ok(healthCheck);
     }
 
     public static async Task<Results<Ok<HealthCheckResult>, UnauthorizedHttpResult, NotFound, ValidationProblem>> HealthCheckDatabaseAsync(
         HttpRequest request,
-        [FromServices] IAuditService auditService)
+        [FromServices] IAuditService auditService,
+        [FromServices] ICultureService cultureService)
     {
-        HealthCheckResult healthCheck = new(HealthStatus.Healthy, "HealthCheckDatabaseAsync - Service Available"); ;
+        HealthStatus healthCheckStatus = HealthStatus.Healthy;
+        Dictionary<string, object> healthData = [];
+        var startDate = cultureService.UtcNow().ToLocalTime();
+        healthData.Add(nameof(startDate), startDate);
         try
         {
-            var returnList = await auditService.GetEntityListAsync();
-
-            if (returnList.Count == 0)
-            {
-                healthCheck = new(HealthStatus.Degraded, "HealthCheckDatabaseAsync - Service Unavailable");
-            }
+            var healthDataParams = await auditService.GetDatabaseHealth();
+            healthDataParams.ToList().ForEach(x => healthData.Add(x.Key, x.Value));
         }
         catch (Exception ex)
         {
-            healthCheck = new(HealthStatus.Unhealthy, $"HealthCheckDatabaseAsync {ex.GetErrorStakTrace()}");
+            healthCheckStatus = HealthStatus.Unhealthy;
+            healthData.Add(nameof(Exception), ex.Message);
         }
+        var endDate = cultureService.UtcNow().ToLocalTime();
+        healthData.Add(nameof(endDate), endDate);
+        var totalTime = endDate - startDate;
+        healthData.Add(nameof(totalTime), totalTime);
+        HealthCheckResult healthCheck = new(healthCheckStatus, nameof(HealthCheckDatabaseAsync), null, healthData);
         return TypedResults.Ok(healthCheck);
-
-
     }
 }

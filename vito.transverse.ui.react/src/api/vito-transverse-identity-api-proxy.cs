@@ -4535,7 +4535,7 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("deviceInformation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("deviceInformation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public DeviceInformationDTO DeviceInformation
         {
             get { return _deviceInformation; }
@@ -9956,7 +9956,7 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("companyNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyNameTranslationKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string CompanyNameTranslationKey
         {
             get { return _companyNameTranslationKey; }
@@ -9971,7 +9971,7 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("companyDescriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyDescriptionTranslationKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string CompanyDescriptionTranslationKey
         {
             get { return _companyDescriptionTranslationKey; }
@@ -9986,7 +9986,7 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("notificationTypeNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("notificationTypeNameTranslationKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string NotificationTypeNameTranslationKey
         {
             get { return _notificationTypeNameTranslationKey; }
@@ -10001,7 +10001,7 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("notificationTemplateName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("notificationTemplateName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string NotificationTemplateName
         {
             get { return _notificationTemplateName; }
@@ -10016,7 +10016,7 @@ namespace Vito.Transverse.Identity.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("cultureNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("cultureNameTranslationKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string CultureNameTranslationKey
         {
             get { return _cultureNameTranslationKey; }

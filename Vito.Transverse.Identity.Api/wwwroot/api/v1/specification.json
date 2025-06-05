@@ -1854,7 +1854,12 @@
             "nullable": true
           },
           "deviceInformation": {
-            "$ref": "#/components/schemas/DeviceInformationDTO"
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DeviceInformationDTO"
+              }
+            ]
           }
         }
       },
@@ -3101,19 +3106,24 @@
             "type": "boolean"
           },
           "companyNameTranslationKey": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "companyDescriptionTranslationKey": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "notificationTypeNameTranslationKey": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "notificationTemplateName": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "cultureNameTranslationKey": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           }
         }
       },

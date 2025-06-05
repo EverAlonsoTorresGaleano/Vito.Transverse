@@ -2144,7 +2144,7 @@ export class Client implements IClient {
 export interface PingResponseDTO {
     pingDate?: Date | undefined;
     pingMessage?: string | undefined;
-    deviceInformation?: DeviceInformationDTO;
+    deviceInformation?: DeviceInformationDTO | undefined;
 }
 
 export interface DeviceInformationDTO {
@@ -2518,11 +2518,11 @@ export interface NotificationDTO {
     isSent?: boolean;
     sentDate?: Date | undefined;
     isHtml?: boolean;
-    companyNameTranslationKey?: string;
-    companyDescriptionTranslationKey?: string;
-    notificationTypeNameTranslationKey?: string;
-    notificationTemplateName?: string;
-    cultureNameTranslationKey?: string;
+    companyNameTranslationKey?: string | undefined;
+    companyDescriptionTranslationKey?: string | undefined;
+    notificationTypeNameTranslationKey?: string | undefined;
+    notificationTemplateName?: string | undefined;
+    cultureNameTranslationKey?: string | undefined;
 }
 
 export interface EntityDTO {

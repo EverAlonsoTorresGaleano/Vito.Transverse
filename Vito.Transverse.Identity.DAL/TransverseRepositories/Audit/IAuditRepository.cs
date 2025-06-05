@@ -20,5 +20,5 @@ public interface IAuditRepository
     Task<List<ActivityLogDTO>> GetActivityLogListAsync(Expression<Func<ActivityLog, bool>> filters, DataBaseServiceContext? context = null);
 
     Task<List<NotificationDTO>> GetNotificationsListAsync(Expression<Func<Notification, bool>> filters, DataBaseServiceContext? context = null);
-
+    Task<Dictionary<string, object>> GetDatabaseHealth();
 }

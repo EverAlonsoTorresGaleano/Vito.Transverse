@@ -25,4 +25,6 @@ public interface IAuditService
     Task<List<ActivityLogDTO>> GetActivityLogListAsync(long? companyId);
 
     Task<List<NotificationDTO>> GetNotificationsListAsync(long? companyId);
+
+    Task<Dictionary<string, object>> GetDatabaseHealth();
 }

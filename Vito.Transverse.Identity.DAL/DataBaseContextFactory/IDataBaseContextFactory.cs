@@ -8,6 +8,8 @@ public interface IDataBaseContextFactory : IDbContextFactory<DataBaseServiceCont
 {
     new DataBaseServiceContext CreateDbContext();
 
+    DataBaseNameEnum DefaultDatabaseId();
+
     DataBaseServiceContext CreateDbContext(DataBaseNameEnum dataBaseEnum);
 
     DataBaseServiceContext GetDbContext(DataBaseServiceContext? context = null, DataBaseNameEnum dataBaseEnum = DataBaseNameEnum.TransverseDB);

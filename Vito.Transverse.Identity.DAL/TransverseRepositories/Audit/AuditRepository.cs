@@ -1,17 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.DAL.DataBaseContext;
 using Vito.Transverse.Identity.DAL.DataBaseContextFactory;
 using Vito.Transverse.Identity.Domain.Extensions;
 using Vito.Transverse.Identity.Domain.Models;
 using Vito.Transverse.Identity.Domain.ModelsDTO;
+using Vito.Transverse.Identity.Domain.Options;
 
 namespace Vito.Transverse.Identity.DAL.TransverseRepositories.Audit;
 
-public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, ILogger<AuditRepository> logger) : IAuditRepository
+public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOptions<DataBaseSettingsOptions> dataBaseSettingsOptions, ILogger<AuditRepository> logger) : IAuditRepository
 {
+    DataBaseSettingsOptions dataBaseSettingsOptionsValue = dataBaseSettingsOptions.Value;
     public async Task<AuditRecordDTO?> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null)
     {
         AuditRecordDTO? recordSaved = null;
@@ -142,5 +146,34 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
         return returnList;
     }
 
+    public async Task<Dictionary<string, object>> GetDatabaseHealth()
+    {
+        Dictionary<string, object> healthCheckData = [];
+        var returnList = new List<EntityDTO>();
+        try
+        {
+            var transverseDBConnectionString = dataBaseSettingsOptionsValue!.ConnectionStrings!.First(x => x.ConnectionName.Equals(dataBaseContextFactory.DefaultDatabaseId().ToString()));
+            healthCheckData.Add(nameof(transverseDBConnectionString.ConnectionType), transverseDBConnectionString.ConnectionType);
+            healthCheckData.Add(nameof(transverseDBConnectionString.ConnectionName), transverseDBConnectionString.ConnectionName);
+            healthCheckData.Add(nameof(transverseDBConnectionString.ConnectionString), transverseDBConnectionString.ConnectionString);
+            healthCheckData.Add(nameof(transverseDBConnectionString.MaxRetryDelay), transverseDBConnectionString.MaxRetryDelay);
+            healthCheckData.Add(nameof(transverseDBConnectionString.RetryCount), transverseDBConnectionString.RetryCount);
+            healthCheckData.Add(nameof(transverseDBConnectionString.TimeOut), transverseDBConnectionString.TimeOut);
+            var context = dataBaseContextFactory.GetDbContext();
+            healthCheckData.Add(nameof(dataBaseContextFactory.GetDbContext), true);
+            var entityList = await context.Entities.ToListAsync();
+            healthCheckData.Add(nameof(context.Entities), true);
+            healthCheckData.Add($"{nameof(context.Entities)}{nameof(entityList.Count)}", entityList.Count);
+            var endpointList = await context.Endpoints.ToListAsync();
+            healthCheckData.Add(nameof(context.Endpoints), true);
+            healthCheckData.Add($"{nameof(context.Endpoints)}{nameof(entityList.Count)}", endpointList.Count);
+        }
+        catch (Exception ex)
+        {
+            healthCheckData.Add(nameof(Exception), ex.GetErrorStakTrace());
+            logger.LogError(ex, message: nameof(GetDatabaseHealth));
+        }
 
+        return healthCheckData;
+    }
 }
