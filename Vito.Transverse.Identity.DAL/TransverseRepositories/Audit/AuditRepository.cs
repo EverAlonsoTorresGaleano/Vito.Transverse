@@ -152,7 +152,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         var returnList = new List<EntityDTO>();
         try
         {
-            var transverseDBConnectionString = dataBaseSettingsOptionsValue!.ConnectionStrings!.First(x => x.ConnectionName.Equals(dataBaseContextFactory.DefaultDatabaseId().ToString()));
+            var transverseDBConnectionString = dataBaseSettingsOptionsValue!.ConnectionStrings!.First(x => x.ConnectionName.Equals(dataBaseContextFactory.DefaultDatabaseName().ToString()));
             healthCheckData.Add(nameof(transverseDBConnectionString.ConnectionType), transverseDBConnectionString.ConnectionType);
             healthCheckData.Add(nameof(transverseDBConnectionString.ConnectionName), transverseDBConnectionString.ConnectionName);
             healthCheckData.Add(nameof(transverseDBConnectionString.ConnectionString), transverseDBConnectionString.ConnectionString);

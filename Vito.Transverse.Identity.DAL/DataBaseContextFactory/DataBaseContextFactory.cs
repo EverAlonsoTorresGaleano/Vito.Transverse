@@ -11,14 +11,14 @@ public class DataBaseContextFactory(IOptions<DataBaseSettingsOptions> _dataBaseS
 {
     DataBaseSettingsOptions _dataBaseSettingsOptionsValue => _dataBaseSettingsOptions.Value;
 
-    public DataBaseNameEnum DefaultDatabaseId()
+    public DataBaseNameEnum DefaultDatabaseName()
     {
         return DataBaseNameEnum.TransverseDB;
     }
 
     public DataBaseServiceContext CreateDbContext()
     {
-        return CreateDbContext(DefaultDatabaseId());
+        return CreateDbContext(DefaultDatabaseName());
     }
 
     public DataBaseServiceContext CreateDbContext(DataBaseNameEnum dataBaseEnum)

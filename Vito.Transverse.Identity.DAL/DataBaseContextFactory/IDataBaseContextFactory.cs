@@ -8,7 +8,7 @@ public interface IDataBaseContextFactory : IDbContextFactory<DataBaseServiceCont
 {
     new DataBaseServiceContext CreateDbContext();
 
-    DataBaseNameEnum DefaultDatabaseId();
+    DataBaseNameEnum DefaultDatabaseName();
 
     DataBaseServiceContext CreateDbContext(DataBaseNameEnum dataBaseEnum);
 
