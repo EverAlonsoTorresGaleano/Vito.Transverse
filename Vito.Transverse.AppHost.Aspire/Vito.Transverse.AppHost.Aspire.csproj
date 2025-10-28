@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Vito.Transverse.Identity.Api\Vito.Transverse.Identity.Api.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Presentation.Api\Vito.Transverse.Identity.Presentation.Api.csproj" />
   </ItemGroup>
 
 </Project>

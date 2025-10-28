@@ -12,11 +12,11 @@ services:
       network-name:
         aliases:
           - vito.sql.server
- vito.transverse.identity.api:
+ Vito.Transverse.Identity.Presentation.Api:
     image: ${DOCKER_REGISTRY-}vitotransverseidentityapi
     build:
       context: .
-      dockerfile: Vito.Transverse.Identity.Api/Dockerfile
+      dockerfile: Vito.Transverse.Identity.Presentation.Api/Dockerfile
     networks:
       network-name:
         aliases:

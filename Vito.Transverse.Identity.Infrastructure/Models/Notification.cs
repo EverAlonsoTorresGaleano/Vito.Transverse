@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace  Vito.Transverse.Identity.Infrastructure.Models;
+
+public partial class Notification
+{
+    public long CompanyFk { get; set; }
+
+    public long NotificationTemplateGroupFk { get; set; }
+
+    public string CultureFk { get; set; } = null!;
+
+    public long NotificationTypeFk { get; set; }
+
+    public long Id { get; set; }
+
+    public DateTime CreationDate { get; set; }
+
+    public string Sender { get; set; } = null!;
+
+    public string Receiver { get; set; } = null!;
+
+    public string? Cc { get; set; }
+
+    public string? Bcc { get; set; }
+
+    public string Subject { get; set; } = null!;
+
+    public string Message { get; set; } = null!;
+
+    public bool IsSent { get; set; }
+
+    public DateTime? SentDate { get; set; }
+
+    public bool IsHtml { get; set; }
+
+    public virtual Company CompanyFkNavigation { get; set; } = null!;
+
+    public virtual Culture CultureFkNavigation { get; set; } = null!;
+
+    public virtual NotificationTemplate NotificationTemplate { get; set; } = null!;
+
+    public virtual GeneralTypeItem NotificationTypeFkNavigation { get; set; } = null!;
+}

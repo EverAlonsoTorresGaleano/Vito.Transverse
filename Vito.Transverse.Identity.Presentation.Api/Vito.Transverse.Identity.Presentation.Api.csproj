@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>c1afc037-45d7-4496-b33b-bfbd07add3f1</UserSecretsId>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <PublishAot>false</PublishAot>
+
+  </PropertyGroup>
+
+
+
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="NSwag.AspNetCore" />
+    <PackageReference Include="NSwag.MSBuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="OpenTelemetry.Api" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="Vito.Framework.Api" />
+    <PackageReference Include="Vito.Framework.Common" />
+    <PackageReference Include="Wangkanai.Detection" />
+    <PackageReference Include="Wangkanai.Hosting" />
+    <PackageReference Include="Wangkanai.System" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vito.Transverse.Identity.Application\Vito.Transverse.Identity.Application.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Infrastructure\Vito.Transverse.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Entities\Vito.Transverse.Identity.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="i18n\en-US\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <Description>Transverse Api for Security/ Culture and Localization end points</Description>
+    <Copyright>Vito Torres Soft ©®™</Copyright>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="$(NSwagExe_Net80) run config.nswag /variables:Configuration=$(Configuration)" />
+	</Target>
+
+</Project>

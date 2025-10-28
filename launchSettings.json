@@ -4,10 +4,10 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "composeLaunchAction": "LaunchBrowser",
-      "composeLaunchServiceName": "vito.transverse.identity.api",
+      "composeLaunchServiceName": "Vito.Transverse.Identity.Presentation.Api",
       "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/api-docs",
       "serviceActions": {
-        "vito.transverse.identity.api": "StartDebugging",
+        "Vito.Transverse.Identity.Presentation.Api": "StartDebugging",
         "vito.db.sqlserver": "StartWithoutDebugging"
       }
     }

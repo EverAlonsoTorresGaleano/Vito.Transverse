@@ -1,5 +1,5 @@
 services:
-  vito.transverse.identity.api:
+  Vito.Transverse.Identity.Presentation.Api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080

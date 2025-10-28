@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Twilio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vito.Transverse.Identity.Infrastructure\Vito.Transverse.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Entities\Vito.Transverse.Identity.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>

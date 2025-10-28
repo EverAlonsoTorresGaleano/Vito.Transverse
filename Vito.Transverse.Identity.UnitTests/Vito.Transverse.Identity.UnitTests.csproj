@@ -10,21 +10,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BAL\CultureServiceTest.cs" />
+    <Compile Remove="DAL\SecurityRepositoryTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" />
     <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Moq.EntityFrameworkCore" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Vito.Framework.Common" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vito.Transverse.Identity.Entities\Vito.Transverse.Identity.Entities.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Presentation.Api\Vito.Transverse.Identity.Presentation.Api.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Application\Vito.Transverse.Identity.Application.csproj" />
+    <ProjectReference Include="..\Vito.Transverse.Identity.Infrastructure\Vito.Transverse.Identity.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

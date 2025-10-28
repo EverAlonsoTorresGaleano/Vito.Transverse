@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.Api", "Vito.Transverse.Identity.Api\Vito.Transverse.Identity.Api.csproj", "{E1AE378A-6918-46F7-B74D-AEBED45DC67F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B3FABDB-E40D-48F2-95E7-4D4BFCCDCE23}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.packages.props = Directory.packages.props
@@ -14,23 +12,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Framework (Nuget)", "00 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Aspire Distributed App", "01 Aspire Distributed App", "{D8B0BC4B-DCB7-4190-A269-B3159A4827DB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Api Server", "02 Api Server", "{0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Presentation (Api Server)", "02 Presentation (Api Server)", "{0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}"
+	ProjectSection(SolutionItems) = preProject
+		Deploy.txt = Deploy.txt
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Azure Function", "03 Azure Function", "{4764CF22-1D55-4B3E-A8D2-5FA73BF9968E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Presentation (Azure Fx)", "03 Presentation (Azure Fx)", "{4764CF22-1D55-4B3E-A8D2-5FA73BF9968E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Domain", "04 Domain", "{F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Entities", "04 Entities", "{F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Business Layer", "05 Business Layer", "{3FD99A0D-213D-4D82-B804-EB3AD9D020AF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Application", "05 Application", "{3FD99A0D-213D-4D82-B804-EB3AD9D020AF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06 Data Access Layer", "06 Data Access Layer", "{9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06 Infrastructure", "06 Infrastructure", "{9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07 Unit Test", "07 Unit Test", "{8626142B-4A18-4F72-BE8F-E71A3CFED020}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.Domain", "Vito.Transverse.Identity.Domain\Vito.Transverse.Identity.Domain.csproj", "{7A69D221-F0F1-440B-8B75-830AF97B51D3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.BAL", "Vito.Transverse.Identity.BAL\Vito.Transverse.Identity.BAL.csproj", "{8B3F93EE-CD59-4CBE-A421-131CE22F68D7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.DAL", "Vito.Transverse.Identity.DAL\Vito.Transverse.Identity.DAL.csproj", "{430EC238-BBCF-4703-B3A4-AA224AAA4EDB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.UnitTests", "Vito.Transverse.Identity.UnitTests\Vito.Transverse.Identity.UnitTests.csproj", "{D5F46237-C073-432E-A99C-A8440D01CDD5}"
 EndProject
@@ -40,28 +35,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.AppHost.Asp
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.Identity.Presentation.Api", "Vito.Transverse.Identity.Presentation.Api\Vito.Transverse.Identity.Presentation.Api.csproj", "{B8287672-2592-0A60-B55B-39ACF688FAFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.Identity.Infrastructure", "Vito.Transverse.Identity.Infrastructure\Vito.Transverse.Identity.Infrastructure.csproj", "{E618475C-3E42-C9EE-144C-E9BD2DAE115A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.Identity.Application", "Vito.Transverse.Identity.Application\Vito.Transverse.Identity.Application.csproj", "{4BDB3D27-1E49-BBCC-DD11-254C0428ED32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.Identity.Entities", "Vito.Transverse.Identity.Entities\Vito.Transverse.Identity.Entities.csproj", "{902ED08A-750E-1DF3-FD15-60F723132726}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1AE378A-6918-46F7-B74D-AEBED45DC67F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A69D221-F0F1-440B-8B75-830AF97B51D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B3F93EE-CD59-4CBE-A421-131CE22F68D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B3F93EE-CD59-4CBE-A421-131CE22F68D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B3F93EE-CD59-4CBE-A421-131CE22F68D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B3F93EE-CD59-4CBE-A421-131CE22F68D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{430EC238-BBCF-4703-B3A4-AA224AAA4EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{430EC238-BBCF-4703-B3A4-AA224AAA4EDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{430EC238-BBCF-4703-B3A4-AA224AAA4EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{430EC238-BBCF-4703-B3A4-AA224AAA4EDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5F46237-C073-432E-A99C-A8440D01CDD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5F46237-C073-432E-A99C-A8440D01CDD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5F46237-C073-432E-A99C-A8440D01CDD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,17 +60,33 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8287672-2592-0A60-B55B-39ACF688FAFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8287672-2592-0A60-B55B-39ACF688FAFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8287672-2592-0A60-B55B-39ACF688FAFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8287672-2592-0A60-B55B-39ACF688FAFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E618475C-3E42-C9EE-144C-E9BD2DAE115A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E618475C-3E42-C9EE-144C-E9BD2DAE115A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E618475C-3E42-C9EE-144C-E9BD2DAE115A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E618475C-3E42-C9EE-144C-E9BD2DAE115A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BDB3D27-1E49-BBCC-DD11-254C0428ED32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BDB3D27-1E49-BBCC-DD11-254C0428ED32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BDB3D27-1E49-BBCC-DD11-254C0428ED32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BDB3D27-1E49-BBCC-DD11-254C0428ED32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{902ED08A-750E-1DF3-FD15-60F723132726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{902ED08A-750E-1DF3-FD15-60F723132726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{902ED08A-750E-1DF3-FD15-60F723132726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{902ED08A-750E-1DF3-FD15-60F723132726}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E1AE378A-6918-46F7-B74D-AEBED45DC67F} = {0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}
-		{7A69D221-F0F1-440B-8B75-830AF97B51D3} = {F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}
-		{8B3F93EE-CD59-4CBE-A421-131CE22F68D7} = {3FD99A0D-213D-4D82-B804-EB3AD9D020AF}
-		{430EC238-BBCF-4703-B3A4-AA224AAA4EDB} = {9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}
 		{D5F46237-C073-432E-A99C-A8440D01CDD5} = {8626142B-4A18-4F72-BE8F-E71A3CFED020}
 		{F800D3CD-F99C-4522-9B44-C12B5AB11D04} = {D8B0BC4B-DCB7-4190-A269-B3159A4827DB}
+		{B8287672-2592-0A60-B55B-39ACF688FAFA} = {0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}
+		{E618475C-3E42-C9EE-144C-E9BD2DAE115A} = {9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}
+		{4BDB3D27-1E49-BBCC-DD11-254C0428ED32} = {3FD99A0D-213D-4D82-B804-EB3AD9D020AF}
+		{902ED08A-750E-1DF3-FD15-60F723132726} = {F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D2F43FD-AFBF-4361-B722-C37FA705CF02}
