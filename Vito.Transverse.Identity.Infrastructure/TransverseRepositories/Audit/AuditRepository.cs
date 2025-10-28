@@ -4,13 +4,12 @@ using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
-using  Vito.Transverse.Identity.Infrastructure.Extensions;
-using  Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
-using Vito.Transverse.Identity.Entities.Options;
-using Vito.Transverse.Identity.Domain.Options;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
+using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Vito.Transverse.Identity.Infrastructure.Models;
 
 namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
 

@@ -115,7 +115,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../vito.transverse.ui.react/src/api/vito-transverse-identity-api.ts"
+      "output": "../Vito.Transverse.Identity.UI/vito-transverse-identity-api.ts"
     },
     "openApiToCSharpClient": {
       "generateClientClasses": true,
@@ -168,7 +168,7 @@
       "handleReferences": false,
       "generateImmutableArrayProperties": false,
       "generateImmutableDictionaryProperties": false,
-      "output": "../vito.transverse.ui.react/src/api/vito-transverse-identity-api-proxy.cs"
+      "output": "../Vito.Transverse.Identity.UI/vito-transverse-identity-api-proxy.cs"
     }
   }
 }

@@ -1,24 +1,20 @@
 ﻿namespace Vito.Transverse.Identity.UnitTests.DAL;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Vito.Framework.Common.Models.SocialNetworks;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
-using  Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
-using Vito.Transverse.Identity.Entities.Options;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
+using Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
 using Vito.Transverse.Identity.UnitTests.Helpers;
-using Vito.Transverse.Identity.Domain.Options;
 
 [TestFixture]
 public class AuditRepositoryTest

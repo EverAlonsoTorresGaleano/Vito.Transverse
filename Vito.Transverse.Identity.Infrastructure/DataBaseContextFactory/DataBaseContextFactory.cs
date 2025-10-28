@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
-using Vito.Transverse.Identity.Domain.Options;
+using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 

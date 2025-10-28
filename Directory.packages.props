@@ -42,7 +42,7 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageVersion Include="NUnit" Version="4.4.0" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.10.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.11.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.8.1" />
@@ -50,8 +50,8 @@
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
     <PackageVersion Include="System.Text.Json" Version="9.0.10" />
     <PackageVersion Include="Twilio" Version="7.13.5" />
-    <PackageVersion Include="Vito.Framework.Api" Version="0.2.41-alpha.0" />
-    <PackageVersion Include="Vito.Framework.Common" Version="0.2.41-alpha.0" />
+    <PackageVersion Include="Vito.Framework.Api" Version="0.2.41-alpha.1" />
+    <PackageVersion Include="Vito.Framework.Common" Version="0.2.41-alpha.2" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.20.0" />
     <PackageVersion Include="Wangkanai.Hosting" Version="3.7.0" />
     <PackageVersion Include="Wangkanai.System" Version="5.8.0" />
