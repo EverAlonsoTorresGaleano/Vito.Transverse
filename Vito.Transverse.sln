@@ -12,24 +12,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Framework (Nuget)", "00 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Aspire Distributed App", "01 Aspire Distributed App", "{D8B0BC4B-DCB7-4190-A269-B3159A4827DB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Presentation (Api Server)", "02 Presentation (Api Server)", "{0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02A Presentation (MInimal Api)", "02A Presentation (MInimal Api)", "{0EE5C3B5-5E63-402E-9C2F-EE053ACC9994}"
 	ProjectSection(SolutionItems) = preProject
 		Deploy.txt = Deploy.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Presentation (Azure Fx)", "03 Presentation (Azure Fx)", "{4764CF22-1D55-4B3E-A8D2-5FA73BF9968E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02B Presentation (Azure Fx)", "02B Presentation (Azure Fx)", "{4764CF22-1D55-4B3E-A8D2-5FA73BF9968E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Entities", "04 Entities", "{F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Entities", "03 Entities", "{F9A06BCD-A5E1-4A36-8A1D-6A2A7EC5A18E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Application", "05 Application", "{3FD99A0D-213D-4D82-B804-EB3AD9D020AF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Application", "04 Application", "{3FD99A0D-213D-4D82-B804-EB3AD9D020AF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06 Infrastructure", "06 Infrastructure", "{9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Infrastructure", "05 Infrastructure", "{9F5CB12A-BB85-404D-B091-7AFCEF2DB4EC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07 Unit Test", "07 Unit Test", "{8626142B-4A18-4F72-BE8F-E71A3CFED020}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06 Unit Test", "06 Unit Test", "{8626142B-4A18-4F72-BE8F-E71A3CFED020}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vito.Transverse.Identity.UnitTests", "Vito.Transverse.Identity.UnitTests\Vito.Transverse.Identity.UnitTests.csproj", "{D5F46237-C073-432E-A99C-A8440D01CDD5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "08 Automation Test", "08 Automation Test", "{BB836303-008D-48AC-8DA6-B81546C2FE9A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07 Automation Test", "07 Automation Test", "{BB836303-008D-48AC-8DA6-B81546C2FE9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vito.Transverse.AppHost.Aspire", "Vito.Transverse.AppHost.Aspire\Vito.Transverse.AppHost.Aspire.csproj", "{F800D3CD-F99C-4522-9B44-C12B5AB11D04}"
 EndProject
