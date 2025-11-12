@@ -2,10 +2,10 @@
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.Entities.Enums;
-using  Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Transverse.Identity.Infrastructure.Models;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Infrastructure.Extensions;
+namespace Vito.Transverse.Identity.Infrastructure.Extensions;
 
 public static class MapperExtension
 {
@@ -72,6 +72,61 @@ public static class MapperExtension
         return returnObject;
     }
 
+    public static Culture ToCulture(this CultureDTO modelObject)
+    {
+        Culture returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            CountryFk = modelObject.CountryFk!,
+            LanguageFk = modelObject.LanguageFk!,
+            IsEnabled = modelObject.IsEnabled
+        };
+        return returnObject;
+    }
+
+    public static LanguageDTO ToLanguageDTO(this Language modelObject)
+    {
+        LanguageDTO returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey
+        };
+        return returnObject;
+    }
+
+    public static Language ToLanguage(this LanguageDTO modelObject)
+    {
+        Language returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey
+        };
+        return returnObject;
+    }
+
+    public static CountryDTO ToCountryDTO(this Country modelObject)
+    {
+        CountryDTO returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            UtcHoursDifference = modelObject.UtcHoursDifference
+        };
+        return returnObject;
+    }
+
+    public static Country ToCountry(this CountryDTO modelObject)
+    {
+        Country returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            UtcHoursDifference = modelObject.UtcHoursDifference
+        };
+        return returnObject;
+    }
+
 
 
     public static CultureTranslationDTO ToCultureTranslationDTO(this CultureTranslation modelObject)
@@ -117,9 +172,185 @@ public static class MapperExtension
         return returnObject;
     }
 
+    public static ListItemDTO ToListItemDTO(this UserDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = $"{modelObject.Name} {modelObject.LastName} [{modelObject.Email}]",
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
 
+    public static ListItemDTO ToListItemDTO(this RoleDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
 
+    public static ListItemDTO ToListItemDTO(this ApplicationDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
 
+    public static ListItemDTO ToListItemDTO(this CompanyDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this CountryDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this LanguageDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this GeneralTypeGroupDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this GeneralTypeItemDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = modelObject.ListItemGroupFk.ToString()
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this EntityDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = $"{modelObject.SchemaName}.{modelObject.EntityName}",
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this MembershipTypeDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this CompanyMembershipsDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = $"{modelObject.MembershipTypeNameTranslationKey} [{modelObject.StartDate} ~ {modelObject.EndDate}]",
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this ModuleDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this EndpointDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this ComponentDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this NotificationTemplateDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = $"{modelObject.Name} [{modelObject.CultureFk}]",
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
 
     public static CompanyEntityAuditDTO ToCompanyEntityAuditDTO(this CompanyEntityAudit modelObject)
     {
@@ -140,6 +371,23 @@ public static class MapperExtension
             AuditTypeNameTranslationKey = modelObject.AuditTypeFkNavigation is null ? string.Empty : modelObject.AuditTypeFkNavigation.NameTranslationKey,
             EntitySchemaName = modelObject.EntityFkNavigation is null ? string.Empty : modelObject.EntityFkNavigation.SchemaName,
             EntityName = modelObject.EntityFkNavigation is null ? string.Empty : modelObject.EntityFkNavigation.EntityName
+        };
+        return returnObject;
+    }
+
+    public static CompanyEntityAudit ToCompanyEntityAudit(this CompanyEntityAuditDTO modelObject)
+    {
+        CompanyEntityAudit returnObject = new()
+        {
+            EntityFk = modelObject.EntityFk,
+            AuditTypeFk = modelObject.AuditTypeFk,
+            CompanyFk = modelObject.CompanyFk,
+            CreatedByUserFk = modelObject.CreatedByUserFk,
+            CreationDate = modelObject.CreationDate,
+            Id = modelObject.Id,
+            IsActive = modelObject.IsActive,
+            LastUpdateDate = modelObject.LastUpdateDate,
+            UpdatedByUserFk = modelObject.UpdatedByUserFk
         };
         return returnObject;
     }
@@ -452,7 +700,77 @@ public static class MapperExtension
         return returnObject;
     }
 
- 
+    public static Role ToRole(this RoleDTO modelObject)
+    {
+        Role returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ApplicationFk = modelObject.ApplicationFk,
+            CompanyFk = modelObject.CompanyFk,
+            CreatedByUserFk = modelObject.CreatedByUserFk,
+            CreationDate = modelObject.CreationDate,
+            IsActive = modelObject.IsActive,
+            LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
+            LastUpdateDate = modelObject.LastUpdateDate,
+        };
+        return returnObject;
+    }
+
+    public static Module ToModule(this ModuleDTO modelObject)
+    {
+        Module returnObject = new()
+        {
+            Id = modelObject.Id,
+            ApplicationFk = modelObject.ApplicationFk,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
+            PositionIndex = modelObject.PositionIndex,
+            IsActive = modelObject.IsActive,
+            IsVisible = modelObject.IsVisible,
+            IsApi = modelObject.IsApi,
+        };
+        return returnObject;
+    }
+
+    public static Endpoint ToEndpoint(this EndpointDTO modelObject)
+    {
+        Endpoint returnObject = new()
+        {
+            Id = modelObject.Id,
+            ApplicationFk = modelObject.ApplicationFk,
+            ModuleFk = modelObject.ModuleFk,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
+            PositionIndex = modelObject.PositionIndex,
+            IsActive = modelObject.IsActive,
+            IsVisible = modelObject.IsVisible,
+            IsApi = modelObject.IsApi,
+            EndpointUrl = modelObject.EndpointUrl,
+            Method = modelObject.Method,
+        };
+        return returnObject;
+    }
+
+    public static Component ToComponent(this ComponentDTO modelObject)
+    {
+        Component returnObject = new()
+        {
+            Id = modelObject.Id,
+            ApplicationFk = modelObject.ApplicationFk,
+            EndpointFk = modelObject.EndpointFk,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
+            ObjectId = modelObject.ObjectId,
+            ObjectName = modelObject.ObjectName,
+            ObjectPropertyName = modelObject.ObjectPropertyName,
+            DefaultPropertyValue = modelObject.DefaultPropertyValue,
+            PositionIndex = modelObject.PositionIndex,
+        };
+        return returnObject;
+    }
+
+
 
 
 
@@ -587,7 +905,7 @@ public static class MapperExtension
 
 
 
- 
+
 
     public static AuditRecordDTO ToAuditRecordDTO(this AuditRecord modelObject)
     {
@@ -849,16 +1167,33 @@ public static class MapperExtension
         returnObject = new()
         {
             Id = modelObject.Id,
+            NotificationTemplateGroupId = modelObject.NotificationTemplateGroupId,
             CultureFk = modelObject.CultureFk,
             SubjectTemplateText = modelObject.SubjectTemplateText,
             MessageTemplateText = modelObject.MessageTemplateText,
             IsHtml = modelObject.IsHtml,
             Name = modelObject.Name,
+            CultureNameTranslationKey = modelObject.CultureFkNavigation?.NameTranslationKey ?? string.Empty
         };
         return returnObject;
     }
 
- 
+    public static NotificationTemplate ToNotificationTemplate(this NotificationTemplateDTO modelObject)
+    {
+        NotificationTemplate returnObject = new()
+        {
+            Id = modelObject.Id,
+            NotificationTemplateGroupId = modelObject.NotificationTemplateGroupId,
+            CultureFk = modelObject.CultureFk,
+            SubjectTemplateText = modelObject.SubjectTemplateText,
+            MessageTemplateText = modelObject.MessageTemplateText,
+            IsHtml = modelObject.IsHtml,
+            Name = modelObject.Name
+        };
+        return returnObject;
+    }
+
+
     public static PictureDTO ToPictureDTO(this Picture modelObject)
     {
         PictureDTO returnObject = new()
@@ -926,7 +1261,134 @@ public static class MapperExtension
         return returnObject;
     }
 
+    public static Entity ToEntity(this EntityDTO modelObject)
+    {
+        Entity returnObject = new()
+        {
+            EntityName = modelObject.EntityName,
+            Id = modelObject.Id,
+            IsActive = modelObject.IsActive,
+            IsSystemEntity = modelObject.IsSystemEntity,
+            SchemaName = modelObject.SchemaName,
+        };
+        return returnObject;
+    }
 
+    public static MembershipTypeDTO ToMembershipTypeDTO(this MembershipType modelObject)
+    {
+        MembershipTypeDTO returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
+            CreationDate = modelObject.CreationDate.ToLocalTime(),
+            CreatedByUserFk = modelObject.CreatedByUserFk,
+            StartDate = modelObject.StartDate.ToLocalTime(),
+            EndDate = modelObject.EndDate.ToLocalTimeNullable(),
+            LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
+            LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
+            IsActive = modelObject.IsActive
+        };
+        return returnObject;
+    }
 
+    public static MembershipType ToMembershipType(this MembershipTypeDTO modelObject)
+    {
+        MembershipType returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
+            CreationDate = modelObject.CreationDate,
+            CreatedByUserFk = modelObject.CreatedByUserFk,
+            StartDate = modelObject.StartDate,
+            EndDate = modelObject.EndDate,
+            LastUpdateDate = modelObject.LastUpdateDate,
+            LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
+            IsActive = modelObject.IsActive
+        };
+        return returnObject;
+    }
+
+    public static SecuencesDTO ToSecuencesDTO(this Sequence modelObject)
+    {
+        SecuencesDTO returnObject = new()
+        {
+            Id = modelObject.Id,
+            CompanyId = modelObject.CompanyFk,
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation?.NameTranslationKey ?? string.Empty,
+            ApplicationId = modelObject.ApplicationFk,
+            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation?.NameTranslationKey ?? string.Empty,
+            SequenceTypeId = modelObject.SequenceTypeFk,
+            SequenceNameFormat = modelObject.SequenceNameFormat,
+            SequenceIndex = modelObject.SequenceIndex,
+            TextFormat = modelObject.TextFormat
+        };
+        return returnObject;
+    }
+
+    public static Sequence ToSequence(this SecuencesDTO modelObject)
+    {
+        Sequence returnObject = new()
+        {
+            Id = modelObject.Id,
+            CompanyFk = modelObject.CompanyId,
+            ApplicationFk = modelObject.ApplicationId,
+            SequenceTypeFk = modelObject.SequenceTypeId,
+            SequenceNameFormat = modelObject.SequenceNameFormat,
+            SequenceIndex = modelObject.SequenceIndex,
+            TextFormat = modelObject.TextFormat
+        };
+        return returnObject;
+    }
+
+    public static GeneralTypeItemDTO ToGeneralTypeItemDTO(this GeneralTypeItem modelObject)
+    {
+        GeneralTypeItemDTO returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = modelObject.ListItemGroupFk,
+            OrderIndex = modelObject.OrderIndex,
+            IsEnabled = modelObject.IsEnabled,
+            ItemGroupNameTranslationKey = modelObject.ListItemGroupFkNavigation?.NameTranslationKey ?? string.Empty
+        };
+        return returnObject;
+    }
+
+    public static GeneralTypeItem ToGeneralTypeItem(this GeneralTypeItemDTO modelObject)
+    {
+        GeneralTypeItem returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = modelObject.ListItemGroupFk,
+            OrderIndex = modelObject.OrderIndex,
+            IsEnabled = modelObject.IsEnabled
+        };
+        return returnObject;
+    }
+
+    public static GeneralTypeGroupDTO ToGeneralTypeGroupDTO(this GeneralTypeGroup modelObject)
+    {
+        GeneralTypeGroupDTO returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            IsSystemType = modelObject.IsSystemType
+        };
+        return returnObject;
+    }
+
+    public static GeneralTypeGroup ToGeneralTypeGroup(this GeneralTypeGroupDTO modelObject)
+    {
+        GeneralTypeGroup returnObject = new()
+        {
+            Id = modelObject.Id,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            IsSystemType = modelObject.IsSystemType
+        };
+        return returnObject;
+    }
 
 }

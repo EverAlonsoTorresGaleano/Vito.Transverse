@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning.Builder;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Api.Filters;
@@ -7,6 +8,7 @@ using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
+using Vito.Transverse.Identity.Presentation.Api.Validators;
 using  Vito.Transverse.Identity.Application.TransverseServices.Audit;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
@@ -21,7 +23,7 @@ public static class AuditEndPoint
             .AddEndpointFilter<InfrastructureFilter>();
 
 
-        endPointGroupVersioned.MapGet("/", GetAuditRecordsListAsync)
+        endPointGroupVersioned.MapGet("/AuditRecords", GetAuditRecordsListAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Get Audit Records List Async")
            .WithDescription("[Require Authorization]")
@@ -31,6 +33,34 @@ public static class AuditEndPoint
         endPointGroupVersioned.MapGet("CompanyEntityAudits", GetCompanyEntityAuditsListAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Get Company Entity Audits List Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapGet("CompanyEntityAudits/{companyEntityAuditId}", GetCompanyEntityAuditByIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Get Company Entity Audit By Id Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapPost("CompanyEntityAudits", CreateNewCompanyEntityAuditAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Create New Company Entity Audit Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapPut("CompanyEntityAudits", UpdateCompanyEntityAuditByIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Update Company Entity Audit By Id Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapDelete("CompanyEntityAudits/Delete/{companyEntityAuditId}", DeleteCompanyEntityAuditByIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Delete Company Entity Audit By Id Async")
             .WithDescription("[Require Authorization]")
             .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
@@ -55,6 +85,41 @@ public static class AuditEndPoint
          .WithDescription("[Require Authorization]")
          .RequireAuthorization()
        .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapGet("Entities/dropdown", GetEntityListItemAsync)
+           .MapToApiVersion(1.0)
+           .WithSummary("Get Entity List Async")
+          .WithDescription("[Require Authorization]")
+          .RequireAuthorization()
+        .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapGet("Entities/{entityId}", GetEntityByIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Get Entity By Id Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapPost("Entities", CreateNewEntityAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Create New Entity Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapPut("Entities", UpdateEntityByIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Update Entity By Id Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
+
+        endPointGroupVersioned.MapDelete("Entities/Delete/{entityId}", DeleteEntityByIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Delete Entity By Id Async")
+            .WithDescription("[Require Authorization]")
+            .RequireAuthorization()
+          .AddEndpointFilter<RoleAuthorizationFilter>();
     }
 
     public static async Task<Results<Ok<List<CompanyEntityAuditDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetCompanyEntityAuditsListAsync(
@@ -102,5 +167,115 @@ public static class AuditEndPoint
     {
         var returnObject = await auditService.GetEntityListAsync();
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetEntityListItemAsync(
+    HttpRequest request,
+    [FromServices] IAuditService auditService)
+    {
+        var returnObject = await auditService.GetEntityListItemAsync();
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<EntityDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetEntityByIdAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromRoute] long entityId)
+    {
+        var returnObject = await auditService.GetEntityByIdAsync(entityId);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<EntityDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewEntityAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromServices] IValidator<EntityDTO> validator,
+        [FromBody] EntityDTO entityDTO)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var validationResult = await validator.ValidateAsync(entityDTO);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+        }
+        var returnObject = await auditService.CreateNewEntityAsync(entityDTO, deviceInformation!);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<EntityDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateEntityByIdAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromServices] IValidator<EntityDTO> validator,
+        [FromBody] EntityDTO entityDTO)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var validationResult = await validator.ValidateAsync(entityDTO);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+        }
+        var returnObject = await auditService.UpdateEntityByIdAsync(entityDTO.Id, entityDTO, deviceInformation!);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok, UnauthorizedHttpResult, NotFound>> DeleteEntityByIdAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromRoute] long entityId)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var deleted = await auditService.DeleteEntityByIdAsync(entityId, deviceInformation!);
+        return deleted ? TypedResults.Ok() : TypedResults.NotFound();
+    }
+
+    public static async Task<Results<Ok<CompanyEntityAuditDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetCompanyEntityAuditByIdAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromRoute] long companyEntityAuditId)
+    {
+        var returnObject = await auditService.GetCompanyEntityAuditByIdAsync(companyEntityAuditId);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<CompanyEntityAuditDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewCompanyEntityAuditAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromServices] IValidator<CompanyEntityAuditDTO> validator,
+        [FromBody] CompanyEntityAuditDTO companyEntityAuditDTO)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var validationResult = await validator.ValidateAsync(companyEntityAuditDTO);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+        }
+        var returnObject = await auditService.CreateNewCompanyEntityAuditAsync(companyEntityAuditDTO, deviceInformation!);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<CompanyEntityAuditDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateCompanyEntityAuditByIdAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromServices] IValidator<CompanyEntityAuditDTO> validator,
+        [FromBody] CompanyEntityAuditDTO companyEntityAuditDTO)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var validationResult = await validator.ValidateAsync(companyEntityAuditDTO);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+        }
+        var returnObject = await auditService.UpdateCompanyEntityAuditByIdAsync(companyEntityAuditDTO.Id, companyEntityAuditDTO, deviceInformation!);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok, UnauthorizedHttpResult, NotFound>> DeleteCompanyEntityAuditByIdAsync(
+        HttpRequest request,
+        [FromServices] IAuditService auditService,
+        [FromRoute] long companyEntityAuditId)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var deleted = await auditService.DeleteCompanyEntityAuditByIdAsync(companyEntityAuditId, deviceInformation!);
+        return deleted ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

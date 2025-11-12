@@ -19,7 +19,23 @@ public interface IAuditService
 
     Task<List<EntityDTO>> GetEntityListAsync();
 
+    Task<EntityDTO?> GetEntityByIdAsync(long entityId);
+
+    Task<EntityDTO?> CreateNewEntityAsync(EntityDTO newRecord, DeviceInformationDTO deviceInformation);
+
+    Task<EntityDTO?> UpdateEntityByIdAsync(long entityId, EntityDTO recordToUpdate, DeviceInformationDTO deviceInformation);
+
+    Task<bool> DeleteEntityByIdAsync(long entityId, DeviceInformationDTO deviceInformation);
+
     Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(long? companyId);
+
+    Task<CompanyEntityAuditDTO?> GetCompanyEntityAuditByIdAsync(long companyEntityAuditId);
+
+    Task<CompanyEntityAuditDTO?> CreateNewCompanyEntityAuditAsync(CompanyEntityAuditDTO newRecord, DeviceInformationDTO deviceInformation);
+
+    Task<CompanyEntityAuditDTO?> UpdateCompanyEntityAuditByIdAsync(long companyEntityAuditId, CompanyEntityAuditDTO recordToUpdate, DeviceInformationDTO deviceInformation);
+
+    Task<bool> DeleteCompanyEntityAuditByIdAsync(long companyEntityAuditId, DeviceInformationDTO deviceInformation);
 
     Task<List<AuditRecordDTO>> GetAuditRecordsListAsync(long? companyId);
 
@@ -32,6 +48,5 @@ public interface IAuditService
     Task<ActivityLogDTO?> AddNewActivityLogAsync(long? companyId, long? applicationId, long? userId, long? roleId, DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
 
     Task<ActivityLogDTO?> AddNewActivityLogAsync(DeviceInformationDTO deviceInformation, OAuthActionTypeEnum actionStatus, DataBaseServiceContext? context = null);
-
-
+    Task<List<ListItemDTO>> GetEntityListItemAsync();
 }

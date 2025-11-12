@@ -1,16 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
-using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
-using  Vito.Transverse.Identity.Application.TransverseServices.Culture;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
+using Vito.Transverse.Identity.Application.TransverseServices.Caching;
+using Vito.Transverse.Identity.Application.TransverseServices.Culture;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
+using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
 
-namespace  Vito.Transverse.Identity.Application.TransverseServices.Audit;
+namespace Vito.Transverse.Identity.Application.TransverseServices.Audit;
 
 public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRepository, ICultureService cultureService, ICachingServiceMemoryCache cachingService) : IAuditService
 {
@@ -114,10 +116,83 @@ public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRe
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            logger.LogError(ex, message: nameof(GetEntityListAsync));
             throw;
         }
 
+    }
+
+    public async Task<List<ListItemDTO>> GetEntityListItemAsync()
+    {
+        var listItem = await GetEntityListAsync();
+        var returnList = listItem.Select(x => x.ToListItemDTO()).ToList();
+        return returnList;
+    }
+
+    public async Task<EntityDTO?> GetEntityByIdAsync(long entityId)
+    {
+        try
+        {
+            var returnObject = await auditRepository.GetEntityByIdAsync(entityId);
+            return returnObject;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetEntityByIdAsync));
+            throw;
+        }
+    }
+
+    public async Task<EntityDTO?> CreateNewEntityAsync(EntityDTO newRecord, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var returnValue = await auditRepository.CreateNewEntityAsync(newRecord, deviceInformation);
+            // Clear cache after creating new entity
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.EntityList.ToString());
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewEntityAsync));
+            throw;
+        }
+    }
+
+    public async Task<EntityDTO?> UpdateEntityByIdAsync(long entityId, EntityDTO recordToUpdate, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            recordToUpdate.Id = entityId;
+            var returnValue = await auditRepository.UpdateEntityByIdAsync(recordToUpdate, deviceInformation);
+            // Clear cache after updating entity
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.EntityList.ToString());
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateEntityByIdAsync));
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteEntityByIdAsync(long entityId, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var deleted = await auditRepository.DeleteEntityByIdAsync(entityId, deviceInformation);
+            // Clear cache after deleting entity
+            if (deleted)
+            {
+                cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.EntityList.ToString());
+            }
+            return deleted;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteEntityByIdAsync));
+            throw;
+        }
     }
 
     public async Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(long? companyId)
@@ -136,6 +211,61 @@ public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRe
         catch (Exception ex)
         {
             logger.LogError(ex, message: nameof(GetCompanyEntityAuditsListAsync));
+            throw;
+        }
+    }
+
+    public async Task<CompanyEntityAuditDTO?> GetCompanyEntityAuditByIdAsync(long companyEntityAuditId)
+    {
+        try
+        {
+            var returnObject = await auditRepository.GetCompanyEntityAuditByIdAsync(companyEntityAuditId);
+            return returnObject;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetCompanyEntityAuditByIdAsync));
+            throw;
+        }
+    }
+
+    public async Task<CompanyEntityAuditDTO?> CreateNewCompanyEntityAuditAsync(CompanyEntityAuditDTO newRecord, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var returnValue = await auditRepository.CreateNewCompanyEntityAuditAsync(newRecord, deviceInformation);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewCompanyEntityAuditAsync));
+            throw;
+        }
+    }
+
+    public async Task<CompanyEntityAuditDTO?> UpdateCompanyEntityAuditByIdAsync(long companyEntityAuditId, CompanyEntityAuditDTO recordToUpdate, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            recordToUpdate.Id = companyEntityAuditId;
+            return await auditRepository.UpdateCompanyEntityAuditByIdAsync(recordToUpdate, deviceInformation);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateCompanyEntityAuditByIdAsync));
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteCompanyEntityAuditByIdAsync(long companyEntityAuditId, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            return await auditRepository.DeleteCompanyEntityAuditByIdAsync(companyEntityAuditId, deviceInformation);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteCompanyEntityAuditByIdAsync));
             throw;
         }
     }
@@ -287,5 +417,6 @@ public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRe
         };
         return newRecord;
     }
+
 
 }

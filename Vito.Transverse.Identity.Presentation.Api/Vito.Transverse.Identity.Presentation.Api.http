@@ -1,0 +1,76 @@
+﻿@Vito.Transverse.Identity.Presentation.Api_HostAddress = https://localhost:7295
+
+
+# @name LoginRequest
+POST {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/Oauth2/v1/Token
+Content-Type: application/json
+{
+  "grant_type": "ClientCredentials",
+  "scope": "",
+  "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109", 
+  "application_secret": "96471380-F3F3-4120-9E25-A4E5C9701C23",
+  "company_id": "C5BCEA98-2974-4D43-8110-28D402CF5CE2",
+  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", 
+  "user_id": "edgar.torres",
+  "user_secret": "456",
+  "refresh_token": ""
+}
+
+###
+
+@bearerToken ={{LoginRequest.response.body.$.access_token}}
+@applicationId=1
+@companyId=1
+@userId=1
+@moduleId=1
+@endpointId=1
+@queryString = companyId={{companyId}}&userId={{userId}};
+
+###
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/
+Authorization: Bearer {{bearerToken}}
+###
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/{{applicationId}}
+Authorization: Bearer {{bearerToken}}
+
+###
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/ByCompany/{{companyId}}/
+Authorization: Bearer {{bearerToken}}
+###
+
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/Modules
+Authorization: Bearer {{bearerToken}}
+###
+
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/Modules/{{moduleId}}
+Authorization: Bearer {{bearerToken}}
+###
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/Modules
+Authorization: Bearer {{bearerToken}}
+###
+
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/Modules/{{moduleId}}
+Authorization: Bearer {{bearerToken}}
+###
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/Modules/{{moduleId}}/endpoints
+Authorization: Bearer {{bearerToken}}
+###
+
+
+GET {{Vito.Transverse.Identity.Presentation.Api_HostAddress}}/api/applications/v1/endpoints/{{endpointId}}/Components
+Authorization: Bearer {{bearerToken}}
+###

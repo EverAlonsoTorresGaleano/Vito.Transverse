@@ -78,6 +78,81 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         return returnList;
     }
 
+    public async Task<RoleDTO?> GetRoleByIdAsync(long roleId, DataBaseServiceContext? context = null)
+    {
+        RoleDTO? roleDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var role = await context.Roles
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == roleId);
+            roleDTO = role?.ToRoleDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetRoleByIdAsync));
+            throw;
+        }
+
+        return roleDTO;
+    }
+
+    public async Task<RoleDTO?> UpdateRoleAsync(RoleDTO recordToUpdate, DataBaseServiceContext? context = null)
+    {
+        RoleDTO? savedRecord = null;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var roleToUpdate = await context.Roles.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
+            if (roleToUpdate is null)
+            {
+                return null;
+            }
+
+            var updatedRole = recordToUpdate.ToRole();
+            context.Entry(roleToUpdate).CurrentValues.SetValues(updatedRole);
+            await context.SaveChangesAsync();
+            savedRecord = roleToUpdate.ToRoleDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateRoleAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteRoleAsync(long roleId, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var role = await context.Roles.FirstOrDefaultAsync(x => x.Id == roleId);
+            if (role is null)
+            {
+                return false;
+            }
+
+            context.Roles.Remove(role);
+            await context.SaveChangesAsync();
+            deleted = true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteRoleAsync));
+            throw;
+        }
+
+        return deleted;
+    }
+
     public async Task<List<UserRoleDTO>> GetUserRolesListAsync(Expression<Func<UserRole, bool>> filters, DataBaseServiceContext? context = null)
     {
         var returnList = new List<UserRoleDTO>();
@@ -100,6 +175,136 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         }
 
         return returnList;
+    }
+
+    public async Task<UserRoleDTO?> GetUserRoleByIdAsync(long userId, long roleId, long companyFk, long applicationFk, DataBaseServiceContext? context = null)
+    {
+        UserRoleDTO? userRoleDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.CreateDbContext();
+            var userRole = await context.UserRoles
+                .Include(x => x.UserFkNavigation)
+                .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.UserFk == userId && x.RoleFk == roleId && x.CompanyFk == companyFk && x.ApplicationFk == applicationFk);
+            userRoleDTO = userRole?.ToUserRoleDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetUserRoleByIdAsync));
+            throw;
+        }
+
+        return userRoleDTO;
+    }
+
+    public async Task<UserRoleDTO?> CreateNewUserRoleAsync(UserRoleDTO userRoleInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        UserRoleDTO? savedRecord = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var newUserRole = new UserRole
+            {
+                CompanyFk = userRoleInfo.CompanyFk,
+                ApplicationFk = userRoleInfo.ApplicationFk,
+                UserFk = userRoleInfo.UserFk,
+                RoleFk = userRoleInfo.RoleFk,
+                CreatedDate = DateTime.UtcNow,
+                CreatedByUserFk = deviceInformation.UserId ?? userRoleInfo.CreatedByUserFk,
+                IsActive = userRoleInfo.IsActive
+            };
+
+            context.UserRoles.Add(newUserRole);
+            await context.SaveChangesAsync();
+
+            // Reload with includes to get navigation properties
+            newUserRole = await context.UserRoles
+                .Include(x => x.UserFkNavigation)
+                .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.UserFk == userRoleInfo.UserFk && x.RoleFk == userRoleInfo.RoleFk && x.CompanyFk == userRoleInfo.CompanyFk && x.ApplicationFk == userRoleInfo.ApplicationFk);
+
+            savedRecord = newUserRole?.ToUserRoleDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewUserRoleAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<UserRoleDTO?> UpdateUserRoleByIdAsync(UserRoleDTO userRoleInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        UserRoleDTO? savedRecord = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var userRoleToUpdate = await context.UserRoles
+                .FirstOrDefaultAsync(x => x.UserFk == userRoleInfo.UserFk && x.RoleFk == userRoleInfo.RoleFk && x.CompanyFk == userRoleInfo.CompanyFk && x.ApplicationFk == userRoleInfo.ApplicationFk);
+            
+            if (userRoleToUpdate is null)
+            {
+                return null;
+            }
+
+            userRoleToUpdate.IsActive = userRoleInfo.IsActive;
+            userRoleToUpdate.CreatedByUserFk = userRoleInfo.CreatedByUserFk;
+
+            await context.SaveChangesAsync();
+
+            // Reload with includes to get navigation properties
+            userRoleToUpdate = await context.UserRoles
+                .Include(x => x.UserFkNavigation)
+                .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.UserFk == userRoleInfo.UserFk && x.RoleFk == userRoleInfo.RoleFk && x.CompanyFk == userRoleInfo.CompanyFk && x.ApplicationFk == userRoleInfo.ApplicationFk);
+
+            savedRecord = userRoleToUpdate?.ToUserRoleDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateUserRoleByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteUserRoleByIdAsync(long userId, long roleId, long companyFk, long applicationFk, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var userRole = await context.UserRoles
+                .FirstOrDefaultAsync(x => x.UserFk == userId && x.RoleFk == roleId && x.CompanyFk == companyFk && x.ApplicationFk == applicationFk);
+            
+            if (userRole is null)
+            {
+                return false;
+            }
+
+            context.UserRoles.Remove(userRole);
+            await context.SaveChangesAsync();
+            deleted = true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteUserRoleByIdAsync));
+            throw;
+        }
+
+        return deleted;
     }
 
     public async Task<UserDTO> GetUserPermissionListAsync(Expression<Func<User, bool>> filters, DataBaseServiceContext? context = null)

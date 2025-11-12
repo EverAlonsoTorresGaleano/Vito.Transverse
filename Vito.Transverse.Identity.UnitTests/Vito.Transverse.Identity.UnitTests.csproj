@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="BAL\CultureServiceTest.cs" />
-    <Compile Remove="DAL\SecurityRepositoryTest.cs" />
+    <Compile Remove="Application\CultureServiceTest.cs" />
+    <Compile Remove="Infrastructure\SecurityRepositoryTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

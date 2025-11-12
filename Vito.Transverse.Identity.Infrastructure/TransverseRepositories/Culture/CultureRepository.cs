@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using Vito.Framework.Common.DTO;
 using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
 using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;

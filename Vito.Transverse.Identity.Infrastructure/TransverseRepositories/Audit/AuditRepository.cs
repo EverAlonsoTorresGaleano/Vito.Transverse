@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Framework.Common.Options;
@@ -56,6 +57,101 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         return returnList;
     }
 
+    public async Task<EntityDTO?> GetEntityByIdAsync(long entityId, DataBaseServiceContext? context = null)
+    {
+        EntityDTO? entityDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var entity = await context.Entities
+                .FirstOrDefaultAsync(x => x.Id == entityId);
+            entityDTO = entity?.ToEntityDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetEntityByIdAsync));
+            throw;
+        }
+
+        return entityDTO;
+    }
+
+    public async Task<EntityDTO?> CreateNewEntityAsync(EntityDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        EntityDTO? savedRecord = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var newRecordDb = newRecord.ToEntity();
+            context.Entities.Add(newRecordDb);
+            await context.SaveChangesAsync();
+            
+            savedRecord = newRecordDb.ToEntityDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewEntityAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<EntityDTO?> UpdateEntityByIdAsync(EntityDTO recordToUpdate, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        EntityDTO? savedRecord = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var entityToUpdate = await context.Entities.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
+            if (entityToUpdate is null)
+            {
+                return null;
+            }
+
+            entityToUpdate.SchemaName = recordToUpdate.SchemaName;
+            entityToUpdate.EntityName = recordToUpdate.EntityName;
+            entityToUpdate.IsActive = recordToUpdate.IsActive;
+            entityToUpdate.IsSystemEntity = recordToUpdate.IsSystemEntity;
+
+            await context.SaveChangesAsync();
+            
+            savedRecord = entityToUpdate.ToEntityDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateEntityByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteEntityByIdAsync(long entityId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var entityToDelete = await context.Entities.FirstOrDefaultAsync(x => x.Id == entityId);
+            if (entityToDelete is null)
+            {
+                return false;
+            }
+
+            context.Entities.Remove(entityToDelete);
+            var recordsAffected = await context.SaveChangesAsync();
+            deleted = recordsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteEntityByIdAsync));
+            throw;
+        }
+
+        return deleted;
+    }
+
     public async Task<List<CompanyEntityAuditDTO>> GetCompanyEntityAuditsListAsync(Expression<Func<CompanyEntityAudit, bool>> filters, DataBaseServiceContext? context = null)
     {
         var returnList = new List<CompanyEntityAuditDTO>();
@@ -76,6 +172,122 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         }
 
         return returnList;
+    }
+
+    public async Task<CompanyEntityAuditDTO?> GetCompanyEntityAuditByIdAsync(long companyEntityAuditId, DataBaseServiceContext? context = null)
+    {
+        CompanyEntityAuditDTO? companyEntityAuditDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var companyEntityAudit = await context.CompanyEntityAudits
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == companyEntityAuditId);
+            companyEntityAuditDTO = companyEntityAudit?.ToCompanyEntityAuditDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetCompanyEntityAuditByIdAsync));
+            throw;
+        }
+
+        return companyEntityAuditDTO;
+    }
+
+    public async Task<CompanyEntityAuditDTO?> CreateNewCompanyEntityAuditAsync(CompanyEntityAuditDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        CompanyEntityAuditDTO? savedRecord = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var newRecordDb = newRecord.ToCompanyEntityAudit();
+            newRecordDb.CreationDate = DateTime.UtcNow;
+            newRecordDb.CreatedByUserFk = deviceInformation.UserId!.Value;
+            context.CompanyEntityAudits.Add(newRecordDb);
+            await context.SaveChangesAsync();
+            
+            // Reload with includes to get navigation properties
+            newRecordDb = await context.CompanyEntityAudits
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == newRecordDb.Id);
+            
+            savedRecord = newRecordDb?.ToCompanyEntityAuditDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewCompanyEntityAuditAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<CompanyEntityAuditDTO?> UpdateCompanyEntityAuditByIdAsync(CompanyEntityAuditDTO recordToUpdate, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        CompanyEntityAuditDTO? savedRecord = null;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var companyEntityAuditToUpdate = await context.CompanyEntityAudits.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
+            if (companyEntityAuditToUpdate is null)
+            {
+                return null;
+            }
+
+            companyEntityAuditToUpdate.CompanyFk = recordToUpdate.CompanyFk;
+            companyEntityAuditToUpdate.EntityFk = recordToUpdate.EntityFk;
+            companyEntityAuditToUpdate.AuditTypeFk = recordToUpdate.AuditTypeFk;
+            companyEntityAuditToUpdate.IsActive = recordToUpdate.IsActive;
+            companyEntityAuditToUpdate.LastUpdateDate = DateTime.UtcNow;
+            companyEntityAuditToUpdate.UpdatedByUserFk = deviceInformation.UserId;
+
+            await context.SaveChangesAsync();
+            
+            // Reload with includes to get navigation properties
+            companyEntityAuditToUpdate = await context.CompanyEntityAudits
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.AuditTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
+            
+            savedRecord = companyEntityAuditToUpdate?.ToCompanyEntityAuditDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateCompanyEntityAuditByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteCompanyEntityAuditByIdAsync(long companyEntityAuditId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var companyEntityAuditToDelete = await context.CompanyEntityAudits.FirstOrDefaultAsync(x => x.Id == companyEntityAuditId);
+            if (companyEntityAuditToDelete is null)
+            {
+                return false;
+            }
+
+            context.CompanyEntityAudits.Remove(companyEntityAuditToDelete);
+            var recordsAffected = await context.SaveChangesAsync();
+            deleted = recordsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteCompanyEntityAuditByIdAsync));
+            throw;
+        }
+
+        return deleted;
     }
 
     public async Task<List<AuditRecordDTO>> GetAuditRecordListAsync(Expression<Func<AuditRecord, bool>> filters, DataBaseServiceContext? context = null)

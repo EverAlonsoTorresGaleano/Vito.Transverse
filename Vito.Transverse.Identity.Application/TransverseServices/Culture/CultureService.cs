@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Globalization;
+using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Options;
 using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
 using  Vito.Transverse.Identity.Application.TransverseServices.Localization;
@@ -62,9 +63,6 @@ public class CultureService(ICultureRepository cultureRepository, ILocalizationS
         string cultureId = cultureRepository.GetCurrentCultureId();
         return cultureId;
     }
-
-
-
 
     #endregion
 }

@@ -8,6 +8,8 @@ public class ListItemDTO
 
     public string NameTranslationKey { get; set; } = null!;
 
+    public string DescriptionTranslationKey { get; set; } = null!;
+
     public int? OrderIndex { get; set; }
 
     public bool IsEnabled { get; set; }

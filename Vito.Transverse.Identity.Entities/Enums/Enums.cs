@@ -2,7 +2,6 @@
 
 public enum FeatureFlagsNamesEnum
 {
-    CulturesFeature,
     LocalizationsFeature,
     OAuth2Feature,
     CacheFeature,
@@ -12,6 +11,7 @@ public enum FeatureFlagsNamesEnum
     ApplicationsFeature,
     CompaniesFeature,
     UsersFeature,
+    MasterFeature,
 }
 
 public enum CacheItemKeysEnum
@@ -27,6 +27,7 @@ public enum CacheItemKeysEnum
     CompanyMemberhipListByCompanyId,
     AllCompanyList,
     RoleListByCompanyId,
+    RoleListByApplicationId,
     RolePermissionListByRoleId,
     ModuleListByApplicationId,
     EndpointListByModuleId,

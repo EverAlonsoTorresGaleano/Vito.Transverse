@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text;
 using Vito.Framework.Common.Constants;
+using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
 using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
@@ -138,6 +139,92 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
         return localizedMessage;
     }
 
+    public async Task<CultureTranslationDTO?> GetCultureTranslationByIdAsync(long applicationId, string cultureId, string translationKey)
+    {
+        try
+        {
+            var translationList = await localizationRepository.GetLocalizedMessagesListAsync(x => 
+                x.ApplicationFk == applicationId && 
+                x.CultureFk == cultureId && 
+                x.TranslationKey == translationKey);
+            return translationList.FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetCultureTranslationByIdAsync));
+            throw;
+        }
+    }
 
+    public async Task<CultureTranslationDTO> CreateNewCultureTranslationAsync(CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var success = await localizationRepository.AddNewCultureTranslationAsync(cultureTranslationDTO);
+            if (!success)
+            {
+                throw new Exception("Failed to create culture translation");
+            }
+
+            // Clear cache
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + cultureTranslationDTO.ApplicationFk.ToString());
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + 
+                cultureTranslationDTO.ApplicationFk.ToString() + cultureTranslationDTO.CultureFk);
+
+            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey) 
+                ?? cultureTranslationDTO;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewCultureTranslationAsync));
+            throw;
+        }
+    }
+
+    public async Task<CultureTranslationDTO> UpdateCultureTranslationAsync(long applicationId, string cultureId, string translationKey, CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var success = await localizationRepository.UpdateCultureTranslationAsync(cultureTranslationDTO);
+            if (!success)
+            {
+                throw new Exception("Failed to update culture translation");
+            }
+
+            // Clear cache
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
+
+            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey) 
+                ?? cultureTranslationDTO;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateCultureTranslationAsync));
+            throw;
+        }
+    }
+
+    public async Task<bool> DeleteCultureTranslationAsync(long applicationId, string cultureId, string translationKey, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var success = await localizationRepository.DeleteCultureTranslationAsync(translationKey);
+            
+            if (success)
+            {
+                // Clear cache
+                cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
+                cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
+            }
+
+            return success;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteCultureTranslationAsync));
+            throw;
+        }
+    }
 
 }

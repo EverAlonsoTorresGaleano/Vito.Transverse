@@ -247,10 +247,10 @@ Content-Type: application/json
 {
   "grant_type": "ClientCredentials",
   "scope": "",
-  "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109", /* 1 - Vito Transverse */
+  "application_id": "879FFB6A-4124-41C3-BD24-76C3B2F96109", 
   "application_secret": "96471380-F3F3-4120-9E25-A4E5C9701C23",
   "company_id": "C5BCEA98-2974-4D43-8110-28D402CF5CE2",
-  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", /*  2- -Proyectos Las Torres SAS */
+  "company_secret": "8010E5E4-5F3F-4CD9-9D4C-B9BABBECC740", 
   "user_id": "edgar.torres",
   "user_secret": "456",
   "refresh_token": ""

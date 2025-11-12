@@ -14,7 +14,18 @@ public interface IUsersRepository
 
     Task<UserDTO?> UpdateUserAsync(UserDTO recordToUpdate, DataBaseServiceContext? context = null);
     Task<List<RoleDTO>> GetRoleListAsync(Expression<Func<Role, bool>> filters, DataBaseServiceContext? context = null);
+    Task<RoleDTO?> GetRoleByIdAsync(long roleId, DataBaseServiceContext? context = null);
+    Task<RoleDTO?> UpdateRoleAsync(RoleDTO recordToUpdate, DataBaseServiceContext? context = null);
+    Task<bool> DeleteRoleAsync(long roleId, DataBaseServiceContext? context = null);
     Task<List<UserRoleDTO>> GetUserRolesListAsync(Expression<Func<UserRole, bool>> filters, DataBaseServiceContext? context = null);
+
+    Task<UserRoleDTO?> GetUserRoleByIdAsync(long userId, long roleId, long companyFk, long applicationFk, DataBaseServiceContext? context = null);
+
+    Task<UserRoleDTO?> CreateNewUserRoleAsync(UserRoleDTO userRoleInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+
+    Task<UserRoleDTO?> UpdateUserRoleByIdAsync(UserRoleDTO userRoleInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+
+    Task<bool> DeleteUserRoleByIdAsync(long userId, long roleId, long companyFk, long applicationFk, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
     Task<UserDTO> GetUserPermissionListAsync(Expression<Func<User, bool>> filters, DataBaseServiceContext? context = null);
 

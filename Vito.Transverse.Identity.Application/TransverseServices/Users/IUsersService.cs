@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vito.Framework.Common.DTO;
+﻿using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 
 namespace  Vito.Transverse.Identity.Application.TransverseServices.Users;
 
@@ -24,11 +19,33 @@ public interface IUsersService
     Task<bool?> ActivateAccountAsync(string activationToken, DeviceInformationDTO deviceInformation);
 
 
-    Task<List<UserRoleDTO>> GetUserRolesListAsync(long userId);
+    Task<List<UserRoleDTO>> GetUserRolesListAsync(long? userId);
+
+    Task<UserRoleDTO?> GetUserRoleByIdAsync(long userId, long roleId, long? companyFk, long? applicationFk);
+
+    Task<UserRoleDTO?> CreateNewUserRoleAsync(UserRoleDTO userRoleInfo, DeviceInformationDTO deviceInformation);
+
+    Task<UserRoleDTO?> UpdateUserRoleByIdAsync(UserRoleDTO userRoleInfo, DeviceInformationDTO deviceInformation);
+
+    Task<bool> DeleteUserRoleByIdAsync(long userId, long roleId, long? companyFk, long? applicationFk, DeviceInformationDTO deviceInformation);
 
     Task<UserDTO> GetUserPermissionListAsync(long userId);
 
     Task<List<UserDTO>> GetUserListAsync(long? companyId);
 
     Task<List<RoleDTO>> GetRoleListAsync(long? companyId);
+
+    Task<RoleDTO?> GetRoleByIdAsync(long roleId);
+
+    Task<RoleDTO?> UpdateRoleByIdAsync(long roleId, RoleDTO roleInfo, DeviceInformationDTO deviceInformation);
+
+    Task<bool> DeleteRoleByIdAsync(long roleId, DeviceInformationDTO deviceInformation);
+
+    Task<UserDTO?> GetUserByIdAsync(long userId);
+
+    Task<UserDTO?> UpdateUserByIdAsync(long userId, UserDTO userInfo, DeviceInformationDTO deviceInformation);
+
+    Task<bool> DeleteUserByIdAsync(long userId, DeviceInformationDTO deviceInformation);
+    Task<List<ListItemDTO>> GetUserListItenAsync(long? companyId);
+    Task<List<ListItemDTO>> GetRoleListItemAsync(long? companyId);
 }

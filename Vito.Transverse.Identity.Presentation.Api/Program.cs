@@ -11,6 +11,7 @@ using Vito.Transverse.Identity.Application.TransverseServices.Caching;
 using Vito.Transverse.Identity.Application.TransverseServices.Companies;
 using Vito.Transverse.Identity.Application.TransverseServices.Culture;
 using Vito.Transverse.Identity.Application.TransverseServices.Localization;
+using Vito.Transverse.Identity.Application.TransverseServices.Master;
 using Vito.Transverse.Identity.Application.TransverseServices.Media;
 using Vito.Transverse.Identity.Application.TransverseServices.Security;
 using Vito.Transverse.Identity.Application.TransverseServices.SocialNetworks;
@@ -24,6 +25,7 @@ using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Master;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Media;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Security;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.SocialNetworks;
@@ -101,6 +103,7 @@ try
     builder.Services.AddTransient<ISecurityRepository, SecurityRepository>();
 
     builder.Services.AddTransient<IMediaRepository, MediaRepository>();
+    builder.Services.AddTransient<IMasterRepository, MasterRepository>();
 
     //Register REpositories
     builder.Services.AddTransient<ISocialNetworksRepository, SocialNetworksRepository>();
@@ -120,6 +123,7 @@ try
 
     builder.Services.AddTransient<IMediaService, MediaService>();
     builder.Services.AddTransient<ISocialNetworkService, SocialNetworkService>();
+    builder.Services.AddTransient<IMasterService, MasterService>();
 
     //Register Services
     builder.Services.AddTransient<ITwilioService, TwilioService>();
@@ -185,9 +189,9 @@ try
     app.MapUsersEndPoint(versionSet);
     app.MapApplicationsEndPoint(versionSet);
     app.MapCompaniesEndPoint(versionSet);
+    app.MapMasterEndPoint(versionSet);
     app.MapOAuth2Endpoint(versionSet);
     app.MapLocalizationEndpoint(versionSet);
-    app.MapCultureEndpoint(versionSet);
     app.MapCacheEndPoints(versionSet);
     app.MapMediaEndPoints(versionSet);
     app.MapAuditEndPoints(versionSet);

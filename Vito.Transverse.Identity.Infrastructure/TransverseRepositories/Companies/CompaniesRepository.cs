@@ -80,6 +80,98 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
         return applicationDTOList;
     }
 
+    public async Task<CompanyMembershipsDTO?> GetCompanyMembershipByIdAsync(long membershipId, DataBaseServiceContext? context = null)
+    {
+        CompanyMembershipsDTO? membershipDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.CreateDbContext();
+            var membership = await context.CompanyMemberships
+                .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.MembershipTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == membershipId);
+            membershipDTO = membership?.ToCompanyMembershipsDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetCompanyMembershipByIdAsync));
+        }
+
+        return membershipDTO;
+    }
+
+    public async Task<CompanyMembershipsDTO?> UpdateCompanyMembershipByIdAsync(CompanyMembershipsDTO membershipInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        CompanyMembershipsDTO? savedRecord = null;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var membershipToUpdate = await context.CompanyMemberships.FirstOrDefaultAsync(x => x.Id == membershipInfo.Id);
+            if (membershipToUpdate is null)
+            {
+                return null;
+            }
+
+            membershipToUpdate.CompanyFk = membershipInfo.CompanyFk;
+            membershipToUpdate.ApplicationFk = membershipInfo.ApplicationFk;
+            membershipToUpdate.MembershipTypeFk = membershipInfo.MembershipTypeFk;
+            membershipToUpdate.StartDate = membershipInfo.StartDate;
+            membershipToUpdate.EndDate = membershipInfo.EndDate;
+            membershipToUpdate.IsActive = membershipInfo.IsActive;
+            membershipToUpdate.LastUpdateDate = DateTime.UtcNow;
+            membershipToUpdate.LastUpdateByUserFk = deviceInformation.UserId;
+
+            await context.SaveChangesAsync();
+            
+            // Reload with includes to get navigation properties
+            membershipToUpdate = await context.CompanyMemberships
+                .Include(x => x.ApplicationFkNavigation)
+                .ThenInclude(x => x.ApplicationOwners)
+                .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.MembershipTypeFkNavigation)
+                .Include(x => x.CompanyFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == membershipInfo.Id);
+            
+            savedRecord = membershipToUpdate?.ToCompanyMembershipsDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateCompanyMembershipByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteCompanyMembershipByIdAsync(long membershipId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var membership = await context.CompanyMemberships.FirstOrDefaultAsync(x => x.Id == membershipId);
+            if (membership is null)
+            {
+                return false;
+            }
+
+            context.CompanyMemberships.Remove(membership);
+            await context.SaveChangesAsync();
+            deleted = true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteCompanyMembershipByIdAsync));
+            throw;
+        }
+
+        return deleted;
+    }
+
     public async Task<List<CompanyDTO>> GetAllCompanyListAsync(Expression<Func<Company, bool>> filters, DataBaseServiceContext? context = null)
     {
         List<CompanyDTO> companyDTOList = new();
@@ -104,5 +196,191 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
         return companyDTOList;
     }
 
+    public async Task<CompanyDTO?> GetCompanyByIdAsync(long companyId, DataBaseServiceContext? context = null)
+    {
+        CompanyDTO? companyDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.CreateDbContext();
+            var company = await context.Companies
+                .Include(x => x.CountryFkNavigation)
+                .Include(x => x.DefaultCultureFkNavigation)
+                .ThenInclude(x => x.LanguageFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == companyId);
+            companyDTO = company?.ToCompanyDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetCompanyByIdAsync));
+        }
+
+        return companyDTO;
+    }
+
+    public async Task<CompanyDTO?> UpdateCompanyByIdAsync(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        CompanyDTO? savedRecord = null;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var companyToUpdate = await context.Companies.FirstOrDefaultAsync(x => x.Id == companyInfo.Id);
+            if (companyToUpdate is null)
+            {
+                return null;
+            }
+
+            var updatedCompany = companyInfo.ToCompany();
+            context.Entry(companyToUpdate).CurrentValues.SetValues(updatedCompany);
+            await context.SaveChangesAsync();
+            savedRecord = companyToUpdate.ToCompanyDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateCompanyByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var company = await context.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
+            if (company is null)
+            {
+                return false;
+            }
+
+            context.Companies.Remove(company);
+            await context.SaveChangesAsync();
+            deleted = true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteCompanyByIdAsync));
+            throw;
+        }
+
+        return deleted;
+    }
+
+    public async Task<List<MembershipTypeDTO>> GetAllMembershipTypeListAsync(Expression<Func<MembershipType, bool>> filters, DataBaseServiceContext? context = null)
+    {
+        List<MembershipTypeDTO> membershipTypeDTOList = new();
+
+        try
+        {
+            context = dataBaseContextFactory.CreateDbContext();
+            var membershipTypeList = await context.MembershipTypes
+                .Where(filters)
+                .ToListAsync();
+            membershipTypeDTOList = membershipTypeList.Select(x => x.ToMembershipTypeDTO()).ToList().OrderBy(x => x.Id).ToList();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetAllMembershipTypeListAsync));
+        }
+
+        return membershipTypeDTOList;
+    }
+
+    public async Task<MembershipTypeDTO?> GetMembershipTypeByIdAsync(long membershipTypeId, DataBaseServiceContext? context = null)
+    {
+        MembershipTypeDTO? membershipTypeDTO = null;
+        try
+        {
+            context = dataBaseContextFactory.CreateDbContext();
+            var membershipType = await context.MembershipTypes
+                .FirstOrDefaultAsync(x => x.Id == membershipTypeId);
+            membershipTypeDTO = membershipType?.ToMembershipTypeDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetMembershipTypeByIdAsync));
+        }
+
+        return membershipTypeDTO;
+    }
+
+    public async Task<MembershipTypeDTO?> CreateNewMembershipTypeAsync(MembershipTypeDTO membershipTypeDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        MembershipTypeDTO? savedRecord = null;
+        var newRecordDb = membershipTypeDTO.ToMembershipType();
+        newRecordDb.CreationDate = DateTime.UtcNow;
+        newRecordDb.CreatedByUserFk = deviceInformation.UserId ?? 0;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            context.MembershipTypes.Add(newRecordDb);
+            await context.SaveChangesAsync();
+            savedRecord = newRecordDb.ToMembershipTypeDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(CreateNewMembershipTypeAsync));
+            throw;
+        }
+        return savedRecord;
+    }
+
+    public async Task<MembershipTypeDTO?> UpdateMembershipTypeByIdAsync(MembershipTypeDTO membershipTypeDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        MembershipTypeDTO? savedRecord = null;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var membershipTypeToUpdate = await context.MembershipTypes.FirstOrDefaultAsync(x => x.Id == membershipTypeDTO.Id);
+            if (membershipTypeToUpdate is null)
+            {
+                return null;
+            }
+
+            var updatedMembershipType = membershipTypeDTO.ToMembershipType();
+            updatedMembershipType.LastUpdateDate = DateTime.UtcNow;
+            updatedMembershipType.LastUpdateByUserFk = deviceInformation.UserId;
+            context.Entry(membershipTypeToUpdate).CurrentValues.SetValues(updatedMembershipType);
+            await context.SaveChangesAsync();
+            savedRecord = membershipTypeToUpdate.ToMembershipTypeDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpdateMembershipTypeByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeleteMembershipTypeByIdAsync(long membershipTypeId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var membershipType = await context.MembershipTypes.FirstOrDefaultAsync(x => x.Id == membershipTypeId);
+            if (membershipType is null)
+            {
+                return false;
+            }
+
+            context.MembershipTypes.Remove(membershipType);
+            await context.SaveChangesAsync();
+            deleted = true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(DeleteMembershipTypeByIdAsync));
+            throw;
+        }
+
+        return deleted;
+    }
 
 }

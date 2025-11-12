@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
+using Vito.Framework.Common.DTO;
 using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
 using  Vito.Transverse.Identity.Infrastructure.Extensions;
@@ -35,22 +36,110 @@ public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
         return returnList!;
     }
 
-    public async Task<bool> AddNewPictureAsync(PictureDTO newRecord, DataBaseServiceContext? context = null)
+    public async Task<PictureDTO?> GetPictureByIdAsync(long pictureId, DataBaseServiceContext? context = null)
     {
-        bool recordSaved = false;
+        PictureDTO? pictureDTO = null;
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var dbRecord = newRecord.ToPicture();
-            context.Pictures.Add(dbRecord);
-            var recordAffected = await context.SaveChangesAsync();
-            recordSaved = recordAffected > 0;
+            var picture = await context.Pictures
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.FileTypeFkNavigation)
+                .Include(x => x.PictureCategoryFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == pictureId);
+            pictureDTO = picture?.ToPictureDTO();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, nameof(GetPictureList));
+            logger.LogError(ex, nameof(GetPictureByIdAsync));
             throw;
         }
-        return recordSaved;
+        return pictureDTO;
+    }
+
+    public async Task<PictureDTO?> CreateNewPictureAsync(PictureDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        PictureDTO? savedRecord = null;
+        var newRecordDb = newRecord.ToPicture();
+        newRecordDb.CreationDate = DateTime.UtcNow;
+        newRecordDb.CreatedByUserFk = deviceInformation.UserId ?? 0;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            context.Pictures.Add(newRecordDb);
+            await context.SaveChangesAsync();
+            savedRecord = newRecordDb.ToPictureDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(CreateNewPictureAsync));
+            throw;
+        }
+        return savedRecord;
+    }
+
+    public async Task<PictureDTO?> UpdatePictureByIdAsync(PictureDTO pictureInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        PictureDTO? savedRecord = null;
+
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var pictureToUpdate = await context.Pictures.FirstOrDefaultAsync(x => x.Id == pictureInfo.Id);
+            if (pictureToUpdate is null)
+            {
+                return null;
+            }
+
+            var updatedPicture = pictureInfo.ToPicture();
+            updatedPicture.LastUpdateDate = DateTime.UtcNow;
+            updatedPicture.LastUpdateByUserFk = deviceInformation.UserId;
+            context.Entry(pictureToUpdate).CurrentValues.SetValues(updatedPicture);
+            await context.SaveChangesAsync();
+            
+            // Reload with includes to get navigation properties
+            pictureToUpdate = await context.Pictures
+                .Include(x => x.CompanyFkNavigation)
+                .Include(x => x.EntityFkNavigation)
+                .Include(x => x.FileTypeFkNavigation)
+                .Include(x => x.PictureCategoryFkNavigation)
+                .FirstOrDefaultAsync(x => x.Id == pictureInfo.Id);
+            
+            savedRecord = pictureToUpdate?.ToPictureDTO();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(UpdatePictureByIdAsync));
+            throw;
+        }
+
+        return savedRecord;
+    }
+
+    public async Task<bool> DeletePictureByIdAsync(long pictureId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    {
+        bool deleted = false;
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var picture = await context.Pictures.FirstOrDefaultAsync(x => x.Id == pictureId);
+            if (picture is null)
+            {
+                return false;
+            }
+
+            context.Pictures.Remove(picture);
+            await context.SaveChangesAsync();
+            deleted = true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(DeletePictureByIdAsync));
+            throw;
+        }
+
+        return deleted;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
 using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
@@ -54,44 +55,63 @@ public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemor
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, nameof(GetPictureByName));
-            throw;
-        }
-    }
-
-    public async Task<bool?> AddNewPictureAsync(PictureDTO picture)
-    {
-        bool? pictureSaved = null!;
-        try
-        {
-//#if DEBUG
-            byte[] bytes = System.IO.File.ReadAllBytes(@"C:\ever.torresg\EATGSoft\Projects\Gestion Inmobiliaria Web\Codigo\EATG.GI.Web\Imagenes\Sistema\LogoFacebook.png");
-            string bytesStr = string.Join(",", bytes);
-
-            var newPicture = new PictureDTO()
-            {
-                EntityFk = 1,
-                FileTypeFk = (long)FileTypeEnum.FileType_Jpg,
-                PictureCategoryFk = (long)PictureCategoryTypeEnum.PictureCategoryType_System,
-                Id = 2,
-                CreatedByUserFk = 1,
-                IsActive = true,
-                Name = "LaPic",
-                PictureSize = 1026,
-                BinaryPicture = bytes
-            };
-//#endif
-            newPicture.CreationDate = cultureRepository.UtcNow().DateTime;
-            pictureSaved = await mediaRepository.AddNewPictureAsync(newPicture);
-
-        }
-        catch (Exception ex)
-        {
             logger.LogError(ex, nameof(GetPictureList));
             throw;
         }
-        return pictureSaved!;
     }
 
+    public async Task<PictureDTO?> GetPictureByIdAsync(long pictureId)
+    {
+        try
+        {
+            return await mediaRepository.GetPictureByIdAsync(pictureId);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(GetPictureByIdAsync));
+            throw;
+        }
+    }
+
+    public async Task<PictureDTO?> CreateNewPictureAsync(PictureDTO pictureDTO, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            var returnValue = await mediaRepository.CreateNewPictureAsync(pictureDTO, deviceInformation);
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(CreateNewPictureAsync));
+            throw;
+        }
+    }
+
+    public async Task<PictureDTO?> UpdatePictureByIdAsync(long pictureId, PictureDTO pictureDTO, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            pictureDTO.Id = pictureId;
+            return await mediaRepository.UpdatePictureByIdAsync(pictureDTO, deviceInformation);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(UpdatePictureByIdAsync));
+            throw;
+        }
+    }
+
+    public async Task<bool> DeletePictureByIdAsync(long pictureId, DeviceInformationDTO deviceInformation)
+    {
+        try
+        {
+            return await mediaRepository.DeletePictureByIdAsync(pictureId, deviceInformation);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, nameof(DeletePictureByIdAsync));
+            throw;
+        }
+    }
 
 }
