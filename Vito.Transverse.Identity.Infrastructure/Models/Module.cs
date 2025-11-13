@@ -9,6 +9,8 @@ public partial class Module
 
     public long Id { get; set; }
 
+    public string? IconName { get; set; }
+
     public string NameTranslationKey { get; set; } = null!;
 
     public string DescriptionTranslationKey { get; set; } = null!;

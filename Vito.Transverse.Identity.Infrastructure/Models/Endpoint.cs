@@ -13,6 +13,8 @@ public partial class Endpoint
 
     public long? PositionIndex { get; set; }
 
+    public string? IconName { get; set; }
+
     public string NameTranslationKey { get; set; } = null!;
 
     public string DescriptionTranslationKey { get; set; } = null!;

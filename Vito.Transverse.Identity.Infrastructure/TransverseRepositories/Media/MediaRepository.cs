@@ -63,7 +63,7 @@ public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
         PictureDTO? savedRecord = null;
         var newRecordDb = newRecord.ToPicture();
         newRecordDb.CreationDate = DateTime.UtcNow;
-        newRecordDb.CreatedByUserFk = deviceInformation.UserId ?? 0;
+        newRecordDb.CreatedByUserFk = deviceInformation.UserId;
 
         try
         {

@@ -18,14 +18,14 @@ public class TokenRequestValidator : AbstractValidator<TokenRequestDTO>
             }
         });
 
-        RuleFor(x => x.company_secret).NotEmpty().WithMessage("Validator_NotEmpty_company_secret");
-        RuleFor(x => x).Custom((entity, vaidationContext) =>
-        {
-            if (IsValidGuid(entity.company_secret))
-            {
-                vaidationContext.AddFailure(nameof(entity.company_secret), $"Validator_NotNull_{nameof(entity.company_secret)}");
-            }
-        });
+        //RuleFor(x => x.company_secret).NotEmpty().WithMessage("Validator_NotEmpty_company_secret");
+        //RuleFor(x => x).Custom((entity, vaidationContext) =>
+        //{
+        //    if (IsValidGuid(entity.company_secret))
+        //    {
+        //        vaidationContext.AddFailure(nameof(entity.company_secret), $"Validator_NotNull_{nameof(entity.company_secret)}");
+        //    }
+        //});
 
         RuleFor(x => x.application_id).NotEmpty().WithMessage("Validator_NotEmpty_application_id");
         RuleFor(x => x).Custom((entity, vaidationContext) =>

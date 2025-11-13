@@ -463,6 +463,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.EndpointUrl)
                 .HasMaxLength(75)
                 .IsUnicode(false);
+            entity.Property(e => e.IconName)
+                .HasMaxLength(40)
+                .IsUnicode(false);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Method)
                 .HasMaxLength(10)
@@ -572,6 +575,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.DescriptionTranslationKey)
                 .HasMaxLength(85)
+                .IsUnicode(false);
+            entity.Property(e => e.IconName)
+                .HasMaxLength(40)
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.NameTranslationKey)

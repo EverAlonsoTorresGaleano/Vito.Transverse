@@ -204,7 +204,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
             context = dataBaseContextFactory.GetDbContext(context);
             var newRecordDb = newRecord.ToCompanyEntityAudit();
             newRecordDb.CreationDate = DateTime.UtcNow;
-            newRecordDb.CreatedByUserFk = deviceInformation.UserId!.Value;
+            newRecordDb.CreatedByUserFk = deviceInformation.UserId!;
             context.CompanyEntityAudits.Add(newRecordDb);
             await context.SaveChangesAsync();
             

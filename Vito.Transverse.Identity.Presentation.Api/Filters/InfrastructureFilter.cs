@@ -7,13 +7,14 @@ using Vito.Transverse.Identity.Presentation.Api.Helpers;
 using Vito.Transverse.Identity.Application.TransverseServices.Culture;
 using Vito.Transverse.Identity.Application.TransverseServices.Security;
 using Wangkanai.Detection.Services;
+using Wangkanai.Extensions;
 
-namespace Vito.Framework.Api.Filters;
+namespace Vito.Transverse.Identity.Presentation.Api.Filters;
 public class InfrastructureFilter : IEndpointFilter
 {
     private const string CONSTANT_APIVERSION_TEXT = "apiVersion";
     private const string CONSTANT_APIVERSION_TEXTFULL = "{apiVersion:apiVersion}";
-    private const string CONSTANT_ENDPOINT_URL_PREFIX = "/";
+    private const char CONSTANT_URL_PATH_SEPARATOR = '/';
 
     public readonly IDetectionService _userDeviceDetectionService;
 
@@ -47,7 +48,7 @@ public class InfrastructureFilter : IEndpointFilter
         DeviceInformationDTO deviceInfo = new()
         {
             HostName = request.Host.ToString(),
-            IpAddress = context.Connection.RemoteIpAddress?.ToString(),
+            IpAddress = context.Connection.RemoteIpAddress!.ToString(),
             DeviceType = _userDeviceDetectionService.Device.Type.ToString(),
             Browser = $"{_userDeviceDetectionService.Browser.Name.ToString()} v{_userDeviceDetectionService.Browser.Version.ToString()}",
             Platform = $"{_userDeviceDetectionService.Platform.Name.ToString()} v{_userDeviceDetectionService.Platform.Version.ToString()} [{_userDeviceDetectionService.Platform.Processor.ToString()}]",
@@ -64,7 +65,7 @@ public class InfrastructureFilter : IEndpointFilter
             CompanyId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.CompanyId.ToString()) ?? FrameworkConstants.Company_DefaultId,
             UserId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.UserId.ToString()) ?? FrameworkConstants.UserId_UserUnknown,
             RoleId = jwtToken!.GetJwtTokenClaimLong(CustomClaimTypes.RoleId.ToString()) ?? FrameworkConstants.RoleId_UserUnknown,
-            CultureId = request.GetCurrectCulture().Name,
+            CultureId =  request.GetCurrectCulture().Name  ,
 
         };
         return deviceInfo;
@@ -73,10 +74,11 @@ public class InfrastructureFilter : IEndpointFilter
     private string GetEndPointPattern(HttpContext httpContext)
     {
         var endPoint = httpContext.GetEndpoint() as RouteEndpoint;
-        var endPointPattern = endPoint!.RoutePattern.RawText;
+        var endPointPatternRaw = endPoint!.RoutePattern.RawText;
         var apiVersion = httpContext.GetRouteValue(CONSTANT_APIVERSION_TEXT);
-        var enpointUrl = endPointPattern!.Replace($"{CONSTANT_APIVERSION_TEXTFULL}", apiVersion.ToString());
-        enpointUrl = CONSTANT_ENDPOINT_URL_PREFIX + enpointUrl;
-        return enpointUrl;
+        var endpointPattern = endPointPatternRaw!.Replace($"{CONSTANT_APIVERSION_TEXTFULL}", apiVersion.ToString());
+        endpointPattern = endpointPattern.Last().Equals(CONSTANT_URL_PATH_SEPARATOR) ? endpointPattern.Left(endpointPattern.Length - 1) : endpointPattern;
+        endpointPattern = endpointPattern.First().Equals(CONSTANT_URL_PATH_SEPARATOR) ? endpointPattern.Right(endpointPattern.Length - 1) : endpointPattern;
+        return endpointPattern;
     }
 }

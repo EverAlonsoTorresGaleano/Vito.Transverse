@@ -32,6 +32,7 @@ using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.SocialNetwo
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Users;
 using Vito.Transverse.Identity.Presentation.Api.Endpoints;
 using Vito.Transverse.Identity.Presentation.Api.EndPoints;
+using Vito.Transverse.Identity.Presentation.Api.Helpers;
 using Vito.Transverse.Identity.Presentation.Api.Validators;
 
 try
@@ -201,7 +202,7 @@ try
     //TO DISABLESWAGGER ON ENVIRONMENTS  remove comments
     //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Container"))
     //{
-        app.UsePostBuildApplicationDefaultsDevelopment();
+    app.UsePostBuildApplicationDefaultsDevelopment();
     //}
 
     app.UseAuthentication();
@@ -214,3 +215,6 @@ catch (Exception ex)
 {
     Console.WriteLine(IdentityConstants.Program_ErrorMessage + ex.GetErrorStakTrace());
 }
+
+
+

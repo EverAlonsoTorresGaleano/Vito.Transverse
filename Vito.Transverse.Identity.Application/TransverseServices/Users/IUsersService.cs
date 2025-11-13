@@ -48,4 +48,5 @@ public interface IUsersService
     Task<bool> DeleteUserByIdAsync(long userId, DeviceInformationDTO deviceInformation);
     Task<List<ListItemDTO>> GetUserListItenAsync(long? companyId);
     Task<List<ListItemDTO>> GetRoleListItemAsync(long? companyId);
+    Task<List<MenuGroupDTO>> GetUserMenuByUserIdAsync(long userId, long companyId);
 }

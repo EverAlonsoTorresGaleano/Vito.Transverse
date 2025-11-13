@@ -2,12 +2,11 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
-using  Vito.Transverse.Identity.Application.TransverseServices.Companies;
+using Vito.Transverse.Identity.Application.TransverseServices.Companies;
 using Vito.Transverse.Identity.Entities.DTO;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
@@ -17,7 +16,7 @@ public static class CompaniesEndPoint
 {
     public static void MapCompaniesEndPoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Companies/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Companies/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CompaniesFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
@@ -28,12 +27,12 @@ public static class CompaniesEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapGet("/dropdown", GetAllCompanyListItemAsync)
+        endPointGroupVersioned.MapGet("dropdown", GetAllCompanyListItemAsync)
            .MapToApiVersion(1.0)
            .WithSummary("Get All Company List Async")
                .WithDescription("[Author] [Authen] [Trace]")
-           .RequireAuthorization()
-           .AddEndpointFilter<RoleAuthorizationFilter>();
+           .AllowAnonymous();
+           //.AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("{companyId}", GetCompanyByIdAsync)
             .MapToApiVersion(1.0)
@@ -149,7 +148,7 @@ public static class CompaniesEndPoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await companiesService.GetCompanyMemberhipAsync(companyId ?? deviceInformation!.CompanyId!.Value);
+        var returnObject = await companiesService.GetCompanyMemberhipAsync(companyId ?? deviceInformation!.CompanyId!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
@@ -159,7 +158,7 @@ public static class CompaniesEndPoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await companiesService.GetCompanyMemberhipListItemAsync(deviceInformation!.CompanyId!.Value);
+        var returnObject = await companiesService.GetCompanyMemberhipListItemAsync(deviceInformation!.CompanyId!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 

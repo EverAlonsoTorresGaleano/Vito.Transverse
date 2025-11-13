@@ -2,13 +2,12 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
-using  Vito.Transverse.Identity.Application.TransverseServices.Media;
-using  Vito.Transverse.Identity.Application.TransverseServices.Security;
+using Vito.Transverse.Identity.Application.TransverseServices.Media;
+using Vito.Transverse.Identity.Application.TransverseServices.Security;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Presentation.Api.EndPoints;
@@ -20,7 +19,7 @@ public static class MediaEndPoint
 {
     public static void MapMediaEndPoints(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Media/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Media/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CacheFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
@@ -92,7 +91,7 @@ public static class MediaEndPoint
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
 
-        var returnValue = await mediaService.GetPictureByName(companyId ?? deviceInformation!.ApplicationId!.Value, pictureName);
+        var returnValue = await mediaService.GetPictureByName(companyId ?? deviceInformation!.ApplicationId!, pictureName);
         return returnValue == null ? TypedResults.NotFound() : TypedResults.File(returnValue.BinaryPicture, contentType: string.Empty, fileDownloadName: $"{returnValue.Name}.png");
     }
 
@@ -105,7 +104,7 @@ public static class MediaEndPoint
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
 
-        var returnValue = await mediaService.GetPictureByNameWildCard(companyId ?? deviceInformation!.ApplicationId!.Value, pictureNameWildCard);
+        var returnValue = await mediaService.GetPictureByNameWildCard(companyId ?? deviceInformation!.ApplicationId!, pictureNameWildCard);
         return TypedResults.Ok(returnValue);
     }
 

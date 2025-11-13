@@ -200,7 +200,7 @@ public static class MapperExtension
     {
         ListItemDTO returnObject = new()
         {
-            Id = modelObject.Id.ToString(),
+            Id = modelObject.ApplicationClient.ToString(),
             IsEnabled = true,
             NameTranslationKey = modelObject.NameTranslationKey,
             ListItemGroupFk = string.Empty
@@ -212,7 +212,7 @@ public static class MapperExtension
     {
         ListItemDTO returnObject = new()
         {
-            Id = modelObject.Id.ToString(),
+            Id = modelObject.CompanyClient.ToString(),
             IsEnabled = true,
             NameTranslationKey = modelObject.NameTranslationKey,
             ListItemGroupFk = string.Empty
@@ -404,6 +404,78 @@ public static class MapperExtension
         return returnObject;
     }
 
+    public static List<MenuGroupDTO> ToMenuGroupDTOList(this User modelObject)
+    {
+
+        List<MenuGroupDTO> moduleList = new();
+        modelObject.UserRoles.ToList().ForEach(userRoleItem =>
+        {
+            if (userRoleItem.RoleFkNavigation.ApplicationFkNavigation is null)
+            {
+                throw new Exception(TransverseExceptionEnum.UserPermissionException_ModuleFromApplicationNotFound.ToString());
+            }
+
+            userRoleItem.RoleFkNavigation.RolePermissions.DistinctBy(x => x.ModuleFk).ToList().ForEach((permission) =>
+            {
+
+                MenuGroupDTO newModuleDTO = new();
+                newModuleDTO = permission.ModuleFkNavigation.ToMenuGroupDTO();
+                newModuleDTO.Items = new();
+
+                var moduleDTO = moduleList.Where(m => m.Id == newModuleDTO.Id).FirstOrDefault();
+                if (moduleDTO is null)
+                {
+                    if (permission.ModuleFkNavigation.IsVisible)
+                    {
+                        moduleList.Add(newModuleDTO);
+                    }
+                }
+                else
+                {
+                    newModuleDTO = moduleDTO;
+                }
+
+                permission.ModuleFkNavigation.Endpoints.ToList().ForEach((endpoint) =>
+                {
+                    MenuItemDTO endpointDTO = new();
+                    endpointDTO = endpoint.ToMenuItemDTO();
+                    if (endpoint.IsVisible)
+                    {
+                        newModuleDTO.Items.Add(endpointDTO);
+                    }
+                });
+                newModuleDTO.Items = newModuleDTO.Items.DistinctBy(x => x.Id).ToList();
+
+            });
+        });
+        return moduleList;
+    }
+
+    public static MenuGroupDTO ToMenuGroupDTO(this Module modelObject)
+    {
+        MenuGroupDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            Title = modelObject.NameTranslationKey,
+            Icon = modelObject.IconName,
+            Description = modelObject.DescriptionTranslationKey,
+            Items = new()
+        };
+        return returnObject;
+    }
+
+    public static MenuItemDTO ToMenuItemDTO(this Endpoint modelObject)
+    {
+        MenuItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            Title = modelObject.NameTranslationKey,
+            Icon = modelObject.IconName,
+            Description = modelObject.DescriptionTranslationKey,
+            Path = modelObject.EndpointUrl
+        };
+        return returnObject;
+    }
 
 
     public static UserDTO ToUserDTO(this User modelObject)
@@ -729,6 +801,7 @@ public static class MapperExtension
             IsActive = modelObject.IsActive,
             IsVisible = modelObject.IsVisible,
             IsApi = modelObject.IsApi,
+            IconName = modelObject.IconName!,
         };
         return returnObject;
     }
@@ -748,6 +821,7 @@ public static class MapperExtension
             IsApi = modelObject.IsApi,
             EndpointUrl = modelObject.EndpointUrl,
             Method = modelObject.Method,
+            IconName = modelObject.IconName,
         };
         return returnObject;
     }
@@ -804,6 +878,7 @@ public static class MapperExtension
             DescriptionTranslationKey = modelObject.DescriptionTranslationKey,
             PositionIndex = modelObject.PositionIndex,
             ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
+            IconName = modelObject.IconName!,
 
 
             ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? (long)Decimal.Zero :
@@ -831,6 +906,7 @@ public static class MapperExtension
             ModuleFk = modelObject.ModuleFk,
             EndpointUrl = modelObject.EndpointUrl,
             Method = modelObject.Method!,
+            IconName = modelObject.IconName!,
             ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation is null ? string.Empty : modelObject.ApplicationFkNavigation.NameTranslationKey,
             ApplicationOwnerId = modelObject.ApplicationFkNavigation is null || modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ?
                                     (long)decimal.Zero :

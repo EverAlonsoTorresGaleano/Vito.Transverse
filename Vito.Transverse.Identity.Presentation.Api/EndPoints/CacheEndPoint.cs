@@ -1,15 +1,14 @@
 ﻿using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
-using  Vito.Transverse.Identity.Application.TransverseServices.Audit;
-using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
-using  Vito.Transverse.Identity.Application.TransverseServices.Security;
+using Vito.Transverse.Identity.Application.TransverseServices.Audit;
+using Vito.Transverse.Identity.Application.TransverseServices.Caching;
+using Vito.Transverse.Identity.Application.TransverseServices.Security;
 using Vito.Transverse.Identity.Entities.Enums;
 
 namespace Vito.Transverse.Identity.Presentation.Api.Endpoints;
@@ -18,12 +17,12 @@ public static class CacheEndpoint
 {
     public static void MapCacheEndPoints(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Cache/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Cache/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<CacheFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapGet("/", GetCacheList)
+        endPointGroupVersioned.MapGet("", GetCacheList)
             .MapToApiVersion(1.0)
             .WithSummary("Get Cache Collentions List")
             .WithDescription("[Require Authorization]")

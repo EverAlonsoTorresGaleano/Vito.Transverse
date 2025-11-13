@@ -5,8 +5,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.Models.Security;
 using Vito.Framework.Common.Options;
-using  Vito.Transverse.Identity.Application.TransverseServices.Culture;
-using  Vito.Transverse.Identity.Application.TransverseServices.Security;
+using Vito.Transverse.Identity.Application.TransverseServices.Culture;
+using Vito.Transverse.Identity.Application.TransverseServices.Security;
 
 namespace Vito.Transverse.Identity.Presentation.Api.Helpers;
 
@@ -25,13 +25,34 @@ public static class ApilHelper
     }
 
 
+    //public static IHostApplicationBuilder AddCorsOnlyForAuthorizedUrls(this IHostApplicationBuilder builder, string[] authorizedUrls)
+    //{
+    //    string[] authorizedUrls2 = authorizedUrls;
+    //    builder.Services.AddCors(options =>
+    //    {
+    //        options.AddDefaultPolicy(p =>
+    //        {
+    //            p.WithOrigins(authorizedUrls2)
+    //            .AllowAnyMethod()
+    //            .AllowAnyHeader()
+    //            .AllowCredentials();
+    //        });
+    //    });
+    //    return builder;
+    //}
+
     public static string GetValueFromHeader(this HttpRequest request, string headerKey, string? defaultValue = "")
     {
         var hasHeaderKey = request.Headers.ContainsKey(headerKey);
         var returnValue = hasHeaderKey ? request.Headers[headerKey].ToString() : defaultValue;
         return returnValue!;
     }
-
+    public static string GetValueFromQueryString(this HttpRequest request, string querStringKey, string? defaultValue = "")
+    {
+        var hasQueryStringKey = request.Query.ContainsKey(querStringKey);
+        var returnValue = hasQueryStringKey ? request.Query[querStringKey].ToString() : defaultValue;
+        return returnValue!;
+    }
 
     public static bool SetValueOnHeader(this HttpRequest request, string headerKey, string headerValue)
     {
@@ -76,7 +97,16 @@ public static class ApilHelper
 
     public static void SetCurrectCultureFromHeader(this HttpRequest request)
     {
-        var cultureId = request.GetValueFromHeader(FrameworkConstants.Header_CultureId, _cultureOptions?.DefaultCulture!);
+        var cultureId = request.GetValueFromHeader(FrameworkConstants.Header_CultureId, null);
+
+        if (cultureId is null)
+        {
+            cultureId = request.GetValueFromQueryString(FrameworkConstants.Header_CultureId, null);
+            if (cultureId is null)
+            {
+                cultureId = _cultureOptions?.DefaultCulture!;
+            }
+        }
         //Set Culture on Main Thread
         _cultureService.SetCurrectCulture(cultureId!);
 

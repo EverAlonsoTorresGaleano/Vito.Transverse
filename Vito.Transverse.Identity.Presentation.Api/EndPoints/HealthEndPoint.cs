@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
-using  Vito.Transverse.Identity.Application.TransverseServices.Audit;
-using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
-using  Vito.Transverse.Identity.Application.TransverseServices.Culture;
-using  Vito.Transverse.Identity.Application.TransverseServices.Security;
+using Vito.Transverse.Identity.Application.TransverseServices.Audit;
+using Vito.Transverse.Identity.Application.TransverseServices.Caching;
+using Vito.Transverse.Identity.Application.TransverseServices.Culture;
+using Vito.Transverse.Identity.Application.TransverseServices.Security;
 using Vito.Transverse.Identity.Entities.Enums;
 
 namespace Vito.Transverse.Identity.Presentation.Api.Endpoints;
@@ -19,11 +18,11 @@ public static class HealthEndPoint
 {
     public static void MapHealthEndPoints(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Health/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Health/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
         .AddEndpointFilter<AuditFeatureFlagFilter>()
         .AddEndpointFilter<InfrastructureFilter>();
 
-        endPointGroupVersioned.MapGet("/", HealthCheckAllAsync)
+        endPointGroupVersioned.MapGet("", HealthCheckAllAsync)
         .MapToApiVersion(1.0)
         .WithSummary("HealthCheck Async")
         .WithDescription("[Require Authorization]")

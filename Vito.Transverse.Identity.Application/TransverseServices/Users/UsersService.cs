@@ -113,13 +113,13 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
         try
         {
             // Set company and application from device information if not provided
-            if (userRoleInfo.CompanyFk == 0 && deviceInformation.CompanyId.HasValue)
+            if (userRoleInfo.CompanyFk == 0 )
             {
-                userRoleInfo.CompanyFk = deviceInformation.CompanyId.Value;
+                userRoleInfo.CompanyFk = deviceInformation.CompanyId;
             }
-            if (userRoleInfo.ApplicationFk == 0 && deviceInformation.ApplicationId.HasValue)
+            if (userRoleInfo.ApplicationFk == 0 )
             {
-                userRoleInfo.ApplicationFk = deviceInformation.ApplicationId.Value;
+                userRoleInfo.ApplicationFk = deviceInformation.ApplicationId;
             }
 
             returnValue = await usersRepository.CreateNewUserRoleAsync(userRoleInfo, deviceInformation);
@@ -153,7 +153,7 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
 
             if (savedRecord != null)
             {
-                await auditService.UpdateRowAuditAsync(userRoleInfo.CompanyFk, deviceInformation.UserId!.Value, userRoleInfoBackup, userRoleInfo, $"{userRoleInfo.UserFk}_{userRoleInfo.RoleFk}", deviceInformation);
+                await auditService.UpdateRowAuditAsync(userRoleInfo.CompanyFk, deviceInformation.UserId!, userRoleInfoBackup, userRoleInfo, $"{userRoleInfo.UserFk}_{userRoleInfo.RoleFk}", deviceInformation);
 
                 // Clear cache
                 cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.UserRoleListByUserId + userRoleInfo.UserFk.ToString());
@@ -198,7 +198,7 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
 
             if (deleted)
             {
-                await auditService.DeleteRowAuditAsync(companyFk.Value, deviceInformation.UserId!.Value, userRoleInfoBackup, $"{userId}_{roleId}", deviceInformation, true);
+                await auditService.DeleteRowAuditAsync(companyFk.Value, deviceInformation.UserId!, userRoleInfoBackup, $"{userId}_{roleId}", deviceInformation, true);
 
                 // Clear cache
                 cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.UserRoleListByUserId + userId.ToString());
@@ -449,7 +449,7 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
             var savedRecord = await usersRepository.UpdateRoleAsync(roleInfo);
             if (savedRecord != null)
             {
-                await auditService.UpdateRowAuditAsync(roleInfo.CompanyFk, deviceInformation.UserId!.Value, roleInfoBackup, roleInfo, roleId.ToString(), deviceInformation);
+                await auditService.UpdateRowAuditAsync(roleInfo.CompanyFk, deviceInformation.UserId!, roleInfoBackup, roleInfo, roleId.ToString(), deviceInformation);
                 cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.RoleListByCompanyId + roleInfo.CompanyFk.ToString());
             }
             return savedRecord;
@@ -476,7 +476,7 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
             deleted = await usersRepository.DeleteRoleAsync(roleId);
             if (deleted)
             {
-                await auditService.DeleteRowAuditAsync(roleToDelete.CompanyFk, deviceInformation.UserId!.Value, roleInfoBackup, roleId.ToString(), deviceInformation, true);
+                await auditService.DeleteRowAuditAsync(roleToDelete.CompanyFk, deviceInformation.UserId!, roleInfoBackup, roleId.ToString(), deviceInformation, true);
                 cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.RoleListByCompanyId + roleToDelete.CompanyFk.ToString());
             }
         }
@@ -498,6 +498,26 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
         catch (Exception ex)
         {
             logger.LogError(ex, message: nameof(GetUserByIdAsync));
+            throw;
+        }
+    }
+
+
+    public async Task<List<MenuGroupDTO>> GetUserMenuByUserIdAsync(long userId, long companyId)
+    {
+        try
+        {
+            var returnList = cachingService.GetCacheDataByKey<List<MenuGroupDTO>>(CacheItemKeysEnum.MenuByUserId + userId.ToString());
+            if (returnList == null)
+            {
+                returnList = await usersRepository.GetUserMenuByUserIdAsync(x => x.Id == userId && x.CompanyFk == companyId);
+                cachingService.SetCacheData(CacheItemKeysEnum.MenuByUserId + userId.ToString(), returnList);
+            }
+            return returnList;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
             throw;
         }
     }

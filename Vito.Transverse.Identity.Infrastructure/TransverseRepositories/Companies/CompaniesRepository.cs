@@ -312,7 +312,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
         MembershipTypeDTO? savedRecord = null;
         var newRecordDb = membershipTypeDTO.ToMembershipType();
         newRecordDb.CreationDate = DateTime.UtcNow;
-        newRecordDb.CreatedByUserFk = deviceInformation.UserId ?? 0;
+        newRecordDb.CreatedByUserFk = deviceInformation.UserId ;
 
         try
         {

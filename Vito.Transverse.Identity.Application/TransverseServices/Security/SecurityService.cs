@@ -6,20 +6,20 @@ using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Models.Security;
 using Vito.Framework.Common.Options;
-using  Vito.Transverse.Identity.Application.Helpers;
-using  Vito.Transverse.Identity.Application.TransverseServices.Applications;
-using  Vito.Transverse.Identity.Application.TransverseServices.Audit;
-using  Vito.Transverse.Identity.Application.TransverseServices.Culture;
-using  Vito.Transverse.Identity.Application.TransverseServices.Users;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Applications;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Users;
+using Vito.Transverse.Identity.Application.Helpers;
+using Vito.Transverse.Identity.Application.TransverseServices.Applications;
+using Vito.Transverse.Identity.Application.TransverseServices.Audit;
+using Vito.Transverse.Identity.Application.TransverseServices.Culture;
+using Vito.Transverse.Identity.Application.TransverseServices.Users;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Applications;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Users;
 using Vito.Transverse.Identity.Entities.Extensions;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Application.TransverseServices.Security;
+namespace Vito.Transverse.Identity.Application.TransverseServices.Security;
 
 
 
@@ -36,7 +36,7 @@ public class SecurityService(ILogger<SecurityService> logger, IApplicationsRepos
             var grantType = Enum.Parse<TokenGrantTypeEnum>(requestBody.grant_type, true);
             TokenResponseDTO tokenResponse = default!;
 
-            userInfoDTO = await NewJwtTokenAsync_ValidateCompanyApplicationInformation(Guid.Parse(requestBody.company_id), Guid.Parse(requestBody.company_secret), Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id ?? null, requestBody.user_secret ?? null, requestBody.scope, deviceInformation);
+            userInfoDTO = await NewJwtTokenAsync_ValidateCompanyApplicationInformation(Guid.Parse(requestBody.company_id), !string.IsNullOrEmpty(requestBody.company_secret) ? Guid.Parse(requestBody.company_secret) : null, Guid.Parse(requestBody.application_id), Guid.Parse(requestBody.application_secret), requestBody.user_id ?? null, requestBody.user_secret ?? null, requestBody.scope, deviceInformation);
 
 
             var logginSuccesStatusList = new List<OAuthActionTypeEnum>()
@@ -63,10 +63,10 @@ public class SecurityService(ILogger<SecurityService> logger, IApplicationsRepos
         }
     }
 
-    private async Task<UserDTOToken?> NewJwtTokenAsync_ValidateCompanyApplicationInformation(Guid companyClient, Guid companySecret, Guid applicationClient, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    private async Task<UserDTOToken?> NewJwtTokenAsync_ValidateCompanyApplicationInformation(Guid companyClient, Guid? companySecret, Guid applicationClient, Guid? applicationSecret, string? userName, string? password, string? scope, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         UserDTOToken? userInfo = default;
-        var scopeRequest = !String.IsNullOrEmpty(scope) ? scope : deviceInformation.EndPointUrl;
+        var scopeRequest = !String.IsNullOrEmpty(scope) ? scope : deviceInformation.EndPointPattern;
         try
         {
             var contextTx = dataBaseContextFactory.GetDbContext(context);
@@ -74,7 +74,7 @@ public class SecurityService(ILogger<SecurityService> logger, IApplicationsRepos
 
             var companyInfoList = await companiesRepository.GetAllCompanyListAsync(x => (
                         x.CompanyClient.Equals(companyClient)
-                        && x.CompanySecret.Equals(companySecret)
+                        //&& x.CompanySecret.Equals(companySecret)
                         && x.IsActive == true),
                         contextTx);
             var companyInfo = companyInfoList.FirstOrDefault();
@@ -139,7 +139,6 @@ public class SecurityService(ILogger<SecurityService> logger, IApplicationsRepos
     {
         UserDTOToken? userInfoDTO = default;
         OAuthActionTypeEnum actionStatus = default;
-
         try
         {
             var contextTx = dataBaseContextFactory.GetDbContext(context);
@@ -158,8 +157,7 @@ public class SecurityService(ILogger<SecurityService> logger, IApplicationsRepos
                      && x.UserFkNavigation.IsLocked == false)
                      , contextTx);
             var userRoleInfo = userRoleInfoList.FirstOrDefault();
-            deviceInformation.RoleId = userRoleInfo!.RoleFk;
-            deviceInformation.ApplicationId = userRoleInfo.ApplicationFk;
+
 
             if (userRoleInfo is null)
             {
@@ -168,6 +166,8 @@ public class SecurityService(ILogger<SecurityService> logger, IApplicationsRepos
             }
             else
             {
+                deviceInformation.RoleId = userRoleInfo!.RoleFk;
+                deviceInformation.ApplicationId = userRoleInfo.ApplicationFk;
                 var endpointList = await applicationsService.GetEndpointsListByRoleIdAsync(userRoleInfo.RoleFk);
                 var endpointInfo = endpointList.FirstOrDefault(x => (x.EndpointUrl.Equals(scope) && x.Method.Equals(method)) && x.IsActive);
 

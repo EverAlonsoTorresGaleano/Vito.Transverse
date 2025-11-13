@@ -2,7 +2,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
@@ -16,7 +15,7 @@ public static class UsersEndPoint
 {
     public static void MapUsersEndPoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Users/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Users/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<UsersFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
@@ -29,7 +28,7 @@ public static class UsersEndPoint
 
 
 
-        endPointGroupVersioned.MapGet("/dropdown", GetUserListItemAsync)
+        endPointGroupVersioned.MapGet("dropdown", GetUserListItemAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Get User  List Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -43,7 +42,12 @@ public static class UsersEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-
+        endPointGroupVersioned.MapGet("Menu", GetUserMenuByRoleIdAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Get User By Id Async")
+            .WithDescription("[Author] [Authen] [Trace]")
+            .RequireAuthorization()
+            .AddEndpointFilter<RoleAuthorizationFilter>();
 
 
 
@@ -145,7 +149,7 @@ public static class UsersEndPoint
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
-        
+
 
         endPointGroupVersioned.MapGet("Roles/{roleId}", GetRoleByIdAsync)
             .MapToApiVersion(1.0)
@@ -182,7 +186,7 @@ public static class UsersEndPoint
         {
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
-        var returnObject = await usersService.CreateNewUserAsync(companyId ?? deviceInformation!.ApplicationId!.Value, userInfo, deviceInformation!);
+        var returnObject = await usersService.CreateNewUserAsync(companyId ?? deviceInformation!.ApplicationId!, userInfo, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
@@ -349,6 +353,16 @@ HttpRequest request,
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
+    public static async Task<Results<Ok<List<MenuGroupDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetUserMenuByRoleIdAsync(
+    HttpRequest request,
+    [FromServices] IUsersService usersService)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var returnObject = await usersService.GetUserMenuByUserIdAsync(deviceInformation.UserId, deviceInformation.CompanyId);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+
     public static async Task<Results<Ok<UserDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateUserByIdAsync(
         HttpRequest request,
         [FromServices] IUsersService usersService,
@@ -383,7 +397,7 @@ HttpRequest request,
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await usersService.SendActivationEmailAsync(companyId ?? deviceInformation!.ApplicationId!.Value, userId, deviceInformation!);
+        var returnObject = await usersService.SendActivationEmailAsync(companyId ?? deviceInformation!.ApplicationId!, userId, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 

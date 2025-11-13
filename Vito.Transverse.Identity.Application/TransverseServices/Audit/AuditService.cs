@@ -325,8 +325,8 @@ public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRe
                 QueryString = deviceInformation.QueryString!,
                 Referer = deviceInformation.Referer!,
                 UserAgent = deviceInformation.UserAgent!,
-                ApplicationId = applicationId ?? deviceInformation.ApplicationId!.Value,
-                RoleId = roleId ?? deviceInformation.RoleId!.Value,
+                ApplicationId = applicationId ?? deviceInformation.ApplicationId!,
+                RoleId = roleId ?? deviceInformation.RoleId!,
 
             };
             savedRecord = await auditRepository.AddNewActivityLogAsync(activityLogDb, null);// contextTx);
@@ -349,7 +349,7 @@ public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRe
             var applicationId = deviceInformation.ApplicationId;
             var userId = deviceInformation.UserId;
             var roleId = deviceInformation.RoleId;
-            returnValue = await AddNewActivityLogAsync(companyId!.Value, applicationId, userId, roleId, deviceInformation, actionStatus, context);
+            returnValue = await AddNewActivityLogAsync(companyId!, applicationId, userId, roleId, deviceInformation, actionStatus, context);
         }
         catch (Exception ex)
         {
@@ -411,8 +411,8 @@ public class AuditService(ILogger<AuditService> logger, IAuditRepository auditRe
             QueryString = devideInformation.QueryString!,
             UserAgent = devideInformation.UserAgent!,
             Referer = devideInformation.Referer!,
-            ApplicationId = devideInformation.ApplicationId!.Value,
-            RoleId = devideInformation.RoleId!.Value,
+            ApplicationId = devideInformation.ApplicationId!,
+            RoleId = devideInformation.RoleId!,
             AuditChanges = auditInformation
         };
         return newRecord;

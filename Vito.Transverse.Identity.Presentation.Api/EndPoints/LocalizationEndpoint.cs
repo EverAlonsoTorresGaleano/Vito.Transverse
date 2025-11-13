@@ -2,7 +2,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
@@ -17,45 +16,36 @@ public static class LocalizationEndpoint
 {
     public static void MapLocalizationEndpoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Localizations/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Localizations/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<LocalizationFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
 
-        endPointGroupVersioned.MapGet("/", GetLocalizationMessagesListAsync)
+        endPointGroupVersioned.MapGet("", GetLocalizationMessagesListAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Get All Localization Messages By Application Async")
-            .WithDescription("[Require Authorization]")
-            .RequireAuthorization();
-
-        endPointGroupVersioned.MapGet("/{messageKey}/All", GetLocalizationMessagesListByKeyAsync)
-            .MapToApiVersion(1.0)
-            .WithSummary("Get Localization Messages By Key Async")
-            .WithDescription("[Require Authorization]")
-            .RequireAuthorization();
-
-
-
-        endPointGroupVersioned.MapGet("/ByCulture/{cultureId}", GetLocalizationMessagesListByCultureAsync)
-            .MapToApiVersion(1.0)
-            .WithSummary("Get All Localization Messages By Application And Culture Async")
-            .WithDescription("[Require Authorization]")
-            .RequireAuthorization();
-
-
-
-        endPointGroupVersioned.MapGet("{messageKey}/WithParams", GetLocalizationMessagesListByKeyAndParamsAsync)
-             .MapToApiVersion(1.0)
-            .WithSummary("Get Localization Message By Key With Param Async")
-            .WithDescription("[Require Authorization]")
-            .RequireAuthorization();
+            .WithSummary("Get All Localization Current Application/ Current Culture Async")
+            .WithDescription("[Anonymous]")
+            .AllowAnonymous();
 
         endPointGroupVersioned.MapGet("{messageKey}", GetCultureTranslationByIdAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Get Culture Translation By Id Async")
-            .WithDescription("[Author] [Authen] [Trace]")
-            .RequireAuthorization()
-            .AddEndpointFilter<RoleAuthorizationFilter>();
+            .WithSummary("Get Culture Translation Current Application/ Current Culture  ByKey Async")
+            .WithDescription("[Anonymous]")
+            .AllowAnonymous();
+
+        endPointGroupVersioned.MapGet("{messageKey}/All", GetLocalizationMessagesListByKeyAsync)
+            .MapToApiVersion(1.0)
+            .WithSummary("Get Localization Messages By Key Current Application All Cultures Async")
+            .WithDescription("[Require Authorization]")
+            .AllowAnonymous();
+
+        endPointGroupVersioned.MapGet("{messageKey}/WithParams", GetLocalizationMessagesListByKeyAndParamsAsync)
+             .MapToApiVersion(1.0)
+            .WithSummary("Get Localization Current Application/ Current Culture By Key With Param Async")
+            .WithDescription("[Require Authorization]")
+            .AllowAnonymous();
+
+
 
         endPointGroupVersioned.MapPost("", CreateNewCultureTranslationAsync)
             .MapToApiVersion(1.0)
@@ -82,11 +72,10 @@ public static class LocalizationEndpoint
     public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetLocalizationMessagesListAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
-        [FromServices] ILocalizationService localizationService,
-        [FromQuery] long? applicationId)
+        [FromServices] ILocalizationService localizationService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await localizationService.GetLocalizedMessagesListByApplicationAsync(applicationId ?? deviceInformation!.ApplicationId!.Value);
+        var returnObject = await localizationService.GetLocalizedMessagesListByApplicationAndCultureAsync(deviceInformation!.ApplicationId!, deviceInformation!.CultureId!);
         return TypedResults.Ok(returnObject);
 
     }
@@ -95,42 +84,24 @@ public static class LocalizationEndpoint
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] ILocalizationService localizationService,
-        [FromQuery] long? applicationId,
         [FromRoute] string messageKey)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await localizationService.GetLocalizedMessagesListByKeyAsync(applicationId ?? deviceInformation!.ApplicationId!.Value, messageKey);
+        var returnObject = await localizationService.GetLocalizedMessagesListByKeyAsync(deviceInformation!.ApplicationId!, messageKey);
         return TypedResults.Ok(returnObject);
 
     }
-
-    public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetLocalizationMessagesListByCultureAsync(
-        HttpRequest request,
-        [FromServices] ISecurityService securityService,
-        [FromServices] ILocalizationService localizationService,
-        [FromQuery] long? applicationId,
-        [FromRoute] string? cultureId)
-    {
-        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await localizationService.GetLocalizedMessagesListByApplicationAndCultureAsync(applicationId ?? deviceInformation!.ApplicationId!.Value, cultureId!);
-        return TypedResults.Ok(returnObject);
-
-    }
-
-
 
     public static Results<Ok<CultureTranslationDTO>, NotFound, UnauthorizedHttpResult, ValidationProblem> GetLocalizationMessagesListByKeyAndParamsAsync(
         HttpRequest request,
         [FromServices] ISecurityService securityService,
         [FromServices] ILocalizationService localizationService,
-        [FromQuery] long? applicationId,
-        [FromQuery] string? cultureId,
         [FromRoute] string messageKey,
         [FromQuery] params string[]? parameters)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
 
-        var returnObject = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId ?? deviceInformation!.ApplicationId!.Value, cultureId! ?? deviceInformation!.CultureId!, messageKey, parameters ?? []);
+        var returnObject = localizationService.GetLocalizedMessageByKeyAndParamsSync(deviceInformation!.ApplicationId, deviceInformation.CultureId, messageKey, parameters ?? []);
         return TypedResults.Ok(returnObject);
     }
 
@@ -140,7 +111,7 @@ public static class LocalizationEndpoint
         [FromRoute] string messageKey)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await localizationService.GetCultureTranslationByIdAsync(deviceInformation.ApplicationId ?? 0, deviceInformation.CultureId, messageKey);
+        var returnObject = await localizationService.GetCultureTranslationByIdAsync(deviceInformation.ApplicationId, deviceInformation.CultureId, messageKey);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
@@ -164,10 +135,7 @@ public static class LocalizationEndpoint
         HttpRequest request,
         [FromServices] ILocalizationService localizationService,
         [FromServices] IValidator<CultureTranslationDTO> validator,
-        [FromBody] CultureTranslationDTO cultureTranslationDTO,
-        [FromQuery] long applicationId,
-        [FromQuery] string cultureId,
-        [FromQuery] string translationKey)
+        [FromBody] CultureTranslationDTO cultureTranslationDTO)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
 
@@ -176,19 +144,17 @@ public static class LocalizationEndpoint
         {
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
-        var returnObject = await localizationService.UpdateCultureTranslationAsync(applicationId, cultureId, translationKey, cultureTranslationDTO, deviceInformation!);
+        var returnObject = await localizationService.UpdateCultureTranslationAsync(deviceInformation.ApplicationId, deviceInformation.CultureId, cultureTranslationDTO.TranslationKey, cultureTranslationDTO, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
     public static async Task<Results<Ok, UnauthorizedHttpResult, NotFound>> DeleteCultureTranslationAsync(
         HttpRequest request,
         [FromServices] ILocalizationService localizationService,
-        [FromQuery] long applicationId,
-        [FromQuery] string cultureId,
         [FromQuery] string translationKey)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var deleted = await localizationService.DeleteCultureTranslationAsync(applicationId, cultureId, translationKey, deviceInformation!);
+        var deleted = await localizationService.DeleteCultureTranslationAsync(deviceInformation.ApplicationId, deviceInformation.CultureId, translationKey, deviceInformation!);
         return deleted ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

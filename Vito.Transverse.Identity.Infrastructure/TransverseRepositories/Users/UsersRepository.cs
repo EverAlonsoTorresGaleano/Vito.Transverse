@@ -214,7 +214,7 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
                 UserFk = userRoleInfo.UserFk,
                 RoleFk = userRoleInfo.RoleFk,
                 CreatedDate = DateTime.UtcNow,
-                CreatedByUserFk = deviceInformation.UserId ?? userRoleInfo.CreatedByUserFk,
+                CreatedByUserFk = deviceInformation.UserId ,
                 IsActive = userRoleInfo.IsActive
             };
 
@@ -327,6 +327,37 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
                     .ThenInclude(x => x.Components)
                 .FirstOrDefaultAsync(filters);
             returnValue = bdList!.ToUserDTO()!;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(GetUserPermissionListAsync));
+            throw;
+        }
+
+        return returnValue;
+    }
+
+
+    public async Task<List<MenuGroupDTO>> GetUserMenuByUserIdAsync(Expression<Func<User, bool>> filters, DataBaseServiceContext? context = null)
+    {
+        var returnValue = new List<MenuGroupDTO>();
+        try
+        {
+            context = dataBaseContextFactory.GetDbContext(context);
+            var bdList = await context.Users
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.RoleFkNavigation)
+                    .ThenInclude(x => x.ApplicationFkNavigation)
+                    .ThenInclude(x => x.ApplicationOwners)
+                    .ThenInclude(x => x.CompanyFkNavigation)
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.RoleFkNavigation)
+                    .ThenInclude(x => x.RolePermissions)
+                    .ThenInclude(x => x.ModuleFkNavigation)
+                    .ThenInclude(x => x.Endpoints)
+                    .ThenInclude(x => x.Components)
+                .FirstOrDefaultAsync(filters);
+            returnValue = bdList!.ToMenuGroupDTOList();
         }
         catch (Exception ex)
         {

@@ -16,6 +16,8 @@ public record ModuleDTO
 
     public bool IsApi { get; set; }
 
+    public string IconName { get; set; } = null!;
+
     public List<EndpointDTO> Endpoints { get; set; } = new();
 
     public string ApplicationNameTranslationKey { get; set; } = null!;

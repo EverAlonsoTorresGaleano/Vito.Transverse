@@ -25,6 +25,8 @@ export interface IClient {
 
     getApiUsersV1(userId: number): Promise<UserDTO>;
 
+    getApiUsersV1Menu(): Promise<MenuGroupDTO[]>;
+
     deleteApiUsersV1Delete(userId: number): Promise<void>;
 
     patchApiUsersV1Password(companyId: number | null | undefined, userInfo: UserDTO): Promise<UserDTO>;
@@ -235,21 +237,19 @@ export interface IClient {
 
     postApiOauth2V1Token(requestBody: TokenRequestDTO): Promise<TokenResponseDTO>;
 
-    getApiLocalizationsV1All(applicationId: number | null | undefined): Promise<CultureTranslationDTO[]>;
+    getApiLocalizationsV1All(): Promise<CultureTranslationDTO[]>;
 
     postApiLocalizationsV1(cultureTranslationDTO: CultureTranslationDTO): Promise<CultureTranslationDTO>;
 
-    putApiLocalizationsV1(applicationId: number, cultureId: string, translationKey: string, cultureTranslationDTO: CultureTranslationDTO): Promise<CultureTranslationDTO>;
-
-    getApiLocalizationsV1All2(applicationId: number | null | undefined, messageKey: string): Promise<CultureTranslationDTO[]>;
-
-    getApiLocalizationsV1ByCulture(applicationId: number | null | undefined, cultureId: string | null): Promise<CultureTranslationDTO[]>;
-
-    getApiLocalizationsV1WithParams(applicationId: number | null | undefined, cultureId: string | null | undefined, messageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
+    putApiLocalizationsV1(cultureTranslationDTO: CultureTranslationDTO): Promise<CultureTranslationDTO>;
 
     getApiLocalizationsV1(messageKey: string): Promise<CultureTranslationDTO>;
 
-    deleteApiLocalizationsV1Delete(applicationId: number, cultureId: string, translationKey: string): Promise<void>;
+    getApiLocalizationsV1All2(messageKey: string): Promise<CultureTranslationDTO[]>;
+
+    getApiLocalizationsV1WithParams(messageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO>;
+
+    deleteApiLocalizationsV1Delete(translationKey: string): Promise<void>;
 
     getApiCacheV1(): Promise<CacheSummaryDTO[]>;
 
@@ -651,6 +651,49 @@ export class Client implements IClient {
             });
         }
         return Promise.resolve<UserDTO>(null as any);
+    }
+
+    getApiUsersV1Menu(): Promise<MenuGroupDTO[]> {
+        let url_ = this.baseUrl + "/api/Users/v1/Menu";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiUsersV1Menu(_response);
+        });
+    }
+
+    protected processGetApiUsersV1Menu(response: Response): Promise<MenuGroupDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as MenuGroupDTO[];
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<MenuGroupDTO[]>(null as any);
     }
 
     deleteApiUsersV1Delete(userId: number): Promise<void> {
@@ -5349,10 +5392,8 @@ export class Client implements IClient {
         return Promise.resolve<TokenResponseDTO>(null as any);
     }
 
-    getApiLocalizationsV1All(applicationId: number | null | undefined): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localizations/v1?";
-        if (applicationId !== undefined && applicationId !== null)
-            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
+    getApiLocalizationsV1All(): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localizations/v1";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -5441,20 +5482,8 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO>(null as any);
     }
 
-    putApiLocalizationsV1(applicationId: number, cultureId: string, translationKey: string, cultureTranslationDTO: CultureTranslationDTO): Promise<CultureTranslationDTO> {
-        let url_ = this.baseUrl + "/api/Localizations/v1?";
-        if (applicationId === undefined || applicationId === null)
-            throw new globalThis.Error("The parameter 'applicationId' must be defined and cannot be null.");
-        else
-            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
-        if (cultureId === undefined || cultureId === null)
-            throw new globalThis.Error("The parameter 'cultureId' must be defined and cannot be null.");
-        else
-            url_ += "cultureId=" + encodeURIComponent("" + cultureId) + "&";
-        if (translationKey === undefined || translationKey === null)
-            throw new globalThis.Error("The parameter 'translationKey' must be defined and cannot be null.");
-        else
-            url_ += "translationKey=" + encodeURIComponent("" + translationKey) + "&";
+    putApiLocalizationsV1(cultureTranslationDTO: CultureTranslationDTO): Promise<CultureTranslationDTO> {
+        let url_ = this.baseUrl + "/api/Localizations/v1";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(cultureTranslationDTO);
@@ -5474,154 +5503,6 @@ export class Client implements IClient {
     }
 
     protected processPutApiLocalizationsV1(response: Response): Promise<CultureTranslationDTO> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO;
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<CultureTranslationDTO>(null as any);
-    }
-
-    getApiLocalizationsV1All2(applicationId: number | null | undefined, messageKey: string): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localizations/v1/{messageKey}/All?";
-        if (messageKey === undefined || messageKey === null)
-            throw new globalThis.Error("The parameter 'messageKey' must be defined.");
-        url_ = url_.replace("{messageKey}", encodeURIComponent("" + messageKey));
-        if (applicationId !== undefined && applicationId !== null)
-            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationsV1All2(_response);
-        });
-    }
-
-    protected processGetApiLocalizationsV1All2(response: Response): Promise<CultureTranslationDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO[];
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<CultureTranslationDTO[]>(null as any);
-    }
-
-    getApiLocalizationsV1ByCulture(applicationId: number | null | undefined, cultureId: string | null): Promise<CultureTranslationDTO[]> {
-        let url_ = this.baseUrl + "/api/Localizations/v1/ByCulture/{cultureId}?";
-        if (cultureId === undefined || cultureId === null)
-            throw new globalThis.Error("The parameter 'cultureId' must be defined.");
-        url_ = url_.replace("{cultureId}", encodeURIComponent("" + cultureId));
-        if (applicationId !== undefined && applicationId !== null)
-            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationsV1ByCulture(_response);
-        });
-    }
-
-    protected processGetApiLocalizationsV1ByCulture(response: Response): Promise<CultureTranslationDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO[];
-            return result200;
-            });
-        } else if (status === 400) {
-            return response.text().then((_responseText) => {
-            let result400: any = null;
-            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
-            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
-            });
-        } else if (status === 404) {
-            return response.text().then((_responseText) => {
-            return throwException("A server side error occurred.", status, _responseText, _headers);
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<CultureTranslationDTO[]>(null as any);
-    }
-
-    getApiLocalizationsV1WithParams(applicationId: number | null | undefined, cultureId: string | null | undefined, messageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
-        let url_ = this.baseUrl + "/api/Localizations/v1/{messageKey}/WithParams?";
-        if (messageKey === undefined || messageKey === null)
-            throw new globalThis.Error("The parameter 'messageKey' must be defined.");
-        url_ = url_.replace("{messageKey}", encodeURIComponent("" + messageKey));
-        if (applicationId !== undefined && applicationId !== null)
-            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
-        if (cultureId !== undefined && cultureId !== null)
-            url_ += "cultureId=" + encodeURIComponent("" + cultureId) + "&";
-        if (parameters !== undefined && parameters !== null)
-            parameters && parameters.forEach(item => { url_ += "parameters=" + encodeURIComponent("" + item) + "&"; });
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetApiLocalizationsV1WithParams(_response);
-        });
-    }
-
-    protected processGetApiLocalizationsV1WithParams(response: Response): Promise<CultureTranslationDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -5694,16 +5575,102 @@ export class Client implements IClient {
         return Promise.resolve<CultureTranslationDTO>(null as any);
     }
 
-    deleteApiLocalizationsV1Delete(applicationId: number, cultureId: string, translationKey: string): Promise<void> {
+    getApiLocalizationsV1All2(messageKey: string): Promise<CultureTranslationDTO[]> {
+        let url_ = this.baseUrl + "/api/Localizations/v1/{messageKey}/All";
+        if (messageKey === undefined || messageKey === null)
+            throw new globalThis.Error("The parameter 'messageKey' must be defined.");
+        url_ = url_.replace("{messageKey}", encodeURIComponent("" + messageKey));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiLocalizationsV1All2(_response);
+        });
+    }
+
+    protected processGetApiLocalizationsV1All2(response: Response): Promise<CultureTranslationDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO[];
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CultureTranslationDTO[]>(null as any);
+    }
+
+    getApiLocalizationsV1WithParams(messageKey: string, parameters: string[] | null | undefined): Promise<CultureTranslationDTO> {
+        let url_ = this.baseUrl + "/api/Localizations/v1/{messageKey}/WithParams?";
+        if (messageKey === undefined || messageKey === null)
+            throw new globalThis.Error("The parameter 'messageKey' must be defined.");
+        url_ = url_.replace("{messageKey}", encodeURIComponent("" + messageKey));
+        if (parameters !== undefined && parameters !== null)
+            parameters && parameters.forEach(item => { url_ += "parameters=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetApiLocalizationsV1WithParams(_response);
+        });
+    }
+
+    protected processGetApiLocalizationsV1WithParams(response: Response): Promise<CultureTranslationDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as CultureTranslationDTO;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as HttpValidationProblemDetails;
+            return throwException("A server side error occurred.", status, _responseText, _headers, result400);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CultureTranslationDTO>(null as any);
+    }
+
+    deleteApiLocalizationsV1Delete(translationKey: string): Promise<void> {
         let url_ = this.baseUrl + "/api/Localizations/v1/Delete?";
-        if (applicationId === undefined || applicationId === null)
-            throw new globalThis.Error("The parameter 'applicationId' must be defined and cannot be null.");
-        else
-            url_ += "applicationId=" + encodeURIComponent("" + applicationId) + "&";
-        if (cultureId === undefined || cultureId === null)
-            throw new globalThis.Error("The parameter 'cultureId' must be defined and cannot be null.");
-        else
-            url_ += "cultureId=" + encodeURIComponent("" + cultureId) + "&";
         if (translationKey === undefined || translationKey === null)
             throw new globalThis.Error("The parameter 'translationKey' must be defined and cannot be null.");
         else
@@ -7050,6 +7017,7 @@ export interface ModuleDTO {
     isActive?: boolean;
     isVisible?: boolean;
     isApi?: boolean;
+    iconName?: string;
     endpoints?: EndpointDTO[];
     applicationNameTranslationKey?: string;
     descriptionTranslationKey?: string;
@@ -7065,6 +7033,7 @@ export interface EndpointDTO {
     nameTranslationKey?: string;
     endpointUrl?: string;
     method?: string;
+    iconName?: string;
     isActive?: boolean;
     isVisible?: boolean;
     isApi?: boolean;
@@ -7114,6 +7083,22 @@ export interface ListItemDTO {
     descriptionTranslationKey?: string;
     orderIndex?: number | undefined;
     isEnabled?: boolean;
+}
+
+export interface MenuGroupDTO {
+    id?: string;
+    title?: string;
+    icon?: string;
+    description?: string;
+    items?: MenuItemDTO[];
+}
+
+export interface MenuItemDTO {
+    id?: string;
+    title?: string;
+    icon?: string;
+    description?: string;
+    path?: string;
 }
 
 export interface UserRoleDTO {

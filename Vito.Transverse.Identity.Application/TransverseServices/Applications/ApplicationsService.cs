@@ -148,7 +148,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
         try
         {
             savedRecord = await applicationsRepository.CreateNewModuleAsync(newRecord, deviceInformation);
-            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!.Value, deviceInformation.UserId!.Value, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
+            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!, deviceInformation.UserId!, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.ModuleListByApplicationId + newRecord.ApplicationFk.ToString());
             return savedRecord;
         }
@@ -170,7 +170,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            var userId = deviceInformation.UserId!.Value;
+            var userId = deviceInformation.UserId!;
             var applicationId = existingRecord.ApplicationFk;
             var originalRecord = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -191,7 +191,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId!.Value, userId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
+            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId!, userId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
 
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.ModuleListByApplicationId + applicationId.ToString());
         }
@@ -214,8 +214,8 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return false;
             }
 
-            var userId = deviceInformation.UserId!.Value;
-            var companyId = deviceInformation.CompanyId!.Value;
+            var userId = deviceInformation.UserId!;
+            var companyId = deviceInformation.CompanyId!;
             var applicationId = existingRecord.ApplicationFk;
             var existingRecordBackup = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -248,7 +248,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             newRecord.ApplicationClient = Guid.NewGuid();
             newRecord.ApplicationSecret = Guid.NewGuid();
             savedRecord = await applicationsRepository.CreateNewApplicationAsync(newRecord, deviceInformation); ;
-            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!.Value, deviceInformation.UserId!.Value, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
+            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!, deviceInformation.UserId!, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
             OAuthActionTypeEnum actionStatus = OAuthActionTypeEnum.OAuthActionType_CreateNewApplication;
             var savedActivityLog = await auditService.AddNewActivityLogAsync(deviceInformation, actionStatus);
             return savedRecord;
@@ -271,7 +271,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            var userId = deviceInformation.UserId!.Value;
+            var userId = deviceInformation.UserId!;
             var companyId = existingRecord.CompanyId;
             var originalRecord = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -316,7 +316,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return false;
             }
 
-            var userId = deviceInformation.UserId!.Value;
+            var userId = deviceInformation.UserId!;
             var companyId = existingRecord.CompanyId;
             var existingRecordBackup = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -409,14 +409,14 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
         EndpointDTO? endpointInfo = null!;
         try
         {
-            var roleId = deviceInformation.RoleId;
-            if (roleId is not null)
-            {
-                var endpointList = await GetEndpointsListByRoleIdAsync(roleId.Value);
-                endpointInfo = endpointList.FirstOrDefault(x => x.EndpointUrl.Equals(deviceInformation.EndPointPattern, StringComparison.InvariantCultureIgnoreCase) && x.Method.Equals(deviceInformation.Method, StringComparison.InvariantCultureIgnoreCase) && x.IsActive);
-                var actionType = endpointInfo is null ? OAuthActionTypeEnum.OAuthActionType_ApiRequestUnauthorized : OAuthActionTypeEnum.OAuthActionType_ApiRequestSuccessfully;
-                var savedActivityLog = await auditService.AddNewActivityLogAsync(deviceInformation, actionType);
-            }
+            //var roleId = deviceInformation.RoleId;
+            //if (roleId )
+            //{
+            var endpointList = await GetEndpointsListByRoleIdAsync(deviceInformation.RoleId);
+            endpointInfo = endpointList.FirstOrDefault(x => x.EndpointUrl.Equals(deviceInformation.EndPointPattern, StringComparison.InvariantCultureIgnoreCase) && x.Method.Equals(deviceInformation.Method, StringComparison.InvariantCultureIgnoreCase) && x.IsActive);
+            var actionType = endpointInfo is null ? OAuthActionTypeEnum.OAuthActionType_ApiRequestUnauthorized : OAuthActionTypeEnum.OAuthActionType_ApiRequestSuccessfully;
+            var savedActivityLog = await auditService.AddNewActivityLogAsync(deviceInformation, actionType);
+            //}
         }
         catch (Exception ex)
         {
@@ -447,7 +447,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
         try
         {
             savedRecord = await applicationsRepository.CreateNewEndpointAsync(newRecord, deviceInformation);
-            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!.Value, deviceInformation.UserId!.Value, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
+            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!, deviceInformation.UserId!, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.EndpointListByModuleId + newRecord.ModuleFk.ToString());
             return savedRecord;
         }
@@ -469,7 +469,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            var userId = deviceInformation.UserId!.Value;
+            var userId = deviceInformation.UserId!;
             var moduleId = existingRecord.ModuleFk;
             var originalRecord = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -492,7 +492,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId!.Value, userId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
+            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId!, userId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
 
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.EndpointListByModuleId + moduleId.ToString());
         }
@@ -515,8 +515,8 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return false;
             }
 
-            var userId = deviceInformation.UserId!.Value;
-            var companyId = deviceInformation.CompanyId!.Value;
+            var userId = deviceInformation.UserId!;
+            var companyId = deviceInformation.CompanyId!;
             var moduleId = existingRecord.ModuleFk;
             var existingRecordBackup = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -561,7 +561,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
         try
         {
             savedRecord = await applicationsRepository.CreateNewComponentAsync(newRecord, deviceInformation);
-            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!.Value, deviceInformation.UserId!.Value, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
+            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!, deviceInformation.UserId!, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.ComponentListByEndpointId + newRecord.EndpointFk.ToString());
             return savedRecord;
         }
@@ -583,7 +583,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            var userId = deviceInformation.UserId!.Value;
+            var userId = deviceInformation.UserId!;
             var endpointId = existingRecord.EndpointFk;
             var originalRecord = existingRecord with { };
             var utcNow = DateTime.UtcNow;
@@ -605,7 +605,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return null;
             }
 
-            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId!.Value, userId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
+            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId!, userId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
 
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.ComponentListByEndpointId + endpointId.ToString());
         }
@@ -628,8 +628,8 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
                 return false;
             }
 
-            var userId = deviceInformation.UserId!.Value;
-            var companyId = deviceInformation.CompanyId!.Value;
+            var userId = deviceInformation.UserId!;
+            var companyId = deviceInformation.CompanyId!;
             var endpointId = existingRecord.EndpointFk;
             var existingRecordBackup = existingRecord with { };
             var utcNow = DateTime.UtcNow;

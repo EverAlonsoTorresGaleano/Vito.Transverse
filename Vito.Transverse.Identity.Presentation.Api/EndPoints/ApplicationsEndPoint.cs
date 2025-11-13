@@ -3,12 +3,11 @@ using Asp.Versioning.Builder;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
-using  Vito.Transverse.Identity.Application.TransverseServices.Applications;
+using Vito.Transverse.Identity.Application.TransverseServices.Applications;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Presentation.Api.EndPoints;
@@ -17,7 +16,7 @@ public static class ApplicationsEndPoint
 {
     public static void MapApplicationsEndPoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/applications/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/applications/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<ApplicationsFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
@@ -29,7 +28,7 @@ public static class ApplicationsEndPoint
            .RequireAuthorization()
            .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapGet("/dropdown", GetAllApplicationListItemAsync)
+        endPointGroupVersioned.MapGet("dropdown", GetAllApplicationListItemAsync)
          .MapToApiVersion(1.0)
          .WithSummary("Get All Application List Async")
            .WithDescription("[Author] [Authen] [Trace]")
@@ -38,7 +37,7 @@ public static class ApplicationsEndPoint
 
          
 
-        endPointGroupVersioned.MapGet("/{applicationId}", GetApplicationByIdAsync)
+        endPointGroupVersioned.MapGet("{applicationId}", GetApplicationByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Get All Application List Async")
              .WithDescription("[Author] [Authen] [Trace]")
@@ -334,7 +333,7 @@ public static class ApplicationsEndPoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await applicationService.GetModuleListAsync(applicationId ?? deviceInformation!.ApplicationId!.Value);
+        var returnObject = await applicationService.GetModuleListAsync(applicationId ?? deviceInformation!.ApplicationId!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
@@ -344,7 +343,7 @@ public static class ApplicationsEndPoint
 
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await applicationService.GetModuleListItemAsync(deviceInformation!.ApplicationId!.Value);
+        var returnObject = await applicationService.GetModuleListItemAsync(deviceInformation!.ApplicationId!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 

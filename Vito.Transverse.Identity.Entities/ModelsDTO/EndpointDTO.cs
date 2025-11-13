@@ -16,6 +16,8 @@ public record EndpointDTO
 
     public string Method { get; set; } = null!;
 
+    public string IconName { get; set; } = null!;
+
     public bool IsActive { get; set; }
 
     public bool IsVisible { get; set; }

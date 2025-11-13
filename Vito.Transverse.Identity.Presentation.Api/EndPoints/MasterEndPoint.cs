@@ -2,7 +2,6 @@ using Asp.Versioning.Builder;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Vito.Framework.Api.Filters;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
@@ -20,7 +19,7 @@ public static class MasterEndPoint
 {
     public static void MapMasterEndPoint(this WebApplication app, ApiVersionSet versionSet)
     {
-        var endPointGroupVersioned = app.MapGroup("api/Master/v{apiVersion:apiVersion}/").WithApiVersionSet(versionSet)
+        var endPointGroupVersioned = app.MapGroup("api/Master/v{apiVersion:apiVersion}").WithApiVersionSet(versionSet)
             .AddEndpointFilter<MasterFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
@@ -91,8 +90,8 @@ public static class MasterEndPoint
             .MapToApiVersion(1.0)
             .WithSummary("Get Active Culture ListItemDTO List Async")
             .WithDescription("[Author] [Authen] [Trace]")
-            .RequireAuthorization()
-            .AddEndpointFilter<RoleAuthorizationFilter>();
+            .AllowAnonymous();
+            //.AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("Cultures/{cultureId}", GetCultureByIdAsync)
             .MapToApiVersion(1.0)
@@ -415,7 +414,7 @@ public static class MasterEndPoint
         [FromServices] ICultureService cultureService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await cultureService.GetActiveCultureListAsync(deviceInformation!.ApplicationId!.Value);
+        var returnObject = await cultureService.GetActiveCultureListAsync(deviceInformation!.ApplicationId!);
         return TypedResults.Ok(returnObject);
     }
 
@@ -425,7 +424,7 @@ public static class MasterEndPoint
         [FromServices] ICultureService cultureService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(deviceInformation!.ApplicationId!.Value);
+        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(deviceInformation!.ApplicationId!);
         return TypedResults.Ok(returnObject);
     }
 

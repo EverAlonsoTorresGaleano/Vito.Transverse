@@ -36,7 +36,7 @@ public enum CacheItemKeysEnum
     UserRoleListByUserId,
     UserPermissionListByUserId,
     CompanyEntityAuditListByCompanyId,
-
+    MenuByUserId,
     PictureListByCompanyId,
     EntityList,
     UserListByCompanyId,
