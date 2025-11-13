@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace  Vito.Transverse.Identity.Infrastructure.Models;
+namespace Vito.Transverse.Identity.Infrastructure.Models;
 
 public partial class RolePermission
 {
@@ -20,6 +20,8 @@ public partial class RolePermission
     public long? ComponentFk { get; set; }
 
     public string? PropertyValue { get; set; }
+
+    public string? Obs { get; set; }
 
     public virtual Component? ComponentFkNavigation { get; set; }
 

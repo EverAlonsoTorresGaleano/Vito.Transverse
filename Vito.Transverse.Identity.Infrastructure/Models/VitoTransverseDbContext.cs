@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Vito.Transverse.Identity.DAL.Models;
+namespace Vito.Transverse.Identity.Infrastructure.Models;
 
 public partial class VitoTransverseDbContext : DbContext
 {
@@ -714,6 +714,9 @@ public partial class VitoTransverseDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK_UserRolePermissions");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Obs)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PropertyValue)
                 .HasMaxLength(75)
                 .IsUnicode(false);

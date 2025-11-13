@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace  Vito.Transverse.Identity.Infrastructure.Models;
+namespace Vito.Transverse.Identity.Infrastructure.Models;
 
 public partial class Picture
 {

@@ -703,6 +703,9 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
             entity.HasKey(e => e.Id).HasName("PK_UserRolePermissions");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Obs)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.PropertyValue)
                 .HasMaxLength(75)
                 .IsUnicode(false);

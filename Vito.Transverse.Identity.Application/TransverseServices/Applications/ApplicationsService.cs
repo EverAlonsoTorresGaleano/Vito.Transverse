@@ -413,7 +413,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             if (roleId is not null)
             {
                 var endpointList = await GetEndpointsListByRoleIdAsync(roleId.Value);
-                endpointInfo = endpointList.FirstOrDefault(x => x.EndpointUrl.Equals(deviceInformation.EndPointUrl, StringComparison.InvariantCultureIgnoreCase) && x.Method.Equals(deviceInformation.Method, StringComparison.InvariantCultureIgnoreCase) && x.IsActive);
+                endpointInfo = endpointList.FirstOrDefault(x => x.EndpointUrl.Equals(deviceInformation.EndPointPattern, StringComparison.InvariantCultureIgnoreCase) && x.Method.Equals(deviceInformation.Method, StringComparison.InvariantCultureIgnoreCase) && x.IsActive);
                 var actionType = endpointInfo is null ? OAuthActionTypeEnum.OAuthActionType_ApiRequestUnauthorized : OAuthActionTypeEnum.OAuthActionType_ApiRequestSuccessfully;
                 var savedActivityLog = await auditService.AddNewActivityLogAsync(deviceInformation, actionType);
             }

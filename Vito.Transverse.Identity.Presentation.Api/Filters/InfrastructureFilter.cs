@@ -4,13 +4,17 @@ using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Enums;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.Presentation.Api.Helpers;
-using  Vito.Transverse.Identity.Application.TransverseServices.Culture;
-using  Vito.Transverse.Identity.Application.TransverseServices.Security;
+using Vito.Transverse.Identity.Application.TransverseServices.Culture;
+using Vito.Transverse.Identity.Application.TransverseServices.Security;
 using Wangkanai.Detection.Services;
 
 namespace Vito.Framework.Api.Filters;
 public class InfrastructureFilter : IEndpointFilter
 {
+    private const string CONSTANT_APIVERSION_TEXT = "apiVersion";
+    private const string CONSTANT_APIVERSION_TEXTFULL = "{apiVersion:apiVersion}";
+    private const string CONSTANT_ENDPOINT_URL_PREFIX = "/";
+
     public readonly IDetectionService _userDeviceDetectionService;
 
     public InfrastructureFilter(ICultureService cultureService, IDetectionService userDeviceDetectionService, ISecurityService securityService, IOptions<CultureSettingsOptions> cultureOptions)
@@ -48,7 +52,9 @@ public class InfrastructureFilter : IEndpointFilter
             Browser = $"{_userDeviceDetectionService.Browser.Name.ToString()} v{_userDeviceDetectionService.Browser.Version.ToString()}",
             Platform = $"{_userDeviceDetectionService.Platform.Name.ToString()} v{_userDeviceDetectionService.Platform.Version.ToString()} [{_userDeviceDetectionService.Platform.Processor.ToString()}]",
             Engine = $"{_userDeviceDetectionService.Engine.Name.ToString()}",
-          
+
+
+            EndPointPattern = GetEndPointPattern(request.HttpContext),
             EndPointUrl = request.HttpContext.Request.Path!,
             Method = request.Method,
             QueryString = request.QueryString.ToString(),
@@ -64,4 +70,13 @@ public class InfrastructureFilter : IEndpointFilter
         return deviceInfo;
     }
 
+    private string GetEndPointPattern(HttpContext httpContext)
+    {
+        var endPoint = httpContext.GetEndpoint() as RouteEndpoint;
+        var endPointPattern = endPoint!.RoutePattern.RawText;
+        var apiVersion = httpContext.GetRouteValue(CONSTANT_APIVERSION_TEXT);
+        var enpointUrl = endPointPattern!.Replace($"{CONSTANT_APIVERSION_TEXTFULL}", apiVersion.ToString());
+        enpointUrl = CONSTANT_ENDPOINT_URL_PREFIX + enpointUrl;
+        return enpointUrl;
+    }
 }

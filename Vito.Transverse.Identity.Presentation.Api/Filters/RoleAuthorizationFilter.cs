@@ -19,7 +19,7 @@ public class RoleAuthorizationFilter(IApplicationsService  applicationsService) 
         var hasPermissions = await applicationsService.ValidateEndpointAuthorizationAsync(deviceInformation!);
         if (hasPermissions is null)
         {
-           // return TypedResults.Unauthorized();
+            return TypedResults.Unauthorized();
         }
         return await next(context);
     }

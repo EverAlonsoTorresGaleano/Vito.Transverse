@@ -50,8 +50,8 @@
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
     <PackageVersion Include="System.Text.Json" Version="9.0.10" />
     <PackageVersion Include="Twilio" Version="7.13.5" />
-    <PackageVersion Include="Vito.Framework.Api" Version="0.2.41-alpha.2" />
-    <PackageVersion Include="Vito.Framework.Common" Version="0.2.42-alpha.0" />
+    <PackageVersion Include="Vito.Framework.Api" Version="0.2.43-alpha.0" />
+    <PackageVersion Include="Vito.Framework.Common" Version="0.2.43-alpha.0" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.20.0" />
     <PackageVersion Include="Wangkanai.Hosting" Version="3.7.0" />
     <PackageVersion Include="Wangkanai.System" Version="5.8.0" />
