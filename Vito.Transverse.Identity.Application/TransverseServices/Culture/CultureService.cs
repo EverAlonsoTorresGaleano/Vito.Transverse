@@ -36,25 +36,25 @@ public class CultureService(ICultureRepository cultureRepository, ILocalizationS
 
     public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync(long applicationId)
     {
-        string cultureId = cultureRepository.GetCurrentCultureId();
+        //string cultureId = cultureRepository.GetCurrentCultureId();
         var returnList = await GetActiveCultureListAsync(applicationId);
         var returnListDTO = returnList.Select(x => x.ToListItemDTO()).ToList();
-        returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
+        //returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
         return returnListDTO;
     }
 
     public async Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId)
     {
-        string cultureId = cultureRepository.GetCurrentCultureId();
-        var cacheList = cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
+        //string cultureId = cultureRepository.GetCurrentCultureId();
+        //var cacheList = cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
         List<CultureDTO> returnList = new();
-        if (cacheList == null)
-        {
-            cacheList = await cultureRepository.GetActiveCultureListAsync();
-            //Localize
-            cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
-            cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() + applicationId, cacheList);
-        }
+        //if (cacheList == null)
+        //{
+        var    cacheList = await cultureRepository.GetActiveCultureListAsync();
+        //    //Localize
+            //cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
+            //cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() + applicationId, cacheList);
+        //}
         return cacheList;
     }
 

@@ -27,6 +27,12 @@ public static class LocalizationEndpoint
             .WithDescription("[Anonymous]")
             .AllowAnonymous();
 
+        endPointGroupVersioned.MapGet("ByCulture/{cultureId}", GetLocalizationMessagesListByCultureAsync)
+           .MapToApiVersion(1.0)
+           .WithSummary("Get All Localization Current Application Async")
+           .WithDescription("[Anonymous]")
+           .AllowAnonymous();
+
         endPointGroupVersioned.MapGet("{messageKey}", GetCultureTranslationByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Get Culture Translation Current Application/ Current Culture  ByKey Async")
@@ -67,6 +73,18 @@ public static class LocalizationEndpoint
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
+    }
+
+    public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetLocalizationMessagesListByCultureAsync(
+        HttpRequest request,
+        [FromServices] ISecurityService securityService,
+        [FromServices] ILocalizationService localizationService,
+        [FromRoute] string cultureId)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var returnObject = await localizationService.GetLocalizedMessagesListByApplicationAndCultureAsync(deviceInformation!.ApplicationId!, cultureId);
+        return TypedResults.Ok(returnObject);
+
     }
 
     public static async Task<Results<Ok<List<CultureTranslationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetLocalizationMessagesListAsync(
