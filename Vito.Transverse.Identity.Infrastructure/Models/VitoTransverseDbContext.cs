@@ -136,7 +136,6 @@ public partial class VitoTransverseDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Applications_1");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.ApplicationClient).HasDefaultValueSql("(newid())");
             entity.Property(e => e.ApplicationSecret).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
@@ -252,7 +251,6 @@ public partial class VitoTransverseDbContext : DbContext
 
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CompanyClient).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CompanySecret).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CountryFk)

@@ -8,9 +8,9 @@ public interface ICompaniesService
 {
 
 
-    Task<CompanyDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO newRecord, DeviceInformationDTO deviceInformation);
+    Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO newRecord, DeviceInformationDTO deviceInformation);
 
-    Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation);
+    Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation);
 
 
     Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipAsync(long? companyId);

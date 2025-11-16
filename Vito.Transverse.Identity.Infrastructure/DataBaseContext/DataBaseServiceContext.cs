@@ -125,7 +125,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Applications_1");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.ApplicationClient).HasDefaultValueSql("(newid())");
             entity.Property(e => e.ApplicationSecret).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
@@ -241,7 +240,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CompanyClient).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CompanySecret).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CountryFk)
@@ -453,7 +451,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasMaxLength(75)
                 .IsUnicode(false);
             entity.Property(e => e.IconName)
-                .HasMaxLength(25)
+                .HasMaxLength(40)
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Method)
@@ -566,7 +564,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
                 .HasMaxLength(85)
                 .IsUnicode(false);
             entity.Property(e => e.IconName)
-                .HasMaxLength(25)
+                .HasMaxLength(40)
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.NameTranslationKey)

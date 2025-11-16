@@ -6,12 +6,12 @@ using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
-using  Vito.Transverse.Identity.Application.TransverseServices.Caching;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
+using Vito.Transverse.Identity.Application.TransverseServices.Caching;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Application.TransverseServices.Localization;
+namespace Vito.Transverse.Identity.Application.TransverseServices.Localization;
 
 public class LocalizationService(ILocalizationRepository localizationRepository, ICachingServiceMemoryCache cachingService, ILogger<LocalizationService> logger, IOptions<CultureSettingsOptions> cultureSettingsOptions) : ILocalizationService
 {
@@ -55,8 +55,11 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
                 localizationFile.Remove(localizationFile.Length - 1, 1);
                 localizationFile.Append("}");
 
-                File.Delete(fileName);
-                File.WriteAllText(fileName, localizationFile.ToString());
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+                //File.WriteAllText(fileName, localizationFile.ToString());
 #endif
             }
         }
@@ -143,9 +146,9 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
     {
         try
         {
-            var translationList = await localizationRepository.GetLocalizedMessagesListAsync(x => 
-                x.ApplicationFk == applicationId && 
-                x.CultureFk == cultureId && 
+            var translationList = await localizationRepository.GetLocalizedMessagesListAsync(x =>
+                x.ApplicationFk == applicationId &&
+                x.CultureFk == cultureId &&
                 x.TranslationKey == translationKey);
             return translationList.FirstOrDefault();
         }
@@ -168,10 +171,10 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
 
             // Clear cache
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + cultureTranslationDTO.ApplicationFk.ToString());
-            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + 
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId +
                 cultureTranslationDTO.ApplicationFk.ToString() + cultureTranslationDTO.CultureFk);
 
-            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey) 
+            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey)
                 ?? cultureTranslationDTO;
         }
         catch (Exception ex)
@@ -195,7 +198,7 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
 
-            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey) 
+            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey)
                 ?? cultureTranslationDTO;
         }
         catch (Exception ex)
@@ -210,7 +213,7 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
         try
         {
             var success = await localizationRepository.DeleteCultureTranslationAsync(translationKey);
-            
+
             if (success)
             {
                 // Clear cache

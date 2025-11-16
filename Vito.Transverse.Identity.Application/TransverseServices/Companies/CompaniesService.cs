@@ -6,6 +6,7 @@ using Vito.Transverse.Identity.Entities.DTO;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Vito.Transverse.Identity.Application.TransverseServices.Companies;
 
@@ -40,11 +41,12 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
     }
 
 
-    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO newRecord, DeviceInformationDTO deviceInformation)
+    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO newRecord, DeviceInformationDTO deviceInformation)
     {
         try
         {
             var returnValue = await companiesRepository.CreateNewCompanyAsync(newRecord, deviceInformation);
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
             return returnValue;
         }
         catch (Exception ex)
@@ -54,7 +56,7 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         }
     }
 
-    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO companyApplicationInfo, DeviceInformationDTO deviceInformation)
+    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO companyApplicationInfo, DeviceInformationDTO deviceInformation)
     {
         CompanyDTO? returnValue = null;
         try
@@ -151,7 +153,9 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         try
         {
             companyInfo.Id = companyId;
-            return await companiesRepository.UpdateCompanyByIdAsync(companyInfo, deviceInformation);
+            var returnValue = await companiesRepository.UpdateCompanyByIdAsync(companyInfo, deviceInformation);
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
+            return returnValue;
         }
         catch (Exception ex)
         {

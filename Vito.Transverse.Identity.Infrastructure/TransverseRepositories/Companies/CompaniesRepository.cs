@@ -2,27 +2,31 @@
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using Vito.Framework.Common.DTO;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Security;
-using Vito.Transverse.Identity.Entities.DTO;
-using  Vito.Transverse.Identity.Infrastructure.Extensions;
-using  Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Framework.Common.Extensions;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
+using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Security;
 
-namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
+namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
 
-public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseContextFactory dataBaseContextFactory) : ICompaniesRepository
+public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRepository cultureRepository, IDataBaseContextFactory dataBaseContextFactory) : ICompaniesRepository
 {
 
 
-    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyApplicationsDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         CompanyDTO? savedRecord = null;
-        var newRecordDb = newRecord.Company.ToCompany();
-
+        var newRecordDb = newRecord.ToCompany();
+        newRecordDb.CreationDate = cultureRepository.UtcNow().DateTime;
+        newRecordDb.CreatedByUserFk = deviceInformation.UserId;
         try
         {
+            newRecord.CompanyClient = Guid.NewGuid();
+            newRecord.CompanySecret = Guid.NewGuid();
             context = dataBaseContextFactory.GetDbContext(context);
             context.Companies.Add(newRecordDb);
             await context.SaveChangesAsync();
@@ -35,15 +39,15 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
         return savedRecord;
     }
 
-    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyApplicationsDTO recordToUpdate, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO recordToUpdate, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         CompanyDTO? savedRecord = null;
 
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var recordToUpdateDb = await context.Companies.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Company.Id);
-            recordToUpdateDb = recordToUpdate.Company.ToCompany(); ;
+            var recordToUpdateDb = await context.Companies.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
+            recordToUpdateDb = recordToUpdate.ToCompany(); ;
             await context.SaveChangesAsync();
             savedRecord = recordToUpdateDb!.ToCompanyDTO();
         }
@@ -126,7 +130,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
             membershipToUpdate.LastUpdateByUserFk = deviceInformation.UserId;
 
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             membershipToUpdate = await context.CompanyMemberships
                 .Include(x => x.ApplicationFkNavigation)
@@ -135,7 +139,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
                 .Include(x => x.MembershipTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == membershipInfo.Id);
-            
+
             savedRecord = membershipToUpdate?.ToCompanyMembershipsDTO();
         }
         catch (Exception ex)
@@ -231,6 +235,8 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
             }
 
             var updatedCompany = companyInfo.ToCompany();
+            updatedCompany.LastUpdateByUserFk = deviceInformation.UserId;
+            updatedCompany.LastUpdateDate = DateTime.UtcNow;
             context.Entry(companyToUpdate).CurrentValues.SetValues(updatedCompany);
             await context.SaveChangesAsync();
             savedRecord = companyToUpdate.ToCompanyDTO();
@@ -247,22 +253,28 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
     public async Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         bool deleted = false;
+
+
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var company = await context.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
-            if (company is null)
+            var companyToUpdate = await context.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
+            if (companyToUpdate is null)
             {
                 return false;
             }
 
-            context.Companies.Remove(company);
+            var updatedCompany = companyToUpdate.CloneEntity();
+            updatedCompany.IsActive = false;
+            updatedCompany.LastUpdateByUserFk = deviceInformation.UserId;
+            updatedCompany.LastUpdateDate = DateTime.UtcNow;
+            context.Entry(companyToUpdate).CurrentValues.SetValues(updatedCompany);
             await context.SaveChangesAsync();
             deleted = true;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(DeleteCompanyByIdAsync));
+            logger.LogError(ex, message: nameof(UpdateCompanyByIdAsync));
             throw;
         }
 
@@ -312,7 +324,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, IDataBaseCo
         MembershipTypeDTO? savedRecord = null;
         var newRecordDb = membershipTypeDTO.ToMembershipType();
         newRecordDb.CreationDate = DateTime.UtcNow;
-        newRecordDb.CreatedByUserFk = deviceInformation.UserId ;
+        newRecordDb.CreatedByUserFk = deviceInformation.UserId;
 
         try
         {

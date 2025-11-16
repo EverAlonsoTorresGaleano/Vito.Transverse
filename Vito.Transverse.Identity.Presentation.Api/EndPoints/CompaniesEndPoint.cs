@@ -187,10 +187,8 @@ public static class CompaniesEndPoint
     public static async Task<Results<Ok<CompanyDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewCompanyAsync(
        HttpRequest request,
        [FromServices] ICompaniesService  companiesService,
-       [FromServices] IValidator<CompanyApplicationsDTO> validator,
-       [FromBody] CompanyApplicationsDTO companyApplications,
-       [FromQuery] long companyId,
-       [FromQuery] long userId)
+       [FromServices] IValidator<CompanyDTO> validator,
+       [FromBody] CompanyDTO companyApplications)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
         var validationResult = await validator.ValidateAsync(companyApplications);

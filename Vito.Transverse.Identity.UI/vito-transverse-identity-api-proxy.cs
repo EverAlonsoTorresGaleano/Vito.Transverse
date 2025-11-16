@@ -5000,21 +5000,15 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CompanyDTO> PostApiCompaniesV1Async(long companyId, long userId, CompanyApplicationsDTO companyApplications)
+        public virtual System.Threading.Tasks.Task<CompanyDTO> PostApiCompaniesV1Async(CompanyDTO companyApplications)
         {
-            return PostApiCompaniesV1Async(companyId, userId, companyApplications, System.Threading.CancellationToken.None);
+            return PostApiCompaniesV1Async(companyApplications, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CompanyDTO> PostApiCompaniesV1Async(long companyId, long userId, CompanyApplicationsDTO companyApplications, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CompanyDTO> PostApiCompaniesV1Async(CompanyDTO companyApplications, System.Threading.CancellationToken cancellationToken)
         {
-            if (companyId == null)
-                throw new System.ArgumentNullException("companyId");
-
-            if (userId == null)
-                throw new System.ArgumentNullException("userId");
-
             if (companyApplications == null)
                 throw new System.ArgumentNullException("companyApplications");
 
@@ -5035,10 +5029,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "api/Companies/v1"
                     urlBuilder_.Append("api/Companies/v1");
-                    urlBuilder_.Append('?');
-                    urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -16968,74 +16958,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
         {
 
             return Newtonsoft.Json.JsonConvert.DeserializeObject<CompanyDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
-
-        }
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CompanyApplicationsDTO : System.ComponentModel.INotifyPropertyChanged
-    {
-        private long _userId;
-        private CompanyDTO _company;
-        private System.Collections.ObjectModel.ObservableCollection<ApplicationDTO> _applications;
-
-        [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long UserId    {
-            get { return _userId; }
-            set
-            {
-                if (_userId != value)
-                {
-                    _userId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("company", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public CompanyDTO Company    {
-            get { return _company; }
-            set
-            {
-                if (_company != value)
-                {
-                    _company = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("applications", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.ObjectModel.ObservableCollection<ApplicationDTO> Applications    {
-            get { return _applications; }
-            set
-            {
-                if (_applications != value)
-                {
-                    _applications = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public string ToJson()
-        {
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
-
-        }
-        public static CompanyApplicationsDTO FromJson(string data)
-        {
-
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<CompanyApplicationsDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
