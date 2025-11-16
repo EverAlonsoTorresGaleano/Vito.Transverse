@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using Asp.Versioning.Builder;
+﻿using Asp.Versioning.Builder;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
-using Vito.Transverse.Identity.Presentation.Api.Filters;
-using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
 using Vito.Transverse.Identity.Application.TransverseServices.Applications;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Presentation.Api.Filters;
+using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
 
 namespace Vito.Transverse.Identity.Presentation.Api.EndPoints;
 

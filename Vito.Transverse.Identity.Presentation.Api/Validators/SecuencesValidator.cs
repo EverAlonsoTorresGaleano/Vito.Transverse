@@ -3,7 +3,7 @@ using Vito.Transverse.Identity.Entities.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Presentation.Api.Validators;
 
-public class SecuencesValidator : AbstractValidator<SecuencesDTO>
+public class SecuencesValidator : AbstractValidator<SequencesDTO>
 {
     public SecuencesValidator() { }
 }

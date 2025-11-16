@@ -6,15 +6,15 @@ namespace Vito.Transverse.Identity.Application.TransverseServices.Master;
 
 public interface IMasterService
 {
-    Task<List<SecuencesDTO>> GetAllSecuencesListAsync();
+    Task<List<SequencesDTO>> GetAllSequencesListAsync();
 
-    Task<SecuencesDTO?> GetSecuenceByIdAsync(long secuenceId);
+    Task<SequencesDTO?> GetSequenceByIdAsync(long secuenceId);
 
-    Task<SecuencesDTO?> CreateNewSecuenceAsync(SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation);
+    Task<SequencesDTO?> CreateNewSequenceAsync(SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation);
 
-    Task<SecuencesDTO?> UpdateSecuenceByIdAsync(long secuenceId, SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation);
+    Task<SequencesDTO?> UpdateSequenceByIdAsync(long secuenceId, SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation);
 
-    Task<bool> DeleteSecuenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation);
+    Task<bool> DeleteSequenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation);
 
     // Culture CRUD
     Task<List<CultureDTO>> GetAllCultureListAsync();

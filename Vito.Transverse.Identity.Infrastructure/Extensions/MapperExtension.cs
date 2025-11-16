@@ -1386,9 +1386,9 @@ public static class MapperExtension
         return returnObject;
     }
 
-    public static SecuencesDTO ToSecuencesDTO(this Sequence modelObject)
+    public static SequencesDTO ToSecuencesDTO(this Sequence modelObject)
     {
-        SecuencesDTO returnObject = new()
+        SequencesDTO returnObject = new()
         {
             Id = modelObject.Id,
             CompanyId = modelObject.CompanyFk,
@@ -1403,7 +1403,7 @@ public static class MapperExtension
         return returnObject;
     }
 
-    public static Sequence ToSequence(this SecuencesDTO modelObject)
+    public static Sequence ToSequence(this SequencesDTO modelObject)
     {
         Sequence returnObject = new()
         {

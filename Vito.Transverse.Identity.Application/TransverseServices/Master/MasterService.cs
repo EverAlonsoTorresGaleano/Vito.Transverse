@@ -10,70 +10,70 @@ namespace Vito.Transverse.Identity.Application.TransverseServices.Master;
 
 public class MasterService(ILogger<MasterService> logger, IMasterRepository masterRepository, ICachingServiceMemoryCache cachingService) : IMasterService
 {
-    public async Task<List<SecuencesDTO>> GetAllSecuencesListAsync()
+    public async Task<List<SequencesDTO>> GetAllSequencesListAsync()
     {
         try
         {
-            var returnList = await masterRepository.GetAllSecuencesListAsync(x => x.Id > 0);
+            var returnList = await masterRepository.GetAllSequencesListAsync(x => x.Id > 0);
             return returnList;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(GetAllSecuencesListAsync));
+            logger.LogError(ex, message: nameof(GetAllSequencesListAsync));
             throw;
         }
     }
 
-    public async Task<SecuencesDTO?> GetSecuenceByIdAsync(long secuenceId)
+    public async Task<SequencesDTO?> GetSequenceByIdAsync(long secuenceId)
     {
         try
         {
-            return await masterRepository.GetSecuenceByIdAsync(secuenceId);
+            return await masterRepository.GetSequenceByIdAsync(secuenceId);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(GetSecuenceByIdAsync));
+            logger.LogError(ex, message: nameof(GetSequenceByIdAsync));
             throw;
         }
     }
 
-    public async Task<SecuencesDTO?> CreateNewSecuenceAsync(SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation)
+    public async Task<SequencesDTO?> CreateNewSequenceAsync(SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation)
     {
         try
         {
-            var returnValue = await masterRepository.CreateNewSecuenceAsync(secuenceDTO, deviceInformation);
+            var returnValue = await masterRepository.CreateNewSequenceAsync(secuenceDTO, deviceInformation);
             return returnValue;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(CreateNewSecuenceAsync));
+            logger.LogError(ex, message: nameof(CreateNewSequenceAsync));
             throw;
         }
     }
 
-    public async Task<SecuencesDTO?> UpdateSecuenceByIdAsync(long secuenceId, SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation)
+    public async Task<SequencesDTO?> UpdateSequenceByIdAsync(long secuenceId, SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation)
     {
         try
         {
             secuenceDTO.Id = secuenceId;
-            return await masterRepository.UpdateSecuenceByIdAsync(secuenceDTO, deviceInformation);
+            return await masterRepository.UpdateSequenceByIdAsync(secuenceDTO, deviceInformation);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(UpdateSecuenceByIdAsync));
+            logger.LogError(ex, message: nameof(UpdateSequenceByIdAsync));
             throw;
         }
     }
 
-    public async Task<bool> DeleteSecuenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation)
+    public async Task<bool> DeleteSequenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation)
     {
         try
         {
-            return await masterRepository.DeleteSecuenceByIdAsync(secuenceId, deviceInformation);
+            return await masterRepository.DeleteSequenceByIdAsync(secuenceId, deviceInformation);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(DeleteSecuenceByIdAsync));
+            logger.LogError(ex, message: nameof(DeleteSequenceByIdAsync));
             throw;
         }
     }

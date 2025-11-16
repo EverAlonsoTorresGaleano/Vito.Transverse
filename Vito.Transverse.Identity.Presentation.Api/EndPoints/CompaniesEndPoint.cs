@@ -4,11 +4,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
+using Vito.Transverse.Identity.Application.TransverseServices.Companies;
+using Vito.Transverse.Identity.Entities.ModelsDTO;
 using Vito.Transverse.Identity.Presentation.Api.Filters;
 using Vito.Transverse.Identity.Presentation.Api.Filters.FeatureFlag;
-using Vito.Transverse.Identity.Application.TransverseServices.Companies;
-using Vito.Transverse.Identity.Entities.DTO;
-using Vito.Transverse.Identity.Entities.ModelsDTO;
 
 namespace Vito.Transverse.Identity.Presentation.Api.EndPoints;
 

@@ -13,9 +13,9 @@ namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Master;
 
 public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContextFactory dataBaseContextFactory) : IMasterRepository
 {
-    public async Task<List<SecuencesDTO>> GetAllSecuencesListAsync(Expression<Func<Sequence, bool>> filters, DataBaseServiceContext? context = null)
+    public async Task<List<SequencesDTO>> GetAllSequencesListAsync(Expression<Func<Sequence, bool>> filters, DataBaseServiceContext? context = null)
     {
-        List<SecuencesDTO> secuencesDTOList = new();
+        List<SequencesDTO> secuencesDTOList = new();
 
         try
         {
@@ -43,16 +43,16 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(GetAllSecuencesListAsync));
+            logger.LogError(ex, message: nameof(GetAllSequencesListAsync));
             throw;
         }
 
         return secuencesDTOList;
     }
 
-    public async Task<SecuencesDTO?> GetSecuenceByIdAsync(long secuenceId, DataBaseServiceContext? context = null)
+    public async Task<SequencesDTO?> GetSequenceByIdAsync(long secuenceId, DataBaseServiceContext? context = null)
     {
-        SecuencesDTO? secuenceDTO = null;
+        SequencesDTO? secuenceDTO = null;
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
@@ -74,16 +74,16 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(GetSecuenceByIdAsync));
+            logger.LogError(ex, message: nameof(GetSequenceByIdAsync));
             throw;
         }
 
         return secuenceDTO;
     }
 
-    public async Task<SecuencesDTO?> CreateNewSecuenceAsync(SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<SequencesDTO?> CreateNewSequenceAsync(SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
-        SecuencesDTO? savedRecord = null;
+        SequencesDTO? savedRecord = null;
         var newRecordDb = secuenceDTO.ToSequence();
 
         try
@@ -111,15 +111,15 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(CreateNewSecuenceAsync));
+            logger.LogError(ex, message: nameof(CreateNewSequenceAsync));
             throw;
         }
         return savedRecord;
     }
 
-    public async Task<SecuencesDTO?> UpdateSecuenceByIdAsync(SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<SequencesDTO?> UpdateSequenceByIdAsync(SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
-        SecuencesDTO? savedRecord = null;
+        SequencesDTO? savedRecord = null;
 
         try
         {
@@ -153,14 +153,14 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(UpdateSecuenceByIdAsync));
+            logger.LogError(ex, message: nameof(UpdateSequenceByIdAsync));
             throw;
         }
 
         return savedRecord;
     }
 
-    public async Task<bool> DeleteSecuenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<bool> DeleteSequenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         bool deleted = false;
         try
@@ -178,7 +178,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(DeleteSecuenceByIdAsync));
+            logger.LogError(ex, message: nameof(DeleteSequenceByIdAsync));
             throw;
         }
 

@@ -1,6 +1,6 @@
 namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 
-public record SecuencesDTO
+public record SequencesDTO
 {
     public long Id { get; set; }
 

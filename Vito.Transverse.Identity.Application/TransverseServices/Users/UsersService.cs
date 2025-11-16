@@ -113,11 +113,11 @@ public class UsersService(ILogger<UsersService> logger, IUsersRepository usersRe
         try
         {
             // Set company and application from device information if not provided
-            if (userRoleInfo.CompanyFk == 0 )
+            if (userRoleInfo.CompanyFk == 0)
             {
                 userRoleInfo.CompanyFk = deviceInformation.CompanyId;
             }
-            if (userRoleInfo.ApplicationFk == 0 )
+            if (userRoleInfo.ApplicationFk == 0)
             {
                 userRoleInfo.ApplicationFk = deviceInformation.ApplicationId;
             }

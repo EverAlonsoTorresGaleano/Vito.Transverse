@@ -299,18 +299,15 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserDTO>> GetApiUsersV1AllAsync(long companyId)
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserDTO>> GetApiUsersV1AllAsync()
         {
-            return GetApiUsersV1AllAsync(companyId, System.Threading.CancellationToken.None);
+            return GetApiUsersV1AllAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserDTO>> GetApiUsersV1AllAsync(long companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<UserDTO>> GetApiUsersV1AllAsync(System.Threading.CancellationToken cancellationToken)
         {
-            if (companyId == null)
-                throw new System.ArgumentNullException("companyId");
-
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
             try
@@ -324,9 +321,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "api/Users/v1"
                     urlBuilder_.Append("api/Users/v1");
-                    urlBuilder_.Append('?');
-                    urlBuilder_.Append(System.Uri.EscapeDataString("companyId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -6495,14 +6489,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<SecuencesDTO>> GetApiMasterV1SecuencesAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<SequencesDTO>> GetApiMasterV1SequencesAllAsync()
         {
-            return GetApiMasterV1SecuencesAllAsync(System.Threading.CancellationToken.None);
+            return GetApiMasterV1SequencesAllAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<SecuencesDTO>> GetApiMasterV1SecuencesAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<SequencesDTO>> GetApiMasterV1SequencesAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -6515,8 +6509,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Secuences"
-                    urlBuilder_.Append("api/Master/v1/Secuences");
+                    // Operation Path: "api/Master/v1/Sequences"
+                    urlBuilder_.Append("api/Master/v1/Sequences");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -6543,7 +6537,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<SecuencesDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<SequencesDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6587,14 +6581,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SecuencesDTO> PostApiMasterV1SecuencesAsync(SecuencesDTO secuenceDTO)
+        public virtual System.Threading.Tasks.Task<SequencesDTO> PostApiMasterV1SequencesAsync(SequencesDTO secuenceDTO)
         {
-            return PostApiMasterV1SecuencesAsync(secuenceDTO, System.Threading.CancellationToken.None);
+            return PostApiMasterV1SequencesAsync(secuenceDTO, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SecuencesDTO> PostApiMasterV1SecuencesAsync(SecuencesDTO secuenceDTO, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SequencesDTO> PostApiMasterV1SequencesAsync(SequencesDTO secuenceDTO, System.Threading.CancellationToken cancellationToken)
         {
             if (secuenceDTO == null)
                 throw new System.ArgumentNullException("secuenceDTO");
@@ -6614,8 +6608,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Secuences"
-                    urlBuilder_.Append("api/Master/v1/Secuences");
+                    // Operation Path: "api/Master/v1/Sequences"
+                    urlBuilder_.Append("api/Master/v1/Sequences");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -6642,7 +6636,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<SecuencesDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SequencesDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6686,14 +6680,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SecuencesDTO> PutApiMasterV1SecuencesAsync(SecuencesDTO secuenceDTO)
+        public virtual System.Threading.Tasks.Task<SequencesDTO> PutApiMasterV1SequencesAsync(SequencesDTO secuenceDTO)
         {
-            return PutApiMasterV1SecuencesAsync(secuenceDTO, System.Threading.CancellationToken.None);
+            return PutApiMasterV1SequencesAsync(secuenceDTO, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SecuencesDTO> PutApiMasterV1SecuencesAsync(SecuencesDTO secuenceDTO, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SequencesDTO> PutApiMasterV1SequencesAsync(SequencesDTO secuenceDTO, System.Threading.CancellationToken cancellationToken)
         {
             if (secuenceDTO == null)
                 throw new System.ArgumentNullException("secuenceDTO");
@@ -6713,8 +6707,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Secuences"
-                    urlBuilder_.Append("api/Master/v1/Secuences");
+                    // Operation Path: "api/Master/v1/Sequences"
+                    urlBuilder_.Append("api/Master/v1/Sequences");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -6741,7 +6735,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<SecuencesDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SequencesDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6785,17 +6779,17 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SecuencesDTO> GetApiMasterV1SecuencesAsync(long secuenceId)
+        public virtual System.Threading.Tasks.Task<SequencesDTO> GetApiMasterV1SequencesAsync(long sequenceId)
         {
-            return GetApiMasterV1SecuencesAsync(secuenceId, System.Threading.CancellationToken.None);
+            return GetApiMasterV1SequencesAsync(sequenceId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SecuencesDTO> GetApiMasterV1SecuencesAsync(long secuenceId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SequencesDTO> GetApiMasterV1SequencesAsync(long sequenceId, System.Threading.CancellationToken cancellationToken)
         {
-            if (secuenceId == null)
-                throw new System.ArgumentNullException("secuenceId");
+            if (sequenceId == null)
+                throw new System.ArgumentNullException("sequenceId");
 
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -6808,9 +6802,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Secuences/{secuenceId}"
-                    urlBuilder_.Append("api/Master/v1/Secuences/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(secuenceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/Master/v1/Sequences/{sequenceId}"
+                    urlBuilder_.Append("api/Master/v1/Sequences/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sequenceId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -6837,7 +6831,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<SecuencesDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SequencesDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6881,17 +6875,17 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1SecuencesDeleteAsync(long secuenceId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1SequencesDeleteAsync(long sequenceId)
         {
-            return DeleteApiMasterV1SecuencesDeleteAsync(secuenceId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1SequencesDeleteAsync(sequenceId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1SecuencesDeleteAsync(long secuenceId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1SequencesDeleteAsync(long sequenceId, System.Threading.CancellationToken cancellationToken)
         {
-            if (secuenceId == null)
-                throw new System.ArgumentNullException("secuenceId");
+            if (sequenceId == null)
+                throw new System.ArgumentNullException("sequenceId");
 
             var client_ = new System.Net.Http.HttpClient();
             var disposeClient_ = true;
@@ -6903,9 +6897,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Secuences/Delete/{secuenceId}"
-                    urlBuilder_.Append("api/Master/v1/Secuences/Delete/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(secuenceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/Master/v1/Sequences/Delete/{sequenceId}"
+                    urlBuilder_.Append("api/Master/v1/Sequences/Delete/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sequenceId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -17401,7 +17395,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SecuencesDTO : System.ComponentModel.INotifyPropertyChanged
+    public partial class SequencesDTO : System.ComponentModel.INotifyPropertyChanged
     {
         private long _id;
         private long _companyId;
@@ -17550,10 +17544,10 @@ namespace Vito.Transverse.Identity.Presentation.Api
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
-        public static SecuencesDTO FromJson(string data)
+        public static SequencesDTO FromJson(string data)
         {
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<SecuencesDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<SequencesDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

@@ -23,37 +23,37 @@ public static class MasterEndPoint
             .AddEndpointFilter<MasterFeatureFlagFilter>()
             .AddEndpointFilter<InfrastructureFilter>();
 
-        endPointGroupVersioned.MapGet("Secuences", GetAllSecuencesListAsync)
+        endPointGroupVersioned.MapGet("Sequences", GetAllSecuencesListAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Get All Secuences List Async")
+            .WithSummary("Get All Sequences List Async")
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapGet("Secuences/{secuenceId}", GetSecuenceByIdAsync)
+        endPointGroupVersioned.MapGet("Sequences/{sequenceId}", GetSequenceByIdAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Get Secuence By Id Async")
+            .WithSummary("Get Sequence By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapPost("Secuences", CreateNewSecuenceAsync)
+        endPointGroupVersioned.MapPost("Sequences", CreateNewSequenceAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Create New Secuence Async")
+            .WithSummary("Create New Sequence Async")
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapPut("Secuences", UpdateSecuenceByIdAsync)
+        endPointGroupVersioned.MapPut("Sequences", UpdateSequenceByIdAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Update Secuence By Id Async")
+            .WithSummary("Update Sequence By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Secuences/Delete/{secuenceId}", DeleteSecuenceByIdAsync)
+        endPointGroupVersioned.MapDelete("Sequences/Delete/{sequenceId}", DeleteSequenceByIdAsync)
             .MapToApiVersion(1.0)
-            .WithSummary("Delete Secuence By Id Async")
+            .WithSummary("Delete Sequence By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
@@ -339,44 +339,28 @@ public static class MasterEndPoint
             .AddEndpointFilter<RoleAuthorizationFilter>();
     }
 
-    public static async Task<Results<Ok<List<SecuencesDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllSecuencesListAsync(
+    public static async Task<Results<Ok<List<SequencesDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllSecuencesListAsync(
         HttpRequest request,
         [FromServices] IMasterService masterService)
     {
-        var returnObject = await masterService.GetAllSecuencesListAsync();
+        var returnObject = await masterService.GetAllSequencesListAsync();
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<SecuencesDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetSecuenceByIdAsync(
+    public static async Task<Results<Ok<SequencesDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetSequenceByIdAsync(
         HttpRequest request,
         [FromServices] IMasterService masterService,
-        [FromRoute] long secuenceId)
+        [FromRoute] long sequenceId)
     {
-        var returnObject = await masterService.GetSecuenceByIdAsync(secuenceId);
+        var returnObject = await masterService.GetSequenceByIdAsync(sequenceId);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<SecuencesDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewSecuenceAsync(
+    public static async Task<Results<Ok<SequencesDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewSequenceAsync(
         HttpRequest request,
         [FromServices] IMasterService masterService,
-        [FromServices] IValidator<SecuencesDTO> validator,
-        [FromBody] SecuencesDTO secuenceDTO)
-    {
-        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var validationResult = await validator.ValidateAsync(secuenceDTO);
-        if (!validationResult.IsValid)
-        {
-            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
-        }
-        var returnObject = await masterService.CreateNewSecuenceAsync(secuenceDTO, deviceInformation!);
-        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
-    }
-
-    public static async Task<Results<Ok<SecuencesDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateSecuenceByIdAsync(
-        HttpRequest request,
-        [FromServices] IMasterService masterService,
-        [FromServices] IValidator<SecuencesDTO> validator,
-        [FromBody] SecuencesDTO secuenceDTO)
+        [FromServices] IValidator<SequencesDTO> validator,
+        [FromBody] SequencesDTO secuenceDTO)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
         var validationResult = await validator.ValidateAsync(secuenceDTO);
@@ -384,17 +368,33 @@ public static class MasterEndPoint
         {
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
-        var returnObject = await masterService.UpdateSecuenceByIdAsync(secuenceDTO.Id, secuenceDTO, deviceInformation!);
+        var returnObject = await masterService.CreateNewSequenceAsync(secuenceDTO, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok, UnauthorizedHttpResult, NotFound>> DeleteSecuenceByIdAsync(
+    public static async Task<Results<Ok<SequencesDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateSequenceByIdAsync(
         HttpRequest request,
         [FromServices] IMasterService masterService,
-        [FromRoute] long secuenceId)
+        [FromServices] IValidator<SequencesDTO> validator,
+        [FromBody] SequencesDTO secuenceDTO)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var deleted = await masterService.DeleteSecuenceByIdAsync(secuenceId, deviceInformation!);
+        var validationResult = await validator.ValidateAsync(secuenceDTO);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
+        }
+        var returnObject = await masterService.UpdateSequenceByIdAsync(secuenceDTO.Id, secuenceDTO, deviceInformation!);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok, UnauthorizedHttpResult, NotFound>> DeleteSequenceByIdAsync(
+        HttpRequest request,
+        [FromServices] IMasterService masterService,
+        [FromRoute] long sequenceId)
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var deleted = await masterService.DeleteSequenceByIdAsync(sequenceId, deviceInformation!);
         return deleted ? TypedResults.Ok() : TypedResults.NotFound();
     }
 

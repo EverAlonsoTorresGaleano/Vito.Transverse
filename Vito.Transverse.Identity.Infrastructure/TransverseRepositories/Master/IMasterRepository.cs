@@ -9,15 +9,15 @@ namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Master;
 
 public interface IMasterRepository
 {
-    Task<List<SecuencesDTO>> GetAllSecuencesListAsync(Expression<Func<Sequence, bool>> filters, DataBaseServiceContext? context = null);
+    Task<List<SequencesDTO>> GetAllSequencesListAsync(Expression<Func<Sequence, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<SecuencesDTO?> GetSecuenceByIdAsync(long secuenceId, DataBaseServiceContext? context = null);
+    Task<SequencesDTO?> GetSequenceByIdAsync(long secuenceId, DataBaseServiceContext? context = null);
 
-    Task<SecuencesDTO?> CreateNewSecuenceAsync(SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<SequencesDTO?> CreateNewSequenceAsync(SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<SecuencesDTO?> UpdateSecuenceByIdAsync(SecuencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<SequencesDTO?> UpdateSequenceByIdAsync(SequencesDTO secuenceDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<bool> DeleteSecuenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<bool> DeleteSequenceByIdAsync(long secuenceId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
     // Culture CRUD
     Task<List<CultureDTO>> GetAllCultureListAsync(DataBaseServiceContext? context = null);

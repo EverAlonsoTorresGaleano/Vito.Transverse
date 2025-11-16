@@ -327,11 +327,10 @@ HttpRequest request,
 
     public static async Task<Results<Ok<List<UserDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetUserListAsync(
           HttpRequest request,
-          [FromServices] IUsersService usersService,
-          [FromQuery] long companyId)
+          [FromServices] IUsersService usersService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await usersService.GetUserListAsync(companyId);
+        var returnObject = await usersService.GetUserListAsync(deviceInformation.CompanyId);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
