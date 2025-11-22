@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Application.TransverseServices.Applications;
@@ -20,6 +21,14 @@ public static class ApplicationsEndPoint
             .AddEndpointFilter<InfrastructureFilter>();
 
 
+        endPointGroupVersioned.MapMethods("", ["OPTIONS"], GetOptionsListAsync)
+           .MapToApiVersion(1.0)
+           .WithSummary("Get All Application List Async")
+             .WithDescription("[Author] [Authen] [Trace]")
+           .RequireAuthorization()
+           .AddEndpointFilter<RoleAuthorizationFilter>();
+
+
         endPointGroupVersioned.MapGet("", GetAllApplicationListAsync)
            .MapToApiVersion(1.0)
            .WithSummary("Get All Application List Async")
@@ -34,7 +43,7 @@ public static class ApplicationsEndPoint
          .RequireAuthorization()
          .AddEndpointFilter<RoleAuthorizationFilter>();
 
-         
+
 
         endPointGroupVersioned.MapGet("{applicationId}", GetApplicationByIdAsync)
             .MapToApiVersion(1.0)
@@ -58,7 +67,7 @@ public static class ApplicationsEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Delete/{applicationId}", DeleteApplicationAsync)
+        endPointGroupVersioned.MapDelete("{applicationId}", DeleteApplicationAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Application Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -122,7 +131,7 @@ public static class ApplicationsEndPoint
           .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Modules/Delete/{moduleId}", DeleteModuleByIdAsync)
+        endPointGroupVersioned.MapDelete("Modules/{moduleId}", DeleteModuleByIdAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Delete Module By Id Async")
           .WithDescription("[Author] [Authen] [Trace]")
@@ -178,7 +187,7 @@ public static class ApplicationsEndPoint
           .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Components/Delete/{componentId}", DeleteComponentByIdAsync)
+        endPointGroupVersioned.MapDelete("Components/{componentId}", DeleteComponentByIdAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Delete Component By Id Async")
           .WithDescription("[Author] [Authen] [Trace]")
@@ -206,7 +215,7 @@ public static class ApplicationsEndPoint
           .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("endpoints/Delete/{endpointId}", DeleteEndpointByIdAsync)
+        endPointGroupVersioned.MapDelete("endpoints/{endpointId}", DeleteEndpointByIdAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Delete Endpoint By Id Async")
           .WithDescription("[Author] [Authen] [Trace]")
@@ -215,6 +224,13 @@ public static class ApplicationsEndPoint
 
     }
 
+    public static async Task<Results<Ok<List<string>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetOptionsListAsync(
+    HttpRequest context)
+    {
+        var methodList = new List<string>() { HttpMethod.Get.ToString(), HttpMethod.Post.ToString(), HttpMethod.Put.ToString(), HttpMethod.Delete.ToString() };
+        context.HttpContext.Response.Headers.Append("Allow", string.Join(',', methodList));
+        return TypedResults.Ok(methodList);
+    }
     public static async Task<Results<Ok<List<ApplicationDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllApplicationListAsync(
         HttpRequest request,
         [FromServices] IApplicationsService applicationService)
@@ -234,7 +250,7 @@ public static class ApplicationsEndPoint
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    
+
 
     public static async Task<Results<Ok<ApplicationDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetApplicationByIdAsync(
         HttpRequest request,

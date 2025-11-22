@@ -101,9 +101,9 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         {
             context = dataBaseContextFactory.CreateDbContext();
 
-            var appicationList = await context.Applications
-                .Include(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+            var appicationList = await context.Applications.AsNoTracking()
+                .Include(x => x.OwnerFkNavigation)
+
                 .Where(filters).ToListAsync();
             applicationDTOList = appicationList.Select(x => x.ToApplicationDTO()).ToList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.Id).ToList();
 
@@ -124,13 +124,12 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var companyMembershipList = await context.CompanyMemberships
+            var companyMembershipList = await context.CompanyMemberships.AsNoTracking()
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
                 .Where(filters).ToListAsync();
-            applicationDTOList = companyMembershipList.Select(x => x.ToApplicationDTO()).ToList().OrderBy(x => x.CompanyId).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.Id).ToList();
+            applicationDTOList = companyMembershipList.Select(x => x.ToApplicationDTO()).ToList().OrderBy(x => x.OwnerFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.Id).ToList();
         }
         catch (Exception ex)
         {
@@ -147,10 +146,9 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Roles
+            var bdList = await context.Roles.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
                 .Include(x => x.RolePermissions)
                 .ThenInclude(x => x.ModuleFkNavigation)
                 .ThenInclude(x => x.Endpoints)
@@ -172,10 +170,10 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Roles
+            var bdList = await context.Roles.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .Include(x => x.RolePermissions)
                 .ThenInclude(x => x.ModuleFkNavigation)
                 .ThenInclude(x => x.Endpoints)
@@ -203,10 +201,10 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Modules
+            var bdList = await context.Modules.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .Where(filters).ToListAsync();
             returnList = bdList.Select(x => x.ToModuleDTO()).ToList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ThenBy(x => x.PositionIndex).ToList();
         }
@@ -233,8 +231,8 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
             // Reload with navigation properties for ToModuleDTO
             var savedModule = await context.Modules
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .FirstOrDefaultAsync(x => x.Id == newRecordDb.Id);
             
             savedRecord = savedModule?.ToModuleDTO();
@@ -255,8 +253,8 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
             context = dataBaseContextFactory.GetDbContext(context);
             var recordToUpdateDb = await context.Modules
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
             if (recordToUpdateDb is null)
             {
@@ -311,10 +309,10 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Endpoints
+            var bdList = await context.Endpoints.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .Where(filters).ToListAsync();
             returnList = bdList.Select(x => x.ToEndpointDTO()).ToList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ThenBy(x => x.PositionIndex).ToList();
         }
@@ -339,7 +337,7 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var endpointPermissionList = await context.RolePermissions
+            var endpointPermissionList = await context.RolePermissions.AsNoTracking()
                .Include(x => x.ModuleFkNavigation)
                .ThenInclude(x => x.Endpoints)
                .ThenInclude(x => x.Components)
@@ -380,10 +378,10 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Components
+            var bdList = await context.Components.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .Where(filters).ToListAsync();
             returnList = bdList.Select(x => x.ToComponentDTO ()).ToList().OrderBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ThenBy(x => x.PositionIndex).ToList(); ;
         }
@@ -410,8 +408,8 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
             // Reload with navigation properties for ToEndpointDTO
             var savedEndpoint = await context.Endpoints
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .FirstOrDefaultAsync(x => x.Id == newRecordDb.Id);
             
             savedRecord = savedEndpoint?.ToEndpointDTO();
@@ -432,8 +430,8 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
             context = dataBaseContextFactory.GetDbContext(context);
             var recordToUpdateDb = await context.Endpoints
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
             if (recordToUpdateDb is null)
             {
@@ -498,8 +496,8 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
             // Reload with navigation properties for ToComponentDTO
             var savedComponent = await context.Components
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .FirstOrDefaultAsync(x => x.Id == newRecordDb.Id);
             
             savedRecord = savedComponent?.ToComponentDTO();
@@ -520,8 +518,8 @@ public class ApplicationsRepository(ILogger<SecurityRepository> logger, IDataBas
             context = dataBaseContextFactory.GetDbContext(context);
             var recordToUpdateDb = await context.Components
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+                
                 .FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
             if (recordToUpdateDb is null)
             {

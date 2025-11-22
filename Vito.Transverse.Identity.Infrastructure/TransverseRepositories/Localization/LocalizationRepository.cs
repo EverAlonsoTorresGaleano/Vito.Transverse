@@ -24,7 +24,7 @@ public class LocalizationRepository(IDataBaseContextFactory dataBaseContextFacto
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            returnList = await context.CultureTranslations
+            returnList = await context.CultureTranslations.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
                 .Include(x => x.CultureFkNavigation.LanguageFkNavigation)
                 .Where(filters).ToListAsync();

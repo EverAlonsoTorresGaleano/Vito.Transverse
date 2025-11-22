@@ -46,19 +46,19 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
                         applicationId.ToString() + cultureId, cultureMessageList);
 
 #if DEBUG
-                var fileName = string.Format(_cultureSettingsOptionsValues.LocalizationJsonFilePath!, cultureId);
-                var localizationFile = new StringBuilder("{");
-                cultureMessageList.ForEach(localizationRow =>
-                {
-                    localizationFile.Append($"{(char)34}{localizationRow.TranslationKey}{(char)34}:{(char)34}{localizationRow.TranslationValue}{(char)34},");
-                });
-                localizationFile.Remove(localizationFile.Length - 1, 1);
-                localizationFile.Append("}");
+                //var fileName = string.Format(_cultureSettingsOptionsValues.LocalizationJsonFilePath!, cultureId);
+                //var localizationFile = new StringBuilder("{");
+                //cultureMessageList.ForEach(localizationRow =>
+                //{
+                //    localizationFile.Append($"{(char)34}{localizationRow.TranslationKey}{(char)34}:{(char)34}{localizationRow.TranslationValue}{(char)34},");
+                //});
+                //localizationFile.Remove(localizationFile.Length - 1, 1);
+                //localizationFile.Append("}");
 
-                if (File.Exists(fileName))
-                {
-                    File.Delete(fileName);
-                }
+                //if (File.Exists(fileName))
+                //{
+                //    File.Delete(fileName);
+                //}
                 //File.WriteAllText(fileName, localizationFile.ToString());
 #endif
             }

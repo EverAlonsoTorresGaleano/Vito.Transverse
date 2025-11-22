@@ -51,7 +51,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Sequences/Delete/{sequenceId}", DeleteSequenceByIdAsync)
+        endPointGroupVersioned.MapDelete("Sequences/{sequenceId}", DeleteSequenceByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Sequence By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -114,7 +114,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Cultures/Delete/{cultureId}", DeleteCultureByIdAsync)
+        endPointGroupVersioned.MapDelete("Cultures/{cultureId}", DeleteCultureByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Culture By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -156,7 +156,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Languages/Delete/{languageId}", DeleteLanguageByIdAsync)
+        endPointGroupVersioned.MapDelete("Languages/{languageId}", DeleteLanguageByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Language By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -198,7 +198,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Countries/Delete/{countryId}", DeleteCountryByIdAsync)
+        endPointGroupVersioned.MapDelete("Countries/{countryId}", DeleteCountryByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Country By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -240,7 +240,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("GeneralTypeGroups/Delete/{generalTypeGroupId}", DeleteGeneralTypeGroupByIdAsync)
+        endPointGroupVersioned.MapDelete("GeneralTypeGroups/{generalTypeGroupId}", DeleteGeneralTypeGroupByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete General Type Group By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -289,7 +289,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("GeneralTypeItems/Delete/{generalTypeItemId}", DeleteGeneralTypeItemByIdAsync)
+        endPointGroupVersioned.MapDelete("GeneralTypeItems/{generalTypeItemId}", DeleteGeneralTypeItemByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete General Type Item By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -331,7 +331,7 @@ public static class MasterEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("NotificationTemplates/Delete/{notificationTemplateId}", DeleteNotificationTemplateByIdAsync)
+        endPointGroupVersioned.MapDelete("NotificationTemplates/{notificationTemplateId}", DeleteNotificationTemplateByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Notification Template By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -414,7 +414,7 @@ public static class MasterEndPoint
         [FromServices] ICultureService cultureService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await cultureService.GetActiveCultureListAsync(deviceInformation!.ApplicationId!);
+        var returnObject = await cultureService.GetActiveCultureListAsync();
         return TypedResults.Ok(returnObject);
     }
 
@@ -424,7 +424,7 @@ public static class MasterEndPoint
         [FromServices] ICultureService cultureService)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync(deviceInformation!.ApplicationId!);
+        var returnObject = await cultureService.GetActiveCultureListItemDTOListAsync();
         return TypedResults.Ok(returnObject);
     }
 

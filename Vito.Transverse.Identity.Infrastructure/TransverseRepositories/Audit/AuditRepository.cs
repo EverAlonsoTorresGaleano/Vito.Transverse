@@ -11,10 +11,11 @@ using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
 using Vito.Transverse.Identity.Infrastructure.Extensions;
 using Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
 
 namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Audit;
 
-public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOptions<DataBaseSettingsOptions> dataBaseSettingsOptions, ILogger<AuditRepository> logger) : IAuditRepository
+public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOptions<DataBaseSettingsOptions> dataBaseSettingsOptions,ICultureRepository cultureRepository, ILogger<AuditRepository> logger) : IAuditRepository
 {
     readonly DataBaseSettingsOptions dataBaseSettingsOptionsValue = dataBaseSettingsOptions.Value;
     public async Task<AuditRecordDTO?> AddNewAuditRecord(AuditRecordDTO newRecord, DataBaseServiceContext? context = null)
@@ -44,7 +45,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Entities
+            var bdList = await context.Entities.AsNoTracking()
                 .Where(filters).ToListAsync();
             returnList = bdList.Select(x => x.ToEntityDTO()).ToList().OrderBy(x => x.Id).ToList();
         }
@@ -63,7 +64,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var entity = await context.Entities
+            var entity = await context.Entities.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == entityId);
             entityDTO = entity?.ToEntityDTO();
         }
@@ -158,7 +159,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.CompanyEntityAudits
+            var bdList = await context.CompanyEntityAudits.AsNoTracking()
                 .Include(x => x.EntityFkNavigation)
                 .Include(x => x.AuditTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
@@ -180,7 +181,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var companyEntityAudit = await context.CompanyEntityAudits
+            var companyEntityAudit = await context.CompanyEntityAudits.AsNoTracking()
                 .Include(x => x.EntityFkNavigation)
                 .Include(x => x.AuditTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
@@ -203,7 +204,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         {
             context = dataBaseContextFactory.GetDbContext(context);
             var newRecordDb = newRecord.ToCompanyEntityAudit();
-            newRecordDb.CreationDate = DateTime.UtcNow;
+            newRecordDb.CreatedDate = cultureRepository.UtcNow().DateTime;
             newRecordDb.CreatedByUserFk = deviceInformation.UserId!;
             context.CompanyEntityAudits.Add(newRecordDb);
             await context.SaveChangesAsync();
@@ -242,8 +243,8 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
             companyEntityAuditToUpdate.EntityFk = recordToUpdate.EntityFk;
             companyEntityAuditToUpdate.AuditTypeFk = recordToUpdate.AuditTypeFk;
             companyEntityAuditToUpdate.IsActive = recordToUpdate.IsActive;
-            companyEntityAuditToUpdate.LastUpdateDate = DateTime.UtcNow;
-            companyEntityAuditToUpdate.UpdatedByUserFk = deviceInformation.UserId;
+            companyEntityAuditToUpdate.LastUpdatedDate = cultureRepository.UtcNow().DateTime;
+            companyEntityAuditToUpdate.LastUpdatedByUserFk = deviceInformation.UserId;
 
             await context.SaveChangesAsync();
             
@@ -296,7 +297,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.AuditRecords
+            var bdList = await context.AuditRecords.AsNoTracking()
                 .Include(x => x.EntityFkNavigation)
                 .Include(x => x.AuditTypeFkNavigation)
                 .Include(x => x.UserFkNavigation)
@@ -319,7 +320,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.ActivityLogs
+            var bdList = await context.ActivityLogs.AsNoTracking()
                 .Include(x => x.UserFkNavigation)
                 .ThenInclude(x => x.CompanyFkNavigation)
                 .Include(x => x.ActionTypeFkNavigation)
@@ -341,7 +342,7 @@ public class AuditRepository(IDataBaseContextFactory dataBaseContextFactory, IOp
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Notifications
+            var bdList = await context.Notifications.AsNoTracking()
                 .Include(x => x.NotificationTemplate)
                 .ThenInclude(x => x.CultureFkNavigation)
                 .Include(x => x.CompanyFkNavigation)

@@ -4,6 +4,7 @@ using Vito.Framework.Common.Enums;
 
 namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 
+//developers
 public class UserDTOToken : UserDTO
 {
     public long? ApplicationOwnerId { get; set; }

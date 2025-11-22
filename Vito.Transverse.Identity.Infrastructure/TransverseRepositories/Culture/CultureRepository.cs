@@ -21,7 +21,8 @@ public class CultureRepository(IDataBaseContextFactory dataBaseContextFactory, I
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var returnList = await context.Cultures.Where(x => x.IsEnabled).ToListAsync();
+            var returnList = await context.Cultures.AsNoTracking()
+                .Where(x => x.IsEnabled).ToListAsync();
             returnListDTO = returnList.Select(x => x.ToCultureDTO()).ToList();
         }
         catch (Exception ex)

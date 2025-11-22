@@ -1,6 +1,7 @@
 ﻿namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 
 
+//developers
 public record MenuItemDTO
 {
     public string Id { get; set; }

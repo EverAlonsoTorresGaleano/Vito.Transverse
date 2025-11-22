@@ -1,25 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
-namespace Vito.Transverse.Identity.Infrastructure.Models;
+namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 
-[Index("CompanyMembershipFk", Name = "IX_CompanyMembershipPermissions")]
-public partial class CompanyMembershipPermission
+public class CompanyMembershipPermissionDTO
 {
+    [Required]
     public long CompanyMembershipFk { get; set; }
 
+    [Required]
     public long CompanyFk { get; set; }
 
+    [Required]
     public long ApplicationFk { get; set; }
 
+    [Required]
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
 
+    [Required]
     public long ModuleFk { get; set; }
 
+    [Required]
     public long EndpointFk { get; set; }
 
     public long? ComponentFk { get; set; }
@@ -27,8 +31,4 @@ public partial class CompanyMembershipPermission
     [StringLength(75)]
     [Unicode(false)]
     public string? PropertyValue { get; set; }
-
-    [ForeignKey("CompanyMembershipFk")]
-    [InverseProperty("CompanyMembershipPermissions")]
-    public virtual CompanyMembership CompanyMembershipFkNavigation { get; set; } = null!;
 }

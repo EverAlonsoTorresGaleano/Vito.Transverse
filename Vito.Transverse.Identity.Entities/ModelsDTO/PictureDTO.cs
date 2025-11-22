@@ -1,34 +1,61 @@
-﻿namespace Vito.Transverse.Identity.Entities.ModelsDTO;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 
 public record PictureDTO
 {
+    [Required]
     public long CompanyFk { get; set; }
 
-    public long Id { get; set; }
-
+    [Required]
+    [StringLength(75)]
+    [Unicode(false)]
     public string Name { get; set; } = null!;
 
-    public long EntityFk { get; set; }
+    [Required]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key]
+    public long Id { get; set; }
 
+    
+    public long? EntityFk { get; set; }
+
+    [Required]
     public long FileTypeFk { get; set; }
 
+    [Required]
     public long PictureCategoryFk { get; set; }
 
-    public DateTime CreationDate { get; set; }
-
-    public long CreatedByUserFk { get; set; }
-
-    public DateTime? LastUpdateDate { get; set; }
-
-    public long? LastUpdateByUserFk { get; set; }
-
+    [Required]
     public bool IsActive { get; set; }
 
-    public byte[] BinaryPicture { get; set; } = null!;
+    [Required]
+    public byte[]? BinaryPicture { get; set; }
 
+    [Required]
+    [Column(TypeName = "decimal(18, 5)")]
     public decimal PictureSize { get; set; }
 
+    //Create Update Time and User
 
+    [NotMapped]
+    [Column(TypeName = "datetime")]
+    public DateTime CreationDate { get; set; }
+
+    [NotMapped]
+    public long CreatedByUserFk { get; set; }
+
+
+    [NotMapped]
+    [Column(TypeName = "datetime")]
+    public DateTime? LastUpdateDate { get; set; }
+
+    [NotMapped]
+    public long? LastUpdateByUserFk { get; set; }
+
+    //Estensions
     public string PictureCategoryNameTranslationKey { get;  set; }=null!;
     public string FileTypeNameTranslationKey { get; set; } = null!; 
     public string CompanyNameTranslationKey { get; set; } = null!;  

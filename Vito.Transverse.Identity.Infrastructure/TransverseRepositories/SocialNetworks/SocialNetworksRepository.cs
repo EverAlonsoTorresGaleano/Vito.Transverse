@@ -19,7 +19,8 @@ public class SocialNetworksRepository(IDataBaseContextFactory dataBaseContextFac
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var notificationTemplateInfo = await context.NotificationTemplates.Where(filters).ToListAsync();
+            var notificationTemplateInfo = await context.NotificationTemplates.AsNoTracking()
+                .Where(filters).ToListAsync();
             notificationTemplateInfoDTOList = notificationTemplateInfo!.ToNotificationTemplateDTO();
         }
         catch (Exception ex)

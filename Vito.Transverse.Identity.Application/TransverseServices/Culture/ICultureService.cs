@@ -15,8 +15,8 @@ public interface ICultureService
 
      DateTimeOffset UtcNow();
 
-    Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId);
+    Task<List<CultureDTO>> GetActiveCultureListAsync();
 
-    Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync(long applicationId);
+    Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync();
     string GetCurrentCultureId();
 }

@@ -20,7 +20,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var sequencesList = await context.Sequences
+            var sequencesList = await context.Sequences.AsNoTracking()
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
                 .Where(filters)
@@ -56,7 +56,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var sequence = await context.Sequences
+            var sequence = await context.Sequences.AsNoTracking()
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == secuenceId);
@@ -64,11 +64,11 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             if (sequence != null)
             {
                 secuenceDTO = sequence.ToSecuencesDTO();
-                
+
                 // Get SequenceType name from GeneralTypeItem
                 var generalTypeItem = await context.GeneralTypeItems
                     .FirstOrDefaultAsync(x => x.Id == sequence.SequenceTypeFk);
-                
+
                 secuenceDTO.SequenceTypeNameTranslationKey = generalTypeItem?.NameTranslationKey ?? string.Empty;
             }
         }
@@ -91,7 +91,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             context = dataBaseContextFactory.GetDbContext(context);
             context.Sequences.Add(newRecordDb);
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             newRecordDb = await context.Sequences
                 .Include(x => x.CompanyFkNavigation)
@@ -101,11 +101,11 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             if (newRecordDb != null)
             {
                 savedRecord = newRecordDb.ToSecuencesDTO();
-                
+
                 // Get SequenceType name from GeneralTypeItem
                 var generalTypeItem = await context.GeneralTypeItems
                     .FirstOrDefaultAsync(x => x.Id == newRecordDb.SequenceTypeFk);
-                
+
                 savedRecord.SequenceTypeNameTranslationKey = generalTypeItem?.NameTranslationKey ?? string.Empty;
             }
         }
@@ -133,21 +133,21 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedSequence = secuenceDTO.ToSequence();
             context.Entry(sequenceToUpdate).CurrentValues.SetValues(updatedSequence);
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             sequenceToUpdate = await context.Sequences
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == secuenceDTO.Id);
-            
+
             if (sequenceToUpdate != null)
             {
                 savedRecord = sequenceToUpdate.ToSecuencesDTO();
-                
+
                 // Get SequenceType name from GeneralTypeItem
                 var generalTypeItem = await context.GeneralTypeItems
                     .FirstOrDefaultAsync(x => x.Id == sequenceToUpdate.SequenceTypeFk);
-                
+
                 savedRecord.SequenceTypeNameTranslationKey = generalTypeItem?.NameTranslationKey ?? string.Empty;
             }
         }
@@ -192,7 +192,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var returnList = await context.Cultures
+            var returnList = await context.Cultures.AsNoTracking()
                 .Include(x => x.CountryFkNavigation)
                 .Include(x => x.LanguageFkNavigation)
                 .ToListAsync();
@@ -212,7 +212,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var culture = await context.Cultures
+            var culture = await context.Cultures.AsNoTracking()
                 .Include(x => x.CountryFkNavigation)
                 .Include(x => x.LanguageFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == cultureId);
@@ -262,13 +262,13 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedCulture = cultureInfo.ToCulture();
             context.Entry(cultureToUpdate).CurrentValues.SetValues(updatedCulture);
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             cultureToUpdate = await context.Cultures
                 .Include(x => x.CountryFkNavigation)
                 .Include(x => x.LanguageFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == cultureId);
-            
+
             savedRecord = cultureToUpdate?.ToCultureDTO();
         }
         catch (Exception ex)
@@ -312,7 +312,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var returnList = await context.Languages.ToListAsync();
+            var returnList = await context.Languages.AsNoTracking().ToListAsync();
             returnListDTO = returnList.Select(x => x.ToLanguageDTO()).ToList();
         }
         catch (Exception ex)
@@ -329,7 +329,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var language = await context.Languages.FirstOrDefaultAsync(x => x.Id == languageId);
+            var language = await context.Languages.AsNoTracking().FirstOrDefaultAsync(x => x.Id == languageId);
             languageDTO = language?.ToLanguageDTO();
         }
         catch (Exception ex)
@@ -376,10 +376,10 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedLanguage = languageInfo.ToLanguage();
             context.Entry(languageToUpdate).CurrentValues.SetValues(updatedLanguage);
             await context.SaveChangesAsync();
-            
+
             // Reload to get updated values
             languageToUpdate = await context.Languages.FirstOrDefaultAsync(x => x.Id == languageId);
-            
+
             savedRecord = languageToUpdate?.ToLanguageDTO();
         }
         catch (Exception ex)
@@ -423,7 +423,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var returnList = await context.Countries.ToListAsync();
+            var returnList = await context.Countries.AsNoTracking().ToListAsync();
             returnListDTO = returnList.Select(x => x.ToCountryDTO()).ToList();
         }
         catch (Exception ex)
@@ -440,7 +440,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var country = await context.Countries.FirstOrDefaultAsync(x => x.Id == countryId);
+            var country = await context.Countries.AsNoTracking().FirstOrDefaultAsync(x => x.Id == countryId);
             countryDTO = country?.ToCountryDTO();
         }
         catch (Exception ex)
@@ -487,10 +487,10 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedCountry = countryInfo.ToCountry();
             context.Entry(countryToUpdate).CurrentValues.SetValues(updatedCountry);
             await context.SaveChangesAsync();
-            
+
             // Reload to get updated values
             countryToUpdate = await context.Countries.FirstOrDefaultAsync(x => x.Id == countryId);
-            
+
             savedRecord = countryToUpdate?.ToCountryDTO();
         }
         catch (Exception ex)
@@ -534,7 +534,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var returnList = await context.GeneralTypeItems
+            var returnList = await context.GeneralTypeItems.AsNoTracking()
                 .Include(x => x.ListItemGroupFkNavigation)
                 .Where(filters)
                 .ToListAsync();
@@ -555,7 +555,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var generalTypeItem = await context.GeneralTypeItems
+            var generalTypeItem = await context.GeneralTypeItems.AsNoTracking()
                 .Include(x => x.ListItemGroupFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == generalTypeItemId);
             generalTypeItemDTO = generalTypeItem?.ToGeneralTypeItemDTO();
@@ -604,12 +604,12 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedGeneralTypeItem = generalTypeItemInfo.ToGeneralTypeItem();
             context.Entry(generalTypeItemToUpdate).CurrentValues.SetValues(updatedGeneralTypeItem);
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             generalTypeItemToUpdate = await context.GeneralTypeItems
                 .Include(x => x.ListItemGroupFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == generalTypeItemInfo.Id);
-            
+
             savedRecord = generalTypeItemToUpdate?.ToGeneralTypeItemDTO();
         }
         catch (Exception ex)
@@ -653,7 +653,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var returnList = await context.GeneralTypeGroups
+            var returnList = await context.GeneralTypeGroups.AsNoTracking()
                 .Where(filters)
                 .ToListAsync();
             returnListDTO = returnList.Select(x => x.ToGeneralTypeGroupDTO()).ToList();
@@ -672,7 +672,8 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var generalTypeGroup = await context.GeneralTypeGroups.FirstOrDefaultAsync(x => x.Id == generalTypeGroupId);
+            var generalTypeGroup = await context.GeneralTypeGroups.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == generalTypeGroupId);
             generalTypeGroupDTO = generalTypeGroup?.ToGeneralTypeGroupDTO();
         }
         catch (Exception ex)
@@ -719,10 +720,10 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedGeneralTypeGroup = generalTypeGroupInfo.ToGeneralTypeGroup();
             context.Entry(generalTypeGroupToUpdate).CurrentValues.SetValues(updatedGeneralTypeGroup);
             await context.SaveChangesAsync();
-            
+
             // Reload to get updated values
             generalTypeGroupToUpdate = await context.GeneralTypeGroups.FirstOrDefaultAsync(x => x.Id == generalTypeGroupInfo.Id);
-            
+
             savedRecord = generalTypeGroupToUpdate?.ToGeneralTypeGroupDTO();
         }
         catch (Exception ex)
@@ -766,7 +767,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var returnList = await context.NotificationTemplates
+            var returnList = await context.NotificationTemplates.AsNoTracking()
                 .Include(x => x.CultureFkNavigation)
                 .Where(filters)
                 .ToListAsync();
@@ -786,7 +787,7 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var notificationTemplate = await context.NotificationTemplates
+            var notificationTemplate = await context.NotificationTemplates.AsNoTracking()
                 .Include(x => x.CultureFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == notificationTemplateId);
             notificationTemplateDTO = notificationTemplate?.ToNotificationTemplateDTO();
@@ -809,12 +810,12 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             context = dataBaseContextFactory.GetDbContext(context);
             context.NotificationTemplates.Add(newRecordDb);
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             newRecordDb = await context.NotificationTemplates
                 .Include(x => x.CultureFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == newRecordDb.Id);
-            
+
             savedRecord = newRecordDb?.ToNotificationTemplateDTO();
         }
         catch (Exception ex)
@@ -841,12 +842,12 @@ public class MasterRepository(ILogger<MasterRepository> logger, IDataBaseContext
             var updatedNotificationTemplate = notificationTemplateInfo.ToNotificationTemplate();
             context.Entry(notificationTemplateToUpdate).CurrentValues.SetValues(updatedNotificationTemplate);
             await context.SaveChangesAsync();
-            
+
             // Reload with includes to get navigation properties
             notificationTemplateToUpdate = await context.NotificationTemplates
                 .Include(x => x.CultureFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == notificationTemplateInfo.Id);
-            
+
             savedRecord = notificationTemplateToUpdate?.ToNotificationTemplateDTO();
         }
         catch (Exception ex)

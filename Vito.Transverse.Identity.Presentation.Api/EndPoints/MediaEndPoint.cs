@@ -62,7 +62,7 @@ public static class MediaEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("pictures/Delete/{pictureId}", DeletePictureByIdAsync)
+        endPointGroupVersioned.MapDelete("pictures/{pictureId}", DeletePictureByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Picture By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")

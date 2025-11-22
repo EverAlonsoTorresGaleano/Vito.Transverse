@@ -783,6 +783,86 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task DeleteApiUsersV1Async(long userId)
+        {
+            return DeleteApiUsersV1Async(userId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task DeleteApiUsersV1Async(long userId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (userId == null)
+                throw new System.ArgumentNullException("userId");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Users/v1/{userId}"
+                    urlBuilder_.Append("api/Users/v1/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<MenuGroupDTO>> GetApiUsersV1MenuAsync()
         {
             return GetApiUsersV1MenuAsync(System.Threading.CancellationToken.None);
@@ -847,86 +927,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new SwaggerException<HttpValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiUsersV1DeleteAsync(long userId)
-        {
-            return DeleteApiUsersV1DeleteAsync(userId, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiUsersV1DeleteAsync(long userId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (userId == null)
-                throw new System.ArgumentNullException("userId");
-
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Users/v1/Delete/{userId}"
-                    urlBuilder_.Append("api/Users/v1/Delete/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
                         }
                         else
                         if (status_ == 404)
@@ -1661,14 +1661,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiUsersV1UserRolesDeleteAsync(long userId, long roleId, long? companyFk, long? applicationFk)
+        public virtual System.Threading.Tasks.Task DeleteApiUsersV1UserRolesAsync(long userId, long roleId, long? companyFk, long? applicationFk)
         {
-            return DeleteApiUsersV1UserRolesDeleteAsync(userId, roleId, companyFk, applicationFk, System.Threading.CancellationToken.None);
+            return DeleteApiUsersV1UserRolesAsync(userId, roleId, companyFk, applicationFk, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiUsersV1UserRolesDeleteAsync(long userId, long roleId, long? companyFk, long? applicationFk, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiUsersV1UserRolesAsync(long userId, long roleId, long? companyFk, long? applicationFk, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -1686,8 +1686,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Users/v1/UserRoles/Delete/{userId}/{roleId}"
-                    urlBuilder_.Append("api/Users/v1/UserRoles/Delete/");
+                    // Operation Path: "api/Users/v1/UserRoles/{userId}/{roleId}"
+                    urlBuilder_.Append("api/Users/v1/UserRoles/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(roleId, System.Globalization.CultureInfo.InvariantCulture)));
@@ -2237,14 +2237,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiUsersV1RolesDeleteAsync(long roleId)
+        public virtual System.Threading.Tasks.Task DeleteApiUsersV1RolesAsync(long roleId)
         {
-            return DeleteApiUsersV1RolesDeleteAsync(roleId, System.Threading.CancellationToken.None);
+            return DeleteApiUsersV1RolesAsync(roleId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiUsersV1RolesDeleteAsync(long roleId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiUsersV1RolesAsync(long roleId, System.Threading.CancellationToken cancellationToken)
         {
             if (roleId == null)
                 throw new System.ArgumentNullException("roleId");
@@ -2259,8 +2259,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Users/v1/Roles/Delete/{roleId}"
-                    urlBuilder_.Append("api/Users/v1/Roles/Delete/");
+                    // Operation Path: "api/Users/v1/Roles/{roleId}"
+                    urlBuilder_.Append("api/Users/v1/Roles/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(roleId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -2289,6 +2289,99 @@ namespace Vito.Transverse.Identity.Presentation.Api
                         if (status_ == 200)
                         {
                             return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<string>> OptionsApiApplicationsV1Async()
+        {
+            return OptionsApiApplicationsV1Async(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<string>> OptionsApiApplicationsV1Async(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("OPTIONS");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/applications/v1"
+                    urlBuilder_.Append("api/applications/v1");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.ObjectModel.ObservableCollection<string>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<HttpValidationProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new SwaggerException<HttpValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 404)
@@ -2805,14 +2898,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1DeleteAsync(long applicationId)
+        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1Async(long applicationId)
         {
-            return DeleteApiApplicationsV1DeleteAsync(applicationId, System.Threading.CancellationToken.None);
+            return DeleteApiApplicationsV1Async(applicationId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1DeleteAsync(long applicationId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1Async(long applicationId, System.Threading.CancellationToken cancellationToken)
         {
             if (applicationId == null)
                 throw new System.ArgumentNullException("applicationId");
@@ -2827,8 +2920,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/applications/v1/Delete/{applicationId}"
-                    urlBuilder_.Append("api/applications/v1/Delete/");
+                    // Operation Path: "api/applications/v1/{applicationId}"
+                    urlBuilder_.Append("api/applications/v1/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(applicationId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -3666,14 +3759,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1ModulesDeleteAsync(long moduleId)
+        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1ModulesAsync(long moduleId)
         {
-            return DeleteApiApplicationsV1ModulesDeleteAsync(moduleId, System.Threading.CancellationToken.None);
+            return DeleteApiApplicationsV1ModulesAsync(moduleId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1ModulesDeleteAsync(long moduleId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1ModulesAsync(long moduleId, System.Threading.CancellationToken cancellationToken)
         {
             if (moduleId == null)
                 throw new System.ArgumentNullException("moduleId");
@@ -3688,8 +3781,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/applications/v1/Modules/Delete/{moduleId}"
-                    urlBuilder_.Append("api/applications/v1/Modules/Delete/");
+                    // Operation Path: "api/applications/v1/Modules/{moduleId}"
+                    urlBuilder_.Append("api/applications/v1/Modules/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(moduleId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -4230,6 +4323,86 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1ComponentsAsync(long componentId)
+        {
+            return DeleteApiApplicationsV1ComponentsAsync(componentId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1ComponentsAsync(long componentId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (componentId == null)
+                throw new System.ArgumentNullException("componentId");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/applications/v1/Components/{componentId}"
+                    urlBuilder_.Append("api/applications/v1/Components/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(componentId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<ComponentDTO> PostApiApplicationsV1ComponentsAsync(long endpointId, long userId, ComponentDTO componentDTO)
         {
             return PostApiApplicationsV1ComponentsAsync(endpointId, userId, componentDTO, System.Threading.CancellationToken.None);
@@ -4438,86 +4611,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1ComponentsDeleteAsync(long componentId)
-        {
-            return DeleteApiApplicationsV1ComponentsDeleteAsync(componentId, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1ComponentsDeleteAsync(long componentId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (componentId == null)
-                throw new System.ArgumentNullException("componentId");
-
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/applications/v1/Components/Delete/{componentId}"
-                    urlBuilder_.Append("api/applications/v1/Components/Delete/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(componentId, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<EndpointDTO> GetApiApplicationsV1EndpointsAsync(long endpointId)
         {
             return GetApiApplicationsV1EndpointsAsync(endpointId, System.Threading.CancellationToken.None);
@@ -4586,6 +4679,86 @@ namespace Vito.Transverse.Identity.Presentation.Api
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new SwaggerException<HttpValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1EndpointsAsync(long endpointId)
+        {
+            return DeleteApiApplicationsV1EndpointsAsync(endpointId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1EndpointsAsync(long endpointId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (endpointId == null)
+                throw new System.ArgumentNullException("endpointId");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/applications/v1/endpoints/{endpointId}"
+                    urlBuilder_.Append("api/applications/v1/endpoints/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(endpointId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
                         }
                         else
                         if (status_ == 404)
@@ -4794,86 +4967,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new SwaggerException<HttpValidationProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiApplicationsV1EndpointsDeleteAsync(long endpointId)
-        {
-            return DeleteApiApplicationsV1EndpointsDeleteAsync(endpointId, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiApplicationsV1EndpointsDeleteAsync(long endpointId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (endpointId == null)
-                throw new System.ArgumentNullException("endpointId");
-
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/applications/v1/endpoints/Delete/{endpointId}"
-                    urlBuilder_.Append("api/applications/v1/endpoints/Delete/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(endpointId, System.Globalization.CultureInfo.InvariantCulture)));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
                         }
                         else
                         if (status_ == 404)
@@ -5380,14 +5473,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiCompaniesV1DeleteAsync(long companyId)
+        public virtual System.Threading.Tasks.Task DeleteApiCompaniesV1Async(long companyId)
         {
-            return DeleteApiCompaniesV1DeleteAsync(companyId, System.Threading.CancellationToken.None);
+            return DeleteApiCompaniesV1Async(companyId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiCompaniesV1DeleteAsync(long companyId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiCompaniesV1Async(long companyId, System.Threading.CancellationToken cancellationToken)
         {
             if (companyId == null)
                 throw new System.ArgumentNullException("companyId");
@@ -5402,8 +5495,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Companies/v1/Delete/{companyId}"
-                    urlBuilder_.Append("api/Companies/v1/Delete/");
+                    // Operation Path: "api/Companies/v1/{companyId}"
+                    urlBuilder_.Append("api/Companies/v1/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(companyId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -5845,14 +5938,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipsDeleteAsync(long membershipId)
+        public virtual System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipsAsync(long membershipId)
         {
-            return DeleteApiCompaniesV1MembershipsDeleteAsync(membershipId, System.Threading.CancellationToken.None);
+            return DeleteApiCompaniesV1MembershipsAsync(membershipId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipsDeleteAsync(long membershipId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipsAsync(long membershipId, System.Threading.CancellationToken cancellationToken)
         {
             if (membershipId == null)
                 throw new System.ArgumentNullException("membershipId");
@@ -5867,8 +5960,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Companies/v1/Memberships/Delete/{membershipId}"
-                    urlBuilder_.Append("api/Companies/v1/Memberships/Delete/");
+                    // Operation Path: "api/Companies/v1/Memberships/{membershipId}"
+                    urlBuilder_.Append("api/Companies/v1/Memberships/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(membershipId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -6409,14 +6502,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipTypesDeleteAsync(long membershipTypeId)
+        public virtual System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipTypesAsync(long membershipTypeId)
         {
-            return DeleteApiCompaniesV1MembershipTypesDeleteAsync(membershipTypeId, System.Threading.CancellationToken.None);
+            return DeleteApiCompaniesV1MembershipTypesAsync(membershipTypeId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipTypesDeleteAsync(long membershipTypeId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiCompaniesV1MembershipTypesAsync(long membershipTypeId, System.Threading.CancellationToken cancellationToken)
         {
             if (membershipTypeId == null)
                 throw new System.ArgumentNullException("membershipTypeId");
@@ -6431,8 +6524,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Companies/v1/MembershipTypes/Delete/{membershipTypeId}"
-                    urlBuilder_.Append("api/Companies/v1/MembershipTypes/Delete/");
+                    // Operation Path: "api/Companies/v1/MembershipTypes/{membershipTypeId}"
+                    urlBuilder_.Append("api/Companies/v1/MembershipTypes/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(membershipTypeId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -6875,14 +6968,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1SequencesDeleteAsync(long sequenceId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1SequencesAsync(long sequenceId)
         {
-            return DeleteApiMasterV1SequencesDeleteAsync(sequenceId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1SequencesAsync(sequenceId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1SequencesDeleteAsync(long sequenceId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1SequencesAsync(long sequenceId, System.Threading.CancellationToken cancellationToken)
         {
             if (sequenceId == null)
                 throw new System.ArgumentNullException("sequenceId");
@@ -6897,8 +6990,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Sequences/Delete/{sequenceId}"
-                    urlBuilder_.Append("api/Master/v1/Sequences/Delete/");
+                    // Operation Path: "api/Master/v1/Sequences/{sequenceId}"
+                    urlBuilder_.Append("api/Master/v1/Sequences/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sequenceId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -7709,14 +7802,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1CulturesDeleteAsync(string cultureId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1CulturesAsync(string cultureId)
         {
-            return DeleteApiMasterV1CulturesDeleteAsync(cultureId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1CulturesAsync(cultureId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1CulturesDeleteAsync(string cultureId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1CulturesAsync(string cultureId, System.Threading.CancellationToken cancellationToken)
         {
             if (cultureId == null)
                 throw new System.ArgumentNullException("cultureId");
@@ -7731,8 +7824,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Cultures/Delete/{cultureId}"
-                    urlBuilder_.Append("api/Master/v1/Cultures/Delete/");
+                    // Operation Path: "api/Master/v1/Cultures/{cultureId}"
+                    urlBuilder_.Append("api/Master/v1/Cultures/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cultureId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -8267,14 +8360,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1LanguagesDeleteAsync(string languageId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1LanguagesAsync(string languageId)
         {
-            return DeleteApiMasterV1LanguagesDeleteAsync(languageId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1LanguagesAsync(languageId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1LanguagesDeleteAsync(string languageId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1LanguagesAsync(string languageId, System.Threading.CancellationToken cancellationToken)
         {
             if (languageId == null)
                 throw new System.ArgumentNullException("languageId");
@@ -8289,8 +8382,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Languages/Delete/{languageId}"
-                    urlBuilder_.Append("api/Master/v1/Languages/Delete/");
+                    // Operation Path: "api/Master/v1/Languages/{languageId}"
+                    urlBuilder_.Append("api/Master/v1/Languages/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(languageId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -8825,14 +8918,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1CountriesDeleteAsync(string countryId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1CountriesAsync(string countryId)
         {
-            return DeleteApiMasterV1CountriesDeleteAsync(countryId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1CountriesAsync(countryId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1CountriesDeleteAsync(string countryId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1CountriesAsync(string countryId, System.Threading.CancellationToken cancellationToken)
         {
             if (countryId == null)
                 throw new System.ArgumentNullException("countryId");
@@ -8847,8 +8940,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/Countries/Delete/{countryId}"
-                    urlBuilder_.Append("api/Master/v1/Countries/Delete/");
+                    // Operation Path: "api/Master/v1/Countries/{countryId}"
+                    urlBuilder_.Append("api/Master/v1/Countries/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(countryId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -9383,14 +9476,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeGroupsDeleteAsync(long generalTypeGroupId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeGroupsAsync(long generalTypeGroupId)
         {
-            return DeleteApiMasterV1GeneralTypeGroupsDeleteAsync(generalTypeGroupId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1GeneralTypeGroupsAsync(generalTypeGroupId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeGroupsDeleteAsync(long generalTypeGroupId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeGroupsAsync(long generalTypeGroupId, System.Threading.CancellationToken cancellationToken)
         {
             if (generalTypeGroupId == null)
                 throw new System.ArgumentNullException("generalTypeGroupId");
@@ -9405,8 +9498,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/GeneralTypeGroups/Delete/{generalTypeGroupId}"
-                    urlBuilder_.Append("api/Master/v1/GeneralTypeGroups/Delete/");
+                    // Operation Path: "api/Master/v1/GeneralTypeGroups/{generalTypeGroupId}"
+                    urlBuilder_.Append("api/Master/v1/GeneralTypeGroups/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(generalTypeGroupId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -10041,14 +10134,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeItemsDeleteAsync(long generalTypeItemId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeItemsAsync(long generalTypeItemId)
         {
-            return DeleteApiMasterV1GeneralTypeItemsDeleteAsync(generalTypeItemId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1GeneralTypeItemsAsync(generalTypeItemId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeItemsDeleteAsync(long generalTypeItemId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1GeneralTypeItemsAsync(long generalTypeItemId, System.Threading.CancellationToken cancellationToken)
         {
             if (generalTypeItemId == null)
                 throw new System.ArgumentNullException("generalTypeItemId");
@@ -10063,8 +10156,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/GeneralTypeItems/Delete/{generalTypeItemId}"
-                    urlBuilder_.Append("api/Master/v1/GeneralTypeItems/Delete/");
+                    // Operation Path: "api/Master/v1/GeneralTypeItems/{generalTypeItemId}"
+                    urlBuilder_.Append("api/Master/v1/GeneralTypeItems/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(generalTypeItemId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -10599,14 +10692,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMasterV1NotificationTemplatesDeleteAsync(long notificationTemplateId)
+        public virtual System.Threading.Tasks.Task DeleteApiMasterV1NotificationTemplatesAsync(long notificationTemplateId)
         {
-            return DeleteApiMasterV1NotificationTemplatesDeleteAsync(notificationTemplateId, System.Threading.CancellationToken.None);
+            return DeleteApiMasterV1NotificationTemplatesAsync(notificationTemplateId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1NotificationTemplatesDeleteAsync(long notificationTemplateId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMasterV1NotificationTemplatesAsync(long notificationTemplateId, System.Threading.CancellationToken cancellationToken)
         {
             if (notificationTemplateId == null)
                 throw new System.ArgumentNullException("notificationTemplateId");
@@ -10621,8 +10714,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Master/v1/NotificationTemplates/Delete/{notificationTemplateId}"
-                    urlBuilder_.Append("api/Master/v1/NotificationTemplates/Delete/");
+                    // Operation Path: "api/Master/v1/NotificationTemplates/{notificationTemplateId}"
+                    urlBuilder_.Append("api/Master/v1/NotificationTemplates/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(notificationTemplateId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -11260,6 +11353,86 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task DeleteApiLocalizationsV1Async(string messageKey)
+        {
+            return DeleteApiLocalizationsV1Async(messageKey, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task DeleteApiLocalizationsV1Async(string messageKey, System.Threading.CancellationToken cancellationToken)
+        {
+            if (messageKey == null)
+                throw new System.ArgumentNullException("messageKey");
+
+            var client_ = new System.Net.Http.HttpClient();
+            var disposeClient_ = true;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "api/Localizations/v1/{messageKey}"
+                    urlBuilder_.Append("api/Localizations/v1/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(messageKey, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CultureTranslationDTO>> GetApiLocalizationsV1All2Async(string messageKey)
         {
             return GetApiLocalizationsV1All2Async(messageKey, System.Threading.CancellationToken.None);
@@ -11460,88 +11633,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiLocalizationsV1DeleteAsync(string translationKey)
-        {
-            return DeleteApiLocalizationsV1DeleteAsync(translationKey, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiLocalizationsV1DeleteAsync(string translationKey, System.Threading.CancellationToken cancellationToken)
-        {
-            if (translationKey == null)
-                throw new System.ArgumentNullException("translationKey");
-
-            var client_ = new System.Net.Http.HttpClient();
-            var disposeClient_ = true;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Localizations/v1/Delete"
-                    urlBuilder_.Append("api/Localizations/v1/Delete");
-                    urlBuilder_.Append('?');
-                    urlBuilder_.Append(System.Uri.EscapeDataString("translationKey")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(translationKey, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    urlBuilder_.Length--;
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.ObjectModel.ObservableCollection<CacheSummaryDTO>> GetApiCacheV1Async()
         {
             return GetApiCacheV1Async(System.Threading.CancellationToken.None);
@@ -11694,14 +11785,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> DeleteApiCacheV1DeleteAsync(string cacheKey)
+        public virtual System.Threading.Tasks.Task<bool> DeleteApiCacheV1Async(string cacheKey)
         {
-            return DeleteApiCacheV1DeleteAsync(cacheKey, System.Threading.CancellationToken.None);
+            return DeleteApiCacheV1Async(cacheKey, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> DeleteApiCacheV1DeleteAsync(string cacheKey, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> DeleteApiCacheV1Async(string cacheKey, System.Threading.CancellationToken cancellationToken)
         {
             if (cacheKey == null)
                 throw new System.ArgumentNullException("cacheKey");
@@ -11717,8 +11808,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Cache/v1/delete/{cacheKey}"
-                    urlBuilder_.Append("api/Cache/v1/delete/");
+                    // Operation Path: "api/Cache/v1/{cacheKey}"
+                    urlBuilder_.Append("api/Cache/v1/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(cacheKey, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -12330,14 +12421,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiMediaV1PicturesDeleteAsync(long pictureId)
+        public virtual System.Threading.Tasks.Task DeleteApiMediaV1PicturesAsync(long pictureId)
         {
-            return DeleteApiMediaV1PicturesDeleteAsync(pictureId, System.Threading.CancellationToken.None);
+            return DeleteApiMediaV1PicturesAsync(pictureId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiMediaV1PicturesDeleteAsync(long pictureId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiMediaV1PicturesAsync(long pictureId, System.Threading.CancellationToken cancellationToken)
         {
             if (pictureId == null)
                 throw new System.ArgumentNullException("pictureId");
@@ -12352,8 +12443,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Media/v1/pictures/Delete/{pictureId}"
-                    urlBuilder_.Append("api/Media/v1/pictures/Delete/");
+                    // Operation Path: "api/Media/v1/pictures/{pictureId}"
+                    urlBuilder_.Append("api/Media/v1/pictures/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(pictureId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -12900,14 +12991,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiAuditoriesV1CompanyEntityAuditsDeleteAsync(long companyEntityAuditId)
+        public virtual System.Threading.Tasks.Task DeleteApiAuditoriesV1CompanyEntityAuditsAsync(long companyEntityAuditId)
         {
-            return DeleteApiAuditoriesV1CompanyEntityAuditsDeleteAsync(companyEntityAuditId, System.Threading.CancellationToken.None);
+            return DeleteApiAuditoriesV1CompanyEntityAuditsAsync(companyEntityAuditId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiAuditoriesV1CompanyEntityAuditsDeleteAsync(long companyEntityAuditId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiAuditoriesV1CompanyEntityAuditsAsync(long companyEntityAuditId, System.Threading.CancellationToken cancellationToken)
         {
             if (companyEntityAuditId == null)
                 throw new System.ArgumentNullException("companyEntityAuditId");
@@ -12922,8 +13013,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Auditories/v1/CompanyEntityAudits/Delete/{companyEntityAuditId}"
-                    urlBuilder_.Append("api/Auditories/v1/CompanyEntityAudits/Delete/");
+                    // Operation Path: "api/Auditories/v1/CompanyEntityAudits/{companyEntityAuditId}"
+                    urlBuilder_.Append("api/Auditories/v1/CompanyEntityAudits/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(companyEntityAuditId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -13654,14 +13745,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task DeleteApiAuditoriesV1EntitiesDeleteAsync(long entityId)
+        public virtual System.Threading.Tasks.Task DeleteApiAuditoriesV1EntitiesAsync(long entityId)
         {
-            return DeleteApiAuditoriesV1EntitiesDeleteAsync(entityId, System.Threading.CancellationToken.None);
+            return DeleteApiAuditoriesV1EntitiesAsync(entityId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task DeleteApiAuditoriesV1EntitiesDeleteAsync(long entityId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task DeleteApiAuditoriesV1EntitiesAsync(long entityId, System.Threading.CancellationToken cancellationToken)
         {
             if (entityId == null)
                 throw new System.ArgumentNullException("entityId");
@@ -13676,8 +13767,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "api/Auditories/v1/Entities/Delete/{entityId}"
-                    urlBuilder_.Append("api/Auditories/v1/Entities/Delete/");
+                    // Operation Path: "api/Auditories/v1/Entities/{entityId}"
+                    urlBuilder_.Append("api/Auditories/v1/Entities/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(entityId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -14487,19 +14578,19 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private System.Guid _activationId;
         private bool _isLocked;
         private System.DateTime? _lockedDate;
-        private System.DateTime? _creationDate;
-        private long? _createdByUserFk;
-        private System.DateTime? _lastUpdateDate;
-        private long? _updatedByUserFk;
         private byte[] _avatar;
         private bool _isActive;
+        private System.DateTime _createdDate;
+        private long _createdByUserFk;
+        private System.DateTime? _lastUpdatedDate;
+        private long? _lastUpdatedByUserFk;
         private System.Collections.ObjectModel.ObservableCollection<RoleDTO> _roles;
         private string _companyNameTranslationKey;
         private object _companyClient;
         private string _newPassword1;
         private string _newPassword2;
 
-        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Always)]
         public long CompanyFk    {
             get { return _companyFk; }
             set
@@ -14512,7 +14603,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(30)]
         public string UserName    {
             get { return _userName; }
             set
@@ -14525,7 +14618,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -14538,7 +14631,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Name    {
             get { return _name; }
             set
@@ -14551,7 +14646,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string LastName    {
             get { return _lastName; }
             set
@@ -14564,7 +14661,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Email    {
             get { return _email; }
             set
@@ -14603,7 +14702,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("requirePasswordChange", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("requirePasswordChange", Required = Newtonsoft.Json.Required.Always)]
         public bool RequirePasswordChange    {
             get { return _requirePasswordChange; }
             set
@@ -14668,7 +14767,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isLocked", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isLocked", Required = Newtonsoft.Json.Required.Always)]
         public bool IsLocked    {
             get { return _isLocked; }
             set
@@ -14694,58 +14793,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? CreationDate    {
-            get { return _creationDate; }
-            set
-            {
-                if (_creationDate != value)
-                {
-                    _creationDate = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("createdByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long? CreatedByUserFk    {
-            get { return _createdByUserFk; }
-            set
-            {
-                if (_createdByUserFk != value)
-                {
-                    _createdByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? LastUpdateDate    {
-            get { return _lastUpdateDate; }
-            set
-            {
-                if (_lastUpdateDate != value)
-                {
-                    _lastUpdateDate = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("updatedByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long? UpdatedByUserFk    {
-            get { return _updatedByUserFk; }
-            set
-            {
-                if (_updatedByUserFk != value)
-                {
-                    _updatedByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [Newtonsoft.Json.JsonProperty("avatar", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public byte[] Avatar    {
             get { return _avatar; }
@@ -14759,7 +14806,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
         public bool IsActive    {
             get { return _isActive; }
             set
@@ -14767,6 +14814,58 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_isActive != value)
                 {
                     _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("createdDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime CreatedDate    {
+            get { return _createdDate; }
+            set
+            {
+                if (_createdDate != value)
+                {
+                    _createdDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("createdByUserFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long CreatedByUserFk    {
+            get { return _createdByUserFk; }
+            set
+            {
+                if (_createdByUserFk != value)
+                {
+                    _createdByUserFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("lastUpdatedDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? LastUpdatedDate    {
+            get { return _lastUpdatedDate; }
+            set
+            {
+                if (_lastUpdatedDate != value)
+                {
+                    _lastUpdatedDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("lastUpdatedByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? LastUpdatedByUserFk    {
+            get { return _lastUpdatedByUserFk; }
+            set
+            {
+                if (_lastUpdatedByUserFk != value)
+                {
+                    _lastUpdatedByUserFk = value;
                     RaisePropertyChanged();
                 }
             }
@@ -14866,18 +14965,21 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _applicationFk;
         private long _id;
         private string _nameTranslationKey;
+        private string _descriptionTranslationKey;
+        private bool _isActive;
         private System.DateTime _creationDate;
         private long _createdByUserFk;
-        private bool _isActive;
         private System.DateTime? _lastUpdateDate;
         private long? _lastUpdateByUserFk;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
         private System.Collections.ObjectModel.ObservableCollection<ModuleDTO> _modules;
         private string _companyNameTranslationKey;
         private string _applicationNameTranslationKey;
         private long _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Always)]
         public long CompanyFk    {
             get { return _companyFk; }
             set
@@ -14890,7 +14992,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -14903,7 +15005,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -14917,6 +15019,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -14924,6 +15027,33 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_nameTranslationKey != value)
                 {
                     _nameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationKey    {
+            get { return _descriptionTranslationKey; }
+            set
+            {
+                if (_descriptionTranslationKey != value)
+                {
+                    _descriptionTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
                     RaisePropertyChanged();
                 }
             }
@@ -14955,19 +15085,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
-            set
-            {
-                if (_isActive != value)
-                {
-                    _isActive = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? LastUpdateDate    {
             get { return _lastUpdateDate; }
@@ -14989,6 +15106,36 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_lastUpdateByUserFk != value)
                 {
                     _lastUpdateByUserFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
+            set
+            {
+                if (_nameTranslationValue != value)
+                {
+                    _nameTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
+            set
+            {
+                if (_descriptionTranslationValue != value)
+                {
+                    _descriptionTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -15086,19 +15233,21 @@ namespace Vito.Transverse.Identity.Presentation.Api
     {
         private long _applicationFk;
         private long _id;
+        private string _iconName;
         private string _nameTranslationKey;
+        private string _descriptionTranslationKey;
         private long? _positionIndex;
         private bool _isActive;
         private bool _isVisible;
         private bool _isApi;
-        private string _iconName;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
         private System.Collections.ObjectModel.ObservableCollection<EndpointDTO> _endpoints;
         private string _applicationNameTranslationKey;
-        private string _descriptionTranslationKey;
         private long _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -15111,7 +15260,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -15124,7 +15273,22 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("iconName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(40)]
+        public string IconName    {
+            get { return _iconName; }
+            set
+            {
+                if (_iconName != value)
+                {
+                    _iconName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -15132,6 +15296,20 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_nameTranslationKey != value)
                 {
                     _nameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationKey    {
+            get { return _descriptionTranslationKey; }
+            set
+            {
+                if (_descriptionTranslationKey != value)
+                {
+                    _descriptionTranslationKey = value;
                     RaisePropertyChanged();
                 }
             }
@@ -15150,7 +15328,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
         public bool IsActive    {
             get { return _isActive; }
             set
@@ -15163,7 +15341,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isVisible", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isVisible", Required = Newtonsoft.Json.Required.Always)]
         public bool IsVisible    {
             get { return _isVisible; }
             set
@@ -15176,7 +15354,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isApi", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isApi", Required = Newtonsoft.Json.Required.Always)]
         public bool IsApi    {
             get { return _isApi; }
             set
@@ -15189,14 +15367,31 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("iconName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string IconName    {
-            get { return _iconName; }
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
             set
             {
-                if (_iconName != value)
+                if (_nameTranslationValue != value)
                 {
-                    _iconName = value;
+                    _nameTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
+            set
+            {
+                if (_descriptionTranslationValue != value)
+                {
+                    _descriptionTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -15223,19 +15418,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_applicationNameTranslationKey != value)
                 {
                     _applicationNameTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string DescriptionTranslationKey    {
-            get { return _descriptionTranslationKey; }
-            set
-            {
-                if (_descriptionTranslationKey != value)
-                {
-                    _descriptionTranslationKey = value;
                     RaisePropertyChanged();
                 }
             }
@@ -15296,20 +15478,22 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _moduleFk;
         private long _id;
         private long? _positionIndex;
+        private string _iconName;
         private string _nameTranslationKey;
+        private string _descriptionTranslationKey;
         private string _endpointUrl;
         private string _method;
-        private string _iconName;
         private bool _isActive;
         private bool _isVisible;
         private bool _isApi;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
         private System.Collections.ObjectModel.ObservableCollection<ComponentDTO> _components;
         private string _applicationNameTranslationKey;
-        private string _descriptionTranslationKey;
-        private long _applicationOwnerId;
+        private long? _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -15322,7 +15506,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("moduleFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("moduleFk", Required = Newtonsoft.Json.Required.Always)]
         public long ModuleFk    {
             get { return _moduleFk; }
             set
@@ -15335,7 +15519,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -15361,46 +15545,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string NameTranslationKey    {
-            get { return _nameTranslationKey; }
-            set
-            {
-                if (_nameTranslationKey != value)
-                {
-                    _nameTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("endpointUrl", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string EndpointUrl    {
-            get { return _endpointUrl; }
-            set
-            {
-                if (_endpointUrl != value)
-                {
-                    _endpointUrl = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("method", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Method    {
-            get { return _method; }
-            set
-            {
-                if (_method != value)
-                {
-                    _method = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("iconName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("iconName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(40)]
         public string IconName    {
             get { return _iconName; }
             set
@@ -15413,7 +15559,64 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationKey    {
+            get { return _nameTranslationKey; }
+            set
+            {
+                if (_nameTranslationKey != value)
+                {
+                    _nameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationKey    {
+            get { return _descriptionTranslationKey; }
+            set
+            {
+                if (_descriptionTranslationKey != value)
+                {
+                    _descriptionTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("endpointUrl", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
+        public string EndpointUrl    {
+            get { return _endpointUrl; }
+            set
+            {
+                if (_endpointUrl != value)
+                {
+                    _endpointUrl = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("method", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(10)]
+        public string Method    {
+            get { return _method; }
+            set
+            {
+                if (_method != value)
+                {
+                    _method = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
         public bool IsActive    {
             get { return _isActive; }
             set
@@ -15426,7 +15629,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isVisible", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isVisible", Required = Newtonsoft.Json.Required.Always)]
         public bool IsVisible    {
             get { return _isVisible; }
             set
@@ -15439,7 +15642,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isApi", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isApi", Required = Newtonsoft.Json.Required.Always)]
         public bool IsApi    {
             get { return _isApi; }
             set
@@ -15447,6 +15650,36 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_isApi != value)
                 {
                     _isApi = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
+            set
+            {
+                if (_nameTranslationValue != value)
+                {
+                    _nameTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
+            set
+            {
+                if (_descriptionTranslationValue != value)
+                {
+                    _descriptionTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -15478,21 +15711,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string DescriptionTranslationKey    {
-            get { return _descriptionTranslationKey; }
-            set
-            {
-                if (_descriptionTranslationKey != value)
-                {
-                    _descriptionTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("applicationOwnerId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long ApplicationOwnerId    {
+        [Newtonsoft.Json.JsonProperty("applicationOwnerId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? ApplicationOwnerId    {
             get { return _applicationOwnerId; }
             set
             {
@@ -15546,17 +15766,19 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _endpointFk;
         private long _id;
         private string _nameTranslationKey;
+        private string _descriptionTranslationKey;
         private string _objectId;
         private string _objectName;
         private string _objectPropertyName;
         private string _defaultPropertyValue;
         private long? _positionIndex;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
         private string _applicationNameTranslationKey;
-        private string _descriptionTranslationKey;
         private long _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -15569,7 +15791,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("endpointFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("endpointFk", Required = Newtonsoft.Json.Required.Always)]
         public long EndpointFk    {
             get { return _endpointFk; }
             set
@@ -15582,7 +15804,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -15596,6 +15818,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -15608,7 +15831,22 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationKey    {
+            get { return _descriptionTranslationKey; }
+            set
+            {
+                if (_descriptionTranslationKey != value)
+                {
+                    _descriptionTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         [Newtonsoft.Json.JsonProperty("objectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string ObjectId    {
             get { return _objectId; }
             set
@@ -15622,6 +15860,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("objectName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string ObjectName    {
             get { return _objectName; }
             set
@@ -15634,7 +15873,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("objectPropertyName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("objectPropertyName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string ObjectPropertyName    {
             get { return _objectPropertyName; }
             set
@@ -15647,7 +15888,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("defaultPropertyValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("defaultPropertyValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string DefaultPropertyValue    {
             get { return _defaultPropertyValue; }
             set
@@ -15673,6 +15916,36 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
+            set
+            {
+                if (_nameTranslationValue != value)
+                {
+                    _nameTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
+            set
+            {
+                if (_descriptionTranslationValue != value)
+                {
+                    _descriptionTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         [Newtonsoft.Json.JsonProperty("applicationNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ApplicationNameTranslationKey    {
             get { return _applicationNameTranslationKey; }
@@ -15681,19 +15954,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_applicationNameTranslationKey != value)
                 {
                     _applicationNameTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string DescriptionTranslationKey    {
-            get { return _descriptionTranslationKey; }
-            set
-            {
-                if (_descriptionTranslationKey != value)
-                {
-                    _descriptionTranslationKey = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16193,9 +16453,11 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _applicationFk;
         private long _userFk;
         private long _roleFk;
+        private bool _isActive;
         private System.DateTime _createdDate;
         private long _createdByUserFk;
-        private bool _isActive;
+        private System.DateTime? _lastUpdateDate;
+        private long? _lastUpdateByUserFk;
         private string _userName;
         private string _applicationNameTranslationKey;
         private string _roleNameTranslationKey;
@@ -16206,7 +16468,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Always)]
         public long CompanyFk    {
             get { return _companyFk; }
             set
@@ -16219,7 +16481,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -16232,7 +16494,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("userFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("userFk", Required = Newtonsoft.Json.Required.Always)]
         public long UserFk    {
             get { return _userFk; }
             set
@@ -16245,7 +16507,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("roleFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("roleFk", Required = Newtonsoft.Json.Required.Always)]
         public long RoleFk    {
             get { return _roleFk; }
             set
@@ -16253,6 +16515,19 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_roleFk != value)
                 {
                     _roleFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16284,14 +16559,27 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
+        [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? LastUpdateDate    {
+            get { return _lastUpdateDate; }
             set
             {
-                if (_isActive != value)
+                if (_lastUpdateDate != value)
                 {
-                    _isActive = value;
+                    _lastUpdateDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("lastUpdateByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? LastUpdateByUserFk    {
+            get { return _lastUpdateByUserFk; }
+            set
+            {
+                if (_lastUpdateByUserFk != value)
+                {
+                    _lastUpdateByUserFk = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16441,22 +16729,24 @@ namespace Vito.Transverse.Identity.Presentation.Api
     {
         private long _id;
         private string _nameTranslationKey;
+        private string _descriptionTranslationKey;
         private System.Guid _applicationClient;
         private System.Guid _applicationSecret;
+        private byte[] _avatar;
+        private bool _isActive;
+        private long _ownerFk;
+        private long _applicationLicenseTypeFk;
         private System.DateTime _creationDate;
         private long _createdByUserFk;
-        private byte[] _avatar;
         private System.DateTime? _lastUpdateDate;
         private long? _lastUpdateByUserFk;
-        private bool _isActive;
-        private long _companyId;
-        private string _companyNameTranslationKey;
-        private string _descriptionTranslationKey;
-        private long _applicationOwnerId;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
+        private long? _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
         private string _applicationOwnerDescriptionTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -16470,6 +16760,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -16477,6 +16768,20 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_nameTranslationKey != value)
                 {
                     _nameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationKey    {
+            get { return _descriptionTranslationKey; }
+            set
+            {
+                if (_descriptionTranslationKey != value)
+                {
+                    _descriptionTranslationKey = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16508,6 +16813,58 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("avatar", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public byte[] Avatar    {
+            get { return _avatar; }
+            set
+            {
+                if (_avatar != value)
+                {
+                    _avatar = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("ownerFk", Required = Newtonsoft.Json.Required.Always)]
+        public long OwnerFk    {
+            get { return _ownerFk; }
+            set
+            {
+                if (_ownerFk != value)
+                {
+                    _ownerFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("applicationLicenseTypeFk", Required = Newtonsoft.Json.Required.Always)]
+        public long ApplicationLicenseTypeFk    {
+            get { return _applicationLicenseTypeFk; }
+            set
+            {
+                if (_applicationLicenseTypeFk != value)
+                {
+                    _applicationLicenseTypeFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime CreationDate    {
             get { return _creationDate; }
@@ -16529,19 +16886,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_createdByUserFk != value)
                 {
                     _createdByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("avatar", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public byte[] Avatar    {
-            get { return _avatar; }
-            set
-            {
-                if (_avatar != value)
-                {
-                    _avatar = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16573,60 +16917,38 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
             set
             {
-                if (_isActive != value)
+                if (_nameTranslationValue != value)
                 {
-                    _isActive = value;
+                    _nameTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long CompanyId    {
-            get { return _companyId; }
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
             set
             {
-                if (_companyId != value)
+                if (_descriptionTranslationValue != value)
                 {
-                    _companyId = value;
+                    _descriptionTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("companyNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string CompanyNameTranslationKey    {
-            get { return _companyNameTranslationKey; }
-            set
-            {
-                if (_companyNameTranslationKey != value)
-                {
-                    _companyNameTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string DescriptionTranslationKey    {
-            get { return _descriptionTranslationKey; }
-            set
-            {
-                if (_descriptionTranslationKey != value)
-                {
-                    _descriptionTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("applicationOwnerId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long ApplicationOwnerId    {
+        [Newtonsoft.Json.JsonProperty("applicationOwnerId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? ApplicationOwnerId    {
             get { return _applicationOwnerId; }
             set
             {
@@ -16694,21 +17016,23 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _descriptionTranslationKey;
         private System.Guid _companyClient;
         private System.Guid _companySecret;
-        private System.DateTime _creationDate;
-        private long _createdByUserFk;
         private string _subdomain;
         private string _email;
         private string _defaultCultureFk;
         private string _countryFk;
         private bool _isSystemCompany;
         private byte[] _avatar;
+        private bool _isActive;
+        private System.DateTime _creationDate;
+        private long _createdByUserFk;
         private System.DateTime? _lastUpdateDate;
         private long? _lastUpdateByUserFk;
-        private bool _isActive;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
         private string _countryNameTranslationKey;
         private string _languageNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -16722,6 +17046,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -16735,6 +17060,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string DescriptionTranslationKey    {
             get { return _descriptionTranslationKey; }
             set
@@ -16773,6 +17099,105 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("subdomain", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(150)]
+        public string Subdomain    {
+            get { return _subdomain; }
+            set
+            {
+                if (_subdomain != value)
+                {
+                    _subdomain = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(150)]
+        public string Email    {
+            get { return _email; }
+            set
+            {
+                if (_email != value)
+                {
+                    _email = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("defaultCultureFk", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(5)]
+        public string DefaultCultureFk    {
+            get { return _defaultCultureFk; }
+            set
+            {
+                if (_defaultCultureFk != value)
+                {
+                    _defaultCultureFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("countryFk", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(2)]
+        public string CountryFk    {
+            get { return _countryFk; }
+            set
+            {
+                if (_countryFk != value)
+                {
+                    _countryFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSystemCompany", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsSystemCompany    {
+            get { return _isSystemCompany; }
+            set
+            {
+                if (_isSystemCompany != value)
+                {
+                    _isSystemCompany = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("avatar", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public byte[] Avatar    {
+            get { return _avatar; }
+            set
+            {
+                if (_avatar != value)
+                {
+                    _avatar = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime CreationDate    {
             get { return _creationDate; }
@@ -16794,84 +17219,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_createdByUserFk != value)
                 {
                     _createdByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("subdomain", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Subdomain    {
-            get { return _subdomain; }
-            set
-            {
-                if (_subdomain != value)
-                {
-                    _subdomain = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Email    {
-            get { return _email; }
-            set
-            {
-                if (_email != value)
-                {
-                    _email = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("defaultCultureFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string DefaultCultureFk    {
-            get { return _defaultCultureFk; }
-            set
-            {
-                if (_defaultCultureFk != value)
-                {
-                    _defaultCultureFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("countryFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string CountryFk    {
-            get { return _countryFk; }
-            set
-            {
-                if (_countryFk != value)
-                {
-                    _countryFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("isSystemCompany", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsSystemCompany    {
-            get { return _isSystemCompany; }
-            set
-            {
-                if (_isSystemCompany != value)
-                {
-                    _isSystemCompany = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("avatar", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public byte[] Avatar    {
-            get { return _avatar; }
-            set
-            {
-                if (_avatar != value)
-                {
-                    _avatar = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16903,14 +17250,31 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
             set
             {
-                if (_isActive != value)
+                if (_nameTranslationValue != value)
                 {
-                    _isActive = value;
+                    _nameTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
+            set
+            {
+                if (_descriptionTranslationValue != value)
+                {
+                    _descriptionTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -16971,13 +17335,13 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _companyFk;
         private long _applicationFk;
         private long _membershipTypeFk;
-        private System.DateTime _creationDate;
-        private long _createdByUserFk;
         private System.DateTime _startDate;
         private System.DateTime? _endDate;
+        private bool _isActive;
+        private System.DateTime _creationDate;
+        private long _createdByUserFk;
         private System.DateTime? _lastUpdateDate;
         private long? _lastUpdateByUserFk;
-        private bool _isActive;
         private string _membershipTypeNameTranslationKey;
         private string _applicationNameTranslationKey;
         private string _companyNameTranslationKey;
@@ -16985,7 +17349,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _applicationOwnerId;
         private string _applicationOwnerNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -16998,7 +17362,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Always)]
         public long CompanyFk    {
             get { return _companyFk; }
             set
@@ -17011,7 +17375,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -17024,7 +17388,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("membershipTypeFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("membershipTypeFk", Required = Newtonsoft.Json.Required.Always)]
         public long MembershipTypeFk    {
             get { return _membershipTypeFk; }
             set
@@ -17032,6 +17396,46 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_membershipTypeFk != value)
                 {
                     _membershipTypeFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.DateTime StartDate    {
+            get { return _startDate; }
+            set
+            {
+                if (_startDate != value)
+                {
+                    _startDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("endDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? EndDate    {
+            get { return _endDate; }
+            set
+            {
+                if (_endDate != value)
+                {
+                    _endDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17063,32 +17467,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime StartDate    {
-            get { return _startDate; }
-            set
-            {
-                if (_startDate != value)
-                {
-                    _startDate = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("endDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? EndDate    {
-            get { return _endDate; }
-            set
-            {
-                if (_endDate != value)
-                {
-                    _endDate = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? LastUpdateDate    {
             get { return _lastUpdateDate; }
@@ -17110,19 +17488,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_lastUpdateByUserFk != value)
                 {
                     _lastUpdateByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
-            set
-            {
-                if (_isActive != value)
-                {
-                    _isActive = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17234,15 +17599,17 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _id;
         private string _nameTranslationKey;
         private string _descriptionTranslationKey;
-        private System.DateTime _creationDate;
-        private long _createdByUserFk;
         private System.DateTime _startDate;
         private System.DateTime? _endDate;
+        private bool _isActive;
+        private System.DateTime _creationDate;
+        private long _createdByUserFk;
         private System.DateTime? _lastUpdateDate;
         private long? _lastUpdateByUserFk;
-        private bool _isActive;
+        private string _nameTranslationValue;
+        private string _descriptionTranslationValue;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -17256,6 +17623,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -17269,6 +17637,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("descriptionTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string DescriptionTranslationKey    {
             get { return _descriptionTranslationKey; }
             set
@@ -17276,6 +17645,46 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_descriptionTranslationKey != value)
                 {
                     _descriptionTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.DateTime StartDate    {
+            get { return _startDate; }
+            set
+            {
+                if (_startDate != value)
+                {
+                    _startDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("endDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? EndDate    {
+            get { return _endDate; }
+            set
+            {
+                if (_endDate != value)
+                {
+                    _endDate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17307,32 +17716,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime StartDate    {
-            get { return _startDate; }
-            set
-            {
-                if (_startDate != value)
-                {
-                    _startDate = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("endDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? EndDate    {
-            get { return _endDate; }
-            set
-            {
-                if (_endDate != value)
-                {
-                    _endDate = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? LastUpdateDate    {
             get { return _lastUpdateDate; }
@@ -17359,14 +17742,31 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
             set
             {
-                if (_isActive != value)
+                if (_nameTranslationValue != value)
                 {
-                    _isActive = value;
+                    _nameTranslationValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("descriptionTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string DescriptionTranslationValue    {
+            get { return _descriptionTranslationValue; }
+            set
+            {
+                if (_descriptionTranslationValue != value)
+                {
+                    _descriptionTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17397,16 +17797,55 @@ namespace Vito.Transverse.Identity.Presentation.Api
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SequencesDTO : System.ComponentModel.INotifyPropertyChanged
     {
+        private long? _companyFk;
+        private long? _applicationFk;
+        private long _sequenceTypeFk;
         private long _id;
-        private long _companyId;
-        private string _companyNameTranslationKey;
-        private long _applicationId;
-        private string _applicationNameTranslationKey;
-        private long _sequenceTypeId;
-        private string _sequenceTypeNameTranslationKey;
         private string _sequenceNameFormat;
         private long _sequenceIndex;
         private string _textFormat;
+        private string _companyNameTranslationKey;
+        private string _applicationNameTranslationKey;
+        private string _sequenceTypeNameTranslationKey;
+
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? CompanyFk    {
+            get { return _companyFk; }
+            set
+            {
+                if (_companyFk != value)
+                {
+                    _companyFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? ApplicationFk    {
+            get { return _applicationFk; }
+            set
+            {
+                if (_applicationFk != value)
+                {
+                    _applicationFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("sequenceTypeFk", Required = Newtonsoft.Json.Required.Always)]
+        public long SequenceTypeFk    {
+            get { return _sequenceTypeFk; }
+            set
+            {
+                if (_sequenceTypeFk != value)
+                {
+                    _sequenceTypeFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public long Id    {
@@ -17421,14 +17860,44 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long CompanyId    {
-            get { return _companyId; }
+        [Newtonsoft.Json.JsonProperty("sequenceNameFormat", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
+        public string SequenceNameFormat    {
+            get { return _sequenceNameFormat; }
             set
             {
-                if (_companyId != value)
+                if (_sequenceNameFormat != value)
                 {
-                    _companyId = value;
+                    _sequenceNameFormat = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("sequenceIndex", Required = Newtonsoft.Json.Required.Always)]
+        public long SequenceIndex    {
+            get { return _sequenceIndex; }
+            set
+            {
+                if (_sequenceIndex != value)
+                {
+                    _sequenceIndex = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("textFormat", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(15)]
+        public string TextFormat    {
+            get { return _textFormat; }
+            set
+            {
+                if (_textFormat != value)
+                {
+                    _textFormat = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17447,19 +17916,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("applicationId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long ApplicationId    {
-            get { return _applicationId; }
-            set
-            {
-                if (_applicationId != value)
-                {
-                    _applicationId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [Newtonsoft.Json.JsonProperty("applicationNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ApplicationNameTranslationKey    {
             get { return _applicationNameTranslationKey; }
@@ -17473,19 +17929,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("sequenceTypeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long SequenceTypeId    {
-            get { return _sequenceTypeId; }
-            set
-            {
-                if (_sequenceTypeId != value)
-                {
-                    _sequenceTypeId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [Newtonsoft.Json.JsonProperty("sequenceTypeNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string SequenceTypeNameTranslationKey    {
             get { return _sequenceTypeNameTranslationKey; }
@@ -17494,45 +17937,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_sequenceTypeNameTranslationKey != value)
                 {
                     _sequenceTypeNameTranslationKey = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("sequenceNameFormat", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string SequenceNameFormat    {
-            get { return _sequenceNameFormat; }
-            set
-            {
-                if (_sequenceNameFormat != value)
-                {
-                    _sequenceNameFormat = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("sequenceIndex", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long SequenceIndex    {
-            get { return _sequenceIndex; }
-            set
-            {
-                if (_sequenceIndex != value)
-                {
-                    _sequenceIndex = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("textFormat", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string TextFormat    {
-            get { return _textFormat; }
-            set
-            {
-                if (_textFormat != value)
-                {
-                    _textFormat = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17568,9 +17972,11 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _countryFk;
         private string _languageFk;
         private bool _isEnabled;
-        private string _name;
+        private string _nameTranslationValue;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(5)]
         public string Id    {
             get { return _id; }
             set
@@ -17584,6 +17990,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -17596,7 +18003,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("countryFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("countryFk", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(2)]
         public string CountryFk    {
             get { return _countryFk; }
             set
@@ -17609,7 +18018,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("languageFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("languageFk", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(2)]
         public string LanguageFk    {
             get { return _languageFk; }
             set
@@ -17622,7 +18033,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isEnabled", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isEnabled", Required = Newtonsoft.Json.Required.Always)]
         public bool IsEnabled    {
             get { return _isEnabled; }
             set
@@ -17635,14 +18046,16 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name    {
-            get { return _name; }
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
             set
             {
-                if (_name != value)
+                if (_nameTranslationValue != value)
                 {
-                    _name = value;
+                    _nameTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17675,8 +18088,11 @@ namespace Vito.Transverse.Identity.Presentation.Api
     {
         private string _id;
         private string _nameTranslationKey;
+        private string _nameTranslationValue;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(2)]
         public string Id    {
             get { return _id; }
             set
@@ -17690,6 +18106,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -17697,6 +18114,21 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_nameTranslationKey != value)
                 {
                     _nameTranslationKey = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
+            set
+            {
+                if (_nameTranslationValue != value)
+                {
+                    _nameTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17730,8 +18162,11 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _id;
         private string _nameTranslationKey;
         private int? _utcHoursDifference;
+        private string _nameTranslationValue;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(2)]
         public string Id    {
             get { return _id; }
             set
@@ -17745,6 +18180,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -17765,6 +18201,21 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_utcHoursDifference != value)
                 {
                     _utcHoursDifference = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
+            set
+            {
+                if (_nameTranslationValue != value)
+                {
+                    _nameTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17798,8 +18249,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _id;
         private string _nameTranslationKey;
         private bool _isSystemType;
+        private string _nameTranslationValue;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -17813,6 +18265,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -17825,7 +18278,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isSystemType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isSystemType", Required = Newtonsoft.Json.Required.Always)]
         public bool IsSystemType    {
             get { return _isSystemType; }
             set
@@ -17833,6 +18286,21 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_isSystemType != value)
                 {
                     _isSystemType = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
+            set
+            {
+                if (_nameTranslationValue != value)
+                {
+                    _nameTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -17868,9 +18336,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _id;
         private string _nameTranslationKey;
         private bool _isEnabled;
-        private string _itemGroupNameTranslationKey;
+        private string _nameTranslationValue;
 
-        [Newtonsoft.Json.JsonProperty("listItemGroupFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("listItemGroupFk", Required = Newtonsoft.Json.Required.Always)]
         public long ListItemGroupFk    {
             get { return _listItemGroupFk; }
             set
@@ -17896,7 +18364,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -17910,6 +18378,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("nameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string NameTranslationKey    {
             get { return _nameTranslationKey; }
             set
@@ -17922,7 +18391,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isEnabled", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isEnabled", Required = Newtonsoft.Json.Required.Always)]
         public bool IsEnabled    {
             get { return _isEnabled; }
             set
@@ -17935,14 +18404,16 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("itemGroupNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string ItemGroupNameTranslationKey    {
-            get { return _itemGroupNameTranslationKey; }
+        [Newtonsoft.Json.JsonProperty("nameTranslationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
+        public string NameTranslationValue    {
+            get { return _nameTranslationValue; }
             set
             {
-                if (_itemGroupNameTranslationKey != value)
+                if (_nameTranslationValue != value)
                 {
-                    _itemGroupNameTranslationKey = value;
+                    _nameTranslationValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -18460,7 +18931,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _applicationNameTranslationKey;
         private string _languageNameTranslationKey;
 
-        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("applicationFk", Required = Newtonsoft.Json.Required.Always)]
         public long ApplicationFk    {
             get { return _applicationFk; }
             set
@@ -18473,7 +18944,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("cultureFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("cultureFk", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(5)]
         public string CultureFk    {
             get { return _cultureFk; }
             set
@@ -18486,7 +18959,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("translationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("translationKey", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(85)]
         public string TranslationKey    {
             get { return _translationKey; }
             set
@@ -18499,7 +18974,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("translationValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("translationValue", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string TranslationValue    {
             get { return _translationValue; }
             set
@@ -18688,18 +19165,18 @@ namespace Vito.Transverse.Identity.Presentation.Api
     public partial class PictureDTO : System.ComponentModel.INotifyPropertyChanged
     {
         private long _companyFk;
-        private long _id;
         private string _name;
-        private long _entityFk;
+        private long _id;
+        private long? _entityFk;
         private long _fileTypeFk;
         private long _pictureCategoryFk;
+        private bool _isActive;
+        private byte[] _binaryPicture;
+        private decimal _pictureSize;
         private System.DateTime _creationDate;
         private long _createdByUserFk;
         private System.DateTime? _lastUpdateDate;
         private long? _lastUpdateByUserFk;
-        private bool _isActive;
-        private byte[] _binaryPicture;
-        private decimal _pictureSize;
         private string _pictureCategoryNameTranslationKey;
         private string _fileTypeNameTranslationKey;
         private string _companyNameTranslationKey;
@@ -18707,7 +19184,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _entityName;
         private string _entitySchemaName;
 
-        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Always)]
         public long CompanyFk    {
             get { return _companyFk; }
             set
@@ -18720,20 +19197,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long Id    {
-            get { return _id; }
-            set
-            {
-                if (_id != value)
-                {
-                    _id = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string Name    {
             get { return _name; }
             set
@@ -18746,8 +19212,21 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("entityFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long EntityFk    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
+        public long Id    {
+            get { return _id; }
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("entityFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? EntityFk    {
             get { return _entityFk; }
             set
             {
@@ -18759,7 +19238,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("fileTypeFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("fileTypeFk", Required = Newtonsoft.Json.Required.Always)]
         public long FileTypeFk    {
             get { return _fileTypeFk; }
             set
@@ -18772,7 +19251,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("pictureCategoryFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("pictureCategoryFk", Required = Newtonsoft.Json.Required.Always)]
         public long PictureCategoryFk    {
             get { return _pictureCategoryFk; }
             set
@@ -18780,6 +19259,46 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_pictureCategoryFk != value)
                 {
                     _pictureCategoryFk = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
+            set
+            {
+                if (_isActive != value)
+                {
+                    _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("binaryPicture", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public byte[] BinaryPicture    {
+            get { return _binaryPicture; }
+            set
+            {
+                if (_binaryPicture != value)
+                {
+                    _binaryPicture = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("pictureSize", Required = Newtonsoft.Json.Required.Always)]
+        public decimal PictureSize    {
+            get { return _pictureSize; }
+            set
+            {
+                if (_pictureSize != value)
+                {
+                    _pictureSize = value;
                     RaisePropertyChanged();
                 }
             }
@@ -18832,45 +19351,6 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_lastUpdateByUserFk != value)
                 {
                     _lastUpdateByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
-            set
-            {
-                if (_isActive != value)
-                {
-                    _isActive = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("binaryPicture", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public byte[] BinaryPicture    {
-            get { return _binaryPicture; }
-            set
-            {
-                if (_binaryPicture != value)
-                {
-                    _binaryPicture = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("pictureSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal PictureSize    {
-            get { return _pictureSize; }
-            set
-            {
-                if (_pictureSize != value)
-                {
-                    _pictureSize = value;
                     RaisePropertyChanged();
                 }
             }
@@ -19074,6 +19554,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("auditEntityIndex", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string AuditEntityIndex    {
             get { return _auditEntityIndex; }
             set
@@ -19087,6 +19568,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("hostName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string HostName    {
             get { return _hostName; }
             set
@@ -19100,6 +19582,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("ipAddress", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string IpAddress    {
             get { return _ipAddress; }
             set
@@ -19113,6 +19596,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("deviceType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string DeviceType    {
             get { return _deviceType; }
             set
@@ -19126,6 +19610,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("browser", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Browser    {
             get { return _browser; }
             set
@@ -19139,6 +19624,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("platform", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Platform    {
             get { return _platform; }
             set
@@ -19152,6 +19638,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("engine", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Engine    {
             get { return _engine; }
             set
@@ -19165,6 +19652,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("cultureFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string CultureFk    {
             get { return _cultureFk; }
             set
@@ -19178,6 +19666,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("endPointUrl", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string EndPointUrl    {
             get { return _endPointUrl; }
             set
@@ -19191,6 +19680,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("method", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Method    {
             get { return _method; }
             set
@@ -19204,6 +19694,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("queryString", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string QueryString    {
             get { return _queryString; }
             set
@@ -19217,6 +19708,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("userAgent", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string UserAgent    {
             get { return _userAgent; }
             set
@@ -19230,6 +19722,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("referer", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Referer    {
             get { return _referer; }
             set
@@ -19401,17 +19894,17 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private long _id;
         private long _entityFk;
         private long _auditTypeFk;
-        private System.DateTime _creationDate;
-        private long _createdByUserFk;
-        private System.DateTime? _lastUpdateDate;
-        private long? _updatedByUserFk;
         private bool _isActive;
+        private System.DateTime _createdDate;
+        private long _createdByUserFk;
+        private System.DateTime? _lastUpdatedDate;
+        private long? _lastUpdatedByUserFk;
         private string _companyNameTranslationKey;
         private string _auditTypeNameTranslationKey;
         private string _entitySchemaName;
         private string _entityName;
 
-        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("companyFk", Required = Newtonsoft.Json.Required.Always)]
         public long CompanyFk    {
             get { return _companyFk; }
             set
@@ -19424,7 +19917,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -19437,7 +19930,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("entityFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("entityFk", Required = Newtonsoft.Json.Required.Always)]
         public long EntityFk    {
             get { return _entityFk; }
             set
@@ -19450,7 +19943,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("auditTypeFk", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("auditTypeFk", Required = Newtonsoft.Json.Required.Always)]
         public long AuditTypeFk    {
             get { return _auditTypeFk; }
             set
@@ -19463,14 +19956,27 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime CreationDate    {
-            get { return _creationDate; }
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
+        public bool IsActive    {
+            get { return _isActive; }
             set
             {
-                if (_creationDate != value)
+                if (_isActive != value)
                 {
-                    _creationDate = value;
+                    _isActive = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("createdDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime CreatedDate    {
+            get { return _createdDate; }
+            set
+            {
+                if (_createdDate != value)
+                {
+                    _createdDate = value;
                     RaisePropertyChanged();
                 }
             }
@@ -19489,40 +19995,27 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("lastUpdateDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? LastUpdateDate    {
-            get { return _lastUpdateDate; }
+        [Newtonsoft.Json.JsonProperty("lastUpdatedDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? LastUpdatedDate    {
+            get { return _lastUpdatedDate; }
             set
             {
-                if (_lastUpdateDate != value)
+                if (_lastUpdatedDate != value)
                 {
-                    _lastUpdateDate = value;
+                    _lastUpdatedDate = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("updatedByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long? UpdatedByUserFk    {
-            get { return _updatedByUserFk; }
+        [Newtonsoft.Json.JsonProperty("lastUpdatedByUserFk", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? LastUpdatedByUserFk    {
+            get { return _lastUpdatedByUserFk; }
             set
             {
-                if (_updatedByUserFk != value)
+                if (_lastUpdatedByUserFk != value)
                 {
-                    _updatedByUserFk = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsActive    {
-            get { return _isActive; }
-            set
-            {
-                if (_isActive != value)
-                {
-                    _isActive = value;
+                    _lastUpdatedByUserFk = value;
                     RaisePropertyChanged();
                 }
             }
@@ -19682,6 +20175,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("deviceName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string DeviceName    {
             get { return _deviceName; }
             set
@@ -19695,6 +20189,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("deviceType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string DeviceType    {
             get { return _deviceType; }
             set
@@ -19721,6 +20216,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("ipAddress", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string IpAddress    {
             get { return _ipAddress; }
             set
@@ -19734,6 +20230,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("browser", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Browser    {
             get { return _browser; }
             set
@@ -19747,6 +20244,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("platform", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Platform    {
             get { return _platform; }
             set
@@ -19760,6 +20258,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("engine", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Engine    {
             get { return _engine; }
             set
@@ -19773,6 +20272,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("cultureId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string CultureId    {
             get { return _cultureId; }
             set
@@ -19786,6 +20286,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("endPointUrl", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string EndPointUrl    {
             get { return _endPointUrl; }
             set
@@ -19799,6 +20300,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("method", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Method    {
             get { return _method; }
             set
@@ -19812,6 +20314,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("queryString", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string QueryString    {
             get { return _queryString; }
             set
@@ -19825,6 +20328,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("userAgent", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string UserAgent    {
             get { return _userAgent; }
             set
@@ -19838,6 +20342,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         [Newtonsoft.Json.JsonProperty("referer", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Referer    {
             get { return _referer; }
             set
@@ -20265,7 +20770,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private bool _isActive;
         private bool _isSystemEntity;
 
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
             get { return _id; }
             set
@@ -20278,7 +20783,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("schemaName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("schemaName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string SchemaName    {
             get { return _schemaName; }
             set
@@ -20291,7 +20798,9 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("entityName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("entityName", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.StringLength(75)]
         public string EntityName    {
             get { return _entityName; }
             set
@@ -20304,7 +20813,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isActive", Required = Newtonsoft.Json.Required.Always)]
         public bool IsActive    {
             get { return _isActive; }
             set
@@ -20317,7 +20826,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("isSystemEntity", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("isSystemEntity", Required = Newtonsoft.Json.Required.Always)]
         public bool IsSystemEntity    {
             get { return _isSystemEntity; }
             set

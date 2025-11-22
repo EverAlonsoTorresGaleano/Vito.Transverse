@@ -67,7 +67,7 @@ public static class LocalizationEndpoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Delete", DeleteCultureTranslationAsync)
+        endPointGroupVersioned.MapDelete("{messageKey}", DeleteCultureTranslationAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Culture Translation Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -169,10 +169,10 @@ public static class LocalizationEndpoint
     public static async Task<Results<Ok, UnauthorizedHttpResult, NotFound>> DeleteCultureTranslationAsync(
         HttpRequest request,
         [FromServices] ILocalizationService localizationService,
-        [FromQuery] string translationKey)
+        [FromRoute] string messageKey)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
-        var deleted = await localizationService.DeleteCultureTranslationAsync(deviceInformation.ApplicationId, deviceInformation.CultureId, translationKey, deviceInformation!);
+        var deleted = await localizationService.DeleteCultureTranslationAsync(deviceInformation.ApplicationId, deviceInformation.CultureId, messageKey, deviceInformation!);
         return deleted ? TypedResults.Ok() : TypedResults.NotFound();
     }
 }

@@ -2,15 +2,16 @@
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using Vito.Framework.Common.DTO;
+using Vito.Transverse.Identity.Entities.ModelsDTO;
 using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
 using  Vito.Transverse.Identity.Infrastructure.Extensions;
 using  Vito.Transverse.Identity.Infrastructure.Models;
-using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
 
 namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Media;
 
-public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILogger<MediaRepository> logger) : IMediaRepository
+public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory,ICultureRepository cultureRepository, ILogger<MediaRepository> logger) : IMediaRepository
 {
 
     public async Task<List<PictureDTO>> GetPictureList(Expression<Func<Picture, bool>> filters, DataBaseServiceContext? context = null)
@@ -19,7 +20,7 @@ public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var databaseList = await context.Pictures
+            var databaseList = await context.Pictures.AsNoTracking()
                     .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.EntityFkNavigation)
                 .Include(x => x.FileTypeFkNavigation)
@@ -42,7 +43,7 @@ public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var picture = await context.Pictures
+            var picture = await context.Pictures.AsNoTracking()
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.EntityFkNavigation)
                 .Include(x => x.FileTypeFkNavigation)
@@ -62,7 +63,7 @@ public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
     {
         PictureDTO? savedRecord = null;
         var newRecordDb = newRecord.ToPicture();
-        newRecordDb.CreationDate = DateTime.UtcNow;
+        newRecordDb.CreationDate = cultureRepository.UtcNow().DateTime;
         newRecordDb.CreatedByUserFk = deviceInformation.UserId;
 
         try
@@ -94,7 +95,7 @@ public class MediaRepository(IDataBaseContextFactory dataBaseContextFactory, ILo
             }
 
             var updatedPicture = pictureInfo.ToPicture();
-            updatedPicture.LastUpdateDate = DateTime.UtcNow;
+            updatedPicture.LastUpdateDate = cultureRepository.UtcNow().DateTime;
             updatedPicture.LastUpdateByUserFk = deviceInformation.UserId;
             context.Entry(pictureToUpdate).CurrentValues.SetValues(updatedPicture);
             await context.SaveChangesAsync();

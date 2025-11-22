@@ -7,10 +7,11 @@ using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Application
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
 
 namespace Vito.Transverse.Identity.Application.TransverseServices.Applications;
 
-public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicationsRepository applicationsRepository, IAuditService auditService, ICachingServiceMemoryCache cachingService) : IApplicationsService
+public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicationsRepository applicationsRepository, IAuditService auditService,ICultureRepository cultureRepository, ICachingServiceMemoryCache cachingService) : IApplicationsService
 {
 
     public async Task<List<ApplicationDTO>> GetAllApplicationListAsync()
@@ -173,7 +174,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             var userId = deviceInformation.UserId!;
             var applicationId = existingRecord.ApplicationFk;
             var originalRecord = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var recordPreparedForUpdate = existingRecord with
             {
@@ -218,7 +219,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             var companyId = deviceInformation.CompanyId!;
             var applicationId = existingRecord.ApplicationFk;
             var existingRecordBackup = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var deleted = await applicationsRepository.DeleteModuleByIdAsync(moduleId, userId, utcNow);
             if (!deleted)
@@ -272,9 +273,9 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             }
 
             var userId = deviceInformation.UserId!;
-            var companyId = existingRecord.CompanyId;
+            var companyId = deviceInformation.CompanyId;
             var originalRecord = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var recordPreparedForUpdate = existingRecord with
             {
@@ -317,9 +318,9 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             }
 
             var userId = deviceInformation.UserId!;
-            var companyId = existingRecord.CompanyId;
+            var companyId = deviceInformation.CompanyId;
             var existingRecordBackup = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var deleted = await applicationsRepository.DeleteApplicationAsync(applicationId, userId, utcNow);
             if (!deleted)
@@ -472,7 +473,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             var userId = deviceInformation.UserId!;
             var moduleId = existingRecord.ModuleFk;
             var originalRecord = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var recordPreparedForUpdate = existingRecord with
             {
@@ -519,7 +520,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             var companyId = deviceInformation.CompanyId!;
             var moduleId = existingRecord.ModuleFk;
             var existingRecordBackup = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var deleted = await applicationsRepository.DeleteEndpointByIdAsync(endpointId, userId, utcNow);
             if (!deleted)
@@ -586,7 +587,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             var userId = deviceInformation.UserId!;
             var endpointId = existingRecord.EndpointFk;
             var originalRecord = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var recordPreparedForUpdate = existingRecord with
             {
@@ -632,7 +633,7 @@ public class ApplicationsService(ILogger<ApplicationsService> logger, IApplicati
             var companyId = deviceInformation.CompanyId!;
             var endpointId = existingRecord.EndpointFk;
             var existingRecordBackup = existingRecord with { };
-            var utcNow = DateTime.UtcNow;
+            var utcNow = cultureRepository.UtcNow().DateTime;
 
             var deleted = await applicationsRepository.DeleteComponentByIdAsync(componentId, userId, utcNow);
             if (!deleted)

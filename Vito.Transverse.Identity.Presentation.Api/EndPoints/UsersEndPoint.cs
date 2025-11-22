@@ -66,7 +66,7 @@ public static class UsersEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Delete/{userId}", DeleteUserByIdAsync)
+        endPointGroupVersioned.MapDelete("{userId}", DeleteUserByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete User By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -122,7 +122,7 @@ public static class UsersEndPoint
           .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("UserRoles/Delete/{userId}/{roleId}", DeleteUserRoleByIdAsync)
+        endPointGroupVersioned.MapDelete("UserRoles/{userId}/{roleId}", DeleteUserRoleByIdAsync)
           .MapToApiVersion(1.0)
           .WithSummary("Delete User Role By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -165,7 +165,7 @@ public static class UsersEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Roles/Delete/{roleId}", DeleteRoleByIdAsync)
+        endPointGroupVersioned.MapDelete("Roles/{roleId}", DeleteRoleByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Role By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")

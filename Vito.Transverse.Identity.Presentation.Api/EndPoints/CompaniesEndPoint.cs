@@ -54,7 +54,7 @@ public static class CompaniesEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Delete/{companyId}", DeleteCompanyByIdAsync)
+        endPointGroupVersioned.MapDelete("{companyId}", DeleteCompanyByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Company By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -89,7 +89,7 @@ public static class CompaniesEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Memberships/Delete/{membershipId}", DeleteCompanyMembershipByIdAsync)
+        endPointGroupVersioned.MapDelete("Memberships/{membershipId}", DeleteCompanyMembershipByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Company Membership By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")
@@ -131,7 +131,7 @@ public static class CompaniesEndPoint
             .RequireAuthorization()
             .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("MembershipTypes/Delete/{membershipTypeId}", DeleteMembershipTypeByIdAsync)
+        endPointGroupVersioned.MapDelete("MembershipTypes/{membershipTypeId}", DeleteMembershipTypeByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Membership Type By Id Async")
             .WithDescription("[Author] [Authen] [Trace]")

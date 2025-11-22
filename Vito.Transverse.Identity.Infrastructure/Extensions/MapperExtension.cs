@@ -360,11 +360,11 @@ public static class MapperExtension
             AuditTypeFk = modelObject.AuditTypeFk,
             CompanyFk = modelObject.CompanyFk,
             CreatedByUserFk = modelObject.CreatedByUserFk,
-            CreationDate = modelObject.CreationDate.ToLocalTime(),
+            CreatedDate = modelObject.CreatedDate.ToLocalTime(),
             Id = modelObject.Id,
             IsActive = modelObject.IsActive,
-            LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
-            UpdatedByUserFk = modelObject.UpdatedByUserFk,
+            LastUpdatedDate = modelObject.LastUpdatedDate.ToLocalTimeNullable(),
+            LastUpdatedByUserFk = modelObject.LastUpdatedByUserFk,
 
 
             CompanyNameTranslationKey = modelObject.CompanyFkNavigation is null ? string.Empty : modelObject.CompanyFkNavigation.NameTranslationKey,
@@ -383,11 +383,11 @@ public static class MapperExtension
             AuditTypeFk = modelObject.AuditTypeFk,
             CompanyFk = modelObject.CompanyFk,
             CreatedByUserFk = modelObject.CreatedByUserFk,
-            CreationDate = modelObject.CreationDate,
+            CreatedDate = modelObject.CreatedDate,
             Id = modelObject.Id,
             IsActive = modelObject.IsActive,
-            LastUpdateDate = modelObject.LastUpdateDate,
-            UpdatedByUserFk = modelObject.UpdatedByUserFk
+            LastUpdatedDate = modelObject.LastUpdatedDate,
+            LastUpdatedByUserFk = modelObject.LastUpdatedByUserFk
         };
         return returnObject;
     }
@@ -496,10 +496,10 @@ public static class MapperExtension
             ActivationId = modelObject.ActivationId,
             Avatar = modelObject.Avatar,
             CreatedByUserFk = modelObject.CreatedByUserFk,
-            CreationDate = modelObject.CreationDate.ToLocalTimeNullable(),
-            LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
+            CreatedDate = modelObject.CreatedDate.ToLocalTime(),
+            LastUpdatedDate = modelObject.LastUpdatedDate.ToLocalTimeNullable(),
             LockedDate = modelObject.LockedDate.ToLocalTimeNullable(),
-            UpdatedByUserFk = modelObject.UpdatedByUserFk,
+            LastUpdatedByUserFk= modelObject.LastUpdatedByUserFk,
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             Email = modelObject.Email,
@@ -564,8 +564,8 @@ public static class MapperExtension
             LastName = modelEntity.LastName,
             Email = modelEntity.Email,
 
-            ApplicationOwnerId = applicationEntity!.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = applicationEntity.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = applicationEntity!.OwnerFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = applicationEntity.OwnerFkNavigation.NameTranslationKey,
 
             ApplicationId = applicationEntity.Id,
             ApplicationNameTranslationKey = applicationEntity.NameTranslationKey,
@@ -599,15 +599,15 @@ public static class MapperExtension
             LastAccess = modelObject.LastAccess,
             IsActive = modelObject.IsActive,
             ActivationId = modelObject.ActivationId,
-            CreationDate = modelObject.CreationDate,
+            CreatedDate = modelObject.CreatedDate,
             Email = modelObject.Email,
             Avatar = modelObject.Avatar,
-            LastUpdateDate = modelObject.LastUpdateDate,
+            LastUpdatedDate = modelObject.LastUpdatedDate,
             LockedDate = modelObject.LockedDate,
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             CreatedByUserFk = modelObject.CreatedByUserFk,
-            UpdatedByUserFk = modelObject.UpdatedByUserFk,
+            LastUpdatedByUserFk = modelObject.LastUpdatedByUserFk,
             ActivationEmailSent = modelObject.ActivationEmailSent,
 
         };
@@ -688,9 +688,9 @@ public static class MapperExtension
             CreationDate = modelObject.CreationDate.ToLocalTime(),
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
             LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
-            ApplicationOwnerId = modelObject.ApplicationOwners.First().CompanyFk,
-            ApplicationOwnerNameTranslationKey = modelObject.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
-            ApplicationOwnerDescriptionTranslationKey = modelObject.ApplicationOwners.First().CompanyFkNavigation.DescriptionTranslationKey,
+            ApplicationOwnerId = modelObject.OwnerFk,
+            ApplicationOwnerNameTranslationKey = modelObject.OwnerFkNavigation.NameTranslationKey,
+            ApplicationOwnerDescriptionTranslationKey = modelObject.OwnerFkNavigation.DescriptionTranslationKey,
 
         };
         return returnObject;
@@ -714,12 +714,11 @@ public static class MapperExtension
             LastUpdateDate = modelObject.ApplicationFkNavigation.LastUpdateDate.ToLocalTimeNullable(),
             NameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
             DescriptionTranslationKey = modelObject.ApplicationFkNavigation.DescriptionTranslationKey,
-            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
-            ApplicationOwnerDescriptionTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.DescriptionTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.OwnerFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
+            ApplicationOwnerDescriptionTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.DescriptionTranslationKey,
 
-            CompanyId = modelObject.CompanyFkNavigation.Id,
-            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+
 
         };
         return returnObject;
@@ -745,8 +744,8 @@ public static class MapperExtension
             MembershipTypeNameTranslationKey = modelObject.MembershipTypeFkNavigation.NameTranslationKey,
             DescriptionTranslationKey = modelObject.MembershipTypeFkNavigation.DescriptionTranslationKey,
             StartDate = modelObject.StartDate.ToLocalTime(),
-            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.OwnerFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
         };
         return returnObject;
     }
@@ -881,10 +880,9 @@ public static class MapperExtension
             IconName = modelObject.IconName!,
 
 
-            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? (long)Decimal.Zero :
-                                modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? string.Empty :
-                                modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.OwnerFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey =
+                                modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
         };
         return returnObject;
     }
@@ -908,12 +906,8 @@ public static class MapperExtension
             Method = modelObject.Method!,
             IconName = modelObject.IconName!,
             ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation is null ? string.Empty : modelObject.ApplicationFkNavigation.NameTranslationKey,
-            ApplicationOwnerId = modelObject.ApplicationFkNavigation is null || modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ?
-                                    (long)decimal.Zero :
-                                    modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation is null || modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ?
-                                    string.Empty :
-                                    modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation is null ? null : modelObject.ApplicationFkNavigation.OwnerFk,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation is null ? string.Empty : modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
 
 
         };
@@ -937,8 +931,8 @@ public static class MapperExtension
             ObjectName = modelObject.ObjectName,
             ObjectPropertyName = modelObject.ObjectPropertyName,
             ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
-            ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.ApplicationFkNavigation.OwnerFkNavigation.Id,
+            ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
 
         };
         return returnObject;
@@ -970,8 +964,8 @@ public static class MapperExtension
             ApplicationDescriptionTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.DescriptionTranslationKey,
 
 
-            ApplicationOwnerId = modelObject.RoleFkNavigation.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-            ApplicationOwnerNameTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+            ApplicationOwnerId = modelObject.RoleFkNavigation.ApplicationFkNavigation.OwnerFk,
+            ApplicationOwnerNameTranslationKey = modelObject.RoleFkNavigation.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
 
         };
         return returnObject;
@@ -1194,10 +1188,8 @@ public static class MapperExtension
                 CompanyNameTranslationKey = modelObject.CompanyFkNavigation is null ? string.Empty : modelObject.CompanyFkNavigation.NameTranslationKey,
                 ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
 
-                ApplicationOwnerId = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? (long)Decimal.Zero
-                                    : modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.Id,
-                ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationOwners.Count == 0 ? string.Empty :
-                modelObject.ApplicationFkNavigation.ApplicationOwners.First().CompanyFkNavigation.NameTranslationKey,
+                ApplicationOwnerId = modelObject.ApplicationFkNavigation.OwnerFk,
+                ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
             };
 
         modelObject!.RolePermissions.DistinctBy(x => x.ModuleFk).ToList().ForEach((permission) =>
@@ -1391,14 +1383,16 @@ public static class MapperExtension
         SequencesDTO returnObject = new()
         {
             Id = modelObject.Id,
-            CompanyId = modelObject.CompanyFk,
-            CompanyNameTranslationKey = modelObject.CompanyFkNavigation?.NameTranslationKey ?? string.Empty,
-            ApplicationId = modelObject.ApplicationFk,
-            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation?.NameTranslationKey ?? string.Empty,
-            SequenceTypeId = modelObject.SequenceTypeFk,
+            CompanyFk = modelObject.CompanyFk,
+            ApplicationFk = modelObject.ApplicationFk,
+            SequenceTypeFk = modelObject.SequenceTypeFk,
             SequenceNameFormat = modelObject.SequenceNameFormat,
             SequenceIndex = modelObject.SequenceIndex,
-            TextFormat = modelObject.TextFormat
+            TextFormat = modelObject.TextFormat,
+
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation?.NameTranslationKey ?? string.Empty,
+            SequenceTypeNameTranslationKey = modelObject .SequenceTypeFkNavigation?.NameTranslationKey ?? string.Empty,
+            ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation?.NameTranslationKey ?? string.Empty,
         };
         return returnObject;
     }
@@ -1408,12 +1402,12 @@ public static class MapperExtension
         Sequence returnObject = new()
         {
             Id = modelObject.Id,
-            CompanyFk = modelObject.CompanyId,
-            ApplicationFk = modelObject.ApplicationId,
-            SequenceTypeFk = modelObject.SequenceTypeId,
+            CompanyFk = modelObject.CompanyFk,
+            ApplicationFk = modelObject.ApplicationFk,
+            SequenceTypeFk = modelObject.SequenceTypeFk,
             SequenceNameFormat = modelObject.SequenceNameFormat,
             SequenceIndex = modelObject.SequenceIndex,
-            TextFormat = modelObject.TextFormat
+            TextFormat = modelObject.TextFormat,
         };
         return returnObject;
     }
@@ -1427,7 +1421,6 @@ public static class MapperExtension
             ListItemGroupFk = modelObject.ListItemGroupFk,
             OrderIndex = modelObject.OrderIndex,
             IsEnabled = modelObject.IsEnabled,
-            ItemGroupNameTranslationKey = modelObject.ListItemGroupFkNavigation?.NameTranslationKey ?? string.Empty
         };
         return returnObject;
     }

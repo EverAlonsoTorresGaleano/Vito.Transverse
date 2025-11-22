@@ -34,27 +34,22 @@ public class CultureService(ICultureRepository cultureRepository, ILocalizationS
 
     #region Localization
 
-    public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync(long applicationId)
+    public async Task<List<ListItemDTO>> GetActiveCultureListItemDTOListAsync()
     {
-        //string cultureId = cultureRepository.GetCurrentCultureId();
-        var returnList = await GetActiveCultureListAsync(applicationId);
+        var returnList = await GetActiveCultureListAsync();
         var returnListDTO = returnList.Select(x => x.ToListItemDTO()).ToList();
-        //returnListDTO.ForEach(c => c.NameTranslationKey = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
         return returnListDTO;
     }
 
-    public async Task<List<CultureDTO>> GetActiveCultureListAsync(long applicationId)
+    public async Task<List<CultureDTO>> GetActiveCultureListAsync()
     {
-        //string cultureId = cultureRepository.GetCurrentCultureId();
-        //var cacheList = cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString() + applicationId);
+        var cacheList = cachingService.GetCacheDataByKey<List<CultureDTO>>(CacheItemKeysEnum.CultureList.ToString());
         List<CultureDTO> returnList = new();
-        //if (cacheList == null)
-        //{
-        var    cacheList = await cultureRepository.GetActiveCultureListAsync();
-        //    //Localize
-            //cacheList.ForEach(c => c.Name = localizationService.GetLocalizedMessageByKeyAndParamsSync(applicationId, cultureId, c.NameTranslationKey).TranslationValue);
-            //cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() + applicationId, cacheList);
-        //}
+        if (cacheList == null)
+        {
+             cacheList = await cultureRepository.GetActiveCultureListAsync();
+            cachingService.SetCacheData(CacheItemKeysEnum.CultureList.ToString() , cacheList);
+        }
         return cacheList;
     }
 

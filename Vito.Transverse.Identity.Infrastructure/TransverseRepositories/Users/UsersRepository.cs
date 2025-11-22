@@ -2,16 +2,17 @@
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using Vito.Framework.Common.DTO;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
-using  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Security;
-using  Vito.Transverse.Identity.Infrastructure.Extensions;
-using  Vito.Transverse.Identity.Infrastructure.Models;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
+using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Security;
 
-namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Users;
+namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Users;
 
-public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContextFactory dataBaseContextFactory) : IUsersRepository
+public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContextFactory dataBaseContextFactory,ICultureRepository cultureRepository) : IUsersRepository
 {
 
     public async Task<UserDTO?> CreateNewUserAsync(UserDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
@@ -61,11 +62,11 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Roles
+            var bdList = await context.Roles.AsNoTracking()
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Where(filters).ToListAsync();
             returnList = bdList!.Select(x => x.ToRoleDTO()).ToList().OrderBy(x => x.CompanyFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.ApplicationFk).ToList();
         }
@@ -84,11 +85,11 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var role = await context.Roles
+            var role = await context.Roles.AsNoTracking()
                 .Include(x => x.CompanyFkNavigation)
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+
                 .FirstOrDefaultAsync(x => x.Id == roleId);
             roleDTO = role?.ToRoleDTO();
         }
@@ -159,14 +160,14 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.UserRoles
+            var bdList = await context.UserRoles.AsNoTracking()
                 .Include(x => x.UserFkNavigation)
                 .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
                 .Where(filters).ToListAsync();
-            returnList = bdList.Select(x=>x.ToUserRoleDTO()).ToList().OrderBy(x => x.CompanyFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.RoleFk).ToList(); ;
+            returnList = bdList.Select(x => x.ToUserRoleDTO()).ToList().OrderBy(x => x.CompanyFk).ThenBy(x => x.ApplicationOwnerId).ThenBy(x => x.RoleFk).ToList(); ;
         }
         catch (Exception ex)
         {
@@ -183,11 +184,11 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var userRole = await context.UserRoles
+            var userRole = await context.UserRoles.AsNoTracking()
                 .Include(x => x.UserFkNavigation)
                 .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
                 .FirstOrDefaultAsync(x => x.UserFk == userId && x.RoleFk == roleId && x.CompanyFk == companyFk && x.ApplicationFk == applicationFk);
             userRoleDTO = userRole?.ToUserRoleDTO();
@@ -210,11 +211,11 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
             var newUserRole = new UserRole
             {
                 CompanyFk = userRoleInfo.CompanyFk,
-                ApplicationFk = userRoleInfo.ApplicationFk,
-                UserFk = userRoleInfo.UserFk,
+                ApplicationFk = userRoleInfo.ApplicationFk, 
+                           UserFk = userRoleInfo.UserFk,
                 RoleFk = userRoleInfo.RoleFk,
-                CreatedDate = DateTime.UtcNow,
-                CreatedByUserFk = deviceInformation.UserId ,
+                CreatedDate = cultureRepository.UtcNow().DateTime,
+                CreatedByUserFk = deviceInformation.UserId,
                 IsActive = userRoleInfo.IsActive
             };
 
@@ -225,8 +226,8 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
             newUserRole = await context.UserRoles
                 .Include(x => x.UserFkNavigation)
                 .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
                 .FirstOrDefaultAsync(x => x.UserFk == userRoleInfo.UserFk && x.RoleFk == userRoleInfo.RoleFk && x.CompanyFk == userRoleInfo.CompanyFk && x.ApplicationFk == userRoleInfo.ApplicationFk);
 
@@ -249,7 +250,7 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
             context = dataBaseContextFactory.GetDbContext(context);
             var userRoleToUpdate = await context.UserRoles
                 .FirstOrDefaultAsync(x => x.UserFk == userRoleInfo.UserFk && x.RoleFk == userRoleInfo.RoleFk && x.CompanyFk == userRoleInfo.CompanyFk && x.ApplicationFk == userRoleInfo.ApplicationFk);
-            
+
             if (userRoleToUpdate is null)
             {
                 return null;
@@ -264,8 +265,8 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
             userRoleToUpdate = await context.UserRoles
                 .Include(x => x.UserFkNavigation)
                 .Include(x => x.RoleFkNavigation.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.RoleFkNavigation.CompanyFkNavigation)
                 .FirstOrDefaultAsync(x => x.UserFk == userRoleInfo.UserFk && x.RoleFk == userRoleInfo.RoleFk && x.CompanyFk == userRoleInfo.CompanyFk && x.ApplicationFk == userRoleInfo.ApplicationFk);
 
@@ -288,7 +289,7 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
             context = dataBaseContextFactory.GetDbContext(context);
             var userRole = await context.UserRoles
                 .FirstOrDefaultAsync(x => x.UserFk == userId && x.RoleFk == roleId && x.CompanyFk == companyFk && x.ApplicationFk == applicationFk);
-            
+
             if (userRole is null)
             {
                 return false;
@@ -313,12 +314,12 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Users
+            var bdList = await context.Users.AsNoTracking()
                 .Include(x => x.UserRoles)
                     .ThenInclude(x => x.RoleFkNavigation)
                     .ThenInclude(x => x.ApplicationFkNavigation)
-                    .ThenInclude(x => x.ApplicationOwners)
-                    .ThenInclude(x => x.CompanyFkNavigation)
+                    .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.UserRoles)
                     .ThenInclude(x => x.RoleFkNavigation)
                     .ThenInclude(x => x.RolePermissions)
@@ -344,12 +345,12 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Users
+            var bdList = await context.Users.AsNoTracking()
                 .Include(x => x.UserRoles)
                     .ThenInclude(x => x.RoleFkNavigation)
                     .ThenInclude(x => x.ApplicationFkNavigation)
-                    .ThenInclude(x => x.ApplicationOwners)
-                    .ThenInclude(x => x.CompanyFkNavigation)
+                    .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.UserRoles)
                     .ThenInclude(x => x.RoleFkNavigation)
                     .ThenInclude(x => x.RolePermissions)
@@ -374,12 +375,12 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var bdList = await context.Users
+            var bdList = await context.Users.AsNoTracking()
                 .Include(x => x.UserRoles)
                     .ThenInclude(x => x.RoleFkNavigation)
                     .ThenInclude(x => x.ApplicationFkNavigation)
-                    .ThenInclude(x => x.ApplicationOwners)
-                    .ThenInclude(x => x.CompanyFkNavigation)
+                    .ThenInclude(x => x.OwnerFkNavigation)
+
                 .Include(x => x.CompanyFkNavigation)
                 //.Include(x => x.UserRoles)
                 //    .ThenInclude(x => x.RoleFkNavigation)
@@ -388,7 +389,7 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
                 //    .ThenInclude(x => x.Endpoints)
                 //    .ThenInclude(x => x.Components)
                 .Where(filters).ToListAsync();
-            returnList = bdList!.Select(x=>x.ToUserDTO()).ToList()!;
+            returnList = bdList!.Select(x => x.ToUserDTO()).ToList()!;
         }
         catch (Exception ex)
         {

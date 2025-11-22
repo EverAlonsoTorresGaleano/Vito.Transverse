@@ -14,8 +14,6 @@ public partial interface IDataBaseServiceContext : IDisposable
 
     DbSet<ApplicationLicenseType> ApplicationLicenseTypes { get; set; }
 
-    DbSet<ApplicationOwner> ApplicationOwners { get; set; }
-
     DbSet<AuditRecord> AuditRecords { get; set; }
 
     DbSet<Company> Companies { get; set; }

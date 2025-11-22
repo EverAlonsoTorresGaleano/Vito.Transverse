@@ -34,7 +34,7 @@ public static class CacheEndpoint
             .WithDescription("[Require Authorization]")
             .RequireAuthorization();
 
-        endPointGroupVersioned.MapDelete("delete/{cacheKey}", DeleteCacheDataByKey)
+        endPointGroupVersioned.MapDelete("{cacheKey}", DeleteCacheDataByKey)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Cache by Key")
             .WithDescription("[Require Authorization]")

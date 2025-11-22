@@ -1,5 +1,6 @@
 ﻿namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 
+//developers
 public class ListItemDTO
 {
     public string ListItemGroupFk { get; set; } = null!;

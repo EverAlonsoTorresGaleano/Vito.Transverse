@@ -57,7 +57,7 @@ public static class AuditEndPoint
             .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("CompanyEntityAudits/Delete/{companyEntityAuditId}", DeleteCompanyEntityAuditByIdAsync)
+        endPointGroupVersioned.MapDelete("CompanyEntityAudits/{companyEntityAuditId}", DeleteCompanyEntityAuditByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Company Entity Audit By Id Async")
             .WithDescription("[Require Authorization]")
@@ -113,7 +113,7 @@ public static class AuditEndPoint
             .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
-        endPointGroupVersioned.MapDelete("Entities/Delete/{entityId}", DeleteEntityByIdAsync)
+        endPointGroupVersioned.MapDelete("Entities/{entityId}", DeleteEntityByIdAsync)
             .MapToApiVersion(1.0)
             .WithSummary("Delete Entity By Id Async")
             .WithDescription("[Require Authorization]")

@@ -67,10 +67,9 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var companyMembershipsList = await context.CompanyMemberships
+            var companyMembershipsList = await context.CompanyMemberships.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
                 .Include(x => x.MembershipTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .Where(filters).ToListAsync();
@@ -90,10 +89,9 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var membership = await context.CompanyMemberships
+            var membership = await context.CompanyMemberships.AsNoTracking()
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
                 .Include(x => x.MembershipTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == membershipId);
@@ -126,7 +124,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
             membershipToUpdate.StartDate = membershipInfo.StartDate;
             membershipToUpdate.EndDate = membershipInfo.EndDate;
             membershipToUpdate.IsActive = membershipInfo.IsActive;
-            membershipToUpdate.LastUpdateDate = DateTime.UtcNow;
+            membershipToUpdate.LastUpdateDate = cultureRepository.UtcNow().DateTime;
             membershipToUpdate.LastUpdateByUserFk = deviceInformation.UserId;
 
             await context.SaveChangesAsync();
@@ -134,8 +132,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
             // Reload with includes to get navigation properties
             membershipToUpdate = await context.CompanyMemberships
                 .Include(x => x.ApplicationFkNavigation)
-                .ThenInclude(x => x.ApplicationOwners)
-                .ThenInclude(x => x.CompanyFkNavigation)
+                .ThenInclude(x => x.OwnerFkNavigation)
                 .Include(x => x.MembershipTypeFkNavigation)
                 .Include(x => x.CompanyFkNavigation)
                 .FirstOrDefaultAsync(x => x.Id == membershipInfo.Id);
@@ -183,7 +180,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var companyList = await context.Companies
+            var companyList = await context.Companies.AsNoTracking()
 
                 .Include(x => x.CountryFkNavigation)
                 .Include(x => x.DefaultCultureFkNavigation)
@@ -206,7 +203,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var company = await context.Companies
+            var company = await context.Companies.AsNoTracking()
                 .Include(x => x.CountryFkNavigation)
                 .Include(x => x.DefaultCultureFkNavigation)
                 .ThenInclude(x => x.LanguageFkNavigation)
@@ -236,7 +233,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
 
             var updatedCompany = companyInfo.ToCompany();
             updatedCompany.LastUpdateByUserFk = deviceInformation.UserId;
-            updatedCompany.LastUpdateDate = DateTime.UtcNow;
+            updatedCompany.LastUpdateDate = cultureRepository.UtcNow().DateTime;
             context.Entry(companyToUpdate).CurrentValues.SetValues(updatedCompany);
             await context.SaveChangesAsync();
             savedRecord = companyToUpdate.ToCompanyDTO();
@@ -267,7 +264,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
             var updatedCompany = companyToUpdate.CloneEntity();
             updatedCompany.IsActive = false;
             updatedCompany.LastUpdateByUserFk = deviceInformation.UserId;
-            updatedCompany.LastUpdateDate = DateTime.UtcNow;
+            updatedCompany.LastUpdateDate = cultureRepository.UtcNow().DateTime;
             context.Entry(companyToUpdate).CurrentValues.SetValues(updatedCompany);
             await context.SaveChangesAsync();
             deleted = true;
@@ -288,7 +285,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var membershipTypeList = await context.MembershipTypes
+            var membershipTypeList = await context.MembershipTypes.AsNoTracking()
                 .Where(filters)
                 .ToListAsync();
             membershipTypeDTOList = membershipTypeList.Select(x => x.ToMembershipTypeDTO()).ToList().OrderBy(x => x.Id).ToList();
@@ -307,7 +304,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            var membershipType = await context.MembershipTypes
+            var membershipType = await context.MembershipTypes.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == membershipTypeId);
             membershipTypeDTO = membershipType?.ToMembershipTypeDTO();
         }
@@ -323,7 +320,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
     {
         MembershipTypeDTO? savedRecord = null;
         var newRecordDb = membershipTypeDTO.ToMembershipType();
-        newRecordDb.CreationDate = DateTime.UtcNow;
+        newRecordDb.CreationDate = cultureRepository.UtcNow().DateTime;
         newRecordDb.CreatedByUserFk = deviceInformation.UserId;
 
         try
@@ -355,7 +352,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
             }
 
             var updatedMembershipType = membershipTypeDTO.ToMembershipType();
-            updatedMembershipType.LastUpdateDate = DateTime.UtcNow;
+            updatedMembershipType.LastUpdateDate = cultureRepository.UtcNow().DateTime;
             updatedMembershipType.LastUpdateByUserFk = deviceInformation.UserId;
             context.Entry(membershipTypeToUpdate).CurrentValues.SetValues(updatedMembershipType);
             await context.SaveChangesAsync();
