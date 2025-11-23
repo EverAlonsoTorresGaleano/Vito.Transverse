@@ -79,6 +79,7 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
 
 
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ActivityLog>(entity =>
@@ -230,7 +231,6 @@ public partial class DataBaseServiceContext : DbContext, IDataBaseServiceContext
         {
             entity.HasKey(e => e.Id).HasName("PK_EndpointsModules");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsActive).HasDefaultValue(true);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Endpoints)

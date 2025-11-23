@@ -25,8 +25,7 @@ public static class ApplicationsEndPoint
            .MapToApiVersion(1.0)
            .WithSummary("Get All Application List Async")
              .WithDescription("[Author] [Authen] [Trace]")
-           .RequireAuthorization()
-           .AddEndpointFilter<RoleAuthorizationFilter>();
+           .AllowAnonymous();
 
 
         endPointGroupVersioned.MapGet("", GetAllApplicationListAsync)

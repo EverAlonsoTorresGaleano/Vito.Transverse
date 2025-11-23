@@ -240,7 +240,6 @@ public partial class VitoTransverseDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_EndpointsModules");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsActive).HasDefaultValue(true);
 
             entity.HasOne(d => d.ApplicationFkNavigation).WithMany(p => p.Endpoints)

@@ -12,7 +12,7 @@ using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Security;
 
 namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Users;
 
-public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContextFactory dataBaseContextFactory,ICultureRepository cultureRepository) : IUsersRepository
+public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContextFactory dataBaseContextFactory, ICultureRepository cultureRepository) : IUsersRepository
 {
 
     public async Task<UserDTO?> CreateNewUserAsync(UserDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
@@ -211,8 +211,8 @@ public class UsersRepository(ILogger<SecurityRepository> logger, IDataBaseContex
             var newUserRole = new UserRole
             {
                 CompanyFk = userRoleInfo.CompanyFk,
-                ApplicationFk = userRoleInfo.ApplicationFk, 
-                           UserFk = userRoleInfo.UserFk,
+                ApplicationFk = userRoleInfo.ApplicationFk,
+                UserFk = userRoleInfo.UserFk,
                 RoleFk = userRoleInfo.RoleFk,
                 CreatedDate = cultureRepository.UtcNow().DateTime,
                 CreatedByUserFk = deviceInformation.UserId,

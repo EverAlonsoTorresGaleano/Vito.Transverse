@@ -16261,6 +16261,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _title;
         private string _icon;
         private string _description;
+        private long? _positionIndex;
         private System.Collections.ObjectModel.ObservableCollection<MenuItemDTO> _items;
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -16315,6 +16316,19 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("positionIndex", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? PositionIndex    {
+            get { return _positionIndex; }
+            set
+            {
+                if (_positionIndex != value)
+                {
+                    _positionIndex = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.ObjectModel.ObservableCollection<MenuItemDTO> Items    {
             get { return _items; }
@@ -16358,6 +16372,12 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _icon;
         private string _description;
         private string _path;
+        private long? _positionIndex;
+        private bool _canCreate;
+        private bool _canView;
+        private bool _canEdit;
+        private bool _canDelete;
+        private System.Collections.ObjectModel.ObservableCollection<MenuComponentDTO> _items;
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Id    {
@@ -16424,6 +16444,84 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("positionIndex", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? PositionIndex    {
+            get { return _positionIndex; }
+            set
+            {
+                if (_positionIndex != value)
+                {
+                    _positionIndex = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("canCreate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool CanCreate    {
+            get { return _canCreate; }
+            set
+            {
+                if (_canCreate != value)
+                {
+                    _canCreate = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("canView", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool CanView    {
+            get { return _canView; }
+            set
+            {
+                if (_canView != value)
+                {
+                    _canView = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("canEdit", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool CanEdit    {
+            get { return _canEdit; }
+            set
+            {
+                if (_canEdit != value)
+                {
+                    _canEdit = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("canDelete", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool CanDelete    {
+            get { return _canDelete; }
+            set
+            {
+                if (_canDelete != value)
+                {
+                    _canDelete = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.ObjectModel.ObservableCollection<MenuComponentDTO> Items    {
+            get { return _items; }
+            set
+            {
+                if (_items != value)
+                {
+                    _items = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public string ToJson()
         {
 
@@ -16434,6 +16532,144 @@ namespace Vito.Transverse.Identity.Presentation.Api
         {
 
             return Newtonsoft.Json.JsonConvert.DeserializeObject<MenuItemDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MenuComponentDTO : System.ComponentModel.INotifyPropertyChanged
+    {
+        private string _id;
+        private string _title;
+        private string _description;
+        private string _objectId;
+        private string _objectName;
+        private string _propertyName;
+        private string _defaultPropertyValue;
+        private string _rolePropertyValue;
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Id    {
+            get { return _id; }
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title    {
+            get { return _title; }
+            set
+            {
+                if (_title != value)
+                {
+                    _title = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description    {
+            get { return _description; }
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("objectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ObjectId    {
+            get { return _objectId; }
+            set
+            {
+                if (_objectId != value)
+                {
+                    _objectId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("objectName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ObjectName    {
+            get { return _objectName; }
+            set
+            {
+                if (_objectName != value)
+                {
+                    _objectName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("propertyName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PropertyName    {
+            get { return _propertyName; }
+            set
+            {
+                if (_propertyName != value)
+                {
+                    _propertyName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("defaultPropertyValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DefaultPropertyValue    {
+            get { return _defaultPropertyValue; }
+            set
+            {
+                if (_defaultPropertyValue != value)
+                {
+                    _defaultPropertyValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("rolePropertyValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string RolePropertyValue    {
+            get { return _rolePropertyValue; }
+            set
+            {
+                if (_rolePropertyValue != value)
+                {
+                    _rolePropertyValue = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, new Newtonsoft.Json.JsonSerializerSettings());
+
+        }
+        public static MenuComponentDTO FromJson(string data)
+        {
+
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<MenuComponentDTO>(data, new Newtonsoft.Json.JsonSerializerSettings());
 
         }
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

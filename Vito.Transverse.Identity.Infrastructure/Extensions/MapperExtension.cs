@@ -2,61 +2,14 @@
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Models.SocialNetworks;
 using Vito.Transverse.Identity.Entities.Enums;
-using Vito.Transverse.Identity.Infrastructure.Models;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.Models;
 
 namespace Vito.Transverse.Identity.Infrastructure.Extensions;
 
 public static class MapperExtension
 {
     private const string commaSeparator = ",";
-    //public static List<PersonDTO> ToPersonDTOList(this List<Person> modelObjectList)
-    //{
-    //    List<PersonDTO> returnList = [];
-    //    modelObjectList.ForEach(modelObject =>
-    //    {
-    //        returnList.Add(modelObject.ToPersonDTO());
-    //    });
-    //    return returnList;
-    //}
-
-    //public static PersonDTO ToPersonDTO(this Person modelObject)
-    //{
-    //    PersonDTO returnObject = new()
-    //    {
-    //        CompanyFk = modelObject.CompanyFk,
-    //        Id = modelObject.Id,
-    //        DocumentTypeFk = modelObject.DocumentTypeFk,
-    //        DocumentValue = modelObject.DocumentValue,
-    //        Name = modelObject.Name,
-    //        LastName = modelObject.LastName,
-    //        Email = modelObject.Email,
-    //        GenderFk = modelObject.GenderFk,
-    //        MobileNumber = modelObject.MobileNumber,
-    //        Avatar = modelObject.Avatar
-    //    };
-    //    return returnObject;
-    //}
-
-    //public static Person ToPerson(this PersonDTO modelObject)
-    //{
-    //    Person returnObject = new()
-    //    {
-    //        CompanyFk = modelObject.CompanyFk!.Value,
-    //        Id = modelObject.Id!.Value,
-    //        DocumentTypeFk = modelObject.DocumentTypeFk!.Value,
-    //        DocumentValue = modelObject.DocumentValue!,
-    //        Name = modelObject.Name!,
-    //        LastName = modelObject.LastName!,
-    //        Email = modelObject.Email!,
-    //        GenderFk = modelObject.GenderFk!.Value,
-    //        MobileNumber = modelObject.MobileNumber,
-    //        Avatar = modelObject.Avatar
-    //    };
-    //    return returnObject;
-    //}
-
-
 
     public static CultureDTO ToCultureDTO(this Culture modelObject)
     {
@@ -127,8 +80,6 @@ public static class MapperExtension
         return returnObject;
     }
 
-
-
     public static CultureTranslationDTO ToCultureTranslationDTO(this CultureTranslation modelObject)
     {
         CultureTranslationDTO returnObject = new()
@@ -144,7 +95,6 @@ public static class MapperExtension
     }
 
 
-
     public static ListItemDTO ToListItemDTO(this GeneralTypeItem modelObject)
     {
         ListItemDTO returnObject = new()
@@ -157,7 +107,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
 
 
     public static ListItemDTO ToListItemDTO(this CultureDTO modelObject)
@@ -418,10 +367,7 @@ public static class MapperExtension
             userRoleItem.RoleFkNavigation.RolePermissions.DistinctBy(x => x.ModuleFk).ToList().ForEach((permission) =>
             {
 
-                MenuGroupDTO newModuleDTO = new();
-                newModuleDTO = permission.ModuleFkNavigation.ToMenuGroupDTO();
-                newModuleDTO.Items = new();
-
+                MenuGroupDTO newModuleDTO = permission.ModuleFkNavigation.ToMenuGroupDTO();
                 var moduleDTO = moduleList.Where(m => m.Id == newModuleDTO.Id).FirstOrDefault();
                 if (moduleDTO is null)
                 {
@@ -435,20 +381,50 @@ public static class MapperExtension
                     newModuleDTO = moduleDTO;
                 }
 
-                permission.ModuleFkNavigation.Endpoints.ToList().ForEach((endpoint) =>
+                if (permission.EndpointFk is null)//Have Fulla Access to all end point
                 {
-                    MenuItemDTO endpointDTO = new();
-                    endpointDTO = endpoint.ToMenuItemDTO();
+                    permission.ModuleFkNavigation.Endpoints.ToList().ForEach((endpoint) =>
+                    {
+                        MenuItemDTO endpointDTO = endpoint.ToMenuItemDTO();
+                        if (endpoint.IsVisible)
+                        {
+                            endpointDTO.CanView = true;
+                            endpointDTO.CanEdit = true;
+                            endpointDTO.CanCreate = true;
+                            endpointDTO.CanDelete = true;
+                            newModuleDTO.Items.Add(endpointDTO);
+                        }
+                    });
+                }
+                else // access to specif end point
+                {
+                    var endpoint = permission.ModuleFkNavigation.Endpoints.FirstOrDefault(x => x.Id == permission.EndpointFk);
+                    MenuItemDTO endpointDTO = endpoint.ToMenuItemDTO();
                     if (endpoint.IsVisible)
                     {
+                        endpointDTO.CanView = permission.CanView ?? true;
+                        endpointDTO.CanEdit = permission.CanEdit ?? true;
+                        endpointDTO.CanCreate = permission.CanCreate ?? true;
+                        endpointDTO.CanDelete = permission.CanDelete ?? true;
+
+                        //if (permission.ComponentFk is not null)//access to all components
+                        //{
+                        //    var component = endpoint.Components.FirstOrDefault(x => x.Id == permission.ComponentFk);
+                        //    MenuComponentDTO componentDTO = component.ToMenuComponentDTO();
+                        //    componentDTO.RolePropertyValue = permission.PropertyValue;
+                        //    if (!componentDTO.DefaultPropertyValue.Equals(componentDTO.RolePropertyValue, StringComparison.InvariantCultureIgnoreCase))
+                        //    {
+                        //        endpointDTO.Items.Add(componentDTO);
+                        //    }
+                        //}
                         newModuleDTO.Items.Add(endpointDTO);
                     }
-                });
+                }
                 newModuleDTO.Items = newModuleDTO.Items.DistinctBy(x => x.Id).ToList();
 
             });
         });
-        return moduleList;
+        return moduleList.OrderBy(x => x.PositionIndex).ToList();
     }
 
     public static MenuGroupDTO ToMenuGroupDTO(this Module modelObject)
@@ -459,6 +435,7 @@ public static class MapperExtension
             Title = modelObject.NameTranslationKey,
             Icon = modelObject.IconName,
             Description = modelObject.DescriptionTranslationKey,
+            PositionIndex = modelObject.PositionIndex,
             Items = new()
         };
         return returnObject;
@@ -472,11 +449,28 @@ public static class MapperExtension
             Title = modelObject.NameTranslationKey,
             Icon = modelObject.IconName,
             Description = modelObject.DescriptionTranslationKey,
-            Path = modelObject.EndpointUrl
+            Path = modelObject.EndpointUrl,
+            PositionIndex = modelObject.PositionIndex,
+            Items = new(),
+
         };
         return returnObject;
     }
 
+    public static MenuComponentDTO ToMenuComponentDTO(this Component modelObject)
+    {
+        MenuComponentDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            Title = modelObject.NameTranslationKey,
+            Description = modelObject.DescriptionTranslationKey,
+            ObjectId = modelObject.ObjectId!,
+            ObjectName = modelObject.ObjectName!,
+            PropertyName = modelObject.ObjectPropertyName,
+            DefaultPropertyValue = modelObject.DefaultPropertyValue
+        };
+        return returnObject;
+    }
 
     public static UserDTO ToUserDTO(this User modelObject)
     {
@@ -499,7 +493,7 @@ public static class MapperExtension
             CreatedDate = modelObject.CreatedDate.ToLocalTime(),
             LastUpdatedDate = modelObject.LastUpdatedDate.ToLocalTimeNullable(),
             LockedDate = modelObject.LockedDate.ToLocalTimeNullable(),
-            LastUpdatedByUserFk= modelObject.LastUpdatedByUserFk,
+            LastUpdatedByUserFk = modelObject.LastUpdatedByUserFk,
             Name = modelObject.Name,
             LastName = modelObject.LastName,
             Email = modelObject.Email,
@@ -581,9 +575,6 @@ public static class MapperExtension
     }
 
 
-
-
-
     public static User ToUser(this UserDTO modelObject)
     {
         User returnObject = new()
@@ -614,7 +605,6 @@ public static class MapperExtension
         return returnObject;
     }
 
-
     public static CompanyDTO ToCompanyDTO(this Company modelObject)
     {
         CompanyDTO returnObject = new()
@@ -635,12 +625,15 @@ public static class MapperExtension
             LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
             IsActive = modelObject.IsActive,
+
+            NameTranslationValue = modelObject.NameTranslationKey,
+            DescriptionTranslationValue = modelObject.DescriptionTranslationKey,
+
             CountryNameTranslationKey = modelObject.CountryFkNavigation is null ? string.Empty : modelObject.CountryFkNavigation.NameTranslationKey,
             LanguageNameTranslationKey = modelObject.DefaultCultureFkNavigation is null ? string.Empty : modelObject.DefaultCultureFkNavigation.LanguageFkNavigation.NameTranslationKey
         };
         return returnObject;
     }
-
 
     public static Company ToCompany(this CompanyDTO modelObject)
     {
@@ -669,10 +662,6 @@ public static class MapperExtension
     }
 
 
-
-
-
-
     public static ApplicationDTO ToApplicationDTO(this Application modelObject)
     {
         ApplicationDTO returnObject = new()
@@ -695,9 +684,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
-
-
 
     public static ApplicationDTO ToApplicationDTO(this CompanyMembership modelObject)
     {
@@ -723,7 +709,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
 
     public static CompanyMembershipsDTO ToCompanyMembershipsDTO(this CompanyMembership modelObject)
     {
@@ -843,10 +828,6 @@ public static class MapperExtension
         return returnObject;
     }
 
-
-
-
-
     public static RolePermissionDTO ToRolePermissionDTO(this RolePermission modelObject)
     {
         RolePermissionDTO returnObject = new()
@@ -858,11 +839,15 @@ public static class MapperExtension
             Id = modelObject.Id,
             ModuleFk = modelObject.ModuleFk,
             EndpointFk = modelObject.EndpointFk,
-            PropertyValue = modelObject.PropertyValue
+            PropertyValue = modelObject.PropertyValue,
+            Obs = modelObject.Obs,
+            CanView = modelObject.CanView,
+            CanCreate = modelObject.CanCreate,
+            CanEdit = modelObject.CanEdit,
+            CanDelete = modelObject.CanDelete,
         };
         return returnObject;
     }
-
 
     public static ModuleDTO ToModuleDTO(this Module modelObject)
     {
@@ -886,7 +871,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
 
 
     public static EndpointDTO ToEndpointDTO(this Endpoint modelObject)
@@ -914,8 +898,6 @@ public static class MapperExtension
         return returnObject;
     }
 
-
-
     public static ComponentDTO ToComponentDTO(this Component modelObject)
     {
         ComponentDTO returnObject = new()
@@ -937,8 +919,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
-
 
 
     public static UserRoleDTO ToUserRoleDTO(this UserRole modelObject)
@@ -970,11 +950,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
-
-
-
-
 
 
     public static AuditRecordDTO ToAuditRecordDTO(this AuditRecord modelObject)
@@ -1049,8 +1024,6 @@ public static class MapperExtension
     }
 
 
-
-
     public static ActivityLogDTO ToActivityLogDTO(this ActivityLog modelObject)
     {
         ActivityLogDTO returnObject = new()
@@ -1084,9 +1057,6 @@ public static class MapperExtension
         return returnObject;
     }
 
-
-
-
     public static ActivityLog ToActivityLog(this ActivityLogDTO modelObject)
     {
         ActivityLog returnObject = new()
@@ -1114,8 +1084,6 @@ public static class MapperExtension
         };
         return returnObject;
     }
-
-
 
     public static NotificationDTO ToNotificationDTO(this Notification modelObject)
     {
@@ -1314,8 +1282,6 @@ public static class MapperExtension
         return returnObject;
     }
 
-
-
     public static EntityDTO ToEntityDTO(this Entity modelObject)
     {
         EntityDTO returnObject = new()
@@ -1391,7 +1357,7 @@ public static class MapperExtension
             TextFormat = modelObject.TextFormat,
 
             CompanyNameTranslationKey = modelObject.CompanyFkNavigation?.NameTranslationKey ?? string.Empty,
-            SequenceTypeNameTranslationKey = modelObject .SequenceTypeFkNavigation?.NameTranslationKey ?? string.Empty,
+            SequenceTypeNameTranslationKey = modelObject.SequenceTypeFkNavigation?.NameTranslationKey ?? string.Empty,
             ApplicationNameTranslationKey = modelObject.ApplicationFkNavigation?.NameTranslationKey ?? string.Empty,
         };
         return returnObject;

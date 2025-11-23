@@ -35,4 +35,16 @@ public record RolePermissionDTO
     [StringLength(50)]
     [Unicode(false)]
     public string? Obs { get; set; }
+
+    [Required]
+    public bool? CanView { get; set; }
+
+    [Required]
+    public bool? CanCreate { get; set; }
+
+    [Required]
+    public bool? CanEdit { get; set; }
+
+    [Required]
+    public bool? CanDelete { get; set; }
 }
