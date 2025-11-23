@@ -10,6 +10,7 @@ public record MenuGroupDTO
 
     public long? PositionIndex { get; set; }
     public List<MenuItemDTO> Items { get; set; }
+    public bool IsVisible { get; set; }
 }
 
 

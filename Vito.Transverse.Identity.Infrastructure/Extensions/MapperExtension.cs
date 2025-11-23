@@ -371,7 +371,7 @@ public static class MapperExtension
                 var moduleDTO = moduleList.Where(m => m.Id == newModuleDTO.Id).FirstOrDefault();
                 if (moduleDTO is null)
                 {
-                    if (permission.ModuleFkNavigation.IsVisible)
+                    if (permission.ModuleFkNavigation.IsActive)
                     {
                         moduleList.Add(newModuleDTO);
                     }
@@ -386,7 +386,7 @@ public static class MapperExtension
                     permission.ModuleFkNavigation.Endpoints.ToList().ForEach((endpoint) =>
                     {
                         MenuItemDTO endpointDTO = endpoint.ToMenuItemDTO();
-                        if (endpoint.IsVisible)
+                        if (endpoint.IsActive)
                         {
                             endpointDTO.CanView = true;
                             endpointDTO.CanEdit = true;
@@ -400,7 +400,7 @@ public static class MapperExtension
                 {
                     var endpoint = permission.ModuleFkNavigation.Endpoints.FirstOrDefault(x => x.Id == permission.EndpointFk);
                     MenuItemDTO endpointDTO = endpoint.ToMenuItemDTO();
-                    if (endpoint.IsVisible)
+                    if (endpoint.IsActive)
                     {
                         endpointDTO.CanView = permission.CanView ?? true;
                         endpointDTO.CanEdit = permission.CanEdit ?? true;
@@ -436,6 +436,7 @@ public static class MapperExtension
             Icon = modelObject.IconName,
             Description = modelObject.DescriptionTranslationKey,
             PositionIndex = modelObject.PositionIndex,
+            IsVisible=modelObject.IsVisible,
             Items = new()
         };
         return returnObject;
@@ -451,6 +452,8 @@ public static class MapperExtension
             Description = modelObject.DescriptionTranslationKey,
             Path = modelObject.EndpointUrl,
             PositionIndex = modelObject.PositionIndex,
+            IsVisible =modelObject.IsVisible,
+            IsApi=modelObject.IsApi,
             Items = new(),
 
         };

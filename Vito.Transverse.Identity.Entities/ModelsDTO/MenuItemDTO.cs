@@ -18,4 +18,6 @@ public record MenuItemDTO
     public bool CanDelete { get; set; }
 
     public List<MenuComponentDTO> Items { get; set; }
+    public bool IsVisible { get; set; }
+    public bool IsApi { get; set; }
 }

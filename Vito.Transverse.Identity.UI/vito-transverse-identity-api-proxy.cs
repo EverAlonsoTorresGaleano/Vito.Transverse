@@ -16263,6 +16263,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _description;
         private long? _positionIndex;
         private System.Collections.ObjectModel.ObservableCollection<MenuItemDTO> _items;
+        private bool _isVisible;
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Id    {
@@ -16342,6 +16343,19 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
+        [Newtonsoft.Json.JsonProperty("isVisible", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsVisible    {
+            get { return _isVisible; }
+            set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public string ToJson()
         {
 
@@ -16378,6 +16392,8 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private bool _canEdit;
         private bool _canDelete;
         private System.Collections.ObjectModel.ObservableCollection<MenuComponentDTO> _items;
+        private bool _isVisible;
+        private bool _isApi;
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Id    {
@@ -16517,6 +16533,32 @@ namespace Vito.Transverse.Identity.Presentation.Api
                 if (_items != value)
                 {
                     _items = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isVisible", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsVisible    {
+            get { return _isVisible; }
+            set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("isApi", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsApi    {
+            get { return _isApi; }
+            set
+            {
+                if (_isApi != value)
+                {
+                    _isApi = value;
                     RaisePropertyChanged();
                 }
             }
