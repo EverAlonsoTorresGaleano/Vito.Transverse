@@ -421,7 +421,13 @@ public static class MapperExtension
                     }
                 }
                 newModuleDTO.Items = newModuleDTO.Items.DistinctBy(x => x.Id).ToList();
+                var hiddenItems = newModuleDTO.Items.Where(x => !x.IsVisible).Count();
 
+
+                if (hiddenItems== newModuleDTO.Items.Count)
+                {
+                    moduleList.RemoveAll(x => x.Id.Equals(newModuleDTO.Id));
+                }
             });
         });
         return moduleList.OrderBy(x => x.PositionIndex).ToList();
@@ -436,7 +442,7 @@ public static class MapperExtension
             Icon = modelObject.IconName,
             Description = modelObject.DescriptionTranslationKey,
             PositionIndex = modelObject.PositionIndex,
-            IsVisible=modelObject.IsVisible,
+            IsVisible = modelObject.IsVisible,
             Items = new()
         };
         return returnObject;
@@ -452,8 +458,8 @@ public static class MapperExtension
             Description = modelObject.DescriptionTranslationKey,
             Path = modelObject.EndpointUrl,
             PositionIndex = modelObject.PositionIndex,
-            IsVisible =modelObject.IsVisible,
-            IsApi=modelObject.IsApi,
+            IsVisible = modelObject.IsVisible,
+            IsApi = modelObject.IsApi,
             Items = new(),
 
         };
