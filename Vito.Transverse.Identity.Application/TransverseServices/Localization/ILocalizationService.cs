@@ -1,7 +1,7 @@
 ﻿using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Application.TransverseServices.Localization;
+namespace Vito.Transverse.Identity.Application.TransverseServices.Localization;
 
 public interface ILocalizationService
 {
@@ -17,7 +17,8 @@ public interface ILocalizationService
 
     Task<CultureTranslationDTO> CreateNewCultureTranslationAsync(CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation);
 
-    Task<CultureTranslationDTO> UpdateCultureTranslationAsync(long applicationId, string cultureId, string translationKey, CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation);
+    Task<bool> UpdateCultureTranslationAsync(long applicationId, string cultureId, string translationKey, CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation);
 
     Task<bool> DeleteCultureTranslationAsync(long applicationId, string cultureId, string translationKey, DeviceInformationDTO deviceInformation);
+    Task<bool> UpsertCultureTranslationMasiveAsync(List<CultureTranslationDTO> cultureTranslationDTOs);
 }

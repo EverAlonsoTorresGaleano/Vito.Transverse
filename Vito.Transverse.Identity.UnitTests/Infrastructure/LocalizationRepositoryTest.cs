@@ -63,7 +63,7 @@ public class LocalizationRepositoryTest
             TranslationKey = "TestKey",
             TranslationValue = "UpdatedValue"
         };
-        var result = await _repository.UpdateCultureTranslationAsync(dto);
+        var result = await _repository.UpsertCultureTranslationAsync(dto);
         Assert.That(result, Is.True);
     }
 

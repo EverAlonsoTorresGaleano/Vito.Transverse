@@ -218,25 +218,25 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         return companyDTO;
     }
 
-    public async Task<CompanyDTO?> UpdateCompanyByIdAsync(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<CompanyDTO?> UpdateCompanyByIdAsync(CompanyDTO newCompanyInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
     {
         CompanyDTO? savedRecord = null;
 
         try
         {
             context = dataBaseContextFactory.GetDbContext(context);
-            var companyToUpdate = await context.Companies.FirstOrDefaultAsync(x => x.Id == companyInfo.Id);
-            if (companyToUpdate is null)
+            var companyDB = await context.Companies.FirstOrDefaultAsync(x => x.Id == newCompanyInfo.Id);
+            if (companyDB is null)
             {
                 return null;
             }
 
-            var updatedCompany = companyInfo.ToCompany();
-            updatedCompany.LastUpdateByUserFk = deviceInformation.UserId;
-            updatedCompany.LastUpdateDate = cultureRepository.UtcNow().DateTime;
-            context.Entry(companyToUpdate).CurrentValues.SetValues(updatedCompany);
+            var newCompanyDb = newCompanyInfo.ToCompany();
+            newCompanyDb.LastUpdateByUserFk = deviceInformation.UserId;
+            newCompanyDb.LastUpdateDate = cultureRepository.UtcNow().DateTime;
+            context.Entry(companyDB).CurrentValues.SetValues(newCompanyDb);
             await context.SaveChangesAsync();
-            savedRecord = companyToUpdate.ToCompanyDTO();
+            savedRecord = companyDB.ToCompanyDTO();
         }
         catch (Exception ex)
         {

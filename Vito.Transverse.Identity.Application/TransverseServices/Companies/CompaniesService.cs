@@ -1,16 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
+using System.Globalization;
 using Vito.Framework.Common.DTO;
+using Vito.Transverse.Identity.Application.Helpers;
 using Vito.Transverse.Identity.Application.TransverseServices.Caching;
-using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
+using Vito.Transverse.Identity.Application.TransverseServices.Localization;
 using Vito.Transverse.Identity.Entities.DTO;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 using Vito.Transverse.Identity.Infrastructure.Extensions;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
 
 namespace Vito.Transverse.Identity.Application.TransverseServices.Companies;
 
-public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesRepository companiesRepository, ICachingServiceMemoryCache cachingService) : ICompaniesService
+public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesRepository companiesRepository, ILocalizationService localizationService, ICachingServiceMemoryCache cachingService) : ICompaniesService
 {
 
     public async Task<List<CompanyDTO>> GetAllCompanyListAsync()
@@ -47,6 +50,10 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         {
             var returnValue = await companiesRepository.CreateNewCompanyAsync(newRecord, deviceInformation);
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
+            var nameTranslation = deviceInformation.ToCultureTranslationDTO(newRecord.NameTranslationKey, newRecord.NameTranslationValue);
+            var descriptionTranslation = deviceInformation.ToCultureTranslationDTO(newRecord.DescriptionTranslationKey, newRecord.DescriptionTranslationValue);
+
+            await localizationService.UpsertCultureTranslationMasiveAsync([nameTranslation, descriptionTranslation]);
             return returnValue;
         }
         catch (Exception ex)
@@ -154,6 +161,12 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         {
             companyInfo.Id = companyId;
             var returnValue = await companiesRepository.UpdateCompanyByIdAsync(companyInfo, deviceInformation);
+
+            var nameTranslation = deviceInformation.ToCultureTranslationDTO(companyInfo.NameTranslationKey, companyInfo.NameTranslationValue);
+            var descriptionTranslation = deviceInformation.ToCultureTranslationDTO(companyInfo.DescriptionTranslationKey, companyInfo.DescriptionTranslationValue);
+
+            await localizationService.UpsertCultureTranslationMasiveAsync([nameTranslation, descriptionTranslation]);
+
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
             return returnValue;
         }

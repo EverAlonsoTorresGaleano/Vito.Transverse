@@ -92,5 +92,5 @@ public record CompanyDTO
 
     //Extensions
     public string CountryNameTranslationKey { get; set; } = null!;
-    public string LanguageNameTranslationKey { get; set; } = null!;
+    public string DefaultCultureNameTranslationKey { get; set; } = null!;
 }

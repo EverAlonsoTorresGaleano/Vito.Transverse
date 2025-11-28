@@ -346,6 +346,7 @@ public static class MapperExtension
     {
         CultureTranslation returnObject = new()
         {
+            ApplicationFk = modelObject.ApplicationFk,
             CultureFk = modelObject.CultureFk,
             TranslationKey = modelObject.TranslationKey,
             TranslationValue = modelObject.TranslationValue,
@@ -424,7 +425,7 @@ public static class MapperExtension
                 var hiddenItems = newModuleDTO.Items.Where(x => !x.IsVisible).Count();
 
 
-                if (hiddenItems== newModuleDTO.Items.Count)
+                if (hiddenItems == newModuleDTO.Items.Count)
                 {
                     moduleList.RemoveAll(x => x.Id.Equals(newModuleDTO.Id));
                 }
@@ -639,7 +640,7 @@ public static class MapperExtension
             DescriptionTranslationValue = modelObject.DescriptionTranslationKey,
 
             CountryNameTranslationKey = modelObject.CountryFkNavigation is null ? string.Empty : modelObject.CountryFkNavigation.NameTranslationKey,
-            LanguageNameTranslationKey = modelObject.DefaultCultureFkNavigation is null ? string.Empty : modelObject.DefaultCultureFkNavigation.LanguageFkNavigation.NameTranslationKey
+            DefaultCultureNameTranslationKey = modelObject.DefaultCultureFkNavigation is null ? string.Empty : modelObject.DefaultCultureFkNavigation.NameTranslationKey
         };
         return returnObject;
     }

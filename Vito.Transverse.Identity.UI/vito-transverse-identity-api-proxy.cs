@@ -11062,14 +11062,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
         }
 
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CultureTranslationDTO> PutApiLocalizationsV1Async(CultureTranslationDTO cultureTranslationDTO)
+        public virtual System.Threading.Tasks.Task<bool> PutApiLocalizationsV1Async(CultureTranslationDTO cultureTranslationDTO)
         {
             return PutApiLocalizationsV1Async(cultureTranslationDTO, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CultureTranslationDTO> PutApiLocalizationsV1Async(CultureTranslationDTO cultureTranslationDTO, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> PutApiLocalizationsV1Async(CultureTranslationDTO cultureTranslationDTO, System.Threading.CancellationToken cancellationToken)
         {
             if (cultureTranslationDTO == null)
                 throw new System.ArgumentNullException("cultureTranslationDTO");
@@ -11117,7 +11117,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CultureTranslationDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -17308,7 +17308,7 @@ namespace Vito.Transverse.Identity.Presentation.Api
         private string _nameTranslationValue;
         private string _descriptionTranslationValue;
         private string _countryNameTranslationKey;
-        private string _languageNameTranslationKey;
+        private string _defaultCultureNameTranslationKey;
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Always)]
         public long Id    {
@@ -17571,14 +17571,14 @@ namespace Vito.Transverse.Identity.Presentation.Api
             }
         }
 
-        [Newtonsoft.Json.JsonProperty("languageNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string LanguageNameTranslationKey    {
-            get { return _languageNameTranslationKey; }
+        [Newtonsoft.Json.JsonProperty("defaultCultureNameTranslationKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DefaultCultureNameTranslationKey    {
+            get { return _defaultCultureNameTranslationKey; }
             set
             {
-                if (_languageNameTranslationKey != value)
+                if (_defaultCultureNameTranslationKey != value)
                 {
-                    _languageNameTranslationKey = value;
+                    _defaultCultureNameTranslationKey = value;
                     RaisePropertyChanged();
                 }
             }

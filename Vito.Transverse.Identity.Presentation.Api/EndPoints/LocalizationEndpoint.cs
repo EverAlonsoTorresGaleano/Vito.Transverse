@@ -149,7 +149,7 @@ public static class LocalizationEndpoint
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    public static async Task<Results<Ok<CultureTranslationDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateCultureTranslationAsync(
+    public static async Task<Results<Ok<bool>, UnauthorizedHttpResult, NotFound, ValidationProblem>> UpdateCultureTranslationAsync(
         HttpRequest request,
         [FromServices] ILocalizationService localizationService,
         [FromServices] IValidator<CultureTranslationDTO> validator,

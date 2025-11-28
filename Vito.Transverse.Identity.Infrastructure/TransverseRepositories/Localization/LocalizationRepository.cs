@@ -5,13 +5,13 @@ using System.Data;
 using System.Globalization;
 using System.Linq.Expressions;
 using Vito.Framework.Common.Options;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
-using  Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
-using  Vito.Transverse.Identity.Infrastructure.Extensions;
-using  Vito.Transverse.Identity.Infrastructure.Models;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContext;
+using Vito.Transverse.Identity.Infrastructure.DataBaseContextFactory;
+using Vito.Transverse.Identity.Infrastructure.Extensions;
+using Vito.Transverse.Identity.Infrastructure.Models;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
+namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
 
 public class LocalizationRepository(IDataBaseContextFactory dataBaseContextFactory, IOptions<CultureSettingsOptions> cultureSettingsOptions, ILogger<LocalizationRepository> logger) : ILocalizationRepository
 {
@@ -60,25 +60,33 @@ public class LocalizationRepository(IDataBaseContextFactory dataBaseContextFacto
         return saveSuccessfuly;
     }
 
-    public async Task<bool> UpdateCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null)
+    public async Task<bool> UpsertCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null)
     {
         var saveSuccessfuly = false;
 
         try
         {
             context = dataBaseContextFactory.CreateDbContext();
-            //Get Culture fron Main Thread
-            var cultureId = CultureInfo.CurrentCulture.Name;
             var newRecord = newRecordDTO.ToCultureTranslation();
-            var recordToUpdate = await context.CultureTranslations.FirstOrDefaultAsync(x => x.CultureFk.Equals(cultureId) && x.TranslationKey.Equals(newRecord.TranslationKey));
-            context.CultureTranslations.Update(newRecord);
+            var recordDb = await context.CultureTranslations.FirstOrDefaultAsync(x =>
+                x.ApplicationFk == newRecord.ApplicationFk &&
+                x.CultureFk.Equals(newRecord.CultureFk) &&
+                x.TranslationKey.Equals(newRecord.TranslationKey));
+            if (recordDb is null)
+            {
+                await context.CultureTranslations.AddAsync(newRecord);
+            }
+            else
+            {
+                context.Entry(recordDb).CurrentValues.SetValues(newRecord);
+            }
             var recordAffected = await context.SaveChangesAsync();
 
             saveSuccessfuly = recordAffected > 0;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(UpdateCultureTranslationAsync));
+            logger.LogError(ex, message: nameof(UpsertCultureTranslationAsync));
             throw;
         }
 

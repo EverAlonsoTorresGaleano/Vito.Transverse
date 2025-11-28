@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Globalization;
-using System.Text;
 using Vito.Framework.Common.Constants;
 using Vito.Framework.Common.DTO;
 using Vito.Framework.Common.Extensions;
 using Vito.Framework.Common.Options;
 using Vito.Transverse.Identity.Application.TransverseServices.Caching;
-using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Localization;
 
 namespace Vito.Transverse.Identity.Application.TransverseServices.Localization;
 
@@ -184,11 +184,11 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
         }
     }
 
-    public async Task<CultureTranslationDTO> UpdateCultureTranslationAsync(long applicationId, string cultureId, string translationKey, CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation)
+    public async Task<bool> UpdateCultureTranslationAsync(long applicationId, string cultureId, string translationKey, CultureTranslationDTO cultureTranslationDTO, DeviceInformationDTO deviceInformation)
     {
         try
         {
-            var success = await localizationRepository.UpdateCultureTranslationAsync(cultureTranslationDTO);
+            var success = await localizationRepository.UpsertCultureTranslationAsync(cultureTranslationDTO);
             if (!success)
             {
                 throw new Exception("Failed to update culture translation");
@@ -196,14 +196,35 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
 
             // Clear cache
             cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + applicationId.ToString());
-            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationIdCultureId + applicationId.ToString() + cultureId);
 
-            return await GetCultureTranslationByIdAsync(cultureTranslationDTO.ApplicationFk, cultureTranslationDTO.CultureFk, cultureTranslationDTO.TranslationKey)
-                ?? cultureTranslationDTO;
+            return success;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, message: nameof(UpdateCultureTranslationAsync));
+            throw;
+        }
+    }
+
+    public Task<bool> UpsertCultureTranslationMasiveAsync(List<CultureTranslationDTO> cultureTranslationDTOs)
+    {
+        try
+        {
+            var sucess = true;
+            cultureTranslationDTOs.ForEach(async item =>
+            {
+                if (!item.TranslationKey.Equals(item.TranslationValue))
+                {
+                    await localizationRepository.UpsertCultureTranslationAsync(item);
+                }
+            });
+
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.CultureTranslationsListByApplicationId + cultureTranslationDTOs.First().ApplicationFk.ToString());
+            return Task.FromResult(sucess);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: nameof(UpsertCultureTranslationMasiveAsync));
             throw;
         }
     }
@@ -229,5 +250,6 @@ public class LocalizationService(ILocalizationRepository localizationRepository,
             throw;
         }
     }
+
 
 }

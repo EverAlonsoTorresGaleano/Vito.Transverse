@@ -10,6 +10,6 @@ public interface ILocalizationRepository
 
     Task<List<CultureTranslationDTO>> GetLocalizedMessagesListAsync(Expression<Func<CultureTranslation, bool>> filters, DataBaseServiceContext? context = null);
     Task<bool> AddNewCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null);
-    Task<bool> UpdateCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null);
+    Task<bool> UpsertCultureTranslationAsync(CultureTranslationDTO newRecordDTO, DataBaseServiceContext? context = null);
     Task<bool> DeleteCultureTranslationAsync(string locationMessageKey, DataBaseServiceContext? context = null);
 }
