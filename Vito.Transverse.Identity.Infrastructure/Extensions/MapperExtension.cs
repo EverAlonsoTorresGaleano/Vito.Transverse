@@ -145,7 +145,7 @@ public static class MapperExtension
         return returnObject;
     }
 
-    public static ListItemDTO ToListItemDTO(this ApplicationDTO modelObject)
+    public static ListItemDTO ToListItemDTOWithGuid(this ApplicationDTO modelObject)
     {
         ListItemDTO returnObject = new()
         {
@@ -157,11 +157,46 @@ public static class MapperExtension
         return returnObject;
     }
 
+    public static ListItemDTO ToListItemDTO(this ApplicationDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
     public static ListItemDTO ToListItemDTO(this CompanyDTO modelObject)
     {
         ListItemDTO returnObject = new()
         {
+            Id = modelObject.Id.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+    public static ListItemDTO ToListItemDTOWithGuid(this CompanyDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
             Id = modelObject.CompanyClient.ToString(),
+            IsEnabled = true,
+            NameTranslationKey = modelObject.NameTranslationKey,
+            ListItemGroupFk = string.Empty
+        };
+        return returnObject;
+    }
+
+    public static ListItemDTO ToListItemDTO(this ApplicationLicenseTypeDTO modelObject)
+    {
+        ListItemDTO returnObject = new()
+        {
+            Id = modelObject.Id.ToString(),
             IsEnabled = true,
             NameTranslationKey = modelObject.NameTranslationKey,
             ListItemGroupFk = string.Empty
@@ -687,9 +722,14 @@ public static class MapperExtension
             CreationDate = modelObject.CreationDate.ToLocalTime(),
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
             LastUpdateDate = modelObject.LastUpdateDate.ToLocalTimeNullable(),
-            ApplicationOwnerId = modelObject.OwnerFk,
+            OwnerFk = modelObject.OwnerFk,
             ApplicationOwnerNameTranslationKey = modelObject.OwnerFkNavigation.NameTranslationKey,
             ApplicationOwnerDescriptionTranslationKey = modelObject.OwnerFkNavigation.DescriptionTranslationKey,
+            ApplicationLicenseTypeNameTranslationKey = modelObject.ApplicationLicenseTypeFkNavigation.NameTranslationKey,
+            ApplicationLicenseTypeFk = modelObject.ApplicationLicenseTypeFk,
+            NameTranslationValue = modelObject.NameTranslationKey,
+            DescriptionTranslationValue = modelObject.DescriptionTranslationKey
+
 
         };
         return returnObject;
@@ -710,10 +750,14 @@ public static class MapperExtension
             LastUpdateDate = modelObject.ApplicationFkNavigation.LastUpdateDate.ToLocalTimeNullable(),
             NameTranslationKey = modelObject.ApplicationFkNavigation.NameTranslationKey,
             DescriptionTranslationKey = modelObject.ApplicationFkNavigation.DescriptionTranslationKey,
-            ApplicationOwnerId = modelObject.ApplicationFkNavigation.OwnerFkNavigation.Id,
+            OwnerFk = modelObject.ApplicationFkNavigation.OwnerFkNavigation.Id,
+            ApplicationLicenseTypeFk = modelObject.ApplicationFkNavigation.ApplicationLicenseTypeFk,
             ApplicationOwnerNameTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.NameTranslationKey,
             ApplicationOwnerDescriptionTranslationKey = modelObject.ApplicationFkNavigation.OwnerFkNavigation.DescriptionTranslationKey,
+            ApplicationLicenseTypeNameTranslationKey = modelObject.ApplicationFkNavigation.ApplicationLicenseTypeFkNavigation.NameTranslationKey,
 
+            DescriptionTranslationValue = modelObject.ApplicationFkNavigation.NameTranslationKey,
+            NameTranslationValue = modelObject.ApplicationFkNavigation.NameTranslationKey
 
 
         };
@@ -761,6 +805,8 @@ public static class MapperExtension
             CreationDate = modelObject.CreationDate,
             LastUpdateByUserFk = modelObject.LastUpdateByUserFk,
             LastUpdateDate = modelObject.LastUpdateDate,
+            ApplicationLicenseTypeFk = modelObject.ApplicationLicenseTypeFk,
+
 
         };
         return returnObject;
@@ -1259,14 +1305,14 @@ public static class MapperExtension
             PictureSize = modelObject.PictureSize,
 
 
-            PictureCategoryNameTranslationKey = modelObject.PictureCategoryFkNavigation.NameTranslationKey,
-            FileTypeNameTranslationKey = modelObject.FileTypeFkNavigation.NameTranslationKey,
+            PictureCategoryNameTranslationKey = modelObject.PictureCategoryFkNavigation is null ? string.Empty : modelObject.PictureCategoryFkNavigation.NameTranslationKey,
+            FileTypeNameTranslationKey = modelObject.FileTypeFkNavigation is null ? string.Empty : modelObject.FileTypeFkNavigation.NameTranslationKey,
 
-            CompanyId = modelObject.CompanyFkNavigation.Id,
-            CompanyNameTranslationKey = modelObject.CompanyFkNavigation.NameTranslationKey,
+            CompanyId = modelObject.CompanyFkNavigation is null ? (long)Decimal.Zero : modelObject.CompanyFkNavigation.Id,
+            CompanyNameTranslationKey = modelObject.CompanyFkNavigation is null ? string.Empty : modelObject.CompanyFkNavigation.NameTranslationKey,
 
-            EntitySchemaName = modelObject.EntityFkNavigation.SchemaName,
-            EntityName = modelObject.EntityFkNavigation.EntityName
+            EntitySchemaName = modelObject.EntityFkNavigation is null ? string.Empty : modelObject.EntityFkNavigation.SchemaName,
+            EntityName = modelObject.EntityFkNavigation is null ? string.Empty : modelObject.EntityFkNavigation.EntityName
         };
         return returnObject;
     }
@@ -1432,6 +1478,27 @@ public static class MapperExtension
             Id = modelObject.Id,
             NameTranslationKey = modelObject.NameTranslationKey,
             IsSystemType = modelObject.IsSystemType
+        };
+        return returnObject;
+    }
+
+
+    public static ApplicationLicenseTypeDTO ToApplicationLicenseTypeDTO(this ApplicationLicenseType modelOjbject)
+    {
+        ApplicationLicenseTypeDTO returnObject = new()
+        {
+            CreatedByUserFk = modelOjbject.CreatedByUserFk,
+            CreationDate = modelOjbject.CreationDate,
+            DescriptionTranslationKey = modelOjbject.DescriptionTranslationKey,
+            EndDate = modelOjbject.EndDate,
+            Id = modelOjbject.Id,
+            IsActive = modelOjbject.IsActive,
+            LastUpdateByUserFk = modelOjbject.LastUpdateByUserFk,
+            LastUpdateDate = modelOjbject.LastUpdateDate,
+            LicenseFile = modelOjbject.LicenseFile,
+            NameTranslationKey = modelOjbject.NameTranslationKey,
+            StartDate = modelOjbject.StartDate
+
         };
         return returnObject;
     }

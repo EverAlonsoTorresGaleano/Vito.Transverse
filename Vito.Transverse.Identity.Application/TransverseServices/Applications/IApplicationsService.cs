@@ -1,9 +1,9 @@
 ﻿using Vito.Framework.Common.DTO;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Application.TransverseServices.Applications;
+namespace Vito.Transverse.Identity.Application.TransverseServices.Applications;
 
-public interface  IApplicationsService
+public interface IApplicationsService
 {
     Task<ApplicationDTO?> CreateNewApplicationAsync(ApplicationDTO newRecord, DeviceInformationDTO deviceInformation);
 
@@ -40,8 +40,9 @@ public interface  IApplicationsService
     Task<ComponentDTO?> CreateNewComponentAsync(ComponentDTO newRecord, DeviceInformationDTO deviceInformation);
     Task<ComponentDTO?> UpdateComponentByIdAsync(long componentId, ComponentDTO componentInfo, DeviceInformationDTO deviceInformation);
     Task<bool> DeleteComponentByIdAsync(long componentId, DeviceInformationDTO deviceInformation);
-    Task<List<ListItemDTO>> GetAllApplicationListItemAsync(long? companyId);
+    Task<List<ListItemDTO>> GetAllApplicationListItemAsync(long? companyId, bool useGuid = false);
     Task<List<ListItemDTO>> GetModuleListItemAsync(long value);
     Task<List<ListItemDTO>> GetEndpointsListItemAsync(long moduleId);
     Task<List<ListItemDTO>> GetComponentListItemAsync(long endpointId);
+    Task<List<ListItemDTO>> GetAllLicenseTypesListItemAsync();
 }

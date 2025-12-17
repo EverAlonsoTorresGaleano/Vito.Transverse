@@ -10,10 +10,16 @@ namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Compan
 public interface ICompaniesRepository
 {
 
+    Task<List<CompanyDTO>> GetAllCompanyListAsync(Expression<Func<Company, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<CompanyDTO?> GetCompanyByIdAsync(long companyId, DataBaseServiceContext? context = null);
+    Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO companyApplicationsInfo);
 
-    Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+    Task<CompanyDTO?> UpdateCompanyAsync(CompanyDTO companyInfo);
+
+
+    Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+
 
     Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipListAsync(Expression<Func<CompanyMembership, bool>> filters, DataBaseServiceContext? context = null);
 
@@ -23,13 +29,10 @@ public interface ICompaniesRepository
 
     Task<bool> DeleteCompanyMembershipByIdAsync(long membershipId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
-    Task<List<CompanyDTO>> GetAllCompanyListAsync(Expression<Func<Company, bool>> filters, DataBaseServiceContext? context = null);
 
-    Task<CompanyDTO?> GetCompanyByIdAsync(long companyId, DataBaseServiceContext? context = null);
 
-    Task<CompanyDTO?> UpdateCompanyByIdAsync(CompanyDTO companyInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
+ 
 
-    Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
 
     Task<List<MembershipTypeDTO>> GetAllMembershipTypeListAsync(Expression<Func<MembershipType, bool>> filters, DataBaseServiceContext? context = null);
 

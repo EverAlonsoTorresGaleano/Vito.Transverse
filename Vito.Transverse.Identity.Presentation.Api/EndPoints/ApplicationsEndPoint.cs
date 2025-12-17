@@ -42,6 +42,12 @@ public static class ApplicationsEndPoint
          .RequireAuthorization()
          .AddEndpointFilter<RoleAuthorizationFilter>();
 
+        endPointGroupVersioned.MapGet("dropdownWithGuid", GetAllApplicationListItemWithGuidAsync)
+     .MapToApiVersion(1.0)
+     .WithSummary("Get All Application List Async")
+       .WithDescription("[Author] [Authen] [Trace]")
+     .RequireAuthorization()
+     .AddEndpointFilter<RoleAuthorizationFilter>();
 
 
         endPointGroupVersioned.MapGet("{applicationId}", GetApplicationByIdAsync)
@@ -221,6 +227,13 @@ public static class ApplicationsEndPoint
           .RequireAuthorization()
           .AddEndpointFilter<RoleAuthorizationFilter>();
 
+        endPointGroupVersioned.MapGet("licensetypes/dropdown", GetLicenseTypesListItemAsync)
+      .MapToApiVersion(1.0)
+      .WithSummary("Get License Types Async")
+      .WithDescription("[Author] [Authen] [Trace]")
+      .RequireAuthorization()
+      .AddEndpointFilter<RoleAuthorizationFilter>();
+
     }
 
     public static async Task<Results<Ok<List<string>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetOptionsListAsync(
@@ -246,6 +259,26 @@ public static class ApplicationsEndPoint
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
         var returnObject = await applicationService.GetAllApplicationListItemAsync(deviceInformation.CompanyId);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllApplicationListItemWithGuidAsync(
+  HttpRequest request,
+  [FromServices] IApplicationsService applicationService)
+
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var returnObject = await applicationService.GetAllApplicationListItemAsync(deviceInformation.CompanyId, true);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
+    public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetLicenseTypesListItemAsync(
+    HttpRequest request,
+    [FromServices] IApplicationsService applicationService)
+
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var returnObject = await applicationService.GetAllLicenseTypesListItemAsync();
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
@@ -275,9 +308,7 @@ public static class ApplicationsEndPoint
        HttpRequest request,
        [FromServices] IApplicationsService applicationService,
        [FromServices] IValidator<ApplicationDTO> validator,
-       [FromBody] ApplicationDTO applicationDTO,
-       [FromQuery] long companyId,
-       [FromQuery] long userId)
+       [FromBody] ApplicationDTO applicationDTO)
     {
         var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
         var validationResult = await validator.ValidateAsync(applicationDTO);

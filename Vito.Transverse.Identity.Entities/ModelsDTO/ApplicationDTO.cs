@@ -7,8 +7,8 @@ namespace Vito.Transverse.Identity.Entities.ModelsDTO;
 public record ApplicationDTO
 {
     [Required]
-    [DatabaseGenerated (DatabaseGeneratedOption.Identity)]
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
 
     
@@ -72,8 +72,7 @@ public record ApplicationDTO
     public string DescriptionTranslationValue { get; set; } = null!;
 
     //Estensions
-    public long? ApplicationOwnerId { get; set; }
     public string ApplicationOwnerNameTranslationKey { get; set; } = null!;
     public string ApplicationOwnerDescriptionTranslationKey { get; set; } = null!;
-
+    public string ApplicationLicenseTypeNameTranslationKey { get; set; } = null!;
 }

@@ -31,6 +31,13 @@ public static class CompaniesEndPoint
            .WithSummary("Get All Company List Async")
                .WithDescription("[Author] [Authen] [Trace]")
            .AllowAnonymous();
+
+        endPointGroupVersioned.MapGet("dropdownWithGuid", GetAllCompanyListItemWithGuidAsync)
+           .MapToApiVersion(1.0)
+           .WithSummary("Get All Company List Async")
+               .WithDescription("[Author] [Authen] [Trace]")
+           .AllowAnonymous();
+        
            //.AddEndpointFilter<RoleAuthorizationFilter>();
 
         endPointGroupVersioned.MapGet("{companyId}", GetCompanyByIdAsync)
@@ -181,7 +188,17 @@ public static class CompaniesEndPoint
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 
-    
+
+    public static async Task<Results<Ok<List<ListItemDTO>>, UnauthorizedHttpResult, NotFound, ValidationProblem>> GetAllCompanyListItemWithGuidAsync(
+    HttpRequest request,
+    [FromServices] ICompaniesService companiesService)
+
+    {
+        var deviceInformation = request.HttpContext.Items[FrameworkConstants.HttpContext_DeviceInformationList] as DeviceInformationDTO;
+        var returnObject = await companiesService.GetAllCompanyListItemAsync(true);
+        return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
+    }
+
 
     public static async Task<Results<Ok<CompanyDTO>, UnauthorizedHttpResult, NotFound, ValidationProblem>> CreateNewCompanyAsync(
        HttpRequest request,
@@ -226,7 +243,7 @@ public static class CompaniesEndPoint
         {
             return TypedResults.ValidationProblem(errors: validationResult.ToDictionary());
         }
-        var returnObject = await companiesService.UpdateCompanyByIdAsync(companyInfo.Id, companyInfo, deviceInformation!);
+        var returnObject = await companiesService.UpdateCompanyAsync(companyInfo, deviceInformation!);
         return returnObject == null ? TypedResults.NotFound() : TypedResults.Ok(returnObject);
     }
 

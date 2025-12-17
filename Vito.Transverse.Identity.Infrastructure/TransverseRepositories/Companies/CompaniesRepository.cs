@@ -17,17 +17,13 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
 {
 
 
-    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO newRecord, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO newRecord)
     {
         CompanyDTO? savedRecord = null;
         var newRecordDb = newRecord.ToCompany();
-        newRecordDb.CreationDate = cultureRepository.UtcNow().DateTime;
-        newRecordDb.CreatedByUserFk = deviceInformation.UserId;
         try
         {
-            newRecord.CompanyClient = Guid.NewGuid();
-            newRecord.CompanySecret = Guid.NewGuid();
-            context = dataBaseContextFactory.GetDbContext(context);
+            var context = dataBaseContextFactory.GetDbContext();
             context.Companies.Add(newRecordDb);
             await context.SaveChangesAsync();
             savedRecord = newRecordDb.ToCompanyDTO();
@@ -36,27 +32,6 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         {
             logger.LogError(ex, message: nameof(CreateNewCompanyAsync));
         }
-        return savedRecord;
-    }
-
-    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO recordToUpdate, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
-    {
-        CompanyDTO? savedRecord = null;
-
-        try
-        {
-            context = dataBaseContextFactory.GetDbContext(context);
-            var recordToUpdateDb = await context.Companies.FirstOrDefaultAsync(x => x.Id == recordToUpdate.Id);
-            recordToUpdateDb = recordToUpdate.ToCompany(); ;
-            await context.SaveChangesAsync();
-            savedRecord = recordToUpdateDb!.ToCompanyDTO();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, message: nameof(UpdateCompanyApplicationsAsync));
-            throw;
-        }
-
         return savedRecord;
     }
 
@@ -218,13 +193,13 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         return companyDTO;
     }
 
-    public async Task<CompanyDTO?> UpdateCompanyByIdAsync(CompanyDTO newCompanyInfo, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null)
+    public async Task<CompanyDTO?> UpdateCompanyAsync(CompanyDTO newCompanyInfo)
     {
         CompanyDTO? savedRecord = null;
 
         try
         {
-            context = dataBaseContextFactory.GetDbContext(context);
+            var context = dataBaseContextFactory.GetDbContext();
             var companyDB = await context.Companies.FirstOrDefaultAsync(x => x.Id == newCompanyInfo.Id);
             if (companyDB is null)
             {
@@ -232,15 +207,13 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
             }
 
             var newCompanyDb = newCompanyInfo.ToCompany();
-            newCompanyDb.LastUpdateByUserFk = deviceInformation.UserId;
-            newCompanyDb.LastUpdateDate = cultureRepository.UtcNow().DateTime;
             context.Entry(companyDB).CurrentValues.SetValues(newCompanyDb);
             await context.SaveChangesAsync();
             savedRecord = companyDB.ToCompanyDTO();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(UpdateCompanyByIdAsync));
+            logger.LogError(ex, message: nameof(UpdateCompanyAsync));
             throw;
         }
 
@@ -271,7 +244,7 @@ public class CompaniesRepository(ILogger<SecurityRepository> logger, ICultureRep
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(UpdateCompanyByIdAsync));
+            logger.LogError(ex, message: nameof(UpdateCompanyAsync));
             throw;
         }
 

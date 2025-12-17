@@ -2,18 +2,22 @@
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using Vito.Framework.Common.DTO;
+using Vito.Framework.Common.Enums;
 using Vito.Transverse.Identity.Application.Helpers;
+using Vito.Transverse.Identity.Application.TransverseServices.Audit;
 using Vito.Transverse.Identity.Application.TransverseServices.Caching;
+using Vito.Transverse.Identity.Application.TransverseServices.Culture;
 using Vito.Transverse.Identity.Application.TransverseServices.Localization;
 using Vito.Transverse.Identity.Entities.DTO;
 using Vito.Transverse.Identity.Entities.Enums;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 using Vito.Transverse.Identity.Infrastructure.Extensions;
 using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Companies;
+using Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Culture;
 
 namespace Vito.Transverse.Identity.Application.TransverseServices.Companies;
 
-public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesRepository companiesRepository, ILocalizationService localizationService, ICachingServiceMemoryCache cachingService) : ICompaniesService
+public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesRepository companiesRepository, IAuditService auditService, ILocalizationService localizationService, ICultureService cultureService, ICachingServiceMemoryCache cachingService) : ICompaniesService
 {
 
     public async Task<List<CompanyDTO>> GetAllCompanyListAsync()
@@ -36,10 +40,10 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         }
     }
 
-    public async Task<List<ListItemDTO>> GetAllCompanyListItemAsync()
+    public async Task<List<ListItemDTO>> GetAllCompanyListItemAsync(bool withGuid = false)
     {
         var listItem = await GetAllCompanyListAsync();
-        var returnList = listItem.Select(x => x.ToListItemDTO()).ToList();
+        var returnList = listItem.Select(x => withGuid ? x.ToListItemDTOWithGuid() : x.ToListItemDTO()).ToList();
         return returnList;
     }
 
@@ -48,13 +52,28 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
     {
         try
         {
-            var returnValue = await companiesRepository.CreateNewCompanyAsync(newRecord, deviceInformation);
-            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
-            var nameTranslation = deviceInformation.ToCultureTranslationDTO(newRecord.NameTranslationKey, newRecord.NameTranslationValue);
-            var descriptionTranslation = deviceInformation.ToCultureTranslationDTO(newRecord.DescriptionTranslationKey, newRecord.DescriptionTranslationValue);
+            newRecord.CompanyClient = Guid.NewGuid();
+            newRecord.CompanySecret = Guid.NewGuid();
+            newRecord.CreationDate = cultureService.UtcNow().DateTime;
+            newRecord.CreatedByUserFk = deviceInformation.UserId;
 
-            await localizationService.UpsertCultureTranslationMasiveAsync([nameTranslation, descriptionTranslation]);
-            return returnValue;
+            var savedRecord = await companiesRepository.CreateNewCompanyAsync(newRecord);
+            savedRecord.NameTranslationKey = $"Company_{savedRecord!.Id}_Name";
+            savedRecord.DescriptionTranslationKey = $"Company_{savedRecord!.Id}_Dsc";
+            savedRecord.LastUpdateByUserFk = deviceInformation.UserId;
+            savedRecord.LastUpdateDate = cultureService.UtcNow().DateTime;
+            savedRecord = await companiesRepository.UpdateCompanyAsync(newRecord);
+
+            await localizationService.UpsetTranslations(deviceInformation, savedRecord.NameTranslationKey, savedRecord.NameTranslationValue, savedRecord.DescriptionTranslationKey, savedRecord.DescriptionTranslationValue);
+
+            var savedAuditRecord = await auditService.NewRowAuditAsync(deviceInformation.CompanyId!, deviceInformation.UserId!, savedRecord!, savedRecord!.Id.ToString(), deviceInformation, true);
+            var savedActivityLog = await auditService.AddNewActivityLogAsync(deviceInformation, OAuthActionTypeEnum.OAuthActionType_CreateNewCompany);
+
+
+
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
+
+            return savedRecord;
         }
         catch (Exception ex)
         {
@@ -63,22 +82,35 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         }
     }
 
-    public async Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO companyApplicationInfo, DeviceInformationDTO deviceInformation)
+    public async Task<CompanyDTO?> UpdateCompanyAsync(CompanyDTO recordToUpdate, DeviceInformationDTO deviceInformation)
     {
-        CompanyDTO? returnValue = null;
+        CompanyDTO? savedRecord = null;
         try
         {
-            returnValue = await companiesRepository.UpdateCompanyApplicationsAsync(companyApplicationInfo, deviceInformation);
+            var originalRecord = await GetCompanyByIdAsync(recordToUpdate.Id);
+            if (originalRecord is null)
+            {
+                return savedRecord;
+            }
+
+            recordToUpdate.LastUpdateDate = cultureService.UtcNow().DateTime;
+            recordToUpdate.LastUpdateByUserFk = deviceInformation.UserId;
+            savedRecord = await companiesRepository.UpdateCompanyAsync(recordToUpdate);
+
+            await localizationService.UpsetTranslations(deviceInformation, savedRecord.NameTranslationKey, savedRecord.NameTranslationValue, savedRecord.DescriptionTranslationKey, savedRecord.DescriptionTranslationValue);
+
+            await auditService.UpdateRowAuditAsync(deviceInformation.CompanyId, deviceInformation.UserId, originalRecord, savedRecord, savedRecord.Id.ToString(), deviceInformation, true);
+
+            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, message: nameof(UpdateCompanyApplicationsAsync));
+            logger.LogError(ex, message: nameof(UpdateCompanyAsync));
             throw;
         }
-        return returnValue;
+        return savedRecord;
     }
-
 
 
     public async Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipAsync(long? companyId)
@@ -155,27 +187,7 @@ public class CompaniesService(ILogger<CompaniesService> logger, ICompaniesReposi
         }
     }
 
-    public async Task<CompanyDTO?> UpdateCompanyByIdAsync(long companyId, CompanyDTO companyInfo, DeviceInformationDTO deviceInformation)
-    {
-        try
-        {
-            companyInfo.Id = companyId;
-            var returnValue = await companiesRepository.UpdateCompanyByIdAsync(companyInfo, deviceInformation);
 
-            var nameTranslation = deviceInformation.ToCultureTranslationDTO(companyInfo.NameTranslationKey, companyInfo.NameTranslationValue);
-            var descriptionTranslation = deviceInformation.ToCultureTranslationDTO(companyInfo.DescriptionTranslationKey, companyInfo.DescriptionTranslationValue);
-
-            await localizationService.UpsertCultureTranslationMasiveAsync([nameTranslation, descriptionTranslation]);
-
-            cachingService.DeleteCacheDataByKey(CacheItemKeysEnum.AllCompanyList.ToString());
-            return returnValue;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, message: nameof(UpdateCompanyByIdAsync));
-            throw;
-        }
-    }
 
     public async Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation)
     {

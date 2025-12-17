@@ -16,7 +16,7 @@ public class MediaService(IMediaRepository mediaRepository, ICachingServiceMemor
         try
         {
             var companyList = await GetPictureList(companyId);
-            var returnItem = companyList.FirstOrDefault(x => x.Name.Equals(name));
+            var returnItem = companyList.FirstOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
             return returnItem;
         }
         catch (Exception ex)

@@ -6,12 +6,15 @@ namespace Vito.Transverse.Identity.Application.TransverseServices.Companies;
 
 public interface ICompaniesService
 {
+    Task<List<CompanyDTO>> GetAllCompanyListAsync();
 
+    Task<CompanyDTO?> GetCompanyByIdAsync(long companyId);
 
     Task<CompanyDTO?> CreateNewCompanyAsync(CompanyDTO newRecord, DeviceInformationDTO deviceInformation);
 
-    Task<CompanyDTO?> UpdateCompanyApplicationsAsync(CompanyDTO companyApplicationsInfo, DeviceInformationDTO deviceInformation);
+    Task<CompanyDTO?> UpdateCompanyAsync(CompanyDTO recordToUpdate, DeviceInformationDTO deviceInformation);
 
+    Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation);
 
     Task<List<CompanyMembershipsDTO>> GetCompanyMemberhipAsync(long? companyId);
 
@@ -21,13 +24,7 @@ public interface ICompaniesService
 
     Task<bool> DeleteCompanyMembershipByIdAsync(long membershipId, DeviceInformationDTO deviceInformation);
 
-    Task<List<CompanyDTO>> GetAllCompanyListAsync();
 
-    Task<CompanyDTO?> GetCompanyByIdAsync(long companyId);
-
-    Task<CompanyDTO?> UpdateCompanyByIdAsync(long companyId, CompanyDTO companyInfo, DeviceInformationDTO deviceInformation);
-
-    Task<bool> DeleteCompanyByIdAsync(long companyId, DeviceInformationDTO deviceInformation);
 
     Task<List<MembershipTypeDTO>> GetAllMembershipTypeListAsync();
 
@@ -38,7 +35,7 @@ public interface ICompaniesService
     Task<MembershipTypeDTO?> UpdateMembershipTypeByIdAsync(long membershipTypeId, MembershipTypeDTO membershipTypeDTO, DeviceInformationDTO deviceInformation);
 
     Task<bool> DeleteMembershipTypeByIdAsync(long membershipTypeId, DeviceInformationDTO deviceInformation);
-    Task<List<ListItemDTO>> GetAllCompanyListItemAsync();
+    Task<List<ListItemDTO>> GetAllCompanyListItemAsync(bool withGuid=false);
     Task<List<ListItemDTO>> GetCompanyMemberhipListItemAsync(long value);
     Task<List<ListItemDTO>> GetAllMembershipTypeListItemAsync();
 }

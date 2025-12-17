@@ -5,7 +5,7 @@ using  Vito.Transverse.Identity.Infrastructure.DataBaseContext;
 using  Vito.Transverse.Identity.Infrastructure.Models;
 using Vito.Transverse.Identity.Entities.ModelsDTO;
 
-namespace  Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Applications;
+namespace Vito.Transverse.Identity.Infrastructure.TransverseRepositories.Applications;
 
 public interface IApplicationsRepository
 {
@@ -42,4 +42,5 @@ public interface IApplicationsRepository
     Task<ComponentDTO?> CreateNewComponentAsync(ComponentDTO componentInfoDTO, DeviceInformationDTO deviceInformation, DataBaseServiceContext? context = null);
     Task<ComponentDTO?> UpdateComponentByIdAsync(ComponentDTO componentInfo, DataBaseServiceContext? context = null);
     Task<bool> DeleteComponentByIdAsync(long componentId, long updatedByUserId, DateTime actionDate, DataBaseServiceContext? context = null);
+    Task<List<ApplicationLicenseTypeDTO>> GetLicenseTypesListAsync();
 }

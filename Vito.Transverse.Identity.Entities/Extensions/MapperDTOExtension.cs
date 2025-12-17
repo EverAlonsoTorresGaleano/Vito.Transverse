@@ -24,7 +24,7 @@ public static class MapperDTOExtension
             LastName = modelEntity.LastName,
             Email = modelEntity.Email,
 
-            ApplicationOwnerId = applicationEntity!.ApplicationOwnerId,
+            ApplicationOwnerId = applicationEntity!.OwnerFk,
             ApplicationOwnerNameTranslationKey = applicationEntity.ApplicationOwnerNameTranslationKey,
 
             ApplicationId = applicationEntity.Id,
